@@ -86,7 +86,7 @@
 						>
 							{bit}
 						</button>
-						<span class="font-mono text-2xs text-muted-foreground/60">{2 ** (7 - i)}</span>
+						<span class="font-mono text-2xs text-muted-foreground">{2 ** (7 - i)}</span>
 					</div>
 				{/each}
 			</div>

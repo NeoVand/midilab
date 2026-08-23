@@ -7,7 +7,7 @@
 
 <div class="mx-auto grid h-full max-w-lg place-items-center px-8 py-24 text-center">
 	<div class="flex flex-col items-center gap-4">
-		<p class="tnum font-mono text-4xl text-muted-foreground/50">{page.status}</p>
+		<p class="tnum font-mono text-4xl text-muted-foreground/60">{page.status}</p>
 		<h1 class="text-2xl font-semibold tracking-tight">
 			{notFound ? 'Nothing here' : 'Something went wrong'}
 		</h1>

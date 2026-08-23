@@ -137,7 +137,7 @@
 					class="group flex flex-col gap-2 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
 					<div class="flex items-baseline gap-2">
-						<span class="font-mono text-xs text-muted-foreground/50">ACT {act.number}</span>
+						<span class="font-mono text-xs text-muted-foreground">ACT {act.number}</span>
 						<span class="ml-auto font-mono text-xs text-muted-foreground">
 							{act.lessons.length} lessons
 						</span>

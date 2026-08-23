@@ -260,9 +260,7 @@
 							<tbody>
 								{#each track.events.slice(0, 400) as e, i (i)}
 									<tr class="border-b border-border/40">
-										<td class="w-16 py-1 pr-2 pl-3 text-right text-muted-foreground/60"
-											>+{e.delta}</td
-										>
+										<td class="w-16 py-1 pr-2 pl-3 text-right text-muted-foreground">+{e.delta}</td>
 										<td class="w-16 py-1 pr-2 text-right text-muted-foreground">{e.tick}</td>
 										<td class="py-1 pr-3">
 											{#if isMeta(e.event)}

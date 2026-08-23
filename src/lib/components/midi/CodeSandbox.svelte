@@ -128,7 +128,7 @@
 		return escaped.replace(
 			/(\/\/[^\n]*)|(`(?:\\.|[^`\\])*`|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*")|\b(const|let|var|function|return|if|else|for|while|of|in|await|async|new|class|try|catch|throw|=>)\b|\b(0x[0-9a-fA-F]+|\d+(?:\.\d+)?)\b|\b(midi|audio|transport|console|log|sleep)\b/g,
 			(m, comment, str, kw, num, api) => {
-				if (comment) return `<span class="text-muted-foreground/60">${comment}</span>`;
+				if (comment) return `<span class="text-muted-foreground">${comment}</span>`;
 				if (str) return `<span class="text-msg-note">${str}</span>`;
 				if (kw) return `<span class="text-msg-expr">${kw}</span>`;
 				if (num) return `<span class="text-msg-program">${num}</span>`;

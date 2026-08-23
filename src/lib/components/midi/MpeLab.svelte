@@ -155,7 +155,7 @@
 					: 'transparent'}; border-right: 1px solid var(--grid-line)"
 			>
 				{#if ((n % 12) + 12) % 12 === 0}
-					<span class="absolute bottom-1 left-1 font-mono text-2xs text-muted-foreground/50">
+					<span class="absolute bottom-1 left-1 font-mono text-2xs text-muted-foreground">
 						{noteName(n, { convention: settings.octaveConvention })}
 					</span>
 				{/if}
@@ -217,7 +217,7 @@
 						<span class="text-muted-foreground">cc74 {v.slide}</span>
 					</div>
 				{:else}
-					<span class="text-2xs text-muted-foreground/40">free</span>
+					<span class="text-2xs text-muted-foreground">free</span>
 				{/if}
 			</div>
 		{/each}

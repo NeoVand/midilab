@@ -94,7 +94,7 @@
 						<div class="h-full bg-msg-cc" style="width: {(s.last / 127) * 100}%"></div>
 					</div>
 					<span class="tnum w-8 text-right font-mono text-xs">{s.last}</span>
-					<span class="tnum w-16 text-right font-mono text-2xs text-muted-foreground/70">
+					<span class="tnum w-16 text-right font-mono text-2xs text-muted-foreground">
 						{s.min}–{s.max}
 					</span>
 				</div>

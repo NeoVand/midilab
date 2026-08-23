@@ -177,8 +177,8 @@
 					</div>
 				{/each}
 			</div>
-			<p class="absolute top-1 left-2 font-mono text-2xs text-muted-foreground/60">late ↑</p>
-			<p class="absolute bottom-1 left-2 font-mono text-2xs text-muted-foreground/60">early ↓</p>
+			<p class="absolute top-1 left-2 font-mono text-2xs text-muted-foreground">late ↑</p>
+			<p class="absolute bottom-1 left-2 font-mono text-2xs text-muted-foreground">early ↓</p>
 		</div>
 		<p class="text-xs leading-relaxed text-muted-foreground">
 			{#if mode === 'naive'}

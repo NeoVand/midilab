@@ -328,7 +328,11 @@
 						class={cn(
 							'tnum flex-1 text-center font-mono text-2xs',
 							i % 4 === 0 && i > 0 && 'ml-2',
-							current === i && transport.playing ? 'text-msg-note' : 'text-muted-foreground/45'
+							current === i && transport.playing
+								? 'text-msg-note'
+								: i % 4 === 0
+									? 'text-muted-foreground'
+									: 'text-muted-foreground/45'
 						)}
 					>
 						{i % 4 === 0 ? i / 4 + 1 : '·'}
@@ -412,7 +416,7 @@
 							</Popover.Content>
 						</Popover.Root>
 
-						<span class="tnum shrink-0 font-mono text-2xs text-muted-foreground/50">
+						<span class="tnum shrink-0 font-mono text-2xs text-muted-foreground">
 							{track.channel + 1}
 						</span>
 					</div>

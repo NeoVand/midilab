@@ -270,7 +270,7 @@
 									<span class="tnum font-mono">
 										<span class={inCount ? 'text-msg-cc' : 'text-muted-foreground'}>{inCount}</span>
 										<span class="text-muted-foreground">in</span>
-										<span class="mx-0.5 text-muted-foreground/40">/</span>
+										<span class="mx-0.5 text-muted-foreground">/</span>
 										<span class={outCount ? 'text-msg-note' : 'text-muted-foreground'}>
 											{outCount}
 										</span>

@@ -155,7 +155,7 @@
 					<div class="flex flex-col gap-1.5">
 						<span class="label flex items-baseline justify-between">
 							Channels
-							<span class="text-muted-foreground/60 normal-case">
+							<span class="text-muted-foreground normal-case">
 								{monitor.channels.length ? `${monitor.channels.length} selected` : 'all'}
 							</span>
 						</span>
@@ -239,7 +239,7 @@
 							)}
 							onclick={() => onSelect?.(e)}
 						>
-							<td class="w-14 py-[3px] pr-1 pl-2 text-right text-muted-foreground/70 tabular-nums">
+							<td class="w-14 py-[3px] pr-1 pl-2 text-right text-muted-foreground tabular-nums">
 								{deltaMs(i)}
 							</td>
 							<td class="w-5 py-[3px]">
@@ -267,7 +267,7 @@
 							</td>
 							{#if showPort}
 								<td
-									class="hidden w-32 truncate py-[3px] pr-3 text-right text-muted-foreground/60 lg:table-cell"
+									class="hidden w-32 truncate py-[3px] pr-3 text-right text-muted-foreground lg:table-cell"
 								>
 									{rows[i + 1]?.portId === e.portId ? '' : e.portName}
 								</td>

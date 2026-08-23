@@ -69,7 +69,7 @@
 		<section id={act.id} class="flex scroll-mt-8 flex-col gap-3">
 			<div class="flex flex-col gap-1">
 				<div class="flex items-baseline gap-3">
-					<span class="font-mono text-xs text-muted-foreground/60">ACT {act.number}</span>
+					<span class="font-mono text-xs text-muted-foreground">ACT {act.number}</span>
 					<h2 class="text-lg font-semibold tracking-tight">{act.title}</h2>
 					<span class="tnum ml-auto shrink-0 font-mono text-xs text-muted-foreground">
 						{done}/{act.lessons.length} · {actMinutes(act.lessons)} min
@@ -101,7 +101,7 @@
 							<span
 								class={cn(
 									'tnum self-start pt-0.5 text-center font-mono text-xs',
-									complete ? 'text-ok' : 'text-muted-foreground/60'
+									complete ? 'text-ok' : 'text-muted-foreground'
 								)}
 							>
 								{#if complete}
@@ -117,7 +117,7 @@
 								</span>
 							</span>
 							<span
-								class="tnum flex shrink-0 items-center gap-2 self-start pt-0.5 text-xs text-muted-foreground/70"
+								class="tnum flex shrink-0 items-center gap-2 self-start pt-0.5 text-xs text-muted-foreground"
 							>
 								{#if lesson.hardware && lesson.hardware !== 'none'}
 									<HugeiconsIcon

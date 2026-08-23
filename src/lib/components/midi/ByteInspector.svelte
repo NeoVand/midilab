@@ -141,7 +141,7 @@
 									? 'font-semibold text-background'
 									: bit === '1'
 										? 'bg-foreground/12 text-foreground'
-										: 'bg-muted text-muted-foreground/60'
+										: 'bg-muted text-muted-foreground'
 							)}
 							style={b === 0
 								? `background:${isStatus ? 'var(--fam)' : 'var(--muted-foreground)'}`

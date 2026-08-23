@@ -67,7 +67,7 @@
 		{placeholder}
 		onkeydown={onKeydown}
 		class="h-8 w-full rounded-md border bg-surface-sunken pr-8 pl-8 text-sm
-			placeholder:text-muted-foreground/70
+			placeholder:text-muted-foreground
 			focus-visible:border-ring
 			[&::-webkit-search-cancel-button]:appearance-none"
 	/>
@@ -85,7 +85,7 @@
 		</button>
 	{:else if shortcut}
 		<kbd
-			class="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 rounded-md border px-1 font-mono text-2xs text-muted-foreground/70"
+			class="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 rounded-md border px-1 font-mono text-2xs text-muted-foreground"
 		>
 			{shortcut}
 		</kbd>

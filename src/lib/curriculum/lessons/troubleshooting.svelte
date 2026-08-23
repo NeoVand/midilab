@@ -51,7 +51,7 @@
 		<div class="flex flex-col gap-2">
 			{#each TOP_FIVE as [title, body], i (title)}
 				<div class="flex gap-4 rounded-lg border p-4">
-					<span class="font-mono text-sm text-muted-foreground/50">{i + 1}</span>
+					<span class="font-mono text-sm text-muted-foreground">{i + 1}</span>
 					<div>
 						<p class="text-sm font-medium">{title}</p>
 						<p class="mt-1 text-xs leading-relaxed text-muted-foreground">{body}</p>

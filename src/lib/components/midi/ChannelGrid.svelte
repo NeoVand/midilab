@@ -61,7 +61,7 @@
 					{snap.notes.size}
 				</span>
 			{:else if c === 9 && compact}
-				<span class="label shrink-0 text-muted-foreground/50">dr</span>
+				<span class="label shrink-0 text-muted-foreground">dr</span>
 			{/if}
 		</button>
 	{/each}

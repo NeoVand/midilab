@@ -32,7 +32,7 @@
 		<div class="flex flex-col gap-1.5">
 			<p class="label">
 				{family}
-				<span class="ml-1 font-mono text-muted-foreground/50">{f * 8}–{f * 8 + 7}</span>
+				<span class="ml-1 font-mono text-muted-foreground">{f * 8}–{f * 8 + 7}</span>
 			</p>
 			<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
 				{#each Array.from({ length: 8 }, (_, i) => f * 8 + i) as p (p)}

@@ -163,7 +163,7 @@
 				</label>
 			{/each}
 			{#if midiAccess.status !== 'granted' && midiAccess.status !== 'unsupported'}
-				<p class="px-1 text-2xs leading-relaxed text-muted-foreground/80">
+				<p class="px-1 text-2xs leading-relaxed text-muted-foreground">
 					Your hardware outputs join this list once you connect.
 				</p>
 			{/if}

@@ -129,7 +129,7 @@
 				</div>
 				<h2 class="font-medium">{tool.name}</h2>
 				<p class="text-sm leading-relaxed text-muted-foreground">{tool.desc}</p>
-				<p class="mt-auto border-t pt-2.5 text-2xs leading-relaxed text-muted-foreground/70">
+				<p class="mt-auto border-t pt-2.5 text-2xs leading-relaxed text-muted-foreground">
 					{tool.contents}
 				</p>
 			</a>

@@ -272,10 +272,10 @@
 				{/if}
 				{#if labelFor(note) || numbered}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/40"
+						class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/55"
 					>
 						{#if labelFor(note)}<span>{labelFor(note)}</span>{/if}
-						{#if numbered}<span class="text-black/30">{note}</span>{/if}
+						{#if numbered}<span class="text-black/45">{note}</span>{/if}
 					</span>
 				{/if}
 			</button>
@@ -311,13 +311,13 @@
 			>
 				{#if labels === 'all' || labels === 'numbers' || numbered}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1 flex flex-col items-center gap-px font-mono text-2xs leading-none text-white/55"
+						class="pointer-events-none absolute inset-x-0 bottom-1 flex flex-col items-center gap-px font-mono text-2xs leading-none text-white/70"
 					>
 						{#if labels === 'all'}
 							<span>{noteName(note, { convention: settings.octaveConvention, octave: false })}</span
 							>
 						{/if}
-						{#if numbered || labels === 'numbers'}<span class="text-white/40">{note}</span>{/if}
+						{#if numbered || labels === 'numbers'}<span class="text-white/55">{note}</span>{/if}
 					</span>
 				{/if}
 			</button>

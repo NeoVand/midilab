@@ -127,7 +127,7 @@
 							Pinned <HugeiconsIcon icon={Cancel01Icon} size={10} strokeWidth={2.5} />
 						</button>
 					{:else if shown}
-						<span class="label text-muted-foreground/60">following</span>
+						<span class="label text-muted-foreground">following</span>
 					{/if}
 				</div>
 				<div class="min-h-0 flex-1 scrollbar-thin overflow-y-auto p-4">

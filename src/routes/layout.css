@@ -18,10 +18,10 @@
 	--secondary: oklch(0.955 0.003 220);
 	--secondary-foreground: oklch(0.218 0.008 223.9);
 	--muted: oklch(0.955 0.003 220);
-	--muted-foreground: oklch(0.56 0.021 213.5);
+	--muted-foreground: oklch(0.52 0.021 213.5);
 	--accent: oklch(0.955 0.003 220);
 	--accent-foreground: oklch(0.218 0.008 223.9);
-	--destructive: oklch(0.577 0.245 27.325);
+	--destructive: oklch(0.55 0.245 27.325);
 	--border: oklch(0.906 0.005 220);
 	--input: oklch(0.906 0.005 220);
 	--ring: oklch(0.723 0.014 214.4);
@@ -139,20 +139,20 @@
 
 :root {
 	/* family hues — L/C tuned for a white ground */
-	--msg-note: oklch(0.58 0.16 150);
-	--msg-note-bg: oklch(0.58 0.16 150 / 12%);
-	--msg-cc: oklch(0.56 0.19 262);
-	--msg-cc-bg: oklch(0.56 0.19 262 / 12%);
-	--msg-expr: oklch(0.58 0.2 318);
-	--msg-expr-bg: oklch(0.58 0.2 318 / 12%);
-	--msg-program: oklch(0.62 0.15 75);
-	--msg-program-bg: oklch(0.62 0.15 75 / 14%);
-	--msg-clock: oklch(0.6 0.09 197);
-	--msg-clock-bg: oklch(0.6 0.09 197 / 12%);
-	--msg-sysex: oklch(0.58 0.19 20);
-	--msg-sysex-bg: oklch(0.58 0.19 20 / 12%);
-	--msg-common: oklch(0.55 0.02 220);
-	--msg-common-bg: oklch(0.55 0.02 220 / 10%);
+	--msg-note: oklch(0.50 0.16 150);
+	--msg-note-bg: oklch(0.50 0.16 150 / 12%);
+	--msg-cc: oklch(0.50 0.19 262);
+	--msg-cc-bg: oklch(0.50 0.19 262 / 12%);
+	--msg-expr: oklch(0.50 0.2 318);
+	--msg-expr-bg: oklch(0.50 0.2 318 / 12%);
+	--msg-program: oklch(0.50 0.15 75);
+	--msg-program-bg: oklch(0.50 0.15 75 / 14%);
+	--msg-clock: oklch(0.50 0.09 197);
+	--msg-clock-bg: oklch(0.50 0.09 197 / 12%);
+	--msg-sysex: oklch(0.50 0.19 20);
+	--msg-sysex-bg: oklch(0.50 0.19 20 / 12%);
+	--msg-common: oklch(0.50 0.02 220);
+	--msg-common-bg: oklch(0.50 0.02 220 / 10%);
 
 	/* structural accents */
 	--wire: oklch(0.8 0.01 220);
@@ -164,8 +164,8 @@
 	--key-white: oklch(0.995 0.001 220);
 	--key-black: oklch(0.28 0.008 224);
 	--readout: oklch(0.45 0.02 200);
-	--ok: oklch(0.58 0.15 150);
-	--warn: oklch(0.68 0.15 75);
+	--ok: oklch(0.50 0.15 150);
+	--warn: oklch(0.50 0.15 75);
 	/* Per-channel track colour: hue varies, lightness follows the ground. */
 	--channel-l: 0.55;
 }

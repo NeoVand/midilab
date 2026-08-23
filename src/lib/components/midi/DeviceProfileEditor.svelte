@@ -210,7 +210,7 @@
 							'tnum size-6 rounded-sm border font-mono text-2xs transition-colors',
 							profile.channel === c
 								? 'border-msg-note bg-msg-note-bg text-msg-note'
-								: 'text-muted-foreground/60 hover:border-foreground/40 hover:text-foreground'
+								: 'text-muted-foreground hover:border-foreground/40 hover:text-foreground'
 						)}
 						onclick={() => editable && devices.update(profile.id, { channel: c })}
 						aria-pressed={profile.channel === c}

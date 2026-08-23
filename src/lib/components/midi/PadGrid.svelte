@@ -112,9 +112,7 @@
 			aria-label="{label(note)}, note {note}"
 			aria-pressed={active}
 		>
-			<span class="absolute top-1.5 right-2 font-mono text-2xs text-muted-foreground/60"
-				>{note}</span
-			>
+			<span class="absolute top-1.5 right-2 font-mono text-2xs text-muted-foreground">{note}</span>
 			<span class="line-clamp-2 text-2xs leading-tight font-medium">{label(note)}</span>
 		</button>
 	{/each}

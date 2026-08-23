@@ -230,11 +230,11 @@
 					<div class="flex flex-wrap gap-x-3 gap-y-1">
 						{#each DRUM_WORDS as [word, note] (word)}
 							<span class="font-mono text-2xs text-muted-foreground">
-								{word}<span class="text-muted-foreground/50">·{note}</span>
+								{word}<span class="text-muted-foreground">·{note}</span>
 							</span>
 						{/each}
 					</div>
-					<p class="text-2xs leading-relaxed text-muted-foreground/80">
+					<p class="text-2xs leading-relaxed text-muted-foreground">
 						On a melodic channel, bare numbers are scale degrees — <code class="font-mono">0</code>
 						is the root, <code class="font-mono">7</code> is an octave up in a seven-note scale.
 						Note names like <code class="font-mono">c3</code> work anywhere.
@@ -254,7 +254,7 @@
 			timelines use, so beat 3 in the ruler is beat 3 in every pattern below it.
 		-->
 		<div class="border-b px-3 pt-2 pb-1">
-			<div class="tnum relative font-mono text-2xs text-muted-foreground/50">
+			<div class="tnum relative font-mono text-2xs text-muted-foreground">
 				{#each Array.from({ length: beatsPerCycle }, (_, b) => b) as b (b)}
 					<span class="absolute" style="left: {(b / beatsPerCycle) * 100}%">{b + 1}</span>
 				{/each}

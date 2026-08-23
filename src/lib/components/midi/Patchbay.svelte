@@ -290,7 +290,7 @@
 										'tnum size-5 rounded-md border font-mono text-2xs transition-colors',
 										route.channels.includes(c)
 											? 'border-msg-cc bg-msg-cc-bg text-msg-cc'
-											: 'text-muted-foreground/60 hover:border-foreground/40'
+											: 'text-muted-foreground hover:border-foreground/40'
 									)}
 									onclick={() =>
 										router.update(route.id, {
@@ -316,9 +316,7 @@
 							<button
 								class={cn(
 									'rounded-md border px-1.5 text-2xs',
-									route.remapTo === null
-										? 'border-msg-note text-msg-note'
-										: 'text-muted-foreground/60'
+									route.remapTo === null ? 'border-msg-note text-msg-note' : 'text-muted-foreground'
 								)}
 								onclick={() => router.update(route.id, { remapTo: null })}
 							>
@@ -330,7 +328,7 @@
 										'tnum size-5 rounded-md border font-mono text-2xs',
 										route.remapTo === c
 											? 'border-msg-note bg-msg-note-bg text-msg-note'
-											: 'text-muted-foreground/60 hover:border-foreground/40'
+											: 'text-muted-foreground hover:border-foreground/40'
 									)}
 									onclick={() => router.update(route.id, { remapTo: c })}
 								>
@@ -397,7 +395,7 @@
 										'rounded-md border px-1.5 py-0.5 text-2xs transition-colors',
 										route.pass[key]
 											? 'border-msg-note/60 bg-msg-note-bg text-msg-note'
-											: 'text-muted-foreground/50'
+											: 'text-muted-foreground'
 									)}
 									onclick={() =>
 										router.update(route.id, { pass: { ...route.pass, [key]: !route.pass[key] } })}

@@ -298,7 +298,7 @@
 									<tr class="border-t bg-surface-sunken">
 										<th
 											colspan="4"
-											class="label px-3 py-1.5 text-left text-muted-foreground/80"
+											class="label px-3 py-1.5 text-left text-muted-foreground"
 											scope="colgroup"
 										>
 											{row.group}
@@ -345,7 +345,7 @@
 								<tr
 									class={cn(
 										'border-t transition-colors hover:bg-muted/40',
-										c.category === 'undefined' && 'text-muted-foreground/50'
+										c.category === 'undefined' && 'text-muted-foreground'
 									)}
 								>
 									<td class="px-3 py-1.5 text-right font-mono text-msg-cc">{c.number}</td>
@@ -353,11 +353,11 @@
 									<td class="px-3 py-1.5 text-xs text-muted-foreground">
 										{CC_KIND[c.category]}
 										{#if c.lsb !== undefined}
-											<span class="block font-mono text-2xs text-muted-foreground/70">
+											<span class="block font-mono text-2xs text-muted-foreground">
 												fine half: CC {c.lsb}
 											</span>
 										{:else if c.msb !== undefined}
-											<span class="block font-mono text-2xs text-muted-foreground/70">
+											<span class="block font-mono text-2xs text-muted-foreground">
 												fine half of CC {c.msb}
 											</span>
 										{/if}
@@ -436,7 +436,7 @@
 					<div class="flex flex-col gap-1.5">
 						<p class="label flex items-baseline gap-2">
 							{g.family}
-							<span class="font-mono text-muted-foreground/50">{g.f * 8}–{g.f * 8 + 7}</span>
+							<span class="font-mono text-muted-foreground">{g.f * 8}–{g.f * 8 + 7}</span>
 						</p>
 						<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
 							{#each g.items as p (p)}
@@ -552,7 +552,7 @@
 										>
 											{noteName(n, { convention: settings.octaveConvention, octave: false })}
 										</span>
-										<span class="tnum font-mono text-2xs text-muted-foreground/60">
+										<span class="tnum font-mono text-2xs text-muted-foreground">
 											{n} · {noteToFrequency(n).toFixed(n < 24 ? 1 : 0)}
 										</span>
 									</button>
@@ -630,7 +630,7 @@
 				{#each elsewhere as t, i (t.value)}<button
 						class="text-foreground underline decoration-border underline-offset-2 hover:decoration-foreground"
 						onclick={() => (tab = t.value)}>{t.label}</button
-					><span class="tnum font-mono text-muted-foreground/70">&nbsp;{t.count}</span>{i <
+					><span class="tnum font-mono text-muted-foreground">&nbsp;{t.count}</span>{i <
 					elsewhere.length - 1
 						? ', '
 						: '.'}{/each}

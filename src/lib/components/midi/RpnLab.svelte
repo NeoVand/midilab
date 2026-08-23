@@ -134,7 +134,7 @@
 		{#each sequence as m, i (i)}
 			{#if m.type === 'controlChange'}
 				<div class="flex flex-wrap items-baseline gap-3 font-mono text-xs">
-					<span class="w-4 text-muted-foreground/50">{i + 1}</span>
+					<span class="w-4 text-muted-foreground">{i + 1}</span>
 					<code class="w-20 text-msg-cc">{hexBytes(encode(m))}</code>
 					<span class="w-24">CC {m.controller} = {m.value}</span>
 					<span class="font-sans text-xs text-muted-foreground">
