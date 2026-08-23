@@ -8,6 +8,8 @@
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import '$lib/midi/notestate.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { handleShortcut } from '$lib/stores/shortcuts.svelte';
+	import { transport } from '$lib/midi/clock.svelte';
 	import { audio } from '$lib/audio/engine';
 	import { Toaster } from '$lib/components/ui/sonner';
 
@@ -26,10 +28,15 @@
 	});
 
 	function onKeydown(e: KeyboardEvent) {
-		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-			e.preventDefault();
-			paletteOpen = !paletteOpen;
-		}
+		handleShortcut(e, {
+			togglePalette: () => (paletteOpen = !paletteOpen),
+			toggleTransport: async () => {
+				await engine.wake();
+				transport.toggle();
+			},
+			panic: () => engine.panic(),
+			toggleDock: () => (settings.dockOpen = !settings.dockOpen)
+		});
 	}
 </script>
 

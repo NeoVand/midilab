@@ -50,10 +50,20 @@ export class MonitorStore {
 		common: 0
 	});
 
+	/**
+	 * The same decay, split by direction rather than by family.
+	 *
+	 * Two indicators answer the question a musician asks first — is anything
+	 * arriving, is anything leaving — before the family breakdown answers what
+	 * it was.
+	 */
+	flow = $state<Record<Direction, number>>({ in: 0, out: 0 });
+
 	total = $state(0);
 	rate = $state(0);
 
 	#buffer: MidiEvent[] = [];
+	#flowPending: Record<Direction, boolean> = { in: false, out: false };
 	#dirty = false;
 	#frame = 0;
 	#rateWindow: number[] = [];
@@ -75,6 +85,7 @@ export class MonitorStore {
 
 	#ingest(event: MidiEvent) {
 		this.#rateWindow.push(event.time);
+		this.#flowPending[event.direction] = true;
 		if (this.paused) return;
 		this.#buffer.push(event);
 		if (this.#buffer.length > CAPACITY) this.#buffer.splice(0, this.#buffer.length - CAPACITY);
@@ -111,6 +122,25 @@ export class MonitorStore {
 			this.version++;
 		}
 		if (changed) this.activity = decayed;
+
+		// Direction indicators decay a little slower than the family bars, so a
+		// single message still registers as a visible blink.
+		const flow = { ...this.flow };
+		let flowChanged = false;
+		for (const d of ['in', 'out'] as const) {
+			if (this.#flowPending[d]) {
+				this.#flowPending[d] = false;
+				flow[d] = 1;
+				flowChanged = true;
+			} else if (flow[d] > 0.001) {
+				flow[d] *= 0.91;
+				flowChanged = true;
+			} else if (flow[d] !== 0) {
+				flow[d] = 0;
+				flowChanged = true;
+			}
+		}
+		if (flowChanged) this.flow = flow;
 
 		const now = performance.now();
 		while (this.#rateWindow.length && now - this.#rateWindow[0] > 1000) this.#rateWindow.shift();

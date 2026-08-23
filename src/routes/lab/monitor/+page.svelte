@@ -3,16 +3,13 @@
 	import MidiMonitor from '$lib/components/midi/MidiMonitor.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import ActivityStrip from '$lib/components/midi/ActivityStrip.svelte';
-	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import type { MidiEvent } from '$lib/midi/bus';
-	import { FAMILY_LABELS, familyColor, type MessageFamily } from '$lib/midi/messages';
 	import { Button } from '$lib/components/ui/button';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { CloudDownloadIcon } from '@hugeicons/core-free-icons';
 
 	let selected = $state<MidiEvent | null>(null);
-	const families: MessageFamily[] = ['note', 'cc', 'expr', 'program', 'clock', 'sysex', 'common'];
 
 	function exportTsv() {
 		const url = URL.createObjectURL(
@@ -26,7 +23,7 @@
 	}
 </script>
 
-<div class="mx-auto flex h-full w-full max-w-7xl flex-col gap-6 px-8 py-8">
+<div class="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col gap-5 px-8 py-6">
 	<PageHeader
 		title="Monitor"
 		lead="Every byte in and out, colour-coded by family. Select a row to take it apart."
@@ -39,16 +36,8 @@
 		{/snippet}
 	</PageHeader>
 
-	<div class="flex flex-wrap items-center gap-4 rounded-lg border px-4 py-3">
-		<ActivityStrip height={22} />
-		<div class="flex flex-wrap gap-3">
-			{#each families as f (f)}
-				<span class="flex items-center gap-1.5 text-xs">
-					<span class="size-2.5 rounded-full" style="background: {familyColor(f)}"></span>
-					{FAMILY_LABELS[f]}
-				</span>
-			{/each}
-		</div>
+	<div class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg border px-4 py-2.5">
+		<ActivityStrip layout="legend" />
 		<div class="flex-1"></div>
 		<span class="tnum font-mono text-xs text-muted-foreground">
 			{monitor.rate}/s · {monitor.total} buffered
@@ -63,19 +52,17 @@
 				selectedId={selected?.id ?? null}
 			/>
 		</div>
-		<div class="flex min-h-0 scrollbar-thin flex-col gap-4 overflow-y-auto">
-			<div class="rounded-lg border p-4">
+		<div class="flex min-h-0 flex-col overflow-hidden rounded-lg border">
+			<p class="label border-b px-4 py-2.5">Inspector</p>
+			<div class="min-h-0 flex-1 scrollbar-thin overflow-y-auto p-4">
 				{#if selected}
 					<ByteInspector bytes={selected.bytes} message={selected.message} />
 				{:else}
-					<p class="text-sm leading-relaxed text-muted-foreground">
+					<p class="measure text-sm text-muted-foreground">
 						Select a message to see it as hex, as bits, split into its nibbles, and translated into
 						English.
 					</p>
 				{/if}
-			</div>
-			<div class="rounded-lg border p-4">
-				<DevicePanel compact />
 			</div>
 		</div>
 	</div>

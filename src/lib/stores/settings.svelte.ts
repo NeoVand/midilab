@@ -10,6 +10,8 @@ class Settings {
 	showNoteNumbers = $state<boolean>(load('showNoteNumbers', false));
 	dockOpen = $state<boolean>(load('dockOpen', false));
 	dockTab = $state<string>(load('dockTab', 'devices'));
+	/** Height of the expanded dock in pixels — dragged, then remembered. */
+	dockHeight = $state<number>(load('dockHeight', 240));
 	reduceMotion = $state<boolean>(load('reduceMotion', false));
 	masterVolume = $state<number>(load('masterVolume', 0.75));
 
@@ -24,6 +26,7 @@ class Settings {
 				$effect(() => save('showNoteNumbers', this.showNoteNumbers));
 				$effect(() => save('dockOpen', this.dockOpen));
 				$effect(() => save('dockTab', this.dockTab));
+				$effect(() => save('dockHeight', this.dockHeight));
 				$effect(() => save('reduceMotion', this.reduceMotion));
 				$effect(() => save('masterVolume', this.masterVolume));
 			});

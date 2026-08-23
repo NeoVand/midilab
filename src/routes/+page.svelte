@@ -83,35 +83,41 @@
 	</header>
 
 	<!-- ── first contact ─────────────────────────────────────────────────── -->
+	<!--
+		Cause above, effect below. Side by side, the keyboard column ran short
+		while the inspector ran long, and the byte cards were forced to wrap in a
+		25rem gutter; stacked, the three bytes sit in one row the way they sit on
+		the wire, and pressing a key reads down the page rather than across it.
+	-->
 	<section class="overflow-hidden rounded-xl border bg-card">
 		<div class="flex items-baseline justify-between border-b px-5 py-3">
 			<h2 class="text-sm font-medium">Press a key</h2>
-			<p class="text-xs text-muted-foreground">
+			<p class="tnum text-xs text-muted-foreground">
 				{noteState.heldCount} note{noteState.heldCount === 1 ? '' : 's'} held
 			</p>
 		</div>
-		<div class="grid gap-0 lg:grid-cols-[1fr_25rem]">
-			<div class="flex flex-col gap-3 p-5">
-				<Keyboard low={48} octaves={3} height={140} labels="c" />
-				<p class="text-xs leading-relaxed text-muted-foreground">
-					Watch the panel change twice: <span class="text-msg-note">Note On</span> when you press,
-					<span class="text-msg-note">Note Off</span> when you let go. A note is two messages, not one
-					— which is exactly why notes get stuck.
-				</p>
-			</div>
-			<div class="panel-sunken border-t p-5 lg:border-t-0 lg:border-l">
-				{#if latest}
-					<ByteInspector bytes={latest.bytes} message={latest.message} />
-				{:else}
-					<div class="flex h-full flex-col justify-center gap-2 text-sm text-muted-foreground">
-						<p class="font-medium">Nothing has happened yet.</p>
-						<p class="text-xs leading-relaxed">
-							Play a note and this panel will take the message apart — hex, bits, the one bit that
-							decides whether a byte is a command or a value, and what it all means in English.
-						</p>
-					</div>
-				{/if}
-			</div>
+
+		<div class="flex flex-col gap-3 p-5">
+			<Keyboard low={48} octaves={3} height={148} labels="c" />
+			<p class="text-xs text-muted-foreground">
+				Watch the panel below change twice: <span class="text-msg-note">Note On</span> when you
+				press, <span class="text-msg-note">Note Off</span> when you let go. A note is two messages, not
+				one — which is exactly why notes get stuck.
+			</p>
+		</div>
+
+		<div class="panel-sunken min-h-44 border-t p-5">
+			{#if latest}
+				<ByteInspector bytes={latest.bytes} message={latest.message} />
+			{:else}
+				<div class="flex h-full min-h-36 flex-col justify-center gap-2">
+					<p class="text-sm font-medium">Nothing has happened yet.</p>
+					<p class="measure text-xs text-muted-foreground">
+						Play a note and this panel will take the message apart — hex, bits, the one bit that
+						decides whether a byte is a command or a value, and what it all means in English.
+					</p>
+				</div>
+			{/if}
 		</div>
 	</section>
 
