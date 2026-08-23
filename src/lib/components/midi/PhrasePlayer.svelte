@@ -35,7 +35,11 @@
 		<HugeiconsIcon icon={player.playing ? StopIcon : PlayIcon} size={14} />
 		{player.playing ? 'Stop' : label}
 	</Button>
-	<div class="h-1 flex-1 overflow-hidden rounded-full bg-muted">
-		<div class="h-full bg-msg-note" style="width: {pct}%"></div>
-	</div>
+	<!-- The track only exists while there is progress to show. Idle, it was four
+	     hundred pixels of grey line reading as an empty input field. -->
+	{#if player.playing}
+		<div class="h-1 flex-1 overflow-hidden rounded-full bg-muted">
+			<div class="h-full bg-msg-note" style="width: {pct}%"></div>
+		</div>
+	{/if}
 </div>

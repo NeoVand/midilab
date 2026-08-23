@@ -7,10 +7,12 @@
 		ArrowRight01Icon,
 		ArrowLeft01Icon,
 		PlugSocketIcon,
-		Target02Icon
+		Target02Icon,
+		Tick02Icon
 	} from '@hugeicons/core-free-icons';
 	import { actOf, lessonPath, neighbours, type LessonMeta } from '$lib/curriculum/registry';
 	import { progress } from '$lib/curriculum/progress.svelte';
+	import { cn } from '$lib/utils';
 
 	interface Props {
 		lesson: LessonMeta;
@@ -43,7 +45,9 @@
 		</div>
 
 		<div class="flex items-start gap-4">
-			<span class="tnum mt-0.5 font-mono text-3xl leading-none text-muted-foreground/60 tabular-nums">
+			<span
+				class="tnum mt-0.5 font-mono text-3xl leading-none text-muted-foreground/60 tabular-nums"
+			>
 				{String(lesson.number).padStart(2, '0')}
 			</span>
 			<div class="min-w-0 flex-1">
@@ -66,9 +70,15 @@
 				{hardwareLabel[lesson.hardware ?? 'none']}
 			</span>
 			{#if total > 0}
-				<span class="flex items-center gap-1.5">
-					<HugeiconsIcon icon={Target02Icon} size={13} />
-					{done} of {total} checkpoints
+				<!-- Finishing a lesson should read as finished. "3 of 3" in the same
+				     grey as "0 of 3" makes the last checkpoint feel like nothing. -->
+				<span class={cn('flex items-center gap-1.5', done === total && 'text-ok')}>
+					<HugeiconsIcon icon={done === total ? Tick02Icon : Target02Icon} size={13} />
+					{#if done === total}
+						All {total} checkpoints done
+					{:else}
+						{done} of {total} checkpoints
+					{/if}
 				</span>
 			{/if}
 		</div>
