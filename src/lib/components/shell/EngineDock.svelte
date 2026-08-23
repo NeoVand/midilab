@@ -33,6 +33,7 @@
 		StopIcon,
 		BackwardIcon,
 		MetronomeIcon,
+		ConnectIcon,
 		DangerIcon,
 		ArrowUp01Icon,
 		ArrowDown01Icon,
@@ -44,6 +45,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { Slider } from '$lib/components/ui/slider';
+	import { metronome } from '$lib/audio/metronome.svelte';
 	import { capturePointer, cn } from '$lib/utils';
 
 	let selected = $state<MidiEvent | null>(null);
@@ -171,7 +173,13 @@
 	{/if}
 	<!-- ── collapsed bar ─────────────────────────────────────────────────── -->
 	<div
-		class="flex h-12 shrink-0 items-center divide-x divide-border [&>*]:flex [&>*]:h-full [&>*]:items-center [&>*]:gap-1.5 [&>*]:px-3"
+		class={cn(
+			'flex h-12 shrink-0 items-center divide-x divide-border [&>*]:flex [&>*]:h-full [&>*]:items-center [&>*]:gap-1.5 [&>*]:px-3',
+			// Without this the tray opened straight out of the toolbar with nothing
+			// between them, so the tab row read as a stray line rather than the top
+			// of a panel.
+			settings.dockOpen && 'border-b'
+		)}
 	>
 		<Tooltip.Provider delayDuration={400}>
 			<!-- transport -->
@@ -230,8 +238,36 @@
 				<TempoField compact />
 			</div>
 
-			<!-- sync -->
+			<!--
+				Click and clock, which are two different things and used to share one
+				button and a metronome icon: pressing it sent MIDI Clock to hardware
+				and made no sound, so the transport ran silently and the icon lied
+				about what it did.
+			-->
 			<div>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<Button
+								{...props}
+								variant="ghost"
+								size="icon"
+								class={cn('size-7', metronome.enabled && 'bg-accent text-foreground')}
+								onclick={() => metronome.toggle()}
+								aria-label="Metronome click"
+								aria-pressed={metronome.enabled}
+							>
+								<HugeiconsIcon icon={MetronomeIcon} size={14} />
+							</Button>
+						{/snippet}
+					</Tooltip.Trigger>
+					<Tooltip.Content side="top" class="max-w-56">
+						{metronome.enabled
+							? 'Click is on — accented on beat one'
+							: 'Click on every beat while the transport runs'}
+					</Tooltip.Content>
+				</Tooltip.Root>
+
 				<Tooltip.Root>
 					<Tooltip.Trigger>
 						{#snippet child({ props })}
@@ -244,7 +280,7 @@
 								aria-label="Send MIDI clock"
 								aria-pressed={transport.sendClock}
 							>
-								<HugeiconsIcon icon={MetronomeIcon} size={14} />
+								<HugeiconsIcon icon={ConnectIcon} size={14} />
 							</Button>
 						{/snippet}
 					</Tooltip.Trigger>
@@ -470,7 +506,14 @@
 	<!-- ── expanded ──────────────────────────────────────────────────────── -->
 	{#if settings.dockOpen}
 		<Tabs.Root bind:value={settings.dockTab} class="min-h-0 flex-1 gap-0">
-			<Tabs.List class="mx-3 mb-0 h-8 w-fit shrink-0">
+			<!--
+				A full-width strip so it reads as the tray's own header rather than a
+				row floating under the toolbar — but the tabs keep their natural
+				width inside it, since the shared trigger grows to fill by default.
+			-->
+			<Tabs.List
+				class="mb-0 h-9 w-full shrink-0 justify-start gap-1 rounded-none border-b bg-transparent px-3 [&>*]:flex-none"
+			>
 				<Tabs.Trigger value="devices" class="text-xs">Devices</Tabs.Trigger>
 				<Tabs.Trigger value="monitor" class="text-xs">Monitor</Tabs.Trigger>
 				<Tabs.Trigger value="state" class="text-xs">State</Tabs.Trigger>

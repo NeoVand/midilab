@@ -8,6 +8,7 @@
 	import { engine } from '$lib/midi/engine.svelte';
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import { router } from '$lib/midi/router.svelte';
+	import { metronome } from '$lib/audio/metronome.svelte';
 	import '$lib/midi/notestate.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { handleShortcut } from '$lib/stores/shortcuts.svelte';
@@ -32,7 +33,9 @@
 		// stopped routing the moment you navigated away from the page that drew
 		// it — while the page promised the opposite in so many words.
 		const stopRouter = router.start();
+		const stopMetronome = metronome.start();
 		return () => {
+			stopMetronome();
 			stopRouter();
 			stopMonitor();
 			engine.stop();
