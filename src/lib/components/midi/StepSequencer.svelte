@@ -137,6 +137,57 @@
 		track.steps[i] = painting;
 	}
 
+	/*
+	 * Roving tabindex over the step grid.
+	 *
+	 * Five tracks of sixteen steps is eighty tab stops sitting between the
+	 * toolbar and everything below it — nobody is Tab-ing eighty times to reach
+	 * the channel strip. The grid is one stop; arrow keys move inside it, which
+	 * is how every hardware step sequencer already works.
+	 */
+	let gridEl = $state<HTMLElement | null>(null);
+	let focusCol = $state(0);
+
+	function moveFocus(row: number, col: number) {
+		const rows = tracks.length;
+		if (rows === 0) return;
+		const r = ((row % rows) + rows) % rows;
+		const c = Math.max(0, Math.min(stepCount - 1, col));
+		focusCol = c;
+		queueMicrotask(() => gridEl?.querySelector<HTMLElement>(`[data-cell="${r}-${c}"]`)?.focus());
+	}
+
+	function onCellKey(e: KeyboardEvent, track: SeqTrack, row: number, col: number) {
+		switch (e.key) {
+			case 'ArrowLeft':
+				moveFocus(row, col - 1);
+				break;
+			case 'ArrowRight':
+				moveFocus(row, col + 1);
+				break;
+			case 'ArrowUp':
+				moveFocus(row - 1, col);
+				break;
+			case 'ArrowDown':
+				moveFocus(row + 1, col);
+				break;
+			case 'Home':
+				moveFocus(row, 0);
+				break;
+			case 'End':
+				moveFocus(row, stepCount - 1);
+				break;
+			case 'Enter':
+			case ' ':
+				toggle(track, col);
+				painting = null;
+				break;
+			default:
+				return;
+		}
+		e.preventDefault();
+	}
+
 	function label(t: SeqTrack): string {
 		return t.channel === 9
 			? (GM_DRUMS[t.note] ?? t.name)
@@ -264,7 +315,7 @@
 	</div>
 
 	<div class="panel-sunken scrollbar-thin overflow-x-auto p-3">
-		<div class={stepCount > 16 ? 'min-w-[62rem]' : 'min-w-[42rem]'}>
+		<div bind:this={gridEl} class={stepCount > 16 ? 'min-w-[62rem]' : 'min-w-[42rem]'}>
 			<!--
 				The ruler counts beats, and the grid is grouped in fours to match.
 				Sixteen evenly spaced squares give the eye nothing to count against —
@@ -285,7 +336,7 @@
 				{/each}
 			</div>
 
-			{#each tracks as track (track.id)}
+			{#each tracks as track, row (track.id)}
 				<div class="mb-1 flex items-center gap-1">
 					<div class="flex w-32 shrink-0 items-center gap-1.5 pr-2">
 						<button
@@ -376,9 +427,14 @@
 								? `color-mix(in oklch, var(--msg-note) ${25 + (v / 127) * 60}%, transparent)`
 								: 'var(--background)'}
 							style:border-color={v ? 'var(--msg-note)' : ''}
+							data-cell="{row}-{i}"
+							tabindex={i === focusCol ? 0 : -1}
 							onpointerdown={() => toggle(track, i)}
 							onpointerenter={() => paint(track, i)}
-							aria-label="Step {i + 1} of {track.name}"
+							onkeydown={(e) => onCellKey(e, track, row, i)}
+							onfocus={() => (focusCol = i)}
+							aria-label="{track.name}, step {i + 1} of {stepCount}"
+							aria-pressed={!!v}
 						></button>
 					{/each}
 				</div>

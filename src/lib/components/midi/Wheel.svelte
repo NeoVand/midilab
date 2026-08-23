@@ -51,6 +51,46 @@
 		set(min + Math.max(0, Math.min(1, 1 - (e.clientY - r.top) / r.height)) * (max - min));
 	}
 
+	/*
+	 * It announced itself as a slider and had a tab stop, and then ignored
+	 * every key you could press on it. Arrows nudge, Page moves in tenths,
+	 * Home and End go to the ends, and Enter or Space returns a sprung wheel to
+	 * centre — the keyboard equivalent of letting go.
+	 */
+	function onKeyDown(e: KeyboardEvent) {
+		const coarse = Math.max(1, Math.round((max - min) / 10));
+		switch (e.key) {
+			case 'ArrowUp':
+			case 'ArrowRight':
+				set(value + 1);
+				break;
+			case 'ArrowDown':
+			case 'ArrowLeft':
+				set(value - 1);
+				break;
+			case 'PageUp':
+				set(value + coarse);
+				break;
+			case 'PageDown':
+				set(value - coarse);
+				break;
+			case 'Home':
+				set(min);
+				break;
+			case 'End':
+				set(max);
+				break;
+			case 'Enter':
+			case ' ':
+				if (!spring) return;
+				set(centre);
+				break;
+			default:
+				return;
+		}
+		e.preventDefault();
+	}
+
 	function release() {
 		dragging = false;
 		if (!spring) return;
@@ -88,6 +128,8 @@
 		onpointermove={(e) => dragging && fromPointer(e)}
 		onpointerup={release}
 		onpointercancel={release}
+		onkeydown={onKeyDown}
+		onblur={() => spring && release()}
 	>
 		<!-- centre detent -->
 		{#if spring}

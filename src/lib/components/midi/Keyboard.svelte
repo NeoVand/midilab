@@ -181,6 +181,29 @@
 		onNoteOff?.(note);
 	}
 
+	/*
+	 * Focus a key and press Enter or Space and it should sound. The A–' typing
+	 * row is the fast way in, but a key you can Tab to and cannot play is a
+	 * dead control, and a keyboard user should not have to know about the
+	 * secret row to get a note out of the thing.
+	 */
+	const keyHeld = new Set<number>();
+
+	function onKeyActivate(e: KeyboardEvent, note: number) {
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		e.preventDefault();
+		if (e.repeat || keyHeld.has(note)) return;
+		keyHeld.add(note);
+		engine.noteOn(note, velocity ?? 96, ch);
+		onNoteOn?.(note, velocity ?? 96);
+	}
+
+	function onKeyRelease(note: number) {
+		if (!keyHeld.delete(note)) return;
+		engine.noteOff(note, ch);
+		onNoteOff?.(note);
+	}
+
 	/**
 	 * The "show note numbers" preference from Settings. It is additive: the
 	 * name still says what you are playing, the number says what the wire will
@@ -226,7 +249,13 @@
 				style:transform={active ? 'translateY(1px)' : 'none'}
 				onpointerdown={(e) => onPointerDown(note, e)}
 				onpointerenter={(e) => onPointerEnter(note, e)}
+				onkeydown={(e) => onKeyActivate(e, note)}
+				onkeyup={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') onKeyRelease(note);
+				}}
+				onblur={() => onKeyRelease(note)}
 				aria-label={noteName(note, { convention: settings.octaveConvention })}
+				aria-pressed={active}
 			>
 				<!--
 					The velocity hint. Hovering a key shades it from top to bottom,
@@ -272,7 +301,13 @@
 					transform: {active ? 'translateY(1px)' : 'none'};"
 				onpointerdown={(e) => onPointerDown(note, e)}
 				onpointerenter={(e) => onPointerEnter(note, e)}
+				onkeydown={(e) => onKeyActivate(e, note)}
+				onkeyup={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') onKeyRelease(note);
+				}}
+				onblur={() => onKeyRelease(note)}
 				aria-label={noteName(note, { convention: settings.octaveConvention })}
+				aria-pressed={active}
 			>
 				{#if labels === 'all' || labels === 'numbers' || numbered}
 					<span

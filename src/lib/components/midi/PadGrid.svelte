@@ -61,6 +61,31 @@
 		engine.noteOff(note, channel);
 		held.delete(e.pointerId);
 	}
+
+	/*
+	 * A pad that only listens for pointerdown is a dead control for anyone
+	 * driving the page from the keyboard: Enter and Space fire `click`, which
+	 * nothing here was listening to. Held while the key is down, released when
+	 * it comes up — the same shape as the pointer path, at a fixed velocity
+	 * because a keyboard has no strike position.
+	 */
+	const keyHeld = new Set<number>();
+
+	function keyDown(e: KeyboardEvent, note: number) {
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		e.preventDefault();
+		if (e.repeat || keyHeld.has(note)) return;
+		const v = velocity ?? 100;
+		keyHeld.add(note);
+		engine.noteOn(note, v, channel);
+		onTrigger?.(note, v);
+	}
+
+	function keyUp(e: KeyboardEvent, note: number) {
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		if (!keyHeld.delete(note)) return;
+		engine.noteOff(note, channel);
+	}
 </script>
 
 <div
@@ -79,6 +104,13 @@
 			onpointerdown={(e) => hit(note, e)}
 			onpointerup={lift}
 			onpointercancel={lift}
+			onkeydown={(e) => keyDown(e, note)}
+			onkeyup={(e) => keyUp(e, note)}
+			onblur={() => {
+				if (keyHeld.delete(note)) engine.noteOff(note, channel);
+			}}
+			aria-label="{label(note)}, note {note}"
+			aria-pressed={active}
 		>
 			<span class="absolute top-1.5 right-2 font-mono text-2xs text-muted-foreground/60"
 				>{note}</span
