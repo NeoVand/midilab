@@ -310,7 +310,7 @@
 			<div class="flex flex-wrap gap-1.5">
 				{#each profile.programs as entry (entry.name)}
 					<button
-						class="rounded border px-2 py-1 text-xs transition-colors hover:border-msg-program"
+						class="rounded-md border px-2 py-1 text-xs transition-colors hover:border-msg-program"
 						onclick={() => {
 							engine.wake();
 							engine.sendAll(device.selectProgram(entry.name));

@@ -114,7 +114,7 @@
 	</div>
 
 	{#if known}
-		<p class="rounded border-l-2 border-msg-note bg-msg-note-bg py-1.5 pl-3 text-sm">
+		<p class="rounded-md border-l-2 border-msg-note bg-msg-note-bg py-1.5 pl-3 text-sm">
 			<strong>{known.name}</strong> — {known.description}
 		</p>
 	{:else if kind === 'rpn'}

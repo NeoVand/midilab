@@ -86,7 +86,7 @@
 
 		<p class="text-xs leading-relaxed text-muted-foreground">
 			What you just sent was 8 notes, and what changed between takes was one three-byte message:
-			<code class="rounded bg-muted px-1 font-mono"
+			<code class="rounded-sm bg-muted px-1 font-mono"
 				>C0 {program.toString(16).toUpperCase().padStart(2, '0')}</code
 			>
 			— "channel 1, use program {program}". Not one sample of audio moved.

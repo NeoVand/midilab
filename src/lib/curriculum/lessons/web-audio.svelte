@@ -149,16 +149,17 @@ log('four second sweep — resonance is doing the work');`
 
 	<Callout variant="key" title="Two clocks, and only one of them is musical">
 		<p>
-			<code class="rounded bg-muted px-1">AudioContext.currentTime</code> is a monotonic clock in
+			<code class="rounded-sm bg-muted px-1">AudioContext.currentTime</code> is a monotonic clock in
 			<em>seconds</em>, driven by the audio hardware. It is the only clock that matters for
-			scheduling sound. <code class="rounded bg-muted px-1">performance.now()</code> is a
+			scheduling sound. <code class="rounded-sm bg-muted px-1">performance.now()</code> is a
 			<em>millisecond</em> clock on the page, and it is what Web MIDI timestamps use.
 		</p>
 		<p class="mt-2">
 			They tick at nearly the same rate but from different zeros, and they drift apart over time.
 			Anything that must reach the synth and a hardware port together needs to be mapped between
-			them — that is what <code class="rounded bg-muted px-1">audioToPerf()</code> in this app does,
-			using <code class="rounded bg-muted px-1">getOutputTimestamp()</code> where the browser offers it.
+			them — that is what <code class="rounded-sm bg-muted px-1">audioToPerf()</code> in this app
+			does, using <code class="rounded-sm bg-muted px-1">getOutputTimestamp()</code> where the browser
+			offers it.
 		</p>
 	</Callout>
 
@@ -204,8 +205,8 @@ gain.setTargetAtTime(0.0001, off, release / 4);    // release`}</code
 			>
 			— that is what makes dynamics read as dynamics. And
 			<strong>controller changes must be smoothed</strong>, with
-			<code class="rounded bg-muted px-1">setTargetAtTime</code> rather than direct assignment, or every
-			CC 74 message becomes a click.
+			<code class="rounded-sm bg-muted px-1">setTargetAtTime</code> rather than direct assignment, or
+			every CC 74 message becomes a click.
 		</p>
 	</Section>
 

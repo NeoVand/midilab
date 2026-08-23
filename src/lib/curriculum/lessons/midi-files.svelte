@@ -95,7 +95,7 @@
 			<div class="flex flex-wrap gap-1.5">
 				{#each [0, 127, 128, 480, 8192, 16383, 100000] as v (v)}
 					<button
-						class="rounded border px-2 py-0.5 font-mono text-xs hover:border-foreground/40"
+						class="rounded-md border px-2 py-0.5 font-mono text-xs hover:border-foreground/40"
 						onclick={() => (vlq = v)}
 					>
 						{v} → {encodeVlq(v).length}B
@@ -118,7 +118,7 @@
 		<p class="text-base leading-relaxed">
 			Files also carry things that make no sense on a cable: the tempo, the time signature, track
 			names, lyrics, markers, copyright. These are <strong>meta events</strong>, always beginning
-			<code class="rounded bg-muted px-1 font-mono">FF</code>, and they exist only inside files.
+			<code class="rounded-sm bg-muted px-1 font-mono">FF</code>, and they exist only inside files.
 		</p>
 		<Callout variant="gotcha" title="Tempo is stored inside out">
 			<p>

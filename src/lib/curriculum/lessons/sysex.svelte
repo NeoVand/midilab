@@ -39,9 +39,10 @@
 			<span class="text-xs text-muted-foreground">end</span>
 		</div>
 		<p class="text-base leading-relaxed">
-			Only <code class="rounded bg-muted px-1 font-mono">F0</code>, the manufacturer identifier and
-			<code class="rounded bg-muted px-1 font-mono">F7</code> are standardised. Everything between is
-			private. A Korg receiving a Roland SysEx will read the first byte, see that it is not addressed
+			Only <code class="rounded-sm bg-muted px-1 font-mono">F0</code>, the manufacturer identifier
+			and
+			<code class="rounded-sm bg-muted px-1 font-mono">F7</code> are standardised. Everything between
+			is private. A Korg receiving a Roland SysEx will read the first byte, see that it is not addressed
 			to Korg, and discard the whole thing — which is exactly how a shared cable stays sane.
 		</p>
 	</Section>
@@ -59,8 +60,8 @@
 	<Section title="Who gets which number">
 		<p class="text-base leading-relaxed">
 			Manufacturer IDs are assigned by the MIDI Association. The early ones are a single byte;
-			latecomers get three, beginning with <code class="rounded bg-muted px-1 font-mono">00</code>.
-			The single-byte numbers are a fossil record of the 1980s synthesiser industry.
+			latecomers get three, beginning with <code class="rounded-sm bg-muted px-1 font-mono">00</code
+			>. The single-byte numbers are a fossil record of the 1980s synthesiser industry.
 		</p>
 		<div class="grid grid-cols-2 gap-x-6 gap-y-1 rounded-lg border p-4 text-sm sm:grid-cols-3">
 			{#each makers as m (m.id)}
@@ -71,8 +72,8 @@
 			{/each}
 		</div>
 		<p class="text-sm text-muted-foreground">
-			Two IDs are special: <code class="rounded bg-muted px-1 font-mono">7E</code> is Universal
-			Non-Real Time and <code class="rounded bg-muted px-1 font-mono">7F</code> is Universal Real Time.
+			Two IDs are special: <code class="rounded-sm bg-muted px-1 font-mono">7E</code> is Universal
+			Non-Real Time and <code class="rounded-sm bg-muted px-1 font-mono">7F</code> is Universal Real Time.
 			These are not owned by anyone — they carry messages every compliant device should understand.
 		</p>
 	</Section>
@@ -109,8 +110,8 @@
 			SysEx is how firmware updates are delivered to a great many instruments. A web page with
 			unrestricted SysEx access could, in principle, write bad firmware to a synthesiser and brick
 			it. So the Web MIDI API treats it as a second, separate capability: you request
-			<code class="rounded bg-muted px-1 font-mono">{'{ sysex: true }'}</code> and the browser asks the
-			user again.
+			<code class="rounded-sm bg-muted px-1 font-mono">{'{ sysex: true }'}</code> and the browser asks
+			the user again.
 		</p>
 		<Callout variant="danger" title="Treat it with the respect it deserves">
 			<p>
@@ -128,7 +129,7 @@
 
 	<TryThis title="Ask a device what it is">
 		<p class="text-sm leading-relaxed">
-			<code class="rounded bg-muted px-1 font-mono">F0 7E 7F 06 01 F7</code> is the Universal Identity
+			<code class="rounded-sm bg-muted px-1 font-mono">F0 7E 7F 06 01 F7</code> is the Universal Identity
 			Request — "everyone on this cable, please say who you are". It is the one SysEx message you can
 			send to anything without knowing anything about it.
 		</p>

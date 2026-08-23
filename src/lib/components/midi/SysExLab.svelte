@@ -85,7 +85,7 @@
 			<div class="flex flex-wrap gap-1.5">
 				{#each PRESETS as [name, hex, why] (name)}
 					<button
-						class="rounded border px-2 py-1 text-xs transition-colors hover:border-foreground/40"
+						class="rounded-md border px-2 py-1 text-xs transition-colors hover:border-foreground/40"
 						title={why}
 						onclick={() => (text = hex)}
 					>

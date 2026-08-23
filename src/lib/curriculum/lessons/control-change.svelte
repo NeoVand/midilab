@@ -36,7 +36,7 @@
 			Notes are only half of a performance. The other half is everything you do <em>while</em> the
 			note is sounding: opening a filter, leaning on the mod wheel, pushing the sustain pedal,
 			swelling a phrase. All of that travels as <strong>Control Change</strong> — status
-			<code class="rounded bg-muted px-1 font-mono">0xBn</code>, then a controller number 0–127,
+			<code class="rounded-sm bg-muted px-1 font-mono">0xBn</code>, then a controller number 0–127,
 			then a value 0–127.
 		</p>
 		<ByteInspector bytes={[0xb0, 74, 96]} />

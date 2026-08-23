@@ -100,13 +100,13 @@ access.onstatechange = (e) => console.log(e.port.name, e.port.state);`}</code
 		</div>
 		<Callout variant="key" title="Web MIDI gives you complete messages">
 			<p>
-				Unlike a raw serial stream, <code class="rounded bg-muted px-1">onmidimessage</code> hands
-				you one whole message per event, with the status byte restored even if running status was
-				used on the wire. You never have to implement a streaming parser to <em>receive</em> — only to
-				read MIDI files.
+				Unlike a raw serial stream, <code class="rounded-sm bg-muted px-1">onmidimessage</code>
+				hands you one whole message per event, with the status byte restored even if running status
+				was used on the wire. You never have to implement a streaming parser to <em>receive</em> — only
+				to read MIDI files.
 			</p>
 			<p class="mt-2">
-				The same applies going out: <code class="rounded bg-muted px-1">send()</code> wants a complete
+				The same applies going out: <code class="rounded-sm bg-muted px-1">send()</code> wants a complete
 				message. Do not try to be clever with running status; it will be rejected.
 			</p>
 		</Callout>

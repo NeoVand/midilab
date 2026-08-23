@@ -48,8 +48,8 @@
 
 	<g stroke="var(--wire)" stroke-width="1.25" fill="none" stroke-linecap="round">
 		<!-- sources converge onto the bus -->
-		{#each sources as _, i (i)}
-			<path d="M 140 {32 + i * 26} H 168" />
+		{#each sources.map((_, i) => 32 + i * 26) as y (y)}
+			<path d="M 140 {y} H 168" />
 		{/each}
 		<path d="M 168 32 V 110" />
 		<path d="M 168 71 H 190" marker-end="url(#sp-arrow)" />

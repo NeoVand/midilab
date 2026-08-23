@@ -237,7 +237,7 @@
 			{#each ESSENTIAL_CCS as n (n)}
 				<button
 					class={cn(
-						'rounded border px-1.5 py-0.5 font-mono text-2xs transition-colors hover:border-msg-cc',
+						'rounded-md border px-1.5 py-0.5 font-mono text-2xs transition-colors hover:border-msg-cc',
 						controller === n && 'border-msg-cc bg-msg-cc-bg text-msg-cc'
 					)}
 					onclick={() => (controller = n)}

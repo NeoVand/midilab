@@ -318,9 +318,9 @@
 					</table>
 				</div>
 				<p class="measure mt-3 text-xs leading-relaxed text-muted-foreground">
-					<code class="rounded bg-muted px-1 font-mono">n</code> is the channel nibble, 0–15 on the wire
-					and 1–16 on the panel. Channel voice messages carry an address; system messages are for everyone
-					listening on the cable at once.
+					<code class="rounded-sm bg-muted px-1 font-mono">n</code> is the channel nibble, 0–15 on the
+					wire and 1–16 on the panel. Channel voice messages carry an address; system messages are for
+					everyone listening on the cable at once.
 				</p>
 			{:else}
 				{@render noMatches('messages')}
@@ -583,11 +583,11 @@
 					{/each}
 				</div>
 				<p class="measure mt-3 text-xs leading-relaxed text-muted-foreground">
-					The first byte after F0. <code class="rounded bg-muted px-1 font-mono">7E</code> is
-					Universal Non-Real Time and <code class="rounded bg-muted px-1 font-mono">7F</code> is
+					The first byte after F0. <code class="rounded-sm bg-muted px-1 font-mono">7E</code> is
+					Universal Non-Real Time and <code class="rounded-sm bg-muted px-1 font-mono">7F</code> is
 					Universal Real Time — messages any device should understand. IDs beginning
-					<code class="rounded bg-muted px-1 font-mono">00</code> are three bytes long. This is the well-known
-					subset, not the full registry.
+					<code class="rounded-sm bg-muted px-1 font-mono">00</code> are three bytes long. This is the
+					well-known subset, not the full registry.
 				</p>
 			{:else}
 				{@render noMatches('manufacturers')}

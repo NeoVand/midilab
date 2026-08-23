@@ -167,7 +167,7 @@
 		</svg>
 		{#if dragging}
 			<span
-				class="tnum pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded border bg-popover px-1.5 py-0.5 font-mono text-xs text-popover-foreground shadow-sm"
+				class="tnum pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded-md border bg-popover px-1.5 py-0.5 font-mono text-xs text-popover-foreground shadow-sm"
 			>
 				{display}
 			</span>

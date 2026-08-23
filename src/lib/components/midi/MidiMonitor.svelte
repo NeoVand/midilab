@@ -104,7 +104,7 @@
 							<span class="label">Families</span>
 							{#each allFamilies as f (f)}
 								<button
-									class="flex items-center gap-2 rounded px-1.5 py-1 text-left text-xs hover:bg-accent"
+									class="flex items-center gap-2 rounded-sm px-1.5 py-1 text-left text-xs hover:bg-accent"
 									onclick={() => monitor.toggleFamily(f)}
 								>
 									<span

@@ -287,7 +287,7 @@
 							{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 								<button
 									class={cn(
-										'tnum size-5 rounded border font-mono text-2xs transition-colors',
+										'tnum size-5 rounded-md border font-mono text-2xs transition-colors',
 										route.channels.includes(c)
 											? 'border-msg-cc bg-msg-cc-bg text-msg-cc'
 											: 'text-muted-foreground/60 hover:border-foreground/40'
@@ -315,7 +315,7 @@
 						<div class="flex flex-wrap gap-1">
 							<button
 								class={cn(
-									'rounded border px-1.5 text-2xs',
+									'rounded-md border px-1.5 text-2xs',
 									route.remapTo === null
 										? 'border-msg-note text-msg-note'
 										: 'text-muted-foreground/60'
@@ -327,7 +327,7 @@
 							{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 								<button
 									class={cn(
-										'tnum size-5 rounded border font-mono text-2xs',
+										'tnum size-5 rounded-md border font-mono text-2xs',
 										route.remapTo === c
 											? 'border-msg-note bg-msg-note-bg text-msg-note'
 											: 'text-muted-foreground/60 hover:border-foreground/40'
@@ -394,7 +394,7 @@
 							{#each FILTER_KEYS as [key, label] (key)}
 								<button
 									class={cn(
-										'rounded border px-1.5 py-0.5 text-2xs transition-colors',
+										'rounded-md border px-1.5 py-0.5 text-2xs transition-colors',
 										route.pass[key]
 											? 'border-msg-note/60 bg-msg-note-bg text-msg-note'
 											: 'text-muted-foreground/50'

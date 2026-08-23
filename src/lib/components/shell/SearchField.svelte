@@ -79,13 +79,13 @@
 				input?.focus();
 			}}
 			aria-label="Clear search"
-			class="absolute top-1/2 right-1.5 grid size-5 -translate-y-1/2 place-items-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+			class="absolute top-1/2 right-1.5 grid size-5 -translate-y-1/2 place-items-center rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
 		>
 			<HugeiconsIcon icon={Cancel01Icon} size={12} strokeWidth={2} />
 		</button>
 	{:else if shortcut}
 		<kbd
-			class="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 rounded border px-1 font-mono text-2xs text-muted-foreground/70"
+			class="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 rounded-md border px-1 font-mono text-2xs text-muted-foreground/70"
 		>
 			{shortcut}
 		</kbd>

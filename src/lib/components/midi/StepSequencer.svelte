@@ -222,7 +222,7 @@
 			{#each [16, 32] as n (n)}
 				<button
 					class={cn(
-						'tnum rounded border px-1.5 py-0.5 font-mono text-2xs transition-colors',
+						'tnum rounded-md border px-1.5 py-0.5 font-mono text-2xs transition-colors',
 						stepCount === n
 							? 'border-foreground/30 text-foreground'
 							: 'text-muted-foreground hover:border-foreground/20'
@@ -239,7 +239,7 @@
 			{#each [50, 80, 100, 127] as v (v)}
 				<button
 					class={cn(
-						'tnum rounded border px-1.5 py-0.5 font-mono text-2xs transition-colors',
+						'tnum rounded-md border px-1.5 py-0.5 font-mono text-2xs transition-colors',
 						velocity === v
 							? 'border-msg-note bg-msg-note-bg text-msg-note'
 							: 'text-muted-foreground hover:border-foreground/20'
@@ -306,7 +306,7 @@
 						-->
 						<Popover.Root>
 							<Popover.Trigger
-								class="min-w-0 flex-1 truncate rounded px-0.5 text-left text-xs transition-colors hover:text-foreground"
+								class="min-w-0 flex-1 truncate rounded-sm px-0.5 text-left text-xs transition-colors hover:text-foreground"
 								title="Edit track"
 							>
 								{label(track)}

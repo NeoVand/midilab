@@ -111,7 +111,7 @@ setInterval(() => {
 			<p class="text-xs leading-relaxed text-muted-foreground">
 				Two rules make it work. The wake-up interval must be comfortably shorter than the lookahead
 				window, so a late wake-up still catches its events. And nothing inside the loop may depend
-				on the wall clock — only on <code class="rounded bg-muted px-1">nextTime</code>, which
+				on the wall clock — only on <code class="rounded-sm bg-muted px-1">nextTime</code>, which
 				advances by exact arithmetic and therefore never drifts.
 			</p>
 		</div>

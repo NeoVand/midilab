@@ -116,7 +116,7 @@
 		<div class="flex flex-wrap gap-1.5">
 			{#each [[0x90, 'Note On, ch 1'], [0x9f, 'Note On, ch 16'], [0xb0, 'CC, ch 1'], [0x3c, 'the number 60'], [0x7f, 'the number 127'], [0xf8, 'Clock']] as [v, l] (v)}
 				<button
-					class="rounded border px-2 py-1 font-mono text-2xs hover:border-foreground/40"
+					class="rounded-md border px-2 py-1 font-mono text-2xs hover:border-foreground/40"
 					onclick={() =>
 						(bits = binary(v as number)
 							.split('')
@@ -147,14 +147,14 @@
 						High nibble — what
 					</p>
 					<p class="mt-1 text-sm leading-relaxed">
-						<code class="rounded bg-muted px-1 font-mono">9</code> = Note On. Eight possible commands,
+						<code class="rounded-sm bg-muted px-1 font-mono">9</code> = Note On. Eight possible commands,
 						listed below.
 					</p>
 				</div>
 				<div>
 					<p class="text-xs font-semibold tracking-wide text-msg-cc uppercase">Low nibble — who</p>
 					<p class="mt-1 text-sm leading-relaxed">
-						<code class="rounded bg-muted px-1 font-mono">2</code> = channel 3. Sixteen channels, numbered
+						<code class="rounded-sm bg-muted px-1 font-mono">2</code> = channel 3. Sixteen channels, numbered
 						0–15 on the wire and 1–16 on every front panel ever made.
 					</p>
 				</div>

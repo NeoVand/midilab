@@ -116,14 +116,14 @@
 
 	<Section title="Note Off has two spellings">
 		<p class="text-base leading-relaxed">
-			There is a real Note Off status — <code class="rounded bg-muted px-1 font-mono">0x8n</code> —
-			and there is a Note On whose velocity happens to be zero, which is
+			There is a real Note Off status — <code class="rounded-sm bg-muted px-1 font-mono">0x8n</code>
+			— and there is a Note On whose velocity happens to be zero, which is
 			<em>defined</em> to mean the same thing. Both are correct. Most hardware sends the second.
 		</p>
 		<div class="grid gap-3 sm:grid-cols-2">
 			<div class="flex flex-col gap-2 rounded-lg border p-4">
 				<p class="text-sm font-semibold">The explicit form</p>
-				<code class="rounded bg-muted px-2 py-1 font-mono text-sm">80 3C 40</code>
+				<code class="rounded-sm bg-muted px-2 py-1 font-mono text-sm">80 3C 40</code>
 				<p class="text-xs leading-relaxed text-muted-foreground">
 					Status 0x80, note 60, release velocity 64. Unambiguous, and carries release velocity if
 					anything cares.
@@ -131,7 +131,7 @@
 			</div>
 			<div class="flex flex-col gap-2 rounded-lg border p-4">
 				<p class="text-sm font-semibold">The velocity-zero form</p>
-				<code class="rounded bg-muted px-2 py-1 font-mono text-sm">90 3C 00</code>
+				<code class="rounded-sm bg-muted px-2 py-1 font-mono text-sm">90 3C 00</code>
 				<p class="text-xs leading-relaxed text-muted-foreground">
 					Status 0x90 — Note <em>On</em> — with velocity 0. Identical effect. Looks wrong; is right.
 				</p>
@@ -158,7 +158,7 @@
 					Four notes, spelled out — {RUN.flat().length} bytes
 				</p>
 				<code
-					class="overflow-x-auto rounded bg-muted px-2 py-1.5 font-mono text-xs whitespace-nowrap"
+					class="overflow-x-auto rounded-sm bg-muted px-2 py-1.5 font-mono text-xs whitespace-nowrap"
 				>
 					{RUN.map((m) => hexBytes(m)).join('  ')}
 				</code>
@@ -168,7 +168,7 @@
 					With running status — {withRunning.length} bytes
 				</p>
 				<code
-					class="overflow-x-auto rounded bg-muted px-2 py-1.5 font-mono text-xs whitespace-nowrap"
+					class="overflow-x-auto rounded-sm bg-muted px-2 py-1.5 font-mono text-xs whitespace-nowrap"
 				>
 					{hexBytes(withRunning)}
 				</code>

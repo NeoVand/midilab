@@ -215,7 +215,7 @@
 					{#each SYNTAX as [src, meaning], i (src)}
 						<button
 							class={cn(
-								'grid grid-cols-[7.5rem_1fr] items-baseline gap-3 rounded px-1.5 py-1.5 text-left transition-colors hover:bg-accent',
+								'grid grid-cols-[7.5rem_1fr] items-baseline gap-3 rounded-sm px-1.5 py-1.5 text-left transition-colors hover:bg-accent',
 								i > 0 && 'border-t'
 							)}
 							onclick={() => addLane(src, src.includes('bd') || src.includes('hh') ? 9 : 0)}
@@ -324,7 +324,7 @@
 				{:else}
 					<div
 						class={cn(
-							'relative h-8 overflow-hidden rounded border bg-background transition-opacity',
+							'relative h-8 overflow-hidden rounded-md border bg-background transition-opacity',
 							lane.mute && 'opacity-40'
 						)}
 					>

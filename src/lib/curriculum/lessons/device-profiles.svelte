@@ -118,7 +118,7 @@ log(JSON.stringify([
 			></pre>
 		<p class="text-base leading-relaxed">
 			Three parameters, three completely different delivery mechanisms, one calling convention. The
-			adapter turns <code class="rounded bg-muted px-1">set('filter.resonance', 0.8)</code> into whichever
+			adapter turns <code class="rounded-sm bg-muted px-1">set('filter.resonance', 0.8)</code> into whichever
 			handshake that particular parameter needs — including the full four-message NRPN sequence, with
 			the Null afterwards.
 		</p>

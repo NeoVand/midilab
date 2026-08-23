@@ -171,14 +171,14 @@
 		>
 			<span class="label">Status byte, split</span>
 			<div class="flex items-center gap-2">
-				<code class="rounded border bg-background px-1.5 py-0.5 font-mono text-xs">
+				<code class="rounded-md border bg-background px-1.5 py-0.5 font-mono text-xs">
 					{binary(status).slice(0, 4)}
 				</code>
 				<span class="text-muted-foreground">→</span>
 				<span class="font-medium" style="color: var(--fam)">{TYPE_NIBBLES[hi] ?? 'System'}</span>
 			</div>
 			<div class="flex items-center gap-2">
-				<code class="rounded border bg-background px-1.5 py-0.5 font-mono text-xs">
+				<code class="rounded-md border bg-background px-1.5 py-0.5 font-mono text-xs">
 					{binary(status).slice(4)}
 				</code>
 				<span class="text-muted-foreground">→</span>

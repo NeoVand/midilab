@@ -97,9 +97,9 @@
 			{/each}
 		</div>
 		<p class="text-xs leading-relaxed text-muted-foreground">
-			Each block is one <code class="rounded bg-muted px-1 font-mono">F8</code> byte. Twenty-four of them
-			make a beat — that is the entire tempo mechanism. Change the BPM slider and the ticks simply arrive
-			faster; no number describing the tempo is ever transmitted.
+			Each block is one <code class="rounded-sm bg-muted px-1 font-mono">F8</code> byte. Twenty-four of
+			them make a beat — that is the entire tempo mechanism. Change the BPM slider and the ticks simply
+			arrive faster; no number describing the tempo is ever transmitted.
 		</p>
 	</div>
 

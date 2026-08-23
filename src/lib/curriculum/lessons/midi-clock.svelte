@@ -31,8 +31,8 @@
 			Here is the surprising thing about MIDI synchronisation: <strong
 				>no tempo number is ever transmitted</strong
 			>. There is no "set BPM to 128" message. Instead the leader sends a single byte —
-			<code class="rounded bg-muted px-1 font-mono">F8</code> — twenty-four times per quarter note, and
-			every follower infers the tempo from how fast they arrive.
+			<code class="rounded-sm bg-muted px-1 font-mono">F8</code> — twenty-four times per quarter note,
+			and every follower infers the tempo from how fast they arrive.
 		</p>
 		<ByteInspector bytes={[0xf8]} />
 		<p class="text-base leading-relaxed">

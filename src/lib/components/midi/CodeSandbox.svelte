@@ -227,8 +227,8 @@
 	<div class="panel-sunken max-h-56 min-h-16 scrollbar-thin overflow-y-auto rounded-lg border p-3">
 		{#if logs.length === 0}
 			<p class="text-xs text-muted-foreground">
-				Output appears here. Use <code class="rounded bg-muted px-1 font-mono">log(...)</code> or
-				<code class="rounded bg-muted px-1 font-mono">console.log(...)</code>.
+				Output appears here. Use <code class="rounded-sm bg-muted px-1 font-mono">log(...)</code> or
+				<code class="rounded-sm bg-muted px-1 font-mono">console.log(...)</code>.
 			</p>
 		{:else}
 			{#each logs as l, i (i)}

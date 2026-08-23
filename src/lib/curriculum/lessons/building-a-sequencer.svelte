@@ -111,9 +111,10 @@ log('waiting for external clock — start your hardware');`
 			<div class="rounded-lg border p-4">
 				<p class="text-sm font-semibold">3 · Advance time by arithmetic, never by measurement</p>
 				<p class="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-					<code class="rounded bg-muted px-1">nextTime += secondsPerStep</code> stays exact forever.
-					<code class="rounded bg-muted px-1">nextTime = now() + secondsPerStep</code> accumulates every
-					scheduling error you ever make, and drifts audibly within a minute.
+					<code class="rounded-sm bg-muted px-1">nextTime += secondsPerStep</code> stays exact
+					forever.
+					<code class="rounded-sm bg-muted px-1">nextTime = now() + secondsPerStep</code> accumulates
+					every scheduling error you ever make, and drifts audibly within a minute.
 				</p>
 			</div>
 		</div>

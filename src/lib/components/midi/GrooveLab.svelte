@@ -94,7 +94,7 @@
 		{#each LANES as lane, li (lane.note)}
 			<div class="flex items-center gap-2">
 				<span class="w-12 shrink-0 text-xs text-muted-foreground">{lane.name}</span>
-				<div class="panel-sunken relative h-7 flex-1 overflow-hidden rounded border">
+				<div class="panel-sunken relative h-7 flex-1 overflow-hidden rounded-md border">
 					<!-- the grid the notes are "supposed" to sit on -->
 					{#each Array.from({ length: 16 }, (_, i) => i) as i (i)}
 						<div

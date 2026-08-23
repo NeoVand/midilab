@@ -295,6 +295,14 @@
 		font-variant-numeric: tabular-nums slashed-zero;
 		font-feature-settings: 'zero' 1;
 	}
+	/*
+	 * JetBrains Mono sets optically larger than Inter at the same pixel size, so
+	 * an inline `code` chip at 1em interrupts the line it sits in. Zero
+	 * specificity, so any explicit size utility still wins.
+	 */
+	:where(code, kbd, samp) {
+		font-size: 0.92em;
+	}
 	::selection {
 		background: var(--msg-note-bg);
 	}

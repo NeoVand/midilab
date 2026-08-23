@@ -218,13 +218,14 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 
 	<TryThis title="Play some patterns">
 		<p class="text-sm leading-relaxed">
-			Drum lanes accept the GM shorthand — <code class="rounded bg-muted px-1 font-mono">bd</code>,
-			<code class="rounded bg-muted px-1 font-mono">sd</code>,
-			<code class="rounded bg-muted px-1 font-mono">hh</code>,
-			<code class="rounded bg-muted px-1 font-mono">oh</code>,
-			<code class="rounded bg-muted px-1 font-mono">cp</code>. Melodic lanes accept note names (<code
-				class="rounded bg-muted px-1 font-mono">C3</code
-			>) or scale degrees (<code class="rounded bg-muted px-1 font-mono">0 3 5 7</code>), and the
+			Drum lanes accept the GM shorthand — <code class="rounded-sm bg-muted px-1 font-mono">bd</code
+			>,
+			<code class="rounded-sm bg-muted px-1 font-mono">sd</code>,
+			<code class="rounded-sm bg-muted px-1 font-mono">hh</code>,
+			<code class="rounded-sm bg-muted px-1 font-mono">oh</code>,
+			<code class="rounded-sm bg-muted px-1 font-mono">cp</code>. Melodic lanes accept note names (<code
+				class="rounded-sm bg-muted px-1 font-mono">C3</code
+			>) or scale degrees (<code class="rounded-sm bg-muted px-1 font-mono">0 3 5 7</code>), and the
 			scale selector decides what a degree means.
 		</p>
 		<PatternLab />

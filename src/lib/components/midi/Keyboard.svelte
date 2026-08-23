@@ -292,9 +292,9 @@
 
 {#if typing}
 	<p class="mt-1.5 text-xs text-muted-foreground">
-		Play with <kbd class="rounded bg-muted px-1 font-mono">A</kbd>–<kbd
-			class="rounded bg-muted px-1 font-mono">'</kbd
-		>, shift octave with <kbd class="rounded bg-muted px-1 font-mono">Z</kbd> /
-		<kbd class="rounded bg-muted px-1 font-mono">X</kbd>. Press lower on a key for more velocity.
+		Play with <kbd class="rounded-sm bg-muted px-1 font-mono">A</kbd>–<kbd
+			class="rounded-sm bg-muted px-1 font-mono">'</kbd
+		>, shift octave with <kbd class="rounded-sm bg-muted px-1 font-mono">Z</kbd> /
+		<kbd class="rounded-sm bg-muted px-1 font-mono">X</kbd>. Press lower on a key for more velocity.
 	</p>
 {/if}

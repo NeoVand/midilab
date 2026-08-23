@@ -18,9 +18,9 @@
 		<p class="measure text-sm leading-relaxed text-muted-foreground">
 			{#if notFound}
 				That address does not correspond to anything in the app. The course lives under
-				<code class="rounded bg-muted px-1 font-mono">/learn</code>, the tools under
-				<code class="rounded bg-muted px-1 font-mono">/lab</code>, and the tables under
-				<code class="rounded bg-muted px-1 font-mono">/reference</code>.
+				<code class="rounded-sm bg-muted px-1 font-mono">/learn</code>, the tools under
+				<code class="rounded-sm bg-muted px-1 font-mono">/lab</code>, and the tables under
+				<code class="rounded-sm bg-muted px-1 font-mono">/reference</code>.
 			{:else}
 				{page.error?.message ??
 					'The app hit an error it did not expect. Reloading usually clears it.'}
