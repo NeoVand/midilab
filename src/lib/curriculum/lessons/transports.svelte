@@ -58,7 +58,8 @@
 		</Callout>
 		<p class="prose-body">
 			Type A is now the standard, and Korg and Teenage Engineering both use it — so an OP-XY driving
-			a Korg needs one straight Type A adapter at each end and nothing else.
+			a Korg over 3.5 mm needs nothing but a plain TRS cable. Adapters only enter the picture when
+			one end is a DIN socket, and then the adapter has to be Type A as well.
 		</p>
 	</Section>
 

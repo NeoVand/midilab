@@ -11,7 +11,9 @@
 	}
 	let { kind, class: className }: Props = $props();
 
-	// DIN-5 pins, viewed looking into the socket, in their physical arc.
+	// DIN-5 pins as you see them looking into a socket: left to right 3, 5, 2, 4,
+	// 1. On a plug, looking at the pins, that order mirrors to 1, 4, 2, 5, 3.
+	// The source/sink roles below are named from the sending end.
 	const DIN_PINS = [
 		{ n: 3, x: 26, y: 62, use: 'unused', note: 'not connected in MIDI' },
 		{ n: 5, x: 38, y: 34, use: 'sink', note: 'current sink — the data line' },
@@ -39,19 +41,23 @@
 			<circle cx="60" cy="52" r="44" class="fill-surface-sunken stroke-border" stroke-width="1.5" />
 			<path d="M 26 20 A 44 44 0 0 1 94 20" fill="none" class="stroke-border" stroke-width="1.5" />
 			{#each DIN_PINS as p (p.n)}
+				<!-- Unused pins read as hollow rather than as a faded solid: a number
+				     in the page background colour on a 35%-opacity grey disc was
+				     legible in neither theme. -->
 				<circle
 					cx={p.x}
 					cy={p.y}
 					r="7"
-					fill={USE_COLOUR[p.use]}
-					opacity={p.use === 'unused' ? 0.35 : 1}
+					fill={p.use === 'unused' ? 'var(--surface-sunken)' : USE_COLOUR[p.use]}
+					stroke={p.use === 'unused' ? 'var(--grid-line-strong)' : 'none'}
+					stroke-width="1.5"
 				/>
 				<text
 					x={p.x}
 					y={p.y + 3.5}
 					text-anchor="middle"
 					font-size="8"
-					class="fill-background"
+					class={p.use === 'unused' ? 'fill-muted-foreground' : 'fill-background'}
 					font-weight="600"
 				>
 					{p.n}
@@ -62,16 +68,18 @@
 			{#each DIN_PINS.slice().sort((a, b) => a.n - b.n) as p (p.n)}
 				<div class="flex items-baseline gap-3 text-sm">
 					<span
-						class="size-2.5 shrink-0 translate-y-0.5 rounded-full"
-						style="background: {USE_COLOUR[p.use]}; opacity: {p.use === 'unused' ? 0.35 : 1}"
+						class="size-2.5 shrink-0 translate-y-0.5 rounded-full border"
+						style={p.use === 'unused'
+							? 'background: var(--surface-sunken); border-color: var(--grid-line-strong)'
+							: `background: ${USE_COLOUR[p.use]}; border-color: ${USE_COLOUR[p.use]}`}
 					></span>
 					<span class="w-10 shrink-0 font-mono text-xs">pin {p.n}</span>
 					<span class="text-xs text-muted-foreground">{p.note}</span>
 				</div>
 			{/each}
 			<p class="mt-2 text-xs leading-relaxed text-muted-foreground">
-				MIDI is a <strong>current loop</strong>, not a voltage signal: pin 4 pushes about 5 mA
-				through the cable and pin 5 receives it. The receiver's end drives an
+				MIDI is a <strong>current loop</strong>, not a voltage signal: at the sending end pin 4
+				pushes about 5 mA through the cable and pin 5 receives it back. The receiver's end drives an
 				<strong>opto-isolator</strong> — an LED shining on a phototransistor — so the two devices share
 				no electrical connection at all. That is why you can chain gear on different circuits without
 				a ground loop, and why a MIDI cable cannot damage anything.
@@ -123,7 +131,7 @@
 					<text x="60" y="12" text-anchor="middle" font-size="8" class="fill-muted-foreground"
 						>ring</text
 					>
-					<text x="117" y="10" text-anchor="middle" font-size="8" class="fill-muted-foreground"
+					<text x="117" y="12" text-anchor="middle" font-size="8" class="fill-muted-foreground"
 						>sleeve</text
 					>
 				</svg>
@@ -193,9 +201,7 @@
 			</p>
 		</div>
 		<div class="flex flex-col gap-3 rounded-lg border p-4">
-			<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">
-				Star — one Thru box, everyone equal
-			</p>
+			<p class="text-sm font-semibold">Star — one Thru box, everyone equal</p>
 			<svg viewBox="0 0 340 70" class="w-full" role="img" aria-label="Star topology">
 				<rect x="4" y="22" width="60" height="26" rx="5" class="fill-card stroke-border" />
 				<text x="34" y="39" text-anchor="middle" font-size="9" class="fill-foreground">Source</text>
