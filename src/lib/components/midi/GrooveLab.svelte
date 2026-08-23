@@ -81,13 +81,22 @@
 		if (player.playing) void player.play(events, { loop: true });
 	}
 
+	/** The words drummers and producers actually use for these amounts. */
 	const FEEL = $derived(
-		swing < 51 ? 'straight' : swing < 60 ? 'light shuffle' : swing < 68 ? 'triplet' : 'hard shuffle'
+		swing <= 50
+			? 'straight'
+			: swing <= 56
+				? 'a hint of swing'
+				: swing <= 63
+					? 'swung'
+					: swing <= 69
+						? 'triplet'
+						: 'hard shuffle'
 	);
 </script>
 
 <div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
-	<div class="flex flex-wrap items-center gap-5">
+	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
 		<Button
 			variant={player.playing ? 'default' : 'outline'}
 			size="sm"
@@ -98,20 +107,29 @@
 			{player.playing ? 'Stop' : 'Play the loop'}
 		</Button>
 
-		<label class="flex min-w-56 flex-1 items-center gap-3">
-			<span class="w-14 shrink-0 text-xs text-muted-foreground">Swing</span>
-			<Slider type="single" bind:value={swing} min={50} max={75} step={1} onValueCommit={reArm} />
-			<span class="w-24 shrink-0 text-right text-xs">
-				<span class="tnum font-mono">{swing}%</span>
-				<span class="text-muted-foreground"> · {FEEL}</span>
-			</span>
-		</label>
+		<div class="grid flex-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+			<label class="flex items-center gap-3">
+				<span class="w-14 shrink-0 text-xs text-muted-foreground">Swing</span>
+				<Slider type="single" bind:value={swing} min={50} max={75} step={1} onValueCommit={reArm} />
+				<span class="w-24 shrink-0 text-right text-xs">
+					<span class="tnum font-mono">{swing}%</span>
+					<span class="text-muted-foreground"> · {FEEL}</span>
+				</span>
+			</label>
 
-		<label class="flex min-w-56 flex-1 items-center gap-3">
-			<span class="w-16 shrink-0 text-xs text-muted-foreground">Humanise</span>
-			<Slider type="single" bind:value={humanise} min={0} max={40} step={1} onValueCommit={reArm} />
-			<span class="tnum w-16 shrink-0 text-right font-mono text-xs">±{humanise} ms</span>
-		</label>
+			<label class="flex items-center gap-3">
+				<span class="w-16 shrink-0 text-xs text-muted-foreground">Humanise</span>
+				<Slider
+					type="single"
+					bind:value={humanise}
+					min={0}
+					max={40}
+					step={1}
+					onValueCommit={reArm}
+				/>
+				<span class="tnum w-16 shrink-0 text-right font-mono text-xs">±{humanise} ms</span>
+			</label>
+		</div>
 	</div>
 
 	<div class="flex flex-col gap-1.5">

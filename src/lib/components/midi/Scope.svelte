@@ -91,7 +91,7 @@
 		<canvas bind:this={canvas} class="block w-full" style="height: {height}px"></canvas>
 		{#if !live}
 			<p
-				class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center text-2xs text-muted-foreground"
+				class="pointer-events-none absolute inset-0 flex items-center justify-center text-2xs text-muted-foreground"
 			>
 				Silent — the audio engine wakes on the first note you play.
 			</p>

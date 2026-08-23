@@ -78,7 +78,7 @@
 	const ports = $derived(midiAccess.inputs.length + midiAccess.outputs.length);
 </script>
 
-<div class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-8 py-12">
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-8 py-12">
 	<header class="flex flex-wrap items-end justify-between gap-4">
 		<div class="flex flex-col gap-3">
 			<h1 class="text-3xl font-semibold tracking-tight">The Lab</h1>

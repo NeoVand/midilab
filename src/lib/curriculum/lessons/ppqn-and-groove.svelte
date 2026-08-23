@@ -98,8 +98,9 @@
 	<Section title="Swing is arithmetic">
 		<p class="prose-body">
 			Swing has a reputation for being mystical. It is not. Take the sixteenth-note grid and delay
-			every <em>second</em> sixteenth by a fraction of its own length. At 0% you get a straight grid;
-			at 66% the pairs approach a triplet feel; past that it starts to limp.
+			every <em>second</em> sixteenth by a fraction of its own length. The dial everyone uses says 50%
+			for a straight grid and 66% for a triplet feel — that is the swung sixteenth sitting two thirds
+			of the way between its neighbours instead of halfway. Past that it starts to limp.
 		</p>
 		<TryThis title="Turn the knobs and listen">
 			<GrooveLab bind:swing />
