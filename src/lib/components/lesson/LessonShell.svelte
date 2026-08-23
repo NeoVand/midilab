@@ -45,9 +45,7 @@
 		</div>
 
 		<div class="flex items-start gap-4">
-			<span
-				class="tnum mt-0.5 font-mono text-3xl leading-none text-muted-foreground/60 tabular-nums"
-			>
+			<span class="tnum mt-0.5 font-mono text-3xl leading-none text-muted-foreground tabular-nums">
 				{String(lesson.number).padStart(2, '0')}
 			</span>
 			<div class="min-w-0 flex-1">
