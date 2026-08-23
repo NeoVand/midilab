@@ -110,12 +110,17 @@
 			{#if latest}
 				<ByteInspector bytes={latest.bytes} message={latest.message} />
 			{:else}
-				<div class="flex h-full min-h-36 flex-col justify-center gap-2">
-					<p class="text-sm font-medium">Nothing has happened yet.</p>
-					<p class="measure text-xs text-muted-foreground">
-						Play a note and this panel will take the message apart — hex, bits, the one bit that
-						decides whether a byte is a command or a value, and what it all means in English.
-					</p>
+				<!-- Centred, like every other "nothing yet" panel in the app. Pinned to
+				     the left of a panel this wide it reads as content that failed to
+				     load rather than as an invitation. -->
+				<div class="grid h-full min-h-36 place-items-center text-center">
+					<div class="measure flex flex-col gap-2">
+						<p class="text-sm font-medium">Nothing has happened yet.</p>
+						<p class="text-xs text-muted-foreground">
+							Play a note and this panel will take the message apart — hex, bits, the one bit that
+							decides whether a byte is a command or a value, and what it all means in English.
+						</p>
+					</div>
 				</div>
 			{/if}
 		</div>

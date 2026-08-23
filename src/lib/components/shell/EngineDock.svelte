@@ -268,10 +268,12 @@
 								>
 									<HugeiconsIcon icon={PlugSocketIcon} size={14} class="text-muted-foreground" />
 									<span class="tnum font-mono">
-										<span class={inCount ? 'text-msg-cc' : 'text-muted-foreground'}>{inCount}</span>
+										<span class={inCount ? 'text-foreground' : 'text-muted-foreground'}
+											>{inCount}</span
+										>
 										<span class="text-muted-foreground">in</span>
 										<span class="mx-0.5 text-muted-foreground">/</span>
-										<span class={outCount ? 'text-msg-note' : 'text-muted-foreground'}>
+										<span class={outCount ? 'text-foreground' : 'text-muted-foreground'}>
 											{outCount}
 										</span>
 										<span class="text-muted-foreground">out</span>
@@ -303,14 +305,22 @@
 					onclick={() => openDock('monitor')}
 					aria-label="Open the monitor"
 				>
+					<!--
+						Direction is not a hue.
+
+						These two dots used to be msg-cc and msg-note — the Control Change
+						and Note colours — sitting six pixels from the seven-bar meter
+						where those same two hues mean Control Change and Note. In an app
+						whose whole colour system is "this hue is that message family",
+						spending two of those hues on in-versus-out is a lie told next to
+						the truth. The words "in" and "out" are already right there.
+					-->
 					<span class="flex flex-col gap-[3px]">
 						{#each [['in', monitor.flow.in], ['out', monitor.flow.out]] as const as [dir, level] (dir)}
 							<span class="flex items-center gap-1">
 								<span
-									class="size-1.5 rounded-full transition-opacity duration-75"
-									style="background: {dir === 'in'
-										? 'var(--msg-cc)'
-										: 'var(--msg-note)'}; opacity: {0.18 + level * 0.82}"
+									class="size-1.5 rounded-full bg-foreground transition-opacity duration-75"
+									style="opacity: {0.18 + level * 0.82}"
 								></span>
 								<span class="label leading-none">{dir}</span>
 							</span>

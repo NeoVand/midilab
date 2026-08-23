@@ -109,13 +109,13 @@
 					<label
 						class={cn(
 							'flex cursor-pointer items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors hover:bg-accent/50',
-							midiAccess.isListening(port.id) && 'border-msg-cc/50 bg-msg-cc-bg'
+							midiAccess.isListening(port.id) && 'border-ring/60 bg-accent'
 						)}
 					>
 						<HugeiconsIcon
 							icon={transportIcon(port.name)}
 							size={15}
-							class={midiAccess.isListening(port.id) ? 'text-msg-cc' : 'text-muted-foreground'}
+							class={midiAccess.isListening(port.id) ? 'text-foreground' : 'text-muted-foreground'}
 						/>
 						<span class="min-w-0 flex-1">
 							<span class="block truncate text-sm leading-tight">{port.name}</span>
@@ -144,13 +144,13 @@
 				<label
 					class={cn(
 						'flex cursor-pointer items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors hover:bg-accent/50',
-						engine.isOutputActive(out.id) && 'border-msg-note/50 bg-msg-note-bg'
+						engine.isOutputActive(out.id) && 'border-ring/60 bg-accent'
 					)}
 				>
 					<HugeiconsIcon
 						icon={out.kind === 'internal' ? AudioWaveformIcon : transportIcon(out.name)}
 						size={15}
-						class={engine.isOutputActive(out.id) ? 'text-msg-note' : 'text-muted-foreground'}
+						class={engine.isOutputActive(out.id) ? 'text-foreground' : 'text-muted-foreground'}
 					/>
 					<span class="min-w-0 flex-1 truncate text-sm">{out.name}</span>
 					{#if !out.connected}
