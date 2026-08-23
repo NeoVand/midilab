@@ -94,7 +94,10 @@
 				<span class={cn('size-1.5 rounded-full', ports ? 'bg-ok' : 'bg-muted-foreground/40')}
 				></span>
 				{#if ports}
-					{midiAccess.inputs.length} in · {midiAccess.outputs.length} out
+					<!-- "detected", because the dock a few pixels below counts the ports
+					     you have actually opened. Two readouts in the same shape meaning
+					     two different things is how you get someone counting cables. -->
+					{midiAccess.inputs.length} in · {midiAccess.outputs.length} out detected
 				{:else}
 					No ports found
 				{/if}

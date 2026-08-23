@@ -12,6 +12,7 @@
 	 * learn where a thing lives by its position, and a hairline between groups
 	 * is what makes position readable at a glance.
 	 */
+	import { browser } from '$app/environment';
 	import { engine, INTERNAL_OUTPUT_ID } from '$lib/midi/engine.svelte';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { transport } from '$lib/midi/clock.svelte';
@@ -101,6 +102,19 @@
 	 * one of those every time.
 	 */
 	const MIN_H = 132;
+
+	/**
+	 * The stored height is a wish, not a promise.
+	 *
+	 * Clamping only while you drag meant a dock dragged tall on a large display
+	 * came back at that height on a laptop, where it swallowed the page and left
+	 * the tool underneath it unusable — with the clamp never running again to
+	 * rescue it. Clamp on the way out too, against the window as it is now.
+	 */
+	let viewportH = $state(browser ? window.innerHeight : 900);
+	const dockH = $derived(
+		Math.min(Math.max(MIN_H, settings.dockHeight), Math.max(MIN_H, viewportH - 220))
+	);
 	let resizing = $state(false);
 
 	function startResize(e: PointerEvent) {
@@ -112,7 +126,11 @@
 	function onResize(e: PointerEvent) {
 		if (!resizing) return;
 		const max = Math.max(MIN_H, window.innerHeight - 220);
-		settings.dockHeight = Math.min(max, Math.max(MIN_H, window.innerHeight - e.clientY - 48));
+		// Whole pixels: a drag hands over 522.93359375, and that is what gets
+		// written to storage and read back forever.
+		settings.dockHeight = Math.round(
+			Math.min(max, Math.max(MIN_H, window.innerHeight - e.clientY - 48))
+		);
 	}
 
 	function openDock(tab: string) {
@@ -121,12 +139,14 @@
 	}
 </script>
 
+<svelte:window bind:innerHeight={viewportH} />
+
 <section
 	class={cn(
 		'relative flex shrink-0 flex-col border-t bg-sidebar',
 		!resizing && 'transition-[height] duration-200'
 	)}
-	style="height: {settings.dockOpen ? settings.dockHeight + 48 : 48}px"
+	style="height: {settings.dockOpen ? dockH + 48 : 48}px"
 	aria-label="Engine dock"
 >
 	{#if settings.dockOpen}
