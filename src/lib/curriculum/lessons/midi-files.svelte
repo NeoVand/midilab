@@ -65,7 +65,14 @@
 			<div class="flex items-center gap-4">
 				<span class="w-16 text-xs text-muted-foreground">Value</span>
 				<div class="flex-1">
-					<Slider type="single" bind:value={vlq} min={0} max={200000} step={1} />
+					<Slider
+						type="single"
+						bind:value={vlq}
+						min={0}
+						max={200000}
+						step={1}
+						aria-label="Value to encode"
+					/>
 				</div>
 				<span class="tnum w-20 text-right font-mono text-sm">{vlq}</span>
 			</div>

@@ -110,7 +110,15 @@
 		<div class="grid flex-1 gap-x-6 gap-y-3 sm:grid-cols-2">
 			<label class="flex items-center gap-3">
 				<span class="w-14 shrink-0 text-xs text-muted-foreground">Swing</span>
-				<Slider type="single" bind:value={swing} min={50} max={75} step={1} onValueCommit={reArm} />
+				<Slider
+					type="single"
+					bind:value={swing}
+					min={50}
+					max={75}
+					step={1}
+					onValueCommit={reArm}
+					aria-label="Swing percentage"
+				/>
 				<span class="w-24 shrink-0 text-right text-xs">
 					<span class="tnum font-mono">{swing}%</span>
 					<span class="text-muted-foreground"> · {FEEL}</span>

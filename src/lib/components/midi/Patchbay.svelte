@@ -178,16 +178,20 @@
 		</svg>
 	</div>
 
-	<div class="flex flex-wrap items-center gap-3">
-		<Button size="sm" class="gap-1.5" onclick={addRoute}>
-			<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
-		</Button>
+	<div class="flex flex-col gap-2">
+		<!-- While the list is empty the empty state below carries the call to
+		     action; two "Add a route" buttons on one screen is one too many. -->
 		{#if router.routes.length > 0}
-			<Button variant="ghost" size="sm" class="text-xs" onclick={() => router.clear()}>
-				Remove all
-			</Button>
+			<div class="flex flex-wrap items-center gap-2">
+				<Button size="sm" class="gap-1.5" onclick={addRoute}>
+					<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
+				</Button>
+				<Button variant="ghost" size="sm" class="text-xs" onclick={() => router.clear()}>
+					Remove all
+				</Button>
+			</div>
 		{/if}
-		<span class="measure text-xs leading-relaxed text-muted-foreground">
+		<p class="measure text-xs leading-relaxed text-muted-foreground">
 			{#if midiAccess.inputs.length === 0}
 				With nothing plugged in you can still route <em>{VIRTUAL_INPUT_NAME}</em> — the keyboards, pads
 				and sequencer on these pages are the controller in this rig. Hardware inputs join the left column
@@ -195,13 +199,14 @@
 			{:else}
 				Routes are saved in this browser and keep working while you use the rest of the app.
 			{/if}
-		</span>
+		</p>
 	</div>
 
 	<!-- ── the routes ────────────────────────────────────────────────────── -->
 	<div class="flex flex-col gap-3">
 		{#each router.routes as route (route.id)}
 			{@const loop = router.isLoop(route)}
+			{@const unison = router.isUnisonDouble(route)}
 			<div class={cn('flex flex-col gap-3 rounded-lg border p-4', loop && 'border-destructive/50')}>
 				<div class="flex flex-wrap items-center gap-3">
 					<Switch
@@ -256,6 +261,15 @@
 					<p class="flex items-center gap-2 text-xs text-destructive">
 						<HugeiconsIcon icon={AlertCircleIcon} size={14} />
 						This route sends a port straight back to itself. It is disabled to prevent a feedback loop.
+					</p>
+				{:else if unison}
+					<p class="flex items-start gap-2 text-xs text-warn">
+						<HugeiconsIcon icon={AlertCircleIcon} size={14} class="mt-px shrink-0" />
+						<span>
+							Every note now reaches the synth twice, at the same pitch — once directly and once
+							through this route. That is phase cancellation, not a layer. Transpose it, remap the
+							channel, or narrow the note range to make it a part rather than a double.
+						</span>
 					</p>
 				{/if}
 
@@ -331,6 +345,7 @@
 								max={36}
 								step={1}
 								onValueChange={(v) => router.update(route.id, { transpose: v })}
+								aria-label="Transpose, in semitones"
 							/>
 						</label>
 						<label class="flex flex-col gap-1">
@@ -344,6 +359,7 @@
 								max={2}
 								step={0.05}
 								onValueChange={(v) => router.update(route.id, { velocityScale: v })}
+								aria-label="Velocity scale"
 							/>
 						</label>
 					</div>
@@ -365,6 +381,7 @@
 								max={127}
 								step={1}
 								onValueChange={(v) => router.update(route.id, { noteRange: [v[0], v[1]] })}
+								thumbLabels={['Lowest note passed', 'Highest note passed']}
 							/>
 						</div>
 						<div class="flex flex-wrap gap-1">

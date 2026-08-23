@@ -154,6 +154,7 @@
 							settings.masterVolume = v;
 							audio.setVolume(v);
 						}}
+						aria-label="Master volume"
 					/>
 				</div>
 			</label>

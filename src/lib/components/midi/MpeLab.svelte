@@ -124,12 +124,26 @@
 		</Button>
 		<label class="flex min-w-44 items-center gap-3">
 			<span class="w-24 text-xs text-muted-foreground">Member channels</span>
-			<Slider type="single" bind:value={memberCount} min={1} max={15} step={1} />
+			<Slider
+				type="single"
+				bind:value={memberCount}
+				min={1}
+				max={15}
+				step={1}
+				aria-label="Member channels"
+			/>
 			<span class="tnum w-6 text-right font-mono text-xs">{memberCount}</span>
 		</label>
 		<label class="flex min-w-44 items-center gap-3">
 			<span class="w-20 text-xs text-muted-foreground">Bend range</span>
-			<Slider type="single" bind:value={bendRange} min={2} max={96} step={1} />
+			<Slider
+				type="single"
+				bind:value={bendRange}
+				min={2}
+				max={96}
+				step={1}
+				aria-label="Bend range in semitones"
+			/>
 			<span class="tnum w-10 text-right font-mono text-xs">±{bendRange}</span>
 		</label>
 	</div>

@@ -59,7 +59,14 @@
 		<div class="flex items-center gap-3">
 			<span class="tnum font-mono text-lg text-readout">{transport.positionLabel}</span>
 			<div class="w-40">
-				<Slider type="single" bind:value={transport.bpm} min={40} max={220} step={0.5} />
+				<Slider
+					type="single"
+					bind:value={transport.bpm}
+					min={40}
+					max={220}
+					step={0.5}
+					aria-label="Tempo in beats per minute"
+				/>
 			</div>
 			<span class="tnum font-mono text-sm">{transport.bpm.toFixed(1)} BPM</span>
 			<Button variant="outline" size="sm" class="h-7 text-xs" onclick={() => transport.tap()}>

@@ -136,12 +136,19 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 			<div class="flex flex-wrap items-center gap-5">
 				<label class="flex min-w-40 flex-1 items-center gap-3">
 					<span class="w-14 text-xs text-muted-foreground">Pulses</span>
-					<Slider type="single" bind:value={pulses} min={0} max={steps} step={1} />
+					<Slider
+						type="single"
+						bind:value={pulses}
+						min={0}
+						max={steps}
+						step={1}
+						aria-label="Pulses"
+					/>
 					<span class="tnum w-6 text-right font-mono text-xs">{pulses}</span>
 				</label>
 				<label class="flex min-w-40 flex-1 items-center gap-3">
 					<span class="w-14 text-xs text-muted-foreground">Steps</span>
-					<Slider type="single" bind:value={steps} min={1} max={16} step={1} />
+					<Slider type="single" bind:value={steps} min={1} max={16} step={1} aria-label="Steps" />
 					<span class="tnum w-6 text-right font-mono text-xs">{steps}</span>
 				</label>
 				<label class="flex min-w-40 flex-1 items-center gap-3">
