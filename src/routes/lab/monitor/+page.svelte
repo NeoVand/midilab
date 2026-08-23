@@ -88,8 +88,23 @@
 		{/snippet}
 	</PageHeader>
 
+	<!--
+		The family legend is a colour key for the log. In the state view nothing
+		is coloured by family, so it would be dead chrome — that row says what is
+		actually in front of you instead.
+	-->
 	<div class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg border px-4 py-2.5">
-		<ActivityStrip layout="legend" />
+		{#if view === 'stream'}
+			<ActivityStrip layout="legend" />
+		{:else}
+			{@const n = noteState.usedChannels.length}
+			<span class="text-xs text-muted-foreground">
+				{n} channel{n === 1 ? '' : 's'} in play · {noteState.heldCount} note{noteState.heldCount ===
+				1
+					? ''
+					: 's'} sounding
+			</span>
+		{/if}
 		<div class="flex-1"></div>
 		<span class="tnum font-mono text-xs text-muted-foreground">
 			{monitor.rate}/s · {monitor.total} buffered
