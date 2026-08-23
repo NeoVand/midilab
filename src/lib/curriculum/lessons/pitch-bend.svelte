@@ -10,6 +10,7 @@
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import Drone from '$lib/components/midi/Drone.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { setBendRange } from '$lib/midi/rpn';
@@ -151,8 +152,9 @@
 		</p>
 		<p class="prose-body">
 			The wall is real enough that an entire extension exists to get around it, by the elegantly
-			brutal method of giving every note its own channel. That is MPE, in Act V. Play the chord
-			above and bend it — feeling why per-note bend matters is the best preparation for that lesson.
+			brutal method of giving every note its own channel. That is <Xref to="mpe" label="MPE" />.
+			Play the chord above and bend it — feeling why per-note bend matters is the best preparation
+			for that lesson.
 		</p>
 	</Section>
 

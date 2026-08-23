@@ -24,7 +24,20 @@
 		class: className
 	}: Props = $props();
 
-	const DEFAULTS: Record<number, number> = { 7: 100, 10: 64, 11: 127, 74: 64, 71: 64, 91: 12 };
+	// The Sound Controllers are relative, so their rest position is the middle
+	// of the range rather than the bottom of it — a knob for CC 73 that springs
+	// back to 0 is a knob that springs back to "shortest attack there is".
+	const DEFAULTS: Record<number, number> = {
+		7: 100,
+		10: 64,
+		11: 127,
+		71: 64,
+		72: 64,
+		73: 64,
+		74: 64,
+		75: 64,
+		91: 12
+	};
 
 	// Local mirror so the knobs stay smooth, kept in step with whatever the
 	// channel last received — including from your hardware.

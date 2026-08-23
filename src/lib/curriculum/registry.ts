@@ -9,7 +9,7 @@ import {
 } from '@hugeicons/core-free-icons';
 
 /**
- * The course: six acts, thirty lessons.
+ * The course: six acts, thirty-one lessons.
  *
  * Metadata lives here; the lessons themselves are Svelte components under
  * `lessons/`, because almost every one of them needs a live instrument, a
@@ -125,6 +125,17 @@ export const CURRICULUM: Act[] = [
 					'Build a Note On and its matching Note Off by hand',
 					'Explain the velocity-zero Note Off trick and why it exists',
 					'Deliberately create and then fix a stuck note'
+				]
+			),
+			lesson(
+				'envelope',
+				'The shape between the messages',
+				'MIDI sends two instants. Attack, decay, sustain and release are what the instrument does with the gap — and why Note Off is not silence.',
+				11,
+				[
+					'Read an ADSR envelope and say which stage you are hearing',
+					'Explain why sustain is a level while the other three are times',
+					'Reshape an instrument from the wire with CC 73, 75 and 72'
 				]
 			)
 		]

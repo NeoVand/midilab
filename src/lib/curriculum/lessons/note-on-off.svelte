@@ -8,6 +8,7 @@
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
@@ -108,8 +109,8 @@
 			<p>
 				Whatever sends a Note On owns the responsibility for its Note Off. In code, that means
 				tracking held notes and releasing them on stop, on disconnect, on channel change, and on
-				error — never assuming the pair will complete itself. The scheduler you build in Act VI does
-				exactly this bookkeeping.
+				error — never assuming the pair will complete itself. The scheduler you build in
+				<Xref to="building-a-sequencer" /> does exactly this bookkeeping.
 			</p>
 		</Callout>
 	</Section>

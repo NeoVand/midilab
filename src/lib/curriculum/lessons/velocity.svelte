@@ -7,6 +7,8 @@
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import VelocityMeter from '$lib/components/midi/VelocityMeter.svelte';
+	import VelocityTimbre from '$lib/components/midi/VelocityTimbre.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import PhrasePlayer from '$lib/components/midi/PhrasePlayer.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { Button } from '$lib/components/ui/button';
@@ -87,9 +89,17 @@
 	<TryThis title="The same note, five ways">
 		<PhrasePlayer notes={DYNAMICS} bpm={100} label="Play note 60 at velocity 20, 45, 70, 95, 120" />
 		<p class="text-sm leading-relaxed text-muted-foreground">
-			One pitch, five velocities. Listen for the tone change, not just the level — this synth opens
-			its filter with velocity, exactly as a hardware instrument would.
+			One pitch, five velocities. Listen for the tone change, not just the level.
 		</p>
+	</TryThis>
+
+	<TryThis title="The same number, two receivers">
+		<p class="text-sm leading-relaxed">
+			This page can play through either of two instruments, and they disagree about what velocity
+			means. Play a few strengths on one, switch, and play the same ones again — the message is
+			byte-for-byte identical both times.
+		</p>
+		<VelocityTimbre />
 	</TryThis>
 
 	<Section title="Why it is not a volume control">
@@ -179,7 +189,7 @@
 			A Note On with velocity 0 is defined to mean <strong>Note Off</strong>. It is not "play this
 			note infinitely quietly" — it stops the note. This was a bandwidth trick from 1983 that lets a
 			stream of notes share one status byte, and every device still honours it. You will meet it
-			properly in two lessons' time.
+			properly in <Xref to="note-on-off" />.
 		</p>
 	</Callout>
 
@@ -188,6 +198,12 @@
 			Note Off carries a velocity too — how fast you <em>lifted</em> the key. Almost nothing transmits
 			it and almost nothing responds to it, so in practice it is 0 or 64 and safely ignored. Worth knowing
 			exists; not worth planning around.
+		</p>
+		<p class="prose-body">
+			Both of these numbers are handed to the same machinery: the instrument's envelope, which is
+			what turns two instants into a sound that lasts. That is
+			<Xref to="envelope" />, and it is where "louder and brighter" stops being a description and
+			becomes a mechanism.
 		</p>
 	</Section>
 

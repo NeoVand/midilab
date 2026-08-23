@@ -38,7 +38,7 @@
 		</p>
 
 		<!--
-			The resume row. A thirty-lesson index without one makes you scroll
+			The resume row. An index this long without one makes you scroll
 			looking for the first title you don't recognise.
 		-->
 		<div
@@ -113,7 +113,7 @@
 
 			<!--
 				One container, ruled rows. Thirty separately bordered cards down a
-				page is thirty rectangles competing for the same attention; a table
+				page is thirty-odd rectangles competing for the same attention; a table
 				of contents is a list, and it should look like one.
 			-->
 			<ol class="overflow-hidden rounded-lg border bg-card">

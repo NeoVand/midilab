@@ -34,7 +34,7 @@
 	</Dialog.Header>
 	<Dialog.Content
 		class={cn(
-			// Wider than a plain dialog: this one lists thirty lesson titles under
+			// Wider than a plain dialog: this one lists every lesson title under
 			// act headings, and at 24rem they truncate.
 			'top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0 sm:max-w-xl',
 			className

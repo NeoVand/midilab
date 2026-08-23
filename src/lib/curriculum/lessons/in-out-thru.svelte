@@ -6,6 +6,7 @@
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import CableFigure from '$lib/components/midi/CableFigure.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -135,8 +136,8 @@
 			Control off, with Thru disabled, or by not making the connection at all.
 		</p>
 		<p class="prose-body">
-			The next lesson makes you draw exactly that diagram for your own rig, in a patchbay that then
-			actually does the routing.
+			<Xref to="studio-routing" label="The next lesson" /> makes you draw exactly that diagram for your
+			own rig, in a patchbay that then actually does the routing.
 		</p>
 	</Section>
 

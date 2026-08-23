@@ -8,6 +8,7 @@
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import Knob from '$lib/components/midi/Knob.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { encode, type MidiMessage } from '$lib/midi/messages';
 	import { hexWord, MESSAGE_TYPES, toUmpMidi1, toUmpMidi2 } from '$lib/midi/ump';
@@ -194,9 +195,10 @@
 			<p>
 				Everything in this course about implementation charts, undocumented NRPNs and CC-number
 				archaeology exists because a MIDI 1.0 device cannot describe itself. Property Exchange is
-				that problem being solved directly — and it is why the device-profile architecture in Act VI
-				is worth building even now: it is the same abstraction, filled in by hand until instruments
-				can fill it in themselves.
+				that problem being solved directly — and it is why the architecture in
+				<Xref to="device-profiles" />
+				is worth building even now: it is the same abstraction, filled in by hand until instruments can
+				fill it in themselves.
 			</p>
 		</Callout>
 	</Section>

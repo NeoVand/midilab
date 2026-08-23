@@ -7,6 +7,7 @@
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
@@ -75,8 +76,8 @@
 				<p class="text-sm font-semibold">CC 123 · All Notes Off</p>
 				<p class="text-sm leading-relaxed">
 					The polite one. It is equivalent to lifting your hands off the keys: notes enter their
-					release phase and fade naturally. <strong>The sustain pedal still applies</strong> — if CC 64
-					is down, everything keeps ringing.
+					<Xref to="envelope" label="release phase" /> and fade naturally.
+					<strong>The sustain pedal still applies</strong> — if CC 64 is down, everything keeps ringing.
 				</p>
 			</div>
 			<div class="flex flex-col gap-2 rounded-lg border p-4">

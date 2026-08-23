@@ -2,11 +2,11 @@
 	/**
 	 * The whole course, as a map rather than a grid of cards.
 	 *
-	 * Six acts in a fixed order, thirty lessons in a fixed order — a sequence,
+	 * Six acts in a fixed order, every lesson in a fixed order — a sequence,
 	 * and a card grid is the one layout that throws a sequence away. Each act is
 	 * a row; each lesson is a pip you can hover to name and click to open. So
 	 * the section shows where the course goes, how far along you are, and gives
-	 * a way into any one of the thirty from the front page.
+	 * a way into any one of them from the front page.
 	 */
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ArrowRight01Icon } from '@hugeicons/core-free-icons';

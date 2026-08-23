@@ -7,6 +7,7 @@
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -159,9 +160,8 @@
 			that clock-following quality varies enormously between devices and is rarely documented.
 		</p>
 		<p class="prose-body">
-			The jitter plot in the previous lesson is how you find out which device is which, rather than
-			arguing about it. Connect each candidate leader in turn, watch the spread, and pick the
-			narrowest.
+			The jitter plot in <Xref to="latency-and-jitter" /> is how you find out which device is which, rather
+			than arguing about it. Connect each candidate leader in turn, watch the spread, and pick the narrowest.
 		</p>
 	</Section>
 

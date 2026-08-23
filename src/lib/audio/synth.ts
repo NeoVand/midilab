@@ -250,6 +250,13 @@ export interface ChannelState {
 	sustain: boolean;
 	cutoff: number;
 	resonance: number;
+	/**
+	 * The GM Level 2 Sound Controllers for envelope times: CC 73, 75 and 72.
+	 * Relative, not absolute — 64 means "whatever the patch says".
+	 */
+	attackTime: number;
+	decayTime: number;
+	releaseTime: number;
 	reverb: number;
 	chorus: number;
 	pressure: number;
@@ -273,6 +280,9 @@ function initialChannel(): ChannelState {
 		sustain: false,
 		cutoff: 64,
 		resonance: 64,
+		attackTime: 64,
+		decayTime: 64,
+		releaseTime: 64,
 		reverb: 12,
 		chorus: 0,
 		pressure: 0,
@@ -281,6 +291,39 @@ function initialChannel(): ChannelState {
 		rpn: null,
 		nrpn: null,
 		muted: false
+	};
+}
+
+/**
+ * What CC 73, 75 and 72 do to a patch.
+ *
+ * The Sound Controllers are defined as offsets from whatever the sound
+ * already is, with 64 meaning "leave it alone" — which is why a device that
+ * ignores them entirely still behaves correctly on a stream that sends them.
+ * Doubling every sixteen steps runs from about a sixteenth of the patch's own
+ * time to about fifteen times it. That is deliberately wide, because the
+ * effect is proportional: fifteen times a pad's attack is most of a second,
+ * and fifteen times a piano's two milliseconds is still nothing at all. That
+ * asymmetry is not a flaw in the implementation, it is what "relative" means,
+ * and it is the thing about these controllers worth knowing.
+ */
+export const timeScale = (v: number) => Math.pow(2, (v - 64) / 16);
+
+/**
+ * Envelope times are stamped on a voice when it starts, so these apply at
+ * Note On and never mid-note. That is not a shortcut: a running envelope
+ * whose stage lengths change underneath it is not something the spec asks
+ * for, and it is not what hardware does either.
+ */
+function shaped(p: Preset, s: ChannelState): Preset {
+	if (s.attackTime === 64 && s.decayTime === 64 && s.releaseTime === 64) return p;
+	const d = timeScale(s.decayTime);
+	return {
+		...p,
+		attack: p.attack * timeScale(s.attackTime),
+		decay: p.decay * d,
+		filterDecay: p.filterDecay * d,
+		release: p.release * timeScale(s.releaseTime)
 	};
 }
 
@@ -393,7 +436,7 @@ export class Synth {
 			oldest?.kill();
 		}
 
-		const preset = presetForProgram(state.program);
+		const preset = shaped(presetForProgram(state.program), state);
 		const voice = new Voice(
 			this.#engine,
 			preset,
@@ -463,6 +506,15 @@ export class Synth {
 			case 71:
 				s.resonance = value;
 				this.#forEach(channel, (v) => v.setResonance(this.#resonance(s)));
+				break;
+			case 72:
+				s.releaseTime = value;
+				break;
+			case 73:
+				s.attackTime = value;
+				break;
+			case 75:
+				s.decayTime = value;
 				break;
 			case 74:
 				s.cutoff = value;
@@ -575,6 +627,10 @@ export class Synth {
 			s.sustain = false;
 			s.bend = 8192;
 			s.pressure = 0;
+			// Deliberately not the Sound Controllers, the filter or the volume:
+			// Reset All Controllers is defined over performance state, and a
+			// message that also undid the patch's brightness would be unusable
+			// as the panic-adjacent tool everyone actually uses it as.
 			this.#forEach(c, (v) => {
 				v.setBendCents(0);
 				v.setVibratoDepth(0);
