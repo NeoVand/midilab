@@ -42,7 +42,7 @@
 				{family}
 				<span class="ml-1 font-mono text-muted-foreground">{f * 8}–{f * 8 + 7}</span>
 			</p>
-			<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4 lg:grid-cols-8">
+			<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
 				{#each Array.from({ length: 8 }, (_, i) => f * 8 + i) as p (p)}
 					<button
 						class={cn(

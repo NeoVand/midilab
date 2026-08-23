@@ -2,6 +2,7 @@
 	import PageHeader from '$lib/components/shell/PageHeader.svelte';
 	import SearchField from '$lib/components/shell/SearchField.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import { onDestroy } from 'svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import {
 		CC_TABLE,
@@ -222,7 +223,7 @@
 
 	/* ------------------------------------------------------------ auditioning */
 
-	let sounding = $state<number | null>(null);
+	let sounding = $state<{ note: number; channel: number } | null>(null);
 	let program = $state<number | null>(null);
 	let release = 0;
 
@@ -239,15 +240,22 @@
 	}
 
 	function play(note: number, velocity: number, channel: number, ms: number) {
-		clearTimeout(release);
-		if (sounding !== null) engine.noteOff(sounding, channel);
+		// Release the previous note on *its own* channel. Auditioning a drum on 10
+		// and then a program on 1 used to send the release to the wrong channel
+		// and leave the drum held for good.
+		stop();
 		engine.noteOn(note, velocity, channel);
-		sounding = note;
-		release = window.setTimeout(() => {
-			engine.noteOff(note, channel);
-			sounding = null;
-		}, ms);
+		sounding = { note, channel };
+		release = window.setTimeout(stop, ms);
 	}
+
+	function stop() {
+		clearTimeout(release);
+		if (sounding) engine.noteOff(sounding.note, sounding.channel);
+		sounding = null;
+	}
+
+	onDestroy(stop);
 
 	const CHIP =
 		'flex items-baseline gap-2 rounded-md border bg-card px-2.5 py-1.5 text-left text-xs transition-colors';
@@ -475,7 +483,7 @@
 				<div class="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3" use:rovingGrid>
 					{#each drumHits as [n, name] (n)}
 						<button
-							class={cn(CHIP, 'hover:border-msg-note', sounding === n && 'border-msg-note')}
+							class={cn(CHIP, 'hover:border-msg-note', sounding?.note === n && 'border-msg-note')}
 							onclick={() => {
 								engine.wake();
 								play(n, 110, 9, 220);
@@ -543,7 +551,7 @@
 										class={cn(
 											'flex flex-col items-center gap-0.5 border-l px-1 py-1.5 transition-colors first:border-l-0',
 											black ? 'bg-surface-sunken' : 'bg-card',
-											sounding === n ? 'bg-msg-note/15' : 'hover:bg-msg-note/8'
+											sounding?.note === n ? 'bg-msg-note/15' : 'hover:bg-msg-note/8'
 										)}
 										onclick={() => {
 											engine.wake();
