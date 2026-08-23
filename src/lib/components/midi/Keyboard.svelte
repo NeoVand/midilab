@@ -274,10 +274,13 @@
 				{/if}
 				{#if labelFor(note) || numbered}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/55"
+						class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/70"
 					>
+						<!-- Black at 55% on an ivory key is 4.4:1 at 10px — just under the
+						     line, and these labels are the only thing telling you which C
+						     you are looking at. The black keys' white labels already pass. -->
 						{#if labelFor(note)}<span>{labelFor(note)}</span>{/if}
-						{#if numbered}<span class="text-black/45">{note}</span>{/if}
+						{#if numbered}<span class="text-black/60">{note}</span>{/if}
 					</span>
 				{/if}
 			</button>
