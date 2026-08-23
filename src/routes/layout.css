@@ -410,6 +410,22 @@
 	 * whole thirty-lesson course was a two-class incantation with no single
 	 * place to change it. It has a name now.
 	 */
+	/*
+	 * A workbench page.
+	 *
+	 * Most pages keep a measure because they are read. The monitor and the
+	 * console are not read, they are watched: a live stream of text beside a
+	 * fixed-width inspector, where every extra pixel goes to the stream. Those
+	 * fill the window — capped so an ultra-wide display does not stretch a
+	 * message log to a metre.
+	 *
+	 * The step grid and the routing graph are deliberately not on this list.
+	 * Wider steps are not better steps, and the patchbay is a drawing.
+	 */
+	.workbench {
+		max-width: 104rem;
+	}
+
 	.prose-body {
 		max-width: 52ch;
 		font-size: var(--text-base);

@@ -16,7 +16,8 @@
 		hexBytes,
 		shortLabel,
 		ch1,
-		type MessageFamily
+		type MessageFamily,
+		magnitude
 	} from '$lib/midi/messages';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
@@ -60,6 +61,19 @@
 		'sysex',
 		'common'
 	];
+
+	/** Where the fill sits in the track, as CSS percentages from each edge. */
+	function bar(e: MidiEvent) {
+		const m = magnitude(e.message);
+		if (!m) return null;
+		const pct = (m.value / m.max) * 100;
+		if (m.centre === undefined) return { left: 0, right: 100 - pct, centre: false };
+		return {
+			left: Math.min(50, pct),
+			right: Math.min(50, 100 - pct),
+			centre: true
+		};
+	}
 
 	function deltaMs(i: number): string {
 		const next = rows[i + 1];
@@ -223,6 +237,7 @@
 						<th class="label w-7 py-1 pl-1.5 text-right font-medium">ch</th>
 						<th class="label w-[8.5rem] py-1 pl-3 text-left font-medium">bytes</th>
 						<th class="label py-1 pr-2 pl-2 text-left font-medium">message</th>
+						<th class="label hidden w-40 py-1 pr-3 text-left font-medium xl:table-cell">value</th>
 						{#if showPort}
 							<th class="label hidden w-32 py-1 pr-3 text-right font-medium lg:table-cell">port</th>
 						{/if}
@@ -264,6 +279,26 @@
 							</td>
 							<td class="truncate py-[3px] pr-2 pl-2">
 								{shortLabel(e.message, { octaveConvention: settings.octaveConvention })}
+							</td>
+							<!--
+								The same message drawn as a quantity. Scroll a CC sweep and it
+								is a staircase; a bend is a ramp out from the middle; a
+								crescendo looks like one. The column only appears where there
+								is room for it.
+							-->
+							<td class="hidden w-40 py-[3px] pr-3 align-middle xl:table-cell">
+								{#if bar(e)}
+									{@const b = bar(e)!}
+									<span class="relative block h-1 rounded-full bg-muted">
+										{#if b.centre}
+											<span class="absolute inset-y-0 left-1/2 w-px bg-border"></span>
+										{/if}
+										<span
+											class="absolute inset-y-0 rounded-full"
+											style="left: {b.left}%; right: {b.right}%; background: {familyColor(fam)}"
+										></span>
+									</span>
+								{/if}
 							</td>
 							{#if showPort}
 								<td

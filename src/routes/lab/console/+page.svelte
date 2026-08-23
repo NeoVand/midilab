@@ -68,14 +68,14 @@ log('all notes off, all sound off, controllers reset, on every channel');`
 	];
 </script>
 
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-8 py-8">
+<div class="workbench mx-auto flex w-full flex-col gap-6 px-8 py-8">
 	<PageHeader
 		title="Console"
 		lead="JavaScript that drives your actual hardware. Everything it sends appears in the monitor below, and Stop cancels every timer and subscription it created."
 		back={{ href: '/lab', label: 'Lab' }}
 	/>
 
-	<div class="grid gap-4 lg:grid-cols-[1fr_22rem]">
+	<div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_30rem]">
 		<CodeSandbox initial={EXAMPLES[0].code} examples={EXAMPLES} rows={20} />
 		<div class="flex flex-col gap-4">
 			<Scope height={80} label="Master output" />

@@ -54,7 +54,7 @@
 	}
 </script>
 
-<div class="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col gap-5 px-8 py-6">
+<div class="mx-auto flex h-full min-h-0 w-full workbench flex-col gap-5 px-8 py-6">
 	<PageHeader
 		title="Monitor"
 		lead="Two views of the same stream: every byte in the order the wire carried it, or the standing state of every channel in play."

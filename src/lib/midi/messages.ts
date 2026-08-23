@@ -465,6 +465,35 @@ export interface DescribeOptions {
 }
 
 /** A short label for monitor rows and piano-roll tooltips. */
+/**
+ * The magnitude a message carries, if it carries one.
+ *
+ * Enough to draw a message as a bar as well as a sentence — which is what
+ * turns a log into something you can read the shape of. A CC sweep becomes a
+ * staircase, a bend becomes a ramp, a crescendo becomes a crescendo. `centre`
+ * is set for the messages that are meaningfully bipolar, so a bend draws out
+ * from the middle rather than up from zero.
+ */
+export function magnitude(
+	msg: MidiMessage
+): { value: number; max: number; centre?: number } | null {
+	switch (msg.type) {
+		case 'noteOn':
+		case 'noteOff':
+			return { value: msg.velocity, max: 127 };
+		case 'controlChange':
+			return { value: msg.value, max: 127 };
+		case 'channelAftertouch':
+			return { value: msg.pressure, max: 127 };
+		case 'polyAftertouch':
+			return { value: msg.pressure, max: 127 };
+		case 'pitchBend':
+			return { value: msg.value, max: 16383, centre: 8192 };
+		default:
+			return null;
+	}
+}
+
 export function shortLabel(msg: MidiMessage, opts: DescribeOptions = {}): string {
 	const conv = opts.octaveConvention ?? 'c3';
 	switch (msg.type) {

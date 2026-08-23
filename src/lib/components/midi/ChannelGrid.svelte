@@ -27,7 +27,17 @@
 	const colour = channelColour;
 </script>
 
-<div class={cn('grid grid-cols-2 gap-1 sm:grid-cols-4 xl:grid-cols-8', className)} use:rovingGrid>
+<!--
+	Column count follows what is in the cell, not how wide the window is. A
+	wider screen was switching to eight narrow columns and truncating every
+	program name back to "Acoustic Grand…" — more room producing less
+	information. Compact cells carry only a number, so those can go eight
+	across.
+-->
+<div
+	class={cn('grid gap-1', compact ? 'grid-cols-8' : 'grid-cols-2 sm:grid-cols-4', className)}
+	use:rovingGrid
+>
 	{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 		{@const snap = noteState.channel(c)}
 		{@const active = snap.notes.size > 0}
