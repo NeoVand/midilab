@@ -78,7 +78,7 @@ log('all notes off, all sound off, controllers reset, on every channel');`
 	<div class="grid gap-4 lg:grid-cols-[1fr_22rem]">
 		<CodeSandbox initial={EXAMPLES[0].code} examples={EXAMPLES} rows={20} />
 		<div class="flex flex-col gap-4">
-			<Scope height={80} />
+			<Scope height={80} label="Master output" />
 			<div class="h-96 overflow-hidden rounded-lg border">
 				<MidiMonitor class="h-full" />
 			</div>

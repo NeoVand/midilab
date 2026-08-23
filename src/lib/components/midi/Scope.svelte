@@ -7,11 +7,15 @@
 	interface Props {
 		height?: number;
 		mode?: 'wave' | 'spectrum' | 'both';
+		/** Names the panel. Without it the scope is an unexplained empty rectangle. */
+		label?: string;
 		class?: string;
 	}
-	let { height = 96, mode = 'both', class: className }: Props = $props();
+	let { height = 96, mode = 'both', label, class: className }: Props = $props();
 
 	let canvas = $state<HTMLCanvasElement | null>(null);
+	/** The audio graph only exists after the first gesture that wakes it. */
+	let live = $state(false);
 
 	onMount(() => {
 		let frame = 0;
@@ -32,7 +36,19 @@
 			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 			ctx.clearRect(0, 0, w, h);
 
-			if (!audio.analyser) return;
+			// A scope at rest still shows its zero line. A blank rectangle reads as
+			// broken; a flat trace reads as silence, which is what it is.
+			const hasAnalyser = !!audio.analyser;
+			if (live !== hasAnalyser) live = hasAnalyser;
+			if (!hasAnalyser) {
+				ctx.strokeStyle = 'var(--grid-line-strong)';
+				ctx.lineWidth = 1;
+				ctx.beginPath();
+				ctx.moveTo(0, Math.round(h / 2) + 0.5);
+				ctx.lineTo(w, Math.round(h / 2) + 0.5);
+				ctx.stroke();
+				return;
+			}
 
 			if (mode !== 'wave') {
 				audio.spectrum(spectrum);
@@ -64,6 +80,21 @@
 	});
 </script>
 
-<div class={cn('panel-sunken graph-paper overflow-hidden rounded-lg border', className)}>
-	<canvas bind:this={canvas} class="block w-full" style="height: {height}px"></canvas>
+<div class={cn('overflow-hidden rounded-lg border bg-card', className)}>
+	{#if label}
+		<div class="flex items-baseline justify-between border-b px-3 py-1.5">
+			<span class="label">{label}</span>
+			<span class="label" class:text-msg-note={live}>{live ? 'live' : 'idle'}</span>
+		</div>
+	{/if}
+	<div class="panel-sunken graph-paper relative">
+		<canvas bind:this={canvas} class="block w-full" style="height: {height}px"></canvas>
+		{#if !live}
+			<p
+				class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center text-2xs text-muted-foreground/70"
+			>
+				Silent — the audio engine wakes on the first note you play.
+			</p>
+		{/if}
+	</div>
 </div>

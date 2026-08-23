@@ -56,7 +56,7 @@
 						></div>
 					</div>
 				</div>
-				<Button href={lessonPath(nextLesson)} size="sm">
+				<Button href={lessonPath(nextLesson)} size="lg">
 					{doneLessons > 0 ? 'Continue' : 'Begin'}
 					<HugeiconsIcon icon={ArrowRight01Icon} size={15} />
 				</Button>

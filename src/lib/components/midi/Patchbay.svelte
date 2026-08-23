@@ -198,19 +198,26 @@
 		{/if}
 	</div>
 
-	<div class="flex items-center gap-3">
-		<Button size="sm" class="gap-1.5" onclick={addRoute} disabled={inputs.length === 0}>
-			<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
-		</Button>
-		{#if router.routes.length > 0}
-			<Button variant="ghost" size="sm" class="text-xs" onclick={() => router.clear()}>
-				Remove all
+	<!--
+		With nothing plugged in there is nothing to route from, so this row would
+		be a disabled button next to a sentence explaining a feature you cannot
+		reach. The empty state above already carries the one action that helps.
+	-->
+	{#if inputs.length > 0}
+		<div class="flex flex-wrap items-center gap-3">
+			<Button size="sm" class="gap-1.5" onclick={addRoute}>
+				<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
 			</Button>
-		{/if}
-		<span class="text-xs text-muted-foreground">
-			Routes are saved in this browser and keep working while you use the rest of the app.
-		</span>
-	</div>
+			{#if router.routes.length > 0}
+				<Button variant="ghost" size="sm" class="text-xs" onclick={() => router.clear()}>
+					Remove all
+				</Button>
+			{/if}
+			<span class="text-xs text-muted-foreground">
+				Routes are saved in this browser and keep working while you use the rest of the app.
+			</span>
+		</div>
+	{/if}
 
 	<!-- ── the routes ────────────────────────────────────────────────────── -->
 	<div class="flex flex-col gap-3">

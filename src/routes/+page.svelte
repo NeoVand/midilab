@@ -66,12 +66,12 @@
 			engine, so nothing is a diagram: press a key below and watch the actual bytes.
 		</p>
 		<div class="flex flex-wrap items-center gap-3 pt-1">
-			<Button href={lessonPath(nextLesson)} size="lg">
+			<Button href={lessonPath(nextLesson)} size="xl">
 				{overall > 0 ? 'Continue' : 'Start the course'}
 				<HugeiconsIcon icon={ArrowRight01Icon} size={16} />
 			</Button>
 			{#if midiAccess.status !== 'granted' && midiAccess.status !== 'unsupported'}
-				<Button variant="outline" size="lg" onclick={() => midiAccess.request(false)}>
+				<Button variant="outline" size="xl" onclick={() => midiAccess.request(false)}>
 					<HugeiconsIcon icon={PlugSocketIcon} size={16} />
 					Connect your hardware
 				</Button>
