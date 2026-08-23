@@ -38,7 +38,7 @@
 		<p class="max-w-[46ch] text-xs text-muted-foreground">{body}</p>
 	{/if}
 	{#if figure}
-		<div class="mt-1 w-full max-w-md opacity-70">{@render figure()}</div>
+		<div class="mt-1 w-full max-w-md opacity-90">{@render figure()}</div>
 	{/if}
 	{#if action}
 		<div class="mt-1 flex flex-wrap items-center justify-center gap-2">{@render action()}</div>

@@ -19,6 +19,8 @@
 	import { SequencePlayer, type ScheduledEvent } from '$lib/midi/player.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import EmptyState from '$lib/components/shell/EmptyState.svelte';
+	import SmfDiagram from './SmfDiagram.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import {
 		FileUploadIcon,
@@ -37,14 +39,12 @@
 	let filename = $state('');
 	let raw = $state<Uint8Array | null>(null);
 	let error = $state<string | null>(null);
+	let dragging = $state(false);
 	const player = new SequencePlayer();
 
 	const summary = $derived(file ? summarise(file) : null);
 
-	async function open(e: Event) {
-		const input = e.currentTarget as HTMLInputElement;
-		const f = input.files?.[0];
-		if (!f) return;
+	async function load(f: File) {
 		error = null;
 		try {
 			const buffer = await f.arrayBuffer();
@@ -55,7 +55,26 @@
 			error = err instanceof Error ? err.message : String(err);
 			file = null;
 			raw = null;
+			filename = f.name;
 		}
+	}
+
+	function open(e: Event) {
+		const input = e.currentTarget as HTMLInputElement;
+		const f = input.files?.[0];
+		if (f) load(f);
+	}
+
+	/*
+	 * Dropping a file onto the page is how people actually open one, and the
+	 * drop target is the whole panel — including after a file is already
+	 * loaded, so swapping files does not mean hunting for the button again.
+	 */
+	function onDrop(e: DragEvent) {
+		e.preventDefault();
+		dragging = false;
+		const f = e.dataTransfer?.files?.[0];
+		if (f) load(f);
 	}
 
 	function play() {
@@ -125,34 +144,77 @@
 	});
 </script>
 
-<div class={cn('flex flex-col gap-4', className)}>
-	<div class="flex flex-wrap items-center gap-3">
-		<label>
-			<input type="file" accept=".mid,.midi,audio/midi" class="sr-only" onchange={open} />
-			<span
-				class="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-			>
-				<HugeiconsIcon icon={FileUploadIcon} size={14} />
-				Open a .mid file
-			</span>
-		</label>
-		{#if file}
-			<Button variant="outline" size="sm" class="gap-1.5" onclick={play}>
+<div
+	class={cn('flex flex-col gap-4', className)}
+	role="region"
+	aria-label="MIDI file lab"
+	ondragover={(e) => {
+		e.preventDefault();
+		dragging = true;
+	}}
+	ondragleave={() => (dragging = false)}
+	ondrop={onDrop}
+>
+	{#if file}
+		<div class="flex flex-wrap items-center gap-3">
+			<label>
+				<input type="file" accept=".mid,.midi,audio/midi" class="sr-only" onchange={open} />
+				<span
+					class="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors hover:bg-accent"
+				>
+					<HugeiconsIcon icon={FileUploadIcon} size={13} />
+					Open another
+				</span>
+			</label>
+			<Button variant="default" size="sm" class="gap-1.5" onclick={play}>
 				<HugeiconsIcon icon={player.playing ? StopIcon : PlayIcon} size={14} />
 				{player.playing ? 'Stop' : 'Play it'}
 			</Button>
-		{/if}
-		<Button variant="outline" size="sm" class="gap-1.5" onclick={download}>
-			<HugeiconsIcon icon={CloudDownloadIcon} size={14} />
-			Write and download one
-		</Button>
-		{#if filename}
-			<span class="font-mono text-xs text-muted-foreground">{filename}</span>
-		{/if}
-	</div>
+			<Button variant="outline" size="sm" class="gap-1.5" onclick={download}>
+				<HugeiconsIcon icon={CloudDownloadIcon} size={14} />
+				Write one
+			</Button>
+			<span class="truncate font-mono text-xs text-muted-foreground">{filename}</span>
+		</div>
+	{:else}
+		<!--
+			The state this panel is in until you give it something. It has room to
+			say what a Standard MIDI File actually is, so it does — and the whole
+			panel is a drop target, because that is how a file gets opened.
+		-->
+		<EmptyState
+			icon={FileUploadIcon}
+			title="Drop a .mid file here"
+			body="It is parsed in the browser by a codec written from the specification — nothing is uploaded anywhere. You get the header byte by byte, every track, every event and its delta time, and you can play the whole thing through your own hardware."
+			class={cn('transition-colors', dragging && 'border-msg-note bg-msg-note-bg')}
+		>
+			{#snippet figure()}
+				<SmfDiagram />
+			{/snippet}
+			{#snippet action()}
+				<label>
+					<input type="file" accept=".mid,.midi,audio/midi" class="sr-only" onchange={open} />
+					<span
+						class="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+					>
+						<HugeiconsIcon icon={FileUploadIcon} size={14} />
+						Choose a file
+					</span>
+				</label>
+				<Button variant="outline" size="sm" class="gap-1.5" onclick={download}>
+					<HugeiconsIcon icon={CloudDownloadIcon} size={14} />
+					Write and download one
+				</Button>
+			{/snippet}
+		</EmptyState>
+	{/if}
 
 	{#if error}
-		<p class="text-sm text-destructive">{error}</p>
+		<p
+			class="rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+		>
+			<span class="font-mono">{filename}</span> could not be read: {error}
+		</p>
 	{/if}
 
 	{#if summary && file}
