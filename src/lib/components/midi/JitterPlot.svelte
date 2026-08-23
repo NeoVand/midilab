@@ -29,7 +29,7 @@
 <div class={cn('flex flex-col gap-2', className)}>
 	<div
 		class="panel-sunken graph-paper relative overflow-hidden rounded-lg border"
-		style="height: {height}px"
+		style="height: {stats ? height : Math.min(height, 56)}px"
 	>
 		{#if stats}
 			<div class="absolute inset-x-0 top-1/2 h-px bg-msg-clock/40"></div>
@@ -47,7 +47,9 @@
 				{/each}
 			</div>
 		{:else}
-			<p class="grid h-full place-items-center text-xs text-muted-foreground">no clock arriving</p>
+			<p class="grid h-full place-items-center px-6 text-center text-xs text-muted-foreground">
+				No clock arriving. Start one from a device into this page and its steadiness is drawn here.
+			</p>
 		{/if}
 	</div>
 	{#if stats}

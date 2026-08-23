@@ -17,17 +17,11 @@
 		title="Diagnostics"
 		lead="Measure instead of guessing: round-trip latency, incoming clock stability, scheduler accuracy — and a decision tree for when nothing is arriving at all."
 		back={{ href: '/lab', label: 'Lab' }}
-	>
-		{#snippet actions()}
-			<Button variant="destructive" size="sm" class="gap-1.5" onclick={() => engine.panic(true)}>
-				<HugeiconsIcon icon={DangerIcon} size={14} /> Full panic
-			</Button>
-		{/snippet}
-	</PageHeader>
+	/>
 
 	<section class="flex flex-col gap-3">
 		<h2 class="text-lg font-semibold tracking-tight">Round-trip latency</h2>
-		<p class="text-sm leading-relaxed text-muted-foreground">
+		<p class="measure text-sm text-muted-foreground">
 			Loop a MIDI output back into an input — physically, or with a virtual port such as the macOS
 			IAC Driver or loopMIDI on Windows — and this measures the real cost of a message leaving and
 			returning.
@@ -37,7 +31,7 @@
 
 	<section class="flex flex-col gap-3">
 		<h2 class="text-lg font-semibold tracking-tight">Incoming clock stability</h2>
-		<p class="text-sm leading-relaxed text-muted-foreground">
+		<p class="measure text-sm text-muted-foreground">
 			Start a clock from any device into this page. The average tells you its tempo; the spread
 			tells you whether it deserves to be your clock leader.
 		</p>
@@ -57,5 +51,19 @@
 	<section class="flex flex-col gap-3">
 		<h2 class="text-lg font-semibold tracking-tight">Nothing is arriving</h2>
 		<Troubleshooter />
+	</section>
+
+	<section class="flex flex-wrap items-center gap-4 rounded-lg border border-destructive/30 p-4">
+		<div class="min-w-0 flex-1">
+			<p class="text-sm font-medium">Last resort</p>
+			<p class="measure mt-1 text-xs text-muted-foreground">
+				An explicit Note Off for all 128 notes on all 16 channels — 2,048 messages. On a DIN cable
+				that takes about two seconds and you will hear it working. Use it when a device honours
+				neither All Notes Off nor All Sound Off.
+			</p>
+		</div>
+		<Button variant="destructive" size="sm" class="gap-1.5" onclick={() => engine.panic(true)}>
+			<HugeiconsIcon icon={DangerIcon} size={14} /> Sweep every note off
+		</Button>
 	</section>
 </div>

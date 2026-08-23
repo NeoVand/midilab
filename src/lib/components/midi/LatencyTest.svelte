@@ -13,6 +13,7 @@
 	import { engine } from '$lib/midi/engine.svelte';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import EmptyState from '$lib/components/shell/EmptyState.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { StopWatchIcon } from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
@@ -73,17 +74,14 @@
 </script>
 
 <div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
-	<div class="flex flex-wrap items-center gap-3">
-		<Button size="sm" class="gap-1.5" onclick={start} disabled={running || !ready}>
-			<HugeiconsIcon icon={StopWatchIcon} size={14} />
-			{running ? 'Measuring…' : 'Measure round trip'}
-		</Button>
-		{#if !ready}
-			<span class="text-xs text-muted-foreground">
-				Enable a hardware output and an input in the dock first, then loop one back into the other.
-			</span>
-		{/if}
-	</div>
+	{#if stats || running}
+		<div class="flex flex-wrap items-center gap-3">
+			<Button size="sm" class="gap-1.5" onclick={start} disabled={running || !ready}>
+				<HugeiconsIcon icon={StopWatchIcon} size={14} />
+				{running ? 'Measuring…' : 'Measure again'}
+			</Button>
+		</div>
+	{/if}
 
 	{#if stats}
 		<div class="flex flex-wrap gap-x-8 gap-y-2">
@@ -124,10 +122,20 @@
 			or two.
 		</p>
 	{:else if !running}
-		<p class="text-xs leading-relaxed text-muted-foreground">
-			No measurement yet. This needs a loop: connect a MIDI Out back to a MIDI In physically, or
-			create a virtual port (IAC Driver on macOS, loopMIDI on Windows) and enable both ends in the
-			dock.
-		</p>
+		<EmptyState
+			icon={StopWatchIcon}
+			class="border-0 py-2"
+			title={ready ? 'Ready to measure' : 'This one needs a loop'}
+			body={ready
+				? 'Sends twenty-four probe notes and times how long each takes to arrive back. The average is latency, which you can compensate for; the spread is jitter, which you cannot.'
+				: 'Connect a MIDI Out back to a MIDI In — physically, or with a virtual port such as the IAC Driver on macOS or loopMIDI on Windows — then enable both ends in the dock.'}
+		>
+			{#snippet action()}
+				<Button size="sm" class="gap-1.5" onclick={start} disabled={!ready}>
+					<HugeiconsIcon icon={StopWatchIcon} size={14} />
+					Measure round trip
+				</Button>
+			{/snippet}
+		</EmptyState>
 	{/if}
 </div>

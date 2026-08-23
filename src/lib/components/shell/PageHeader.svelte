@@ -21,7 +21,7 @@
 		{/if}
 		<h1 class="text-2xl font-semibold tracking-tight">{title}</h1>
 		{#if lead}
-			<p class="max-w-2xl text-sm leading-relaxed text-muted-foreground">{lead}</p>
+			<p class="measure text-sm text-muted-foreground">{lead}</p>
 		{/if}
 	</div>
 	{#if actions}
