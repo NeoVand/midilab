@@ -27,9 +27,12 @@
 </script>
 
 <div class={cn('flex flex-col gap-2', className)}>
+	<!-- Same height empty as full: a measurement panel that resizes the page the
+	     moment data arrives is a panel you cannot watch out of the corner of
+	     your eye, which is the only way anyone watches a jitter plot. -->
 	<div
 		class="panel-sunken graph-paper relative overflow-hidden rounded-lg border"
-		style="height: {stats ? height : Math.min(height, 56)}px"
+		style="height: {height}px"
 	>
 		{#if stats}
 			<div class="absolute inset-x-0 top-1/2 h-px bg-msg-clock/40"></div>

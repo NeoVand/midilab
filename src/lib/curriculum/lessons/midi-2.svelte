@@ -216,6 +216,14 @@
 			agree on high-resolution velocity and per-note expression without a mapping session.
 		</p>
 		<p class="prose-body">
+			On the hardware side the list is short but it is no longer theoretical. Roland's A-88MK2 took
+			UMP and Property Exchange in a firmware update; Native Instruments' Kontrol S-series MK3 and
+			Studiologic's SL mk2 speak UMP over USB; CME's WIDI adapters carry it over Bluetooth; and
+			Yamaha's Montage M and MODX and Waldorf's Quantum and Iridium handle high-resolution MIDI 2.0
+			messages. If you own one of those, the resolution and per-note expression are already there
+			waiting for a host that asks for them.
+		</p>
+		<p class="prose-body">
 			What has not: the instruments in most studios still speak MIDI 1.0, and no browser exposes
 			MIDI 2.0 through the Web MIDI API. Which means the packets on this page are UMP that this app
 			encoded itself, not UMP off a cable — the encoding is real and matches the specification, but

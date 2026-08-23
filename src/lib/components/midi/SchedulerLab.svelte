@@ -153,7 +153,7 @@
 				</span>
 			</p>
 		</div>
-		<div class="panel-sunken relative h-20 overflow-hidden rounded-lg border">
+		<div class="panel-sunken graph-paper relative h-20 overflow-hidden rounded-lg border">
 			<div class="absolute inset-x-0 top-1/2 h-px bg-msg-note/40"></div>
 			<div class="absolute inset-0 flex items-center gap-[3px] px-2">
 				{#each Array.from({ length: steps }, (_, i) => i) as i (i)}
