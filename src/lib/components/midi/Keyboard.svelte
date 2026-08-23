@@ -13,6 +13,7 @@
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { isBlackKey, noteName, pitchClass } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { channelColour } from '$lib/midi/channelcolour';
 	import { capturePointer, cn } from '$lib/utils';
 
 	interface Props {
@@ -180,6 +181,13 @@
 		onNoteOff?.(note);
 	}
 
+	/**
+	 * The "show note numbers" preference from Settings. It is additive: the
+	 * name still says what you are playing, the number says what the wire will
+	 * carry, and an engineer usually wants both in front of them at once.
+	 */
+	const numbered = $derived(settings.showNoteNumbers && labels !== 'numbers');
+
 	function labelFor(note: number): string {
 		if (labels === 'none') return '';
 		if (labels === 'numbers') return String(note);
@@ -188,11 +196,6 @@
 				? noteName(note, { convention: settings.octaveConvention })
 				: '';
 		return noteName(note, { convention: settings.octaveConvention });
-	}
-
-	const CHANNEL_HUES = [150, 262, 318, 75, 197, 20, 220, 100, 285, 340, 45, 175, 240, 300, 60, 210];
-	function channelColour(c: number): string {
-		return `oklch(0.7 0.17 ${CHANNEL_HUES[c % 16]})`;
 	}
 </script>
 
@@ -238,11 +241,12 @@
 						)} 26%, transparent) 100%)"
 					></span>
 				{/if}
-				{#if labelFor(note)}
+				{#if labelFor(note) || numbered}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center font-mono text-2xs text-black/40"
+						class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/40"
 					>
-						{labelFor(note)}
+						{#if labelFor(note)}<span>{labelFor(note)}</span>{/if}
+						{#if numbered}<span class="text-black/30">{note}</span>{/if}
 					</span>
 				{/if}
 			</button>
@@ -270,13 +274,15 @@
 				onpointerenter={(e) => onPointerEnter(note, e)}
 				aria-label={noteName(note, { convention: settings.octaveConvention })}
 			>
-				{#if labels === 'all' || labels === 'numbers'}
+				{#if labels === 'all' || labels === 'numbers' || numbered}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1 text-center font-mono text-2xs text-white/55"
+						class="pointer-events-none absolute inset-x-0 bottom-1 flex flex-col items-center gap-px font-mono text-2xs leading-none text-white/55"
 					>
-						{labels === 'numbers'
-							? note
-							: noteName(note, { convention: settings.octaveConvention, octave: false })}
+						{#if labels === 'all'}
+							<span>{noteName(note, { convention: settings.octaveConvention, octave: false })}</span
+							>
+						{/if}
+						{#if numbered || labels === 'numbers'}<span class="text-white/40">{note}</span>{/if}
 					</span>
 				{/if}
 			</button>

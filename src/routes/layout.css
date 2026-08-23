@@ -335,6 +335,20 @@
 	.scrollbar-thin::-webkit-scrollbar-track {
 		background: transparent;
 	}
+	/*
+	 * Reduce motion.
+	 *
+	 * Seeded from the OS preference and overridable in Settings. Every meter in
+	 * this app is driven by requestAnimationFrame rather than by CSS, so this
+	 * removes the decorative easing without freezing anything you need to read.
+	 */
+	.reduce-motion *,
+	.reduce-motion *::before,
+	.reduce-motion *::after {
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 1ms !important;
+	}
 	.no-drag {
 		-webkit-user-drag: none;
 		user-select: none;

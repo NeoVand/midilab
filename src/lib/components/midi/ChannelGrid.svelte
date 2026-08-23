@@ -12,6 +12,7 @@
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { synth } from '$lib/audio/synth';
 	import { gmProgramName } from '$lib/midi/constants';
+	import { channelColour } from '$lib/midi/channelcolour';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -22,8 +23,7 @@
 	}
 	let { selectable = true, compact = false, class: className }: Props = $props();
 
-	const CHANNEL_HUES = [150, 262, 318, 75, 197, 20, 220, 100, 285, 340, 45, 175, 240, 300, 60, 210];
-	const colour = (c: number) => `oklch(var(--channel-l) 0.17 ${CHANNEL_HUES[c % 16]})`;
+	const colour = channelColour;
 </script>
 
 <div class={cn('grid grid-cols-2 gap-1 sm:grid-cols-4 xl:grid-cols-8', className)}>
