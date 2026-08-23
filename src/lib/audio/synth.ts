@@ -294,9 +294,6 @@ export class Synth {
 	#out: GainNode | null = null;
 	#sweeper = 0;
 
-	/** Notes currently sounding, keyed `channel:note`. Drives keyboard highlighting. */
-	readonly active = new Set<string>();
-
 	constructor(engine: AudioEngine = audio) {
 		this.#engine = engine;
 	}
@@ -324,8 +321,13 @@ export class Synth {
 	#reap() {
 		const alive: Voice[] = [];
 		for (const v of this.#voices) {
-			if (v.finished) v.dispose();
-			else alive.push(v);
+			if (v.finished) {
+				v.dispose();
+				// A pedal-held voice that decayed on its own must leave the sustained
+				// set with it, or the set retains disposed voices for the life of the
+				// page and pedal-up walks a list of ghosts.
+				this.#sustained.delete(v);
+			} else alive.push(v);
 		}
 		this.#voices = alive;
 	}
@@ -375,7 +377,6 @@ export class Synth {
 		}
 		const state = this.channels[channel];
 		if (state.muted) return;
-		this.active.add(`${channel}:${note}`);
 		const when = audioTime ?? ctx.currentTime;
 
 		if (channel === DRUM_CHANNEL) {
@@ -415,7 +416,6 @@ export class Synth {
 	}
 
 	noteOff(channel: number, note: number, audioTime?: number): void {
-		this.active.delete(`${channel}:${note}`);
 		const state = this.channels[channel];
 		for (const v of this.#voices) {
 			if (v.channel === channel && v.note === note && !v.released) {
@@ -546,16 +546,24 @@ export class Synth {
 		for (const v of this.#voices) {
 			if (channel === undefined || v.channel === channel) v.release();
 		}
-		this.#sustained.clear();
-		this.#clearActive(channel);
+		this.#dropSustained(channel);
 	}
 
 	allSoundOff(channel?: number): void {
 		for (const v of this.#voices) {
 			if (channel === undefined || v.channel === channel) v.kill();
 		}
-		this.#sustained.clear();
-		this.#clearActive(channel);
+		this.#dropSustained(channel);
+	}
+
+	/**
+	 * All Notes Off on channel 3 must not forget channel 5's pedal-held voices:
+	 * they are still sounding, and dropping them from the set means the eventual
+	 * pedal-up has nothing to release and the note hangs forever.
+	 */
+	#dropSustained(channel?: number) {
+		if (channel === undefined) return this.#sustained.clear();
+		for (const v of this.#sustained) if (v.channel === channel) this.#sustained.delete(v);
 	}
 
 	resetControllers(channel?: number): void {
@@ -578,13 +586,6 @@ export class Synth {
 	reset(): void {
 		this.allSoundOff();
 		for (let i = 0; i < 16; i++) this.channels[i] = initialChannel();
-	}
-
-	#clearActive(channel?: number) {
-		if (channel === undefined) return this.active.clear();
-		for (const key of [...this.active]) {
-			if (key.startsWith(`${channel}:`)) this.active.delete(key);
-		}
 	}
 
 	#forEach(channel: number, fn: (v: Voice) => void) {
