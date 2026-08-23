@@ -1,1 +1,286 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn-svelte/tailwind.css';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.148 0.004 228.8);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.148 0.004 228.8);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.148 0.004 228.8);
+	--primary: oklch(0.218 0.008 223.9);
+	--primary-foreground: oklch(0.987 0.002 197.1);
+	--secondary: oklch(0.963 0.002 197.1);
+	--secondary-foreground: oklch(0.218 0.008 223.9);
+	--muted: oklch(0.963 0.002 197.1);
+	--muted-foreground: oklch(0.56 0.021 213.5);
+	--accent: oklch(0.963 0.002 197.1);
+	--accent-foreground: oklch(0.218 0.008 223.9);
+	--destructive: oklch(0.577 0.245 27.325);
+	--border: oklch(0.925 0.005 214.3);
+	--input: oklch(0.925 0.005 214.3);
+	--ring: oklch(0.723 0.014 214.4);
+	--chart-1: oklch(0.872 0.007 219.6);
+	--chart-2: oklch(0.56 0.021 213.5);
+	--chart-3: oklch(0.45 0.017 213.2);
+	--chart-4: oklch(0.378 0.015 216);
+	--chart-5: oklch(0.275 0.011 216.9);
+	--radius: 0.45rem;
+	--sidebar: oklch(0.987 0.002 197.1);
+	--sidebar-foreground: oklch(0.148 0.004 228.8);
+	--sidebar-primary: oklch(0.218 0.008 223.9);
+	--sidebar-primary-foreground: oklch(0.987 0.002 197.1);
+	--sidebar-accent: oklch(0.963 0.002 197.1);
+	--sidebar-accent-foreground: oklch(0.218 0.008 223.9);
+	--sidebar-border: oklch(0.925 0.005 214.3);
+	--sidebar-ring: oklch(0.723 0.014 214.4);
+}
+
+.dark {
+	--background: oklch(0.148 0.004 228.8);
+	--foreground: oklch(0.987 0.002 197.1);
+	--card: oklch(0.218 0.008 223.9);
+	--card-foreground: oklch(0.987 0.002 197.1);
+	--popover: oklch(0.218 0.008 223.9);
+	--popover-foreground: oklch(0.987 0.002 197.1);
+	--primary: oklch(0.925 0.005 214.3);
+	--primary-foreground: oklch(0.218 0.008 223.9);
+	--secondary: oklch(0.275 0.011 216.9);
+	--secondary-foreground: oklch(0.987 0.002 197.1);
+	--muted: oklch(0.275 0.011 216.9);
+	--muted-foreground: oklch(0.723 0.014 214.4);
+	--accent: oklch(0.275 0.011 216.9);
+	--accent-foreground: oklch(0.987 0.002 197.1);
+	--destructive: oklch(0.704 0.191 22.216);
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	--ring: oklch(0.56 0.021 213.5);
+	--chart-1: oklch(0.872 0.007 219.6);
+	--chart-2: oklch(0.56 0.021 213.5);
+	--chart-3: oklch(0.45 0.017 213.2);
+	--chart-4: oklch(0.378 0.015 216);
+	--chart-5: oklch(0.275 0.011 216.9);
+	--sidebar: oklch(0.218 0.008 223.9);
+	--sidebar-foreground: oklch(0.987 0.002 197.1);
+	--sidebar-primary: oklch(0.488 0.243 264.376);
+	--sidebar-primary-foreground: oklch(0.987 0.002 197.1);
+	--sidebar-accent: oklch(0.275 0.011 216.9);
+	--sidebar-accent-foreground: oklch(0.987 0.002 197.1);
+	--sidebar-border: oklch(1 0 0 / 10%);
+	--sidebar-ring: oklch(0.56 0.021 213.5);
+}
+
+@theme inline {
+	--font-sans: 'Inter Variable', sans-serif;
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar: var(--sidebar);
+	--color-chart-5: var(--chart-5);
+	--color-chart-4: var(--chart-4);
+	--color-chart-3: var(--chart-3);
+	--color-chart-2: var(--chart-2);
+	--color-chart-1: var(--chart-1);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+	--color-foreground: var(--foreground);
+	--color-background: var(--background);
+	--radius-sm: calc(var(--radius) * 0.6);
+	--radius-md: calc(var(--radius) * 0.8);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.4);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+	html {
+		@apply font-sans;
+	}
+}
+
+/* ============================================================================
+   MIDI Lab — message colour language
+   ----------------------------------------------------------------------------
+   One hue per message family, used with total consistency across the monitor,
+   the byte inspector, the piano roll, the routing graph and the sequencer
+   lanes. Learn it once in Act I; read a dense stream at a glance by Act VI.
+   ========================================================================== */
+
+:root {
+	/* family hues — L/C tuned for a white ground */
+	--msg-note: oklch(0.58 0.16 150);
+	--msg-note-bg: oklch(0.58 0.16 150 / 12%);
+	--msg-cc: oklch(0.56 0.19 262);
+	--msg-cc-bg: oklch(0.56 0.19 262 / 12%);
+	--msg-expr: oklch(0.58 0.2 318);
+	--msg-expr-bg: oklch(0.58 0.2 318 / 12%);
+	--msg-program: oklch(0.62 0.15 75);
+	--msg-program-bg: oklch(0.62 0.15 75 / 14%);
+	--msg-clock: oklch(0.6 0.09 197);
+	--msg-clock-bg: oklch(0.6 0.09 197 / 12%);
+	--msg-sysex: oklch(0.58 0.19 20);
+	--msg-sysex-bg: oklch(0.58 0.19 20 / 12%);
+	--msg-common: oklch(0.55 0.02 220);
+	--msg-common-bg: oklch(0.55 0.02 220 / 10%);
+
+	/* structural accents */
+	--wire: oklch(0.8 0.01 220);
+	--wire-active: var(--msg-note);
+	--grid-line: oklch(0.92 0.004 220);
+	--grid-line-strong: oklch(0.85 0.005 220);
+	--surface-sunken: oklch(0.975 0.002 220);
+	--surface-raised: oklch(1 0 0);
+	--key-white: oklch(0.995 0.001 220);
+	--key-black: oklch(0.28 0.008 224);
+	--readout: oklch(0.45 0.02 200);
+	--ok: oklch(0.58 0.15 150);
+	--warn: oklch(0.68 0.15 75);
+}
+
+.dark {
+	--msg-note: oklch(0.78 0.17 152);
+	--msg-note-bg: oklch(0.78 0.17 152 / 16%);
+	--msg-cc: oklch(0.72 0.16 264);
+	--msg-cc-bg: oklch(0.72 0.16 264 / 16%);
+	--msg-expr: oklch(0.75 0.19 320);
+	--msg-expr-bg: oklch(0.75 0.19 320 / 16%);
+	--msg-program: oklch(0.82 0.15 80);
+	--msg-program-bg: oklch(0.82 0.15 80 / 16%);
+	--msg-clock: oklch(0.74 0.1 197);
+	--msg-clock-bg: oklch(0.74 0.1 197 / 14%);
+	--msg-sysex: oklch(0.72 0.18 25);
+	--msg-sysex-bg: oklch(0.72 0.18 25 / 16%);
+	--msg-common: oklch(0.68 0.02 220);
+	--msg-common-bg: oklch(0.68 0.02 220 / 12%);
+
+	--wire: oklch(0.4 0.012 220);
+	--wire-active: var(--msg-note);
+	--grid-line: oklch(1 0 0 / 7%);
+	--grid-line-strong: oklch(1 0 0 / 13%);
+	--surface-sunken: oklch(0.118 0.004 228.8);
+	--surface-raised: oklch(0.218 0.008 223.9);
+	--key-white: oklch(0.9 0.003 220);
+	--key-black: oklch(0.2 0.008 224);
+	--readout: oklch(0.8 0.03 197);
+	--ok: oklch(0.78 0.16 152);
+	--warn: oklch(0.82 0.15 80);
+}
+
+@theme inline {
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
+
+	--color-msg-note: var(--msg-note);
+	--color-msg-note-bg: var(--msg-note-bg);
+	--color-msg-cc: var(--msg-cc);
+	--color-msg-cc-bg: var(--msg-cc-bg);
+	--color-msg-expr: var(--msg-expr);
+	--color-msg-expr-bg: var(--msg-expr-bg);
+	--color-msg-program: var(--msg-program);
+	--color-msg-program-bg: var(--msg-program-bg);
+	--color-msg-clock: var(--msg-clock);
+	--color-msg-clock-bg: var(--msg-clock-bg);
+	--color-msg-sysex: var(--msg-sysex);
+	--color-msg-sysex-bg: var(--msg-sysex-bg);
+	--color-msg-common: var(--msg-common);
+	--color-msg-common-bg: var(--msg-common-bg);
+
+	--color-wire: var(--wire);
+	--color-grid-line: var(--grid-line);
+	--color-grid-line-strong: var(--grid-line-strong);
+	--color-surface-sunken: var(--surface-sunken);
+	--color-surface-raised: var(--surface-raised);
+	--color-key-white: var(--key-white);
+	--color-key-black: var(--key-black);
+	--color-readout: var(--readout);
+	--color-ok: var(--ok);
+	--color-warn: var(--warn);
+}
+
+@layer base {
+	html {
+		color-scheme: light dark;
+	}
+	/* Tabular, slashed-zero numerics everywhere a value is read, not prose. */
+	.tnum {
+		font-variant-numeric: tabular-nums slashed-zero;
+	}
+	.font-mono {
+		font-variant-numeric: tabular-nums slashed-zero;
+		font-feature-settings: 'zero' 1;
+	}
+	::selection {
+		background: var(--msg-note-bg);
+	}
+}
+
+@layer components {
+	/* A recessed instrument panel — used for monitors, scopes, keybeds. */
+	.panel-sunken {
+		background: var(--surface-sunken);
+		box-shadow: inset 0 1px 2px oklch(0 0 0 / 6%);
+	}
+	/* Faint engineering graph paper, for scopes and timelines. */
+	.graph-paper {
+		background-image:
+			linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+			linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+		background-size: 16px 16px;
+	}
+	.focus-ring {
+		@apply outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50;
+	}
+}
+
+/* Scrollbars that belong to an instrument, not a document. */
+@layer utilities {
+	.scrollbar-thin {
+		scrollbar-width: thin;
+		scrollbar-color: var(--grid-line-strong) transparent;
+	}
+	.scrollbar-thin::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+	.scrollbar-thin::-webkit-scrollbar-thumb {
+		background: var(--grid-line-strong);
+		border-radius: 4px;
+	}
+	.scrollbar-thin::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	.no-drag {
+		-webkit-user-drag: none;
+		user-select: none;
+	}
+}
