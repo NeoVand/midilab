@@ -37,7 +37,13 @@
 	}
 </script>
 
-<div class={cn('flex flex-col gap-4', className)}>
+<!--
+	The panel fills whatever height the tray has been given. Left to size
+	itself it sat at the top with a hundred and twenty pixels of nothing
+	underneath, which reads as a layout that stopped halfway. Spare height now
+	goes inside the two lists, where it looks like room.
+-->
+<div class={cn('flex h-full min-h-0 flex-col gap-3', className)}>
 	{#if midiAccess.status === 'unsupported'}
 		<div class="flex gap-3 rounded-lg border border-warn/40 bg-warn/5 p-3">
 			<HugeiconsIcon icon={AlertCircleIcon} size={18} class="mt-0.5 shrink-0 text-warn" />
@@ -62,116 +68,143 @@
 		behind "not connected yet" told you that you had nothing to play, which
 		was never true.
 	-->
-	<div class={cn('grid gap-4', compact ? 'grid-cols-1' : 'sm:grid-cols-2')}>
+	<div class={cn('grid min-h-0 flex-1 gap-3', compact ? 'grid-cols-1' : 'sm:grid-cols-2')}>
 		<!-- Inputs -->
-		<section class="flex flex-col gap-1.5">
-			<header class="label flex items-center justify-between px-1">
+		<section class="panel-sunken flex min-h-0 flex-col overflow-hidden rounded-lg border">
+			<header class="label flex shrink-0 items-baseline justify-between border-b px-3 py-2">
 				<span>Inputs — listen</span>
 				{#if midiAccess.status === 'granted'}
-					<button
-						class="hover:text-foreground"
-						onclick={() => midiAccess.refresh()}
-						aria-label="Rescan ports"
-					>
-						<HugeiconsIcon icon={Refresh01Icon} size={13} />
-					</button>
+					<span class="font-mono text-muted-foreground">
+						{midiAccess.listening.length} of {midiAccess.inputs.length} open
+					</span>
 				{/if}
 			</header>
-
-			{#if midiAccess.status === 'unsupported'}
-				<p class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
-					No Web MIDI in this browser, so no inputs can exist here.
-				</p>
-			{:else if midiAccess.status !== 'granted'}
-				<div class="flex flex-col items-start gap-2.5 rounded-lg border p-3">
-					<p class="text-xs leading-relaxed text-muted-foreground">
-						The browser will ask permission. Nothing is opened automatically — you pick which ports
-						to listen to and which to send on.
+			<div class="flex min-h-0 flex-1 scrollbar-thin flex-col gap-1.5 overflow-y-auto p-2">
+				{#if midiAccess.status === 'unsupported'}
+					<p class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
+						No Web MIDI in this browser, so no inputs can exist here.
 					</p>
-					<Button
-						size="sm"
-						onclick={() => midiAccess.request(false)}
-						disabled={midiAccess.status === 'requesting'}
-					>
-						<HugeiconsIcon icon={PlugSocketIcon} size={15} />
-						{midiAccess.status === 'requesting' ? 'Asking…' : 'Connect MIDI'}
-					</Button>
-					{#if midiAccess.error}
-						<p class="text-xs text-destructive">{midiAccess.error}</p>
-					{/if}
-				</div>
-			{:else if midiAccess.inputs.length === 0}
-				<p class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
-					No MIDI inputs found. Plug something in — the list updates itself.
-				</p>
-			{:else}
-				{#each midiAccess.inputs as port (port.id)}
+				{:else if midiAccess.status !== 'granted'}
+					<div class="flex flex-col items-start gap-2.5 rounded-lg border p-3">
+						<p class="text-xs leading-relaxed text-muted-foreground">
+							The browser will ask permission. Nothing is opened automatically — you pick which
+							ports to listen to and which to send on.
+						</p>
+						<Button
+							size="sm"
+							onclick={() => midiAccess.request(false)}
+							disabled={midiAccess.status === 'requesting'}
+						>
+							<HugeiconsIcon icon={PlugSocketIcon} size={15} />
+							{midiAccess.status === 'requesting' ? 'Asking…' : 'Connect MIDI'}
+						</Button>
+						{#if midiAccess.error}
+							<p class="text-xs text-destructive">{midiAccess.error}</p>
+						{/if}
+					</div>
+				{:else if midiAccess.inputs.length === 0}
+					<p class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
+						No MIDI inputs found. Plug something in — the list updates itself.
+					</p>
+				{:else}
+					{#each midiAccess.inputs as port (port.id)}
+						<label
+							class={cn(
+								'flex cursor-pointer items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors hover:bg-accent/50',
+								midiAccess.isListening(port.id) && 'border-ring/60 bg-accent'
+							)}
+						>
+							<HugeiconsIcon
+								icon={transportIcon(port.name)}
+								size={15}
+								class={midiAccess.isListening(port.id)
+									? 'text-foreground'
+									: 'text-muted-foreground'}
+							/>
+							<span class="min-w-0 flex-1">
+								<span class="block truncate text-sm leading-tight">{port.name}</span>
+								{#if port.manufacturer}
+									<span class="block truncate text-xs text-muted-foreground"
+										>{port.manufacturer}</span
+									>
+								{/if}
+							</span>
+							{#if port.state === 'disconnected'}
+								<Badge variant="outline" class="text-2xs">offline</Badge>
+							{/if}
+							<Switch
+								checked={midiAccess.isListening(port.id)}
+								onCheckedChange={() => midiAccess.toggleListen(port.id)}
+								disabled={port.state === 'disconnected'}
+							/>
+						</label>
+					{/each}
+				{/if}
+			</div>
+		</section>
+
+		<!-- Outputs. Same row shape as inputs, down to the second line. -->
+		<section class="panel-sunken flex min-h-0 flex-col overflow-hidden rounded-lg border">
+			<header class="label flex shrink-0 items-baseline justify-between border-b px-3 py-2">
+				<span>Outputs — send</span>
+				<span class="font-mono text-muted-foreground">
+					{engine.activeOutputs.length} of {engine.outputs.length} open
+				</span>
+			</header>
+			<div class="flex min-h-0 flex-1 scrollbar-thin flex-col gap-1.5 overflow-y-auto p-2">
+				{#each engine.outputs as out (out.id)}
 					<label
 						class={cn(
 							'flex cursor-pointer items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors hover:bg-accent/50',
-							midiAccess.isListening(port.id) && 'border-ring/60 bg-accent'
+							engine.isOutputActive(out.id) && 'border-ring/60 bg-accent'
 						)}
 					>
 						<HugeiconsIcon
-							icon={transportIcon(port.name)}
+							icon={out.kind === 'internal' ? AudioWaveformIcon : transportIcon(out.name)}
 							size={15}
-							class={midiAccess.isListening(port.id) ? 'text-foreground' : 'text-muted-foreground'}
+							class={engine.isOutputActive(out.id) ? 'text-foreground' : 'text-muted-foreground'}
 						/>
 						<span class="min-w-0 flex-1">
-							<span class="block truncate text-sm leading-tight">{port.name}</span>
-							{#if port.manufacturer}
-								<span class="block truncate text-xs text-muted-foreground">{port.manufacturer}</span
-								>
+							<span class="block truncate text-sm leading-tight">{out.name}</span>
+							{#if out.subtitle}
+								<span class="block truncate text-xs text-muted-foreground">{out.subtitle}</span>
 							{/if}
 						</span>
-						{#if port.state === 'disconnected'}
+						{#if !out.connected}
 							<Badge variant="outline" class="text-2xs">offline</Badge>
 						{/if}
 						<Switch
-							checked={midiAccess.isListening(port.id)}
-							onCheckedChange={() => midiAccess.toggleListen(port.id)}
-							disabled={port.state === 'disconnected'}
+							checked={engine.isOutputActive(out.id)}
+							onCheckedChange={() => engine.toggleOutput(out.id)}
 						/>
 					</label>
 				{/each}
-			{/if}
-		</section>
-
-		<!-- Outputs -->
-		<section class="flex flex-col gap-1.5">
-			<header class="label px-1">Outputs — send</header>
-			{#each engine.outputs as out (out.id)}
-				<label
-					class={cn(
-						'flex cursor-pointer items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors hover:bg-accent/50',
-						engine.isOutputActive(out.id) && 'border-ring/60 bg-accent'
-					)}
-				>
-					<HugeiconsIcon
-						icon={out.kind === 'internal' ? AudioWaveformIcon : transportIcon(out.name)}
-						size={15}
-						class={engine.isOutputActive(out.id) ? 'text-foreground' : 'text-muted-foreground'}
-					/>
-					<span class="min-w-0 flex-1 truncate text-sm">{out.name}</span>
-					{#if !out.connected}
-						<Badge variant="outline" class="text-2xs">offline</Badge>
-					{/if}
-					<Switch
-						checked={engine.isOutputActive(out.id)}
-						onCheckedChange={() => engine.toggleOutput(out.id)}
-					/>
-				</label>
-			{/each}
-			{#if midiAccess.status !== 'granted' && midiAccess.status !== 'unsupported'}
-				<p class="px-1 text-2xs leading-relaxed text-muted-foreground">
-					Your hardware outputs join this list once you connect.
-				</p>
-			{/if}
+				{#if midiAccess.status !== 'granted' && midiAccess.status !== 'unsupported'}
+					<p class="px-1 text-2xs leading-relaxed text-muted-foreground">
+						Your hardware outputs join this list once you connect.
+					</p>
+				{/if}
+			</div>
 		</section>
 	</div>
 
+	<!--
+		Panel-level footer. Rescan used to be a bare icon in the Inputs header,
+		which made the two column headers different shapes for something that
+		re-reads both lists anyway.
+	-->
 	{#if midiAccess.status === 'granted'}
-		<div class="flex flex-wrap items-center gap-3 border-t pt-3">
+		<div class="flex shrink-0 flex-wrap items-center gap-3 border-t pt-3">
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-7 gap-1.5 text-xs"
+				onclick={() => midiAccess.refresh()}
+			>
+				<HugeiconsIcon icon={Refresh01Icon} size={13} />
+				Rescan ports
+			</Button>
+			<span class="h-4 w-px bg-border"></span>
 			<div class="flex items-center gap-2">
 				<HugeiconsIcon icon={LockIcon} size={14} class="text-muted-foreground" />
 				<span class="text-xs">

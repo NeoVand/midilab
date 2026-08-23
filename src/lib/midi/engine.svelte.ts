@@ -32,6 +32,13 @@ export const VIRTUAL_INPUT_NAME = 'MIDI Lab controls';
 export interface OutputTarget {
 	id: string;
 	name: string;
+	/**
+	 * Second line in the device list. Inputs have always shown the
+	 * manufacturer under the port name; outputs are the same three devices and
+	 * were showing one line, which put the two columns out of step by the third
+	 * row. They carry it too now.
+	 */
+	subtitle: string;
 	kind: 'internal' | 'hardware';
 	connected: boolean;
 }
@@ -58,7 +65,8 @@ export class MidiEngine {
 	get outputs(): OutputTarget[] {
 		const internal: OutputTarget = {
 			id: INTERNAL_OUTPUT_ID,
-			name: 'MIDI Lab Synth (internal)',
+			name: 'MIDI Lab Synth',
+			subtitle: 'Built into this page',
 			kind: 'internal',
 			connected: true
 		};
@@ -67,6 +75,7 @@ export class MidiEngine {
 			...midiAccess.outputs.map((p) => ({
 				id: p.id,
 				name: p.name,
+				subtitle: p.manufacturer,
 				kind: 'hardware' as const,
 				connected: p.state === 'connected'
 			}))
