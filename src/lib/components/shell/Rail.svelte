@@ -82,7 +82,7 @@
 						>
 							{#if active}
 								<span
-									class="absolute top-1/2 -left-[9px] h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-msg-note"
+									class="absolute top-1/2 -left-[9px] h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-foreground"
 								></span>
 							{/if}
 							<HugeiconsIcon icon={item.icon} size={20} strokeWidth={1.7} />

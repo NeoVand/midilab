@@ -51,7 +51,7 @@
 					</span>
 					<div class="h-1.5 w-40 overflow-hidden rounded-full bg-border">
 						<div
-							class="h-full rounded-full bg-msg-note transition-[width] duration-500"
+							class="h-full rounded-full bg-ok transition-[width] duration-500"
 							style="width: {Math.max(overall * 100, overall > 0 ? 2 : 0)}%"
 						></div>
 					</div>
@@ -96,7 +96,7 @@
 							)}
 						>
 							{#if isNext && doneLessons > 0}
-								<span class="absolute inset-y-0 left-0 w-[3px] bg-msg-note"></span>
+								<span class="absolute inset-y-0 left-0 w-[3px] bg-ok"></span>
 							{/if}
 							<span
 								class={cn(
