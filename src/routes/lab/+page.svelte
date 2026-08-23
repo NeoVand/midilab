@@ -114,23 +114,33 @@
 		{#each tools as tool (tool.href)}
 			<a
 				href={tool.href}
-				class="group flex flex-col gap-2 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
+				class="group flex flex-col gap-2.5 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 			>
-				<div class="flex items-start justify-between gap-2">
-					<HugeiconsIcon
-						icon={tool.icon}
-						size={20}
-						class="text-muted-foreground transition-colors group-hover:text-foreground"
-					/>
+				<!--
+					Mark and name on one line. The icon used to sit alone on a row of
+					its own above the title, which left it reading as a stray glyph
+					rather than the card's mark.
+				-->
+				<div class="flex items-center gap-3">
+					<span
+						class="grid size-9 shrink-0 place-items-center rounded-lg border bg-surface-sunken transition-colors group-hover:border-foreground/25 group-hover:bg-accent"
+					>
+						<HugeiconsIcon
+							icon={tool.icon}
+							size={18}
+							strokeWidth={1.6}
+							class="text-muted-foreground transition-colors group-hover:text-foreground"
+						/>
+					</span>
+					<h2 class="min-w-0 flex-1 leading-tight font-medium">{tool.name}</h2>
 					{#if tool.badge}
 						<span
-							class="tnum rounded-full border px-1.5 py-0.5 font-mono text-2xs text-muted-foreground"
+							class="tnum shrink-0 rounded-full border px-1.5 py-0.5 font-mono text-2xs text-muted-foreground"
 						>
 							{tool.badge}
 						</span>
 					{/if}
 				</div>
-				<h2 class="font-medium">{tool.name}</h2>
 				<p class="text-sm leading-relaxed text-muted-foreground">{tool.desc}</p>
 				<p class="mt-auto border-t pt-2.5 text-2xs leading-relaxed text-muted-foreground">
 					{tool.contents}
