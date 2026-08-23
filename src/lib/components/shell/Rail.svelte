@@ -5,6 +5,7 @@
 		GraduationCapIcon,
 		FlaskConicalIcon,
 		LibraryIcon,
+		MusicNote02Icon,
 		Settings02Icon,
 		Sun03Icon,
 		Moon02Icon,
@@ -63,14 +64,7 @@
 	aria-label="Primary"
 >
 	<a href="/" class="mb-2.5 grid size-8 place-items-center" aria-label="MIDI Lab home">
-		<!-- The mark: a status byte's high bit, then seven data bits. -->
-		<svg viewBox="0 0 24 24" class="size-6" aria-hidden="true">
-			<rect x="1" y="4" width="4" height="16" rx="1.2" fill="var(--msg-note)" />
-			<rect x="7" y="7" width="2.4" height="10" rx="1" fill="currentColor" opacity="0.85" />
-			<rect x="11" y="9.5" width="2.4" height="5" rx="1" fill="currentColor" opacity="0.55" />
-			<rect x="15" y="7" width="2.4" height="10" rx="1" fill="currentColor" opacity="0.85" />
-			<rect x="19" y="10.5" width="2.4" height="3" rx="1" fill="currentColor" opacity="0.4" />
-		</svg>
+		<HugeiconsIcon icon={MusicNote02Icon} size={22} strokeWidth={1.7} class="text-msg-note" />
 	</a>
 
 	{#each items as item (item.href)}

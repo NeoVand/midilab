@@ -9,6 +9,8 @@
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import NoteExplorer from '$lib/components/midi/NoteExplorer.svelte';
 	import PhrasePlayer from '$lib/components/midi/PhrasePlayer.svelte';
+	import Harmonics from '$lib/components/midi/Harmonics.svelte';
+	import Scope from '$lib/components/midi/Scope.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -168,6 +170,33 @@
 			60-64-67, then 60-63-67. The middle note moved down by one. That is the entire difference
 			between happy and sad, expressed as arithmetic.
 		</p>
+	</Section>
+
+	<Section title="One note is not one frequency">
+		<p class="prose-body">
+			Play a low note and watch the analyser: it lights up in half a dozen places, not one. That is
+			not the analyser being confused. An instrument sounding a single note puts out a whole series
+			of them, at whole-number multiples of the fundamental, and the balance between those is most
+			of what makes a trumpet sound like a trumpet and not like a flute playing the same note.
+		</p>
+		<Scope label="Whatever is sounding" height={120} />
+		<p class="prose-body">
+			The series is also where the intervals in the last section came from. The second harmonic is
+			an octave. The third is a fifth above that. The fifth is a major third. Every interval a
+			musician names is already sitting inside one note, which is why they sound like anything at
+			all rather than like arbitrary distances.
+		</p>
+		<Harmonics />
+		<Callout
+			variant="gotcha"
+			title="The keyboard is a compromise, and this is where you can see it"
+		>
+			The ratios are exact; the keys are not. An equal-tempered keyboard divides the octave into
+			twelve identical steps so that every key works in every key signature, and pays for it by
+			putting almost every interval slightly off its pure ratio. The seventh harmonic is the extreme
+			case — a third of a semitone flat of the note everyone calls it, which is why it sounds wrong
+			on a piano and right on a horn.
+		</Callout>
 	</Section>
 
 	<TryThis title="Play it yourself">

@@ -182,8 +182,13 @@
 			<span class="label" class:text-ok={sounding}>{sounding ? 'sounding' : 'silent'}</span>
 		</div>
 	{/if}
+	<!--
+		`flex-1` only in the bare form, where the panel around it sets the height.
+		In the standalone card the height prop is the height, and a flex-basis of
+		zero would win against it and collapse the whole thing to its axis.
+	-->
 	<div
-		class={cn('relative min-h-0 w-full flex-1', !bare && 'panel-sunken')}
+		class={cn('relative w-full', bare ? 'min-h-0 flex-1' : 'panel-sunken shrink-0')}
 		style={bare ? undefined : `height: ${height}px`}
 	>
 		<!--

@@ -5,6 +5,7 @@
 	import ActivityStrip from '$lib/components/midi/ActivityStrip.svelte';
 	import ChannelState from '$lib/components/midi/ChannelState.svelte';
 	import WireView from '$lib/components/midi/WireView.svelte';
+	import WireLoad from '$lib/components/midi/WireLoad.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import type { MidiEvent } from '$lib/midi/bus';
@@ -110,6 +111,12 @@
 			</span>
 		{/if}
 		<div class="flex-1"></div>
+		<!--
+			What this traffic would cost on the wire MIDI was designed for. Over
+			USB it costs nothing like it — the point is the shape of the limit the
+			protocol still carries the scars of.
+		-->
+		<WireLoad class="w-56 shrink-0" />
 		<span class="tnum font-mono text-xs text-muted-foreground">
 			{monitor.rate}/s · {monitor.total} buffered
 		</span>
