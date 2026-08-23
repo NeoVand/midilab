@@ -43,7 +43,7 @@
 	underneath, which reads as a layout that stopped halfway. Spare height now
 	goes inside the two lists, where it looks like room.
 -->
-<div class={cn('flex h-full min-h-0 flex-col gap-3', className)}>
+<div class={cn('flex min-h-full flex-col gap-3', className)}>
 	{#if midiAccess.status === 'unsupported'}
 		<div class="flex gap-3 rounded-lg border border-warn/40 bg-warn/5 p-3">
 			<HugeiconsIcon icon={AlertCircleIcon} size={18} class="mt-0.5 shrink-0 text-warn" />
@@ -70,7 +70,7 @@
 	-->
 	<div class={cn('grid min-h-0 flex-1 gap-3', compact ? 'grid-cols-1' : 'sm:grid-cols-2')}>
 		<!-- Inputs -->
-		<section class="panel-sunken flex min-h-0 flex-col overflow-hidden rounded-lg border">
+		<section class="panel-sunken flex min-h-32 flex-col overflow-hidden rounded-lg border">
 			<header class="label flex shrink-0 items-baseline justify-between border-b px-3 py-2">
 				<span>Inputs — listen</span>
 				{#if midiAccess.status === 'granted'}
@@ -144,7 +144,7 @@
 		</section>
 
 		<!-- Outputs. Same row shape as inputs, down to the second line. -->
-		<section class="panel-sunken flex min-h-0 flex-col overflow-hidden rounded-lg border">
+		<section class="panel-sunken flex min-h-32 flex-col overflow-hidden rounded-lg border">
 			<header class="label flex shrink-0 items-baseline justify-between border-b px-3 py-2">
 				<span>Outputs — send</span>
 				<span class="font-mono text-muted-foreground">
