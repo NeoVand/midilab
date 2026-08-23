@@ -11,8 +11,9 @@
 	import { bus } from '$lib/midi/bus';
 	import { ccInfo } from '$lib/midi/constants';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { Delete02Icon } from '@hugeicons/core-free-icons';
+	import { Delete02Icon, PlugSocketIcon } from '@hugeicons/core-free-icons';
 	import { Button } from '$lib/components/ui/button';
+	import { midiAccess } from '$lib/midi/access.svelte';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -78,9 +79,27 @@
 		</Button>
 	</div>
 
-	{#if seen.length === 0}
+	{#if seen.length === 0 && incomingOnly && midiAccess.listening.length === 0}
+		<div class="flex flex-col items-center gap-3 p-5 text-center">
+			<p class="max-w-[52ch] text-xs leading-relaxed text-muted-foreground">
+				{#if midiAccess.status === 'unsupported'}
+					This browser has no Web MIDI, so nothing can arrive here. Chrome, Edge or Firefox can
+					watch a controller; everything else in the app still works.
+				{:else if midiAccess.status === 'granted'}
+					Nothing is being listened to yet. Switch on an input in the dock, then move a knob.
+				{:else}
+					Nothing is connected yet.
+				{/if}
+			</p>
+			{#if midiAccess.status !== 'granted' && midiAccess.status !== 'unsupported'}
+				<Button size="sm" class="gap-1.5" onclick={() => midiAccess.request(false)}>
+					<HugeiconsIcon icon={PlugSocketIcon} size={14} /> Connect MIDI
+				</Button>
+			{/if}
+		</div>
+	{:else if seen.length === 0}
 		<p class="p-4 text-center text-xs leading-relaxed text-muted-foreground">
-			Move a knob, fader, wheel or pedal on your controller.<br />
+			Move a knob, fader, wheel or pedal{incomingOnly ? ' on your controller' : ''}.<br />
 			Whatever it sends will appear here with its number and range.
 		</p>
 	{:else}
