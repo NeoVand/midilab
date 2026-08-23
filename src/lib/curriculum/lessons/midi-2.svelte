@@ -208,12 +208,24 @@
 			nothing you learn here is wasted.
 		</p>
 		<p class="text-base leading-relaxed">
-			But shipping hardware remains scarce, browser support for MIDI 2.0 is not there, and the
-			instruments in your studio almost certainly speak MIDI 1.0. The right posture is: understand
-			the shape of it, recognise the terminology, and keep building on MIDI 1.0 with an architecture
-			that will not need tearing up when 2.0 arrives properly.
+			What has actually shipped: operating-system support is real on all three desktop platforms —
+			CoreMIDI has carried UMP since macOS Monterey, Windows MIDI Services brings a universal USB
+			MIDI 2.0 class driver, and Linux carries UMP through ALSA and PipeWire. And the first Profiles
+			have moved from drafts to approved documents — Piano, Drum Note Mapping, and Note-On
+			Orchestral Articulation — so a compatible controller and a compatible piano instrument can now
+			agree on high-resolution velocity and per-note expression without a mapping session.
 		</p>
-		<p class="text-base leading-relaxed">Which is what the rest of this course does.</p>
+		<p class="text-base leading-relaxed">
+			What has not: the instruments in most studios still speak MIDI 1.0, and no browser exposes
+			MIDI 2.0 through the Web MIDI API. Which means the packets on this page are UMP that this app
+			encoded itself, not UMP off a cable — the encoding is real and matches the specification, but
+			nothing here has ever seen a MIDI 2.0 device.
+		</p>
+		<p class="text-base leading-relaxed">
+			The right posture is: understand the shape of it, recognise the terminology, and keep building
+			on MIDI 1.0 with an architecture that will not need tearing up when 2.0 arrives properly.
+			Which is what the rest of this course does.
+		</p>
 	</Section>
 
 	<Quiz
