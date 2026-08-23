@@ -282,7 +282,9 @@ rows, pad banks, the channel strip, the note map, the GM tables — is a single
 tab stop with arrow movement inside it, the way your hands already use a
 hardware grid; the Programmer went from 150 tab stops to 47 and the Reference
 note map from 128 to one. Focus is always visible; mouse users never see it,
-keyboard users cannot work without it.
+keyboard users cannot work without it, and the ring itself clears 3:1 against
+every surface it can land on — a focus indicator you have to hunt for is not
+one.
 
 **Motion** is physical and restrained — notes bloom, packets travel, meters
 decay; nothing bounces for decoration. All of it is CSS, and all of it is

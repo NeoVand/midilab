@@ -62,6 +62,18 @@
 		'common'
 	];
 
+	/*
+	 * The ports the buffer has actually seen. With one interface a port filter
+	 * is a control with one option, so it does not appear; the moment a second
+	 * device shows up it does.
+	 */
+	const seenPorts = $derived.by(() => {
+		void monitor.version;
+		const map = new Map<string, string>();
+		for (const e of monitor.events) if (!map.has(e.portId)) map.set(e.portId, e.portName);
+		return [...map].map(([id, name]) => ({ id, name }));
+	});
+
 	/** Where the fill sits in the track, as CSS percentages from each edge. */
 	function bar(e: MidiEvent) {
 		const m = magnitude(e.message);
@@ -191,6 +203,33 @@
 							{/each}
 						</div>
 					</div>
+
+					{#if seenPorts.length > 1}
+						<div class="flex flex-col gap-1.5">
+							<span class="label flex items-baseline justify-between">
+								Ports
+								<span class="text-muted-foreground normal-case">
+									{monitor.ports.length ? `${monitor.ports.length} selected` : 'all'}
+								</span>
+							</span>
+							{#each seenPorts as port (port.id)}
+								{@const on = monitor.ports.includes(port.id)}
+								<button
+									class={cn(
+										'truncate rounded-sm px-1.5 py-1 text-left text-xs transition-colors hover:bg-accent',
+										on ? 'text-msg-cc' : 'text-muted-foreground'
+									)}
+									aria-pressed={on}
+									onclick={() =>
+										(monitor.ports = on
+											? monitor.ports.filter((x) => x !== port.id)
+											: [...monitor.ports, port.id])}
+								>
+									{port.name}
+								</button>
+							{/each}
+						</div>
+					{/if}
 
 					{#if monitor.filtering}
 						<button
