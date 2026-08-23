@@ -371,8 +371,14 @@
 				</Tooltip.Root>
 			</div>
 
+			<!--
+				The widest zone on the bar, and it used to render nothing at all until
+				the first message arrived: an empty six-hundred-pixel button where the
+				run of dividers simply stopped. It keeps its divider like every other
+				zone, and says what it is for while it waits.
+			-->
 			<button
-				class="min-w-0 flex-1 justify-start overflow-hidden !border-l-0 text-left hover:bg-accent/50"
+				class="min-w-0 flex-1 justify-start overflow-hidden text-left hover:bg-accent/50"
 				onclick={() => openDock('monitor')}
 				aria-label="Most recent message — open the monitor"
 			>
@@ -389,6 +395,10 @@
 					</span>
 					<span class="truncate text-xs text-muted-foreground">
 						{shortLabel(latest.message, { octaveConvention: settings.octaveConvention })}
+					</span>
+				{:else}
+					<span class="truncate text-xs text-muted-foreground">
+						The last message will show here
 					</span>
 				{/if}
 			</button>
