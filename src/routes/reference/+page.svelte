@@ -306,7 +306,7 @@
 		'flex items-baseline gap-2 rounded-md border bg-card px-2.5 py-1.5 text-left text-xs transition-colors';
 </script>
 
-<div class="mx-auto flex w-full max-w-5xl flex-col gap-6 px-8 py-8">
+<div class="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 sm:px-8">
 	<PageHeader
 		title="Reference"
 		lead="The tables you keep coming back to — the same data the rest of the app runs on."

@@ -35,7 +35,7 @@
 	};
 </script>
 
-<article class="mx-auto flex w-full max-w-[54rem] flex-col gap-10 px-8 py-10">
+<article class="mx-auto flex w-full max-w-[54rem] flex-col gap-10 px-4 py-10 sm:px-8">
 	<header class="flex flex-col gap-3">
 		<div class="flex items-center gap-2 text-xs text-muted-foreground">
 			<a href={path('/learn')} class="hover:text-foreground">Learn</a>

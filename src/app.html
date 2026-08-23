@@ -2,7 +2,13 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--
+			`viewport-fit=cover` is what makes `env(safe-area-inset-*)` report
+			anything other than zero. Without it the app stops short of the
+			rounded corners on a phone and the padding meant to clear the home
+			indicator silently does nothing.
+		-->
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<meta name="text-scale" content="scale" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
 

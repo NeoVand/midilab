@@ -172,196 +172,213 @@
 		</div>
 	{/if}
 	<!-- ── collapsed bar ─────────────────────────────────────────────────── -->
+	<!--
+		A strip that scrolls, with two things nailed down.
+		
+		Seven groups of controls need about six hundred pixels, and a phone has
+		three hundred and seventy-five. Hiding some of them would mean a capability
+		that exists on a desktop and not in a hand, which is not the deal. So the
+		strip scrolls sideways — a transport that runs off the edge of a small
+		panel is a thing every piece of hardware in this field does — and the two
+		controls you must never have to go looking for are pinned outside it:
+		panic, and the handle that opens the tray.
+		
+		At a desktop width there is no overflow, nothing scrolls, and the result
+		is pixel-for-pixel what it was.
+	-->
 	<div
 		class={cn(
-			'flex h-12 shrink-0 items-center divide-x divide-border [&>*]:flex [&>*]:h-full [&>*]:items-center [&>*]:gap-1.5 [&>*]:px-3',
+			'flex h-12 shrink-0 items-stretch',
 			// Without this the tray opened straight out of the toolbar with nothing
 			// between them, so the tab row read as a stray line rather than the top
 			// of a panel.
 			settings.dockOpen && 'border-b'
 		)}
 	>
-		<Tooltip.Provider delayDuration={400}>
-			<!-- transport -->
-			<div class="!pl-2">
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						{#snippet child({ props })}
-							<Button
-								{...props}
-								variant="ghost"
-								size="icon"
-								class="size-7"
-								onclick={() => transport.rewind()}
-								aria-label="Return to start"
-							>
-								<HugeiconsIcon icon={BackwardIcon} size={14} />
-							</Button>
-						{/snippet}
-					</Tooltip.Trigger>
-					<Tooltip.Content side="top">Return to the start</Tooltip.Content>
-				</Tooltip.Root>
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						{#snippet child({ props })}
-							<Button
-								{...props}
-								variant={transport.playing ? 'default' : 'secondary'}
-								size="icon"
-								class="size-7"
-								onclick={toggleTransport}
-								aria-label={transport.playing ? 'Stop' : 'Play'}
-							>
-								<HugeiconsIcon icon={transport.playing ? StopIcon : PlayIcon} size={14} />
-							</Button>
-						{/snippet}
-					</Tooltip.Trigger>
-					<Tooltip.Content side="top" class="flex items-center gap-2">
-						{transport.playing ? 'Stop' : 'Play'}
-						<kbd class="rounded-xs bg-foreground/15 px-1 font-mono text-2xs">space</kbd>
-					</Tooltip.Content>
-				</Tooltip.Root>
-			</div>
+		<div
+			class="flex min-w-0 flex-1 scrollbar-none items-center divide-x divide-border overflow-x-auto [&>*]:flex [&>*]:h-full [&>*]:shrink-0 [&>*]:items-center [&>*]:gap-1.5 [&>*]:px-3"
+		>
+			<Tooltip.Provider delayDuration={400}>
+				<!-- transport -->
+				<div class="!pl-2">
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							{#snippet child({ props })}
+								<Button
+									{...props}
+									variant="ghost"
+									size="icon"
+									class="size-7"
+									onclick={() => transport.rewind()}
+									aria-label="Return to start"
+								>
+									<HugeiconsIcon icon={BackwardIcon} size={14} />
+								</Button>
+							{/snippet}
+						</Tooltip.Trigger>
+						<Tooltip.Content side="top">Return to the start</Tooltip.Content>
+					</Tooltip.Root>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							{#snippet child({ props })}
+								<Button
+									{...props}
+									variant={transport.playing ? 'default' : 'secondary'}
+									size="icon"
+									class="size-7"
+									onclick={toggleTransport}
+									aria-label={transport.playing ? 'Stop' : 'Play'}
+								>
+									<HugeiconsIcon icon={transport.playing ? StopIcon : PlayIcon} size={14} />
+								</Button>
+							{/snippet}
+						</Tooltip.Trigger>
+						<Tooltip.Content side="top" class="flex items-center gap-2">
+							{transport.playing ? 'Stop' : 'Play'}
+							<kbd class="rounded-xs bg-foreground/15 px-1 font-mono text-2xs">space</kbd>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</div>
 
-			<!-- position and tempo -->
-			<div>
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						{#snippet child({ props })}
-							<span {...props} class="tnum font-mono text-sm text-readout tabular-nums">
-								{position}
-							</span>
-						{/snippet}
-					</Tooltip.Trigger>
-					<Tooltip.Content side="top">Bar · beat · sixteenth</Tooltip.Content>
-				</Tooltip.Root>
-				<TempoField compact />
-			</div>
+				<!-- position and tempo -->
+				<div>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							{#snippet child({ props })}
+								<span {...props} class="tnum font-mono text-sm text-readout tabular-nums">
+									{position}
+								</span>
+							{/snippet}
+						</Tooltip.Trigger>
+						<Tooltip.Content side="top">Bar · beat · sixteenth</Tooltip.Content>
+					</Tooltip.Root>
+					<TempoField compact />
+				</div>
 
-			<!--
+				<!--
 				Click and clock, which are two different things and used to share one
 				button and a metronome icon: pressing it sent MIDI Clock to hardware
 				and made no sound, so the transport ran silently and the icon lied
 				about what it did.
 			-->
-			<div>
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						{#snippet child({ props })}
-							<Button
-								{...props}
-								variant="ghost"
-								size="icon"
-								class={cn('size-7', metronome.enabled && 'bg-accent text-foreground')}
-								onclick={() => metronome.toggle()}
-								aria-label="Metronome click"
-								aria-pressed={metronome.enabled}
-							>
-								<HugeiconsIcon icon={MetronomeIcon} size={14} />
-							</Button>
-						{/snippet}
-					</Tooltip.Trigger>
-					<Tooltip.Content side="top" class="max-w-56">
-						{metronome.enabled
-							? 'Click is on — accented on beat one'
-							: 'Click on every beat while the transport runs'}
-					</Tooltip.Content>
-				</Tooltip.Root>
-
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						{#snippet child({ props })}
-							<Button
-								{...props}
-								variant="ghost"
-								size="icon"
-								class={cn('size-7', transport.sendClock && 'bg-msg-clock-bg text-msg-clock')}
-								onclick={() => (transport.sendClock = !transport.sendClock)}
-								aria-label="Send MIDI clock"
-								aria-pressed={transport.sendClock}
-							>
-								<HugeiconsIcon icon={ConnectIcon} size={14} />
-							</Button>
-						{/snippet}
-					</Tooltip.Trigger>
-					<Tooltip.Content side="top" class="max-w-56">
-						{transport.sendClock
-							? 'Sending MIDI Clock — this machine is the clock leader'
-							: 'Send MIDI Clock to hardware, making this machine the clock leader'}
-					</Tooltip.Content>
-				</Tooltip.Root>
-
-				{#if transport.externalPresent}
+				<div>
 					<Tooltip.Root>
 						<Tooltip.Trigger>
 							{#snippet child({ props })}
-								<span {...props} class="tnum font-mono text-xs text-msg-clock">
-									ext {transport.externalBpm.toFixed(1)}
-									<span class="text-muted-foreground">
-										±{transport.externalJitter.toFixed(1)}
-									</span>
-								</span>
+								<Button
+									{...props}
+									variant="ghost"
+									size="icon"
+									class={cn('size-7', metronome.enabled && 'bg-accent text-foreground')}
+									onclick={() => metronome.toggle()}
+									aria-label="Metronome click"
+									aria-pressed={metronome.enabled}
+								>
+									<HugeiconsIcon icon={MetronomeIcon} size={14} />
+								</Button>
 							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Content side="top" class="max-w-56">
-							An external clock is arriving. The second figure is its jitter in milliseconds — the
-							spread, not the average, is what you hear.
+							{metronome.enabled
+								? 'Click is on — accented on beat one'
+								: 'Click on every beat while the transport runs'}
 						</Tooltip.Content>
 					</Tooltip.Root>
-				{/if}
-			</div>
 
-			<!-- ports -->
-			<div class="!px-0">
-				{#if connected}
 					<Tooltip.Root>
 						<Tooltip.Trigger>
 							{#snippet child({ props })}
-								<button
+								<Button
 									{...props}
-									class="flex h-full items-center gap-1.5 px-3 text-sm hover:bg-accent"
-									onclick={() => openDock('devices')}
+									variant="ghost"
+									size="icon"
+									class={cn('size-7', transport.sendClock && 'bg-msg-clock-bg text-msg-clock')}
+									onclick={() => (transport.sendClock = !transport.sendClock)}
+									aria-label="Send MIDI clock"
+									aria-pressed={transport.sendClock}
 								>
-									<HugeiconsIcon icon={PlugSocketIcon} size={14} class="text-muted-foreground" />
-									<span class="tnum font-mono">
-										<span class={inCount ? 'text-foreground' : 'text-muted-foreground'}
-											>{inCount}</span
-										>
-										<span class="text-muted-foreground">in</span>
-										<span class="mx-0.5 text-muted-foreground">/</span>
-										<span class={outCount ? 'text-foreground' : 'text-muted-foreground'}>
-											{outCount}
-										</span>
-										<span class="text-muted-foreground">out</span>
-									</span>
-								</button>
+									<HugeiconsIcon icon={ConnectIcon} size={14} />
+								</Button>
 							{/snippet}
 						</Tooltip.Trigger>
-						<Tooltip.Content side="top">Hardware ports open — click to manage</Tooltip.Content>
+						<Tooltip.Content side="top" class="max-w-56">
+							{transport.sendClock
+								? 'Sending MIDI Clock — this machine is the clock leader'
+								: 'Send MIDI Clock to hardware, making this machine the clock leader'}
+						</Tooltip.Content>
 					</Tooltip.Root>
-				{:else}
-					<div class="px-3">
-						<Button
-							variant="outline"
-							size="sm"
-							class="h-7 gap-1.5"
-							onclick={() => openDock('devices')}
-						>
-							<HugeiconsIcon icon={PlugSocketIcon} size={14} />
-							Connect MIDI
-						</Button>
-					</div>
-				{/if}
-			</div>
 
-			<!-- activity -->
-			<div class="!px-0">
-				<button
-					class="flex h-full items-center gap-2.5 px-3 hover:bg-accent"
-					onclick={() => openDock('monitor')}
-					aria-label="Open the monitor"
-				>
-					<!--
+					{#if transport.externalPresent}
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								{#snippet child({ props })}
+									<span {...props} class="tnum font-mono text-xs text-msg-clock">
+										ext {transport.externalBpm.toFixed(1)}
+										<span class="text-muted-foreground">
+											±{transport.externalJitter.toFixed(1)}
+										</span>
+									</span>
+								{/snippet}
+							</Tooltip.Trigger>
+							<Tooltip.Content side="top" class="max-w-56">
+								An external clock is arriving. The second figure is its jitter in milliseconds — the
+								spread, not the average, is what you hear.
+							</Tooltip.Content>
+						</Tooltip.Root>
+					{/if}
+				</div>
+
+				<!-- ports -->
+				<div class="!px-0">
+					{#if connected}
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								{#snippet child({ props })}
+									<button
+										{...props}
+										class="flex h-full items-center gap-1.5 px-3 text-sm hover:bg-accent"
+										onclick={() => openDock('devices')}
+									>
+										<HugeiconsIcon icon={PlugSocketIcon} size={14} class="text-muted-foreground" />
+										<span class="tnum font-mono">
+											<span class={inCount ? 'text-foreground' : 'text-muted-foreground'}
+												>{inCount}</span
+											>
+											<span class="text-muted-foreground">in</span>
+											<span class="mx-0.5 text-muted-foreground">/</span>
+											<span class={outCount ? 'text-foreground' : 'text-muted-foreground'}>
+												{outCount}
+											</span>
+											<span class="text-muted-foreground">out</span>
+										</span>
+									</button>
+								{/snippet}
+							</Tooltip.Trigger>
+							<Tooltip.Content side="top">Hardware ports open — click to manage</Tooltip.Content>
+						</Tooltip.Root>
+					{:else}
+						<div class="px-3">
+							<Button
+								variant="outline"
+								size="sm"
+								class="h-7 gap-1.5"
+								onclick={() => openDock('devices')}
+							>
+								<HugeiconsIcon icon={PlugSocketIcon} size={14} />
+								Connect MIDI
+							</Button>
+						</div>
+					{/if}
+				</div>
+
+				<!-- activity -->
+				<div class="!px-0">
+					<button
+						class="flex h-full items-center gap-2.5 px-3 hover:bg-accent"
+						onclick={() => openDock('monitor')}
+						aria-label="Open the monitor"
+					>
+						<!--
 						Direction is not a hue.
 
 						These two dots used to be msg-cc and msg-note — the Control Change
@@ -371,136 +388,144 @@
 						spending two of those hues on in-versus-out is a lie told next to
 						the truth. The words "in" and "out" are already right there.
 					-->
-					<span class="flex flex-col gap-[3px]">
-						{#each [['in', monitor.flow.in], ['out', monitor.flow.out]] as const as [dir, level] (dir)}
-							<span class="flex items-center gap-1">
+						<span class="flex flex-col gap-[3px]">
+							{#each [['in', monitor.flow.in], ['out', monitor.flow.out]] as const as [dir, level] (dir)}
+								<span class="flex items-center gap-1">
+									<span
+										class="size-1.5 rounded-full bg-foreground transition-opacity duration-75"
+										style="opacity: {0.18 + level * 0.82}"
+									></span>
+									<span class="label leading-none">{dir}</span>
+								</span>
+							{/each}
+						</span>
+						<ActivityStrip height={18} />
+					</button>
+				</div>
+
+				<!-- voices -->
+				<div>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							{#snippet child({ props })}
 								<span
-									class="size-1.5 rounded-full bg-foreground transition-opacity duration-75"
-									style="opacity: {0.18 + level * 0.82}"
-								></span>
-								<span class="label leading-none">{dir}</span>
-							</span>
-						{/each}
-					</span>
-					<ActivityStrip height={18} />
-				</button>
-			</div>
+									{...props}
+									class={cn(
+										'tnum font-mono text-xs tabular-nums',
+										engine.voiceCount ? 'text-foreground' : 'text-muted-foreground'
+									)}
+								>
+									{engine.voiceCount}
+									<span class="label">{engine.voiceCount === 1 ? 'voice' : 'voices'}</span>
+								</span>
+							{/snippet}
+						</Tooltip.Trigger>
+						<Tooltip.Content side="top">Notes sounding in the internal synth</Tooltip.Content>
+					</Tooltip.Root>
+				</div>
 
-			<!-- voices -->
-			<div>
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						{#snippet child({ props })}
-							<span
-								{...props}
-								class={cn(
-									'tnum font-mono text-xs tabular-nums',
-									engine.voiceCount ? 'text-foreground' : 'text-muted-foreground'
-								)}
-							>
-								{engine.voiceCount}
-								<span class="label">{engine.voiceCount === 1 ? 'voice' : 'voices'}</span>
-							</span>
-						{/snippet}
-					</Tooltip.Trigger>
-					<Tooltip.Content side="top">Notes sounding in the internal synth</Tooltip.Content>
-				</Tooltip.Root>
-			</div>
-
-			<!--
+				<!--
 				The widest zone on the bar, and it used to render nothing at all until
 				the first message arrived: an empty six-hundred-pixel button where the
 				run of dividers simply stopped. It keeps its divider like every other
 				zone, and says what it is for while it waits.
 			-->
-			<button
-				class="min-w-0 flex-1 justify-start overflow-hidden text-left hover:bg-accent/50"
-				onclick={() => openDock('monitor')}
-				aria-label="Most recent message — open the monitor"
-			>
-				{#if latest}
-					{@const fam = family(latest.message)}
-					<span class="size-1.5 shrink-0 rounded-full" style="background: {familyColor(fam)}"
-					></span>
-					<span class="tnum shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
-						{latest.direction === 'in' ? '▸' : '◂'}
-						{ch1(latest.message) ?? '—'}
-					</span>
-					<span class="shrink-0 font-mono text-xs" style="color: {familyColor(fam)}">
-						{hexBytes(latest.bytes.slice(0, 3))}
-					</span>
-					<span class="truncate text-xs text-muted-foreground">
-						{shortLabel(latest.message, { octaveConvention: settings.octaveConvention })}
-					</span>
-				{:else}
-					<span class="truncate text-xs text-muted-foreground">
-						The last message will show here
-					</span>
-				{/if}
-			</button>
-
-			<!-- output level -->
-			<div class="hidden md:flex">
 				<button
-					class="rounded-sm p-1.5 text-muted-foreground hover:text-foreground"
-					onclick={() => onVolume(settings.masterVolume > 0 ? 0 : 0.75)}
-					aria-label={settings.masterVolume > 0 ? 'Mute' : 'Unmute'}
+					class="min-w-0 flex-1 justify-start overflow-hidden text-left hover:bg-accent/50"
+					onclick={() => openDock('monitor')}
+					aria-label="Most recent message — open the monitor"
 				>
-					<HugeiconsIcon
-						icon={settings.masterVolume > 0 ? VolumeHighIcon : VolumeOffIcon}
-						size={14}
-					/>
+					{#if latest}
+						{@const fam = family(latest.message)}
+						<span class="size-1.5 shrink-0 rounded-full" style="background: {familyColor(fam)}"
+						></span>
+						<span class="tnum shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
+							{latest.direction === 'in' ? '▸' : '◂'}
+							{ch1(latest.message) ?? '—'}
+						</span>
+						<span class="shrink-0 font-mono text-xs" style="color: {familyColor(fam)}">
+							{hexBytes(latest.bytes.slice(0, 3))}
+						</span>
+						<span class="truncate text-xs text-muted-foreground">
+							{shortLabel(latest.message, { octaveConvention: settings.octaveConvention })}
+						</span>
+					{:else}
+						<span class="truncate text-xs text-muted-foreground">
+							The last message will show here
+						</span>
+					{/if}
 				</button>
-				<div class="w-24">
-					<Slider
-						type="single"
-						value={settings.masterVolume}
-						min={0}
-						max={1}
-						step={0.01}
-						onValueChange={onVolume}
-						aria-label="Output level"
-					/>
+
+				<!-- output level -->
+				<div class="hidden md:flex">
+					<button
+						class="rounded-sm p-1.5 text-muted-foreground hover:text-foreground"
+						onclick={() => onVolume(settings.masterVolume > 0 ? 0 : 0.75)}
+						aria-label={settings.masterVolume > 0 ? 'Mute' : 'Unmute'}
+					>
+						<HugeiconsIcon
+							icon={settings.masterVolume > 0 ? VolumeHighIcon : VolumeOffIcon}
+							size={14}
+						/>
+					</button>
+					<div class="w-24">
+						<Slider
+							type="single"
+							value={settings.masterVolume}
+							min={0}
+							max={1}
+							step={0.01}
+							onValueChange={onVolume}
+							aria-label="Output level"
+						/>
+					</div>
 				</div>
-			</div>
+			</Tooltip.Provider>
+		</div>
 
-			<!-- panic -->
-			<div>
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						{#snippet child({ props })}
-							<button
-								{...props}
-								class="flex h-7 items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-2.5 text-sm font-medium text-destructive transition-colors hover:border-destructive/70 hover:bg-destructive/20"
-								onclick={() => engine.panic()}
-								ondblclick={() => engine.panic(true)}
-							>
-								<HugeiconsIcon icon={DangerIcon} size={14} />
-								Panic
-							</button>
-						{/snippet}
-					</Tooltip.Trigger>
-					<Tooltip.Content side="top" class="max-w-64">
-						Lifts the pedals, then All Notes Off, All Sound Off and Reset All Controllers on all
-						sixteen channels. Double-click for the full 2,048-message Note Off sweep.
-					</Tooltip.Content>
-				</Tooltip.Root>
-			</div>
+		<!-- Pinned: the stop-everything button, and the way into the tray. -->
+		<div
+			class="flex shrink-0 items-center divide-x divide-border border-l [&>*]:flex [&>*]:h-full [&>*]:items-center [&>*]:gap-1.5 [&>*]:px-3"
+		>
+			<Tooltip.Provider delayDuration={400}>
+				<!-- panic -->
+				<div>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							{#snippet child({ props })}
+								<button
+									{...props}
+									class="flex h-7 items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-2.5 text-sm font-medium text-destructive transition-colors hover:border-destructive/70 hover:bg-destructive/20"
+									onclick={() => engine.panic()}
+									ondblclick={() => engine.panic(true)}
+								>
+									<HugeiconsIcon icon={DangerIcon} size={14} />
+									Panic
+								</button>
+							{/snippet}
+						</Tooltip.Trigger>
+						<Tooltip.Content side="top" class="max-w-64">
+							Lifts the pedals, then All Notes Off, All Sound Off and Reset All Controllers on all
+							sixteen channels. Double-click for the full 2,048-message Note Off sweep.
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</div>
 
-			<!-- expand -->
-			<div class="!px-1">
-				<Button
-					variant="ghost"
-					size="icon"
-					class="size-7"
-					onclick={() => (settings.dockOpen = !settings.dockOpen)}
-					aria-label={settings.dockOpen ? 'Collapse dock' : 'Expand dock'}
-					aria-expanded={settings.dockOpen}
-				>
-					<HugeiconsIcon icon={settings.dockOpen ? ArrowDown01Icon : ArrowUp01Icon} size={15} />
-				</Button>
-			</div>
-		</Tooltip.Provider>
+				<!-- expand -->
+				<div class="!px-1">
+					<Button
+						variant="ghost"
+						size="icon"
+						class="size-7"
+						onclick={() => (settings.dockOpen = !settings.dockOpen)}
+						aria-label={settings.dockOpen ? 'Collapse dock' : 'Expand dock'}
+						aria-expanded={settings.dockOpen}
+					>
+						<HugeiconsIcon icon={settings.dockOpen ? ArrowDown01Icon : ArrowUp01Icon} size={15} />
+					</Button>
+				</div>
+			</Tooltip.Provider>
+		</div>
 	</div>
 
 	<!-- ── expanded ──────────────────────────────────────────────────────── -->

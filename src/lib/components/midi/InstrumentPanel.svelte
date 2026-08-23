@@ -30,6 +30,7 @@
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { momentary } from '$lib/a11y/momentary';
 	import { onMount } from 'svelte';
+	import { device } from '$lib/stores/device.svelte';
 
 	/**
 	 * All 128 programs, in two moves: the sixteen families as a grid, and a
@@ -82,6 +83,24 @@
 	});
 
 	const LEDS = Array.from({ length: 8 }, (_, i) => i);
+
+	/**
+	 * On a phone the screen shows one thing at a time.
+	 *
+	 * Three columns side by side is what a front panel looks like because a
+	 * front panel is wide. Stacked, the same three regions push the keyboard
+	 * eleven hundred pixels down the page — past the fold, past the thumb, and
+	 * past the point where this is an instrument at all. So they become three
+	 * tabs in the space of one, the keyboard comes up to meet the hand, and
+	 * nothing is lost: every region is one tap away instead of one scroll.
+	 */
+	type Pane = 'notation' | 'output' | 'voice';
+	let pane = $state<Pane>('notation');
+	const PANES: { id: Pane; label: string }[] = [
+		{ id: 'notation', label: 'Notation' },
+		{ id: 'output', label: 'Output' },
+		{ id: 'voice', label: 'Voice' }
+	];
 </script>
 
 <!--
@@ -116,14 +135,18 @@
 
 	<!-- ── screen: what you played, what it sounds like, what voice ─────── -->
 	<!--
-		A fixed height, so the panel never resizes.
+		Three regions, laid out twice.
 		
-		Everything in this row changes as you play, and every one of those
-		changes used to move the keybed and the readout under it. The row is now
-		as tall as its fullest state and stays there; what varies is what is
-		inside, not how much room it takes.
+		Wide, they sit side by side at a fixed height, because that is what a
+		front panel looks like and because everything in them changes as you
+		play — a row that resized would move the keybed under your hands.
+		
+		Narrow, the same three become tabs. Stacked, they push the keyboard
+		eleven hundred pixels down the page — past the fold, past the thumb, and
+		past the point where this is an instrument at all. As tabs they cost one
+		height between them and every region is a tap away instead of a scroll.
 	-->
-	<div class="panel-sunken grid border-b lg:h-[13.5rem] lg:grid-cols-[17rem_1fr_20rem]">
+	{#snippet notationPane()}
 		<!-- Notation first: it is the thing you can read back to someone else. -->
 		<div
 			class="flex min-h-0 flex-col overflow-hidden border-b px-3 pt-2.5 pb-3 lg:border-r lg:border-b-0"
@@ -131,15 +154,24 @@
 			<span class="label mb-1.5">Notation</span>
 			<NowPlaying />
 		</div>
-
+	{/snippet}
+	{#snippet outputPane()}
 		<div class="flex flex-col border-b lg:border-r lg:border-b-0">
+			<!--
+				The heading goes when the tab above it already says "Output".
+				Naming the same region twice in the space of thirty pixels is the
+				kind of thing that reads as nobody having looked.
+			-->
 			<div class="flex items-baseline justify-between px-3 pt-2.5 pb-1">
-				<span class="label">Output</span>
-				<span class="label" class:text-ok={sounding}>{sounding ? 'sounding' : 'silent'}</span>
+				<span class="label" class:hidden={device.narrow}>Output</span>
+				<span class="label ml-auto" class:text-ok={sounding}
+					>{sounding ? 'sounding' : 'silent'}</span
+				>
 			</div>
 			<Scope bare class="flex-1 pb-1" bind:sounding />
 		</div>
-
+	{/snippet}
+	{#snippet voicePane()}
 		<!-- Voice bank. Two columns of eight, the way a patch list sits on a screen. -->
 		<div class="flex flex-col">
 			<div class="flex items-baseline justify-between px-3 pt-2.5 pb-1">
@@ -165,8 +197,8 @@
 						aria-pressed={family === i}
 						use:momentary
 						class="flex items-center gap-1.5 rounded px-1.5 py-[3px] text-left text-3xs transition-colors
-							hover:bg-accent
-							aria-pressed:bg-foreground aria-pressed:text-background"
+								hover:bg-accent
+								aria-pressed:bg-foreground aria-pressed:text-background"
 					>
 						<span class="tnum shrink-0 opacity-50">{String(familyProgram(i)).padStart(3, '0')}</span
 						>
@@ -176,10 +208,10 @@
 			</div>
 
 			<!--
-				The eight variants inside the family. This is where the other 112
-				programs live, and where you find out that a family is not one
-				sound but eight related ones.
-			-->
+					The eight variants inside the family. This is where the other 112
+					programs live, and where you find out that a family is not one
+					sound but eight related ones.
+				-->
 			<div class="mt-1.5 flex items-center gap-1 border-t px-2 py-1">
 				<button
 					type="button"
@@ -214,7 +246,41 @@
 				</button>
 			</div>
 		</div>
-	</div>
+	{/snippet}
+
+	{#if device.narrow}
+		<div class="panel-sunken border-b">
+			<div class="flex border-b" role="tablist" aria-label="Instrument screen">
+				{#each PANES as p (p.id)}
+					<button
+						type="button"
+						role="tab"
+						aria-selected={pane === p.id}
+						onclick={() => (pane = p.id)}
+						class="flex-1 border-b-2 border-transparent py-2.5 text-xs font-medium text-muted-foreground transition-colors aria-selected:border-foreground aria-selected:text-foreground"
+					>
+						{p.label}
+					</button>
+				{/each}
+			</div>
+			<!-- One height for all three, so switching tabs never moves the keys. -->
+			<div class="grid h-[11.5rem] [&>*]:min-w-0">
+				{#if pane === 'notation'}
+					{@render notationPane()}
+				{:else if pane === 'output'}
+					{@render outputPane()}
+				{:else}
+					{@render voicePane()}
+				{/if}
+			</div>
+		</div>
+	{:else}
+		<div class="panel-sunken grid border-b lg:h-[13.5rem] lg:grid-cols-[17rem_1fr_20rem]">
+			{@render notationPane()}
+			{@render outputPane()}
+			{@render voicePane()}
+		</div>
+	{/if}
 
 	<!-- ── keybed ───────────────────────────────────────────────────────── -->
 	<div class="px-4 py-4">

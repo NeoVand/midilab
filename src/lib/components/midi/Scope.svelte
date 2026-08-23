@@ -18,6 +18,7 @@
 	import { audio } from '$lib/audio/engine';
 	import { noteName, noteToFrequency } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { device } from '$lib/stores/device.svelte';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -53,13 +54,37 @@
 	 * 24: so every fundamental the protocol can ask for is inside the picture,
 	 * nothing above the highest of them is drawn as though it mattered, and the
 	 * first and last labels are not jammed against the sides.
+	 *
+	 * A phone gives up the bottom octave. Notes 24 to 35 are the pedal register
+	 * of an organ and the bottom of a five-string bass; on a desk they cost
+	 * nothing to include, and across three hundred pixels they are an eighth of
+	 * the width spent on a region almost nothing puts a fundamental in. What is
+	 * left is the octaves music is actually written in, wider.
 	 */
-	const LOWEST_LABEL = 24;
+	const LOWEST_LABEL = $derived(device.narrow ? 36 : 24);
 	const HIGHEST_LABEL = 120;
 
 	const MARGIN = noteToFrequency(127) / noteToFrequency(HIGHEST_LABEL);
-	const MIN_HZ = noteToFrequency(LOWEST_LABEL) / MARGIN;
+	const MIN_HZ = $derived(noteToFrequency(LOWEST_LABEL) / MARGIN);
 	const MAX_HZ = noteToFrequency(HIGHEST_LABEL) * MARGIN;
+
+	/**
+	 * How finely to slice the spectrum, which is a question about pixels.
+	 *
+	 * One band per semitone is the right answer on a desk: the harmonic series
+	 * lands on named notes and you can read a fifth off the screen. Across a
+	 * phone it is ninety-six bars in three hundred pixels — three pixels each,
+	 * with a gap — which is not a spectrum, it is a texture. So a narrow screen
+	 * gets third-octave bands instead: two dozen bars, thirteen pixels wide,
+	 * still logarithmic, still showing a filter open and a chord spread out,
+	 * and actually visible.
+	 *
+	 * The same arithmetic applies to the axis. Nine octave labels across a
+	 * phone collide; every other one does not, and the gridlines still mark
+	 * all nine.
+	 */
+	const bands = $derived(device.narrow ? 6 : 2);
+	const labelEvery = $derived(device.narrow ? 2 : 1);
 
 	/**
 	 * One tick per octave C, named the way the rest of the app names notes —
@@ -67,25 +92,40 @@
 	 * readout are talking about.
 	 */
 	const OCTAVES = $derived.by(() => {
-		const out: { label: string; left: number }[] = [];
+		const out: { label: string; left: number; named: boolean }[] = [];
 		const span = Math.log2(MAX_HZ / MIN_HZ);
-		for (let note = LOWEST_LABEL; note <= HIGHEST_LABEL; note += 12) {
+		let i = 0;
+		for (let note = LOWEST_LABEL; note <= HIGHEST_LABEL; note += 12, i++) {
 			out.push({
 				label: noteName(note, { convention: settings.octaveConvention }),
-				left: (Math.log2(noteToFrequency(note) / MIN_HZ) / span) * 100
+				left: (Math.log2(noteToFrequency(note) / MIN_HZ) / span) * 100,
+				named: i % labelEvery === 0
 			});
 		}
 		return out;
 	});
 
 	let host = $state<HTMLDivElement | null>(null);
+	let analyzer: AudioMotionAnalyzer | null = null;
+
+	/*
+	 * Rotating a phone, or dragging a desktop window narrow, changes the answer
+	 * to "how many bars fit" — so it is re-asked rather than decided once when
+	 * the analyser was built. At component scope, because an effect created
+	 * inside `onMount` has no owner to be cleaned up by.
+	 */
+	$effect(() => {
+		const [m, lo] = [bands, MIN_HZ];
+		if (!analyzer) return;
+		analyzer.mode = m;
+		analyzer.minFreq = lo;
+	});
 
 	onMount(() => {
 		// The graph is built here rather than waited for: suspended and silent,
 		// but present, so the analyser has something to attach to and the panel
 		// shows its resting floor instead of an empty rectangle.
 		audio.prime();
-		let analyzer: AudioMotionAnalyzer | null = null;
 		let frame = 0;
 		let themeWatch: MutationObserver | null = null;
 
@@ -117,8 +157,8 @@
 				source: node,
 				// The master bus already reaches the speakers; this is a tap.
 				connectSpeakers: false,
-				// One band per semitone. Everything else here follows from that.
-				mode: 2,
+				// How many bands, and therefore how wide each bar is — see `bands`.
+				mode: bands,
 				frequencyScale: 'log',
 				minFreq: MIN_HZ,
 				maxFreq: MAX_HZ,
@@ -171,6 +211,7 @@
 			cancelAnimationFrame(frame);
 			themeWatch?.disconnect();
 			analyzer?.destroy();
+			analyzer = null;
 		};
 	});
 </script>
@@ -208,18 +249,22 @@
 			bind:this={host}
 			class="absolute inset-0"
 			role="img"
-			aria-label="Live spectrum analyser, one bar per semitone"
+			aria-label="Live spectrum analyser, {device.narrow
+				? 'one bar per third of an octave'
+				: 'one bar per semitone'}"
 		></div>
 	</div>
 	{#if scale}
 		<div class="relative h-4 shrink-0 select-none" aria-hidden="true">
 			{#each OCTAVES as tick (tick.label)}
-				<span
-					class="tnum absolute top-0 -translate-x-1/2 text-2xs text-muted-foreground"
-					style="left: {tick.left}%"
-				>
-					{tick.label}
-				</span>
+				{#if tick.named}
+					<span
+						class="tnum absolute top-0 -translate-x-1/2 text-2xs text-muted-foreground"
+						style="left: {tick.left}%"
+					>
+						{tick.label}
+					</span>
+				{/if}
 			{/each}
 		</div>
 	{/if}

@@ -18,8 +18,9 @@
 
 	interface Props {
 		onOpenPalette: () => void;
+		class?: string;
 	}
-	let { onOpenPalette }: Props = $props();
+	let { onOpenPalette, class: className }: Props = $props();
 
 	/*
 	 * Three destinations, and they are named.
@@ -63,7 +64,10 @@
 	on the edge it opens onto, which is a join rather than a container.
 -->
 <nav
-	class="flex w-[3.25rem] shrink-0 flex-col items-center gap-1 border-r bg-sidebar py-3"
+	class={cn(
+		'pl-safe w-[3.25rem] shrink-0 flex-col items-center gap-1 border-r bg-sidebar py-3',
+		className ?? 'flex'
+	)}
 	aria-label="Primary"
 >
 	<a href={path('/')} class="mb-2.5 grid size-8 place-items-center" aria-label="MIDI Lab home">

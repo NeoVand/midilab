@@ -23,7 +23,7 @@
 	}
 </script>
 
-<div class="mx-auto flex w-full max-w-4xl flex-col gap-10 px-8 py-12">
+<div class="mx-auto flex w-full max-w-4xl flex-col gap-10 px-4 py-12 sm:px-8">
 	<header class="flex flex-col gap-3">
 		<h1 class="text-3xl font-semibold tracking-tight">The course</h1>
 		<p class="prose-body text-muted-foreground">
