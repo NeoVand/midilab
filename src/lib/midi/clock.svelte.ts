@@ -64,6 +64,7 @@ export class Transport {
 	/** Whether an external clock has been seen recently. */
 	externalPresent = $state(false);
 	externalBpm = $state(0);
+	#presenceTimer = 0;
 	/** Standard deviation of incoming clock intervals, in ms. The jitter figure. */
 	externalJitter = $state(0);
 
@@ -104,14 +105,37 @@ export class Transport {
 		return () => this.#listeners.delete(listener);
 	}
 
-	/** Watch the bus for incoming clock so external sync and jitter can be measured. */
+	/**
+	 * Watch the bus for incoming clock so external sync and jitter can be
+	 * measured.
+	 *
+	 * Idempotent, and it always hands back a stop function rather than the raw
+	 * unsubscribe — returning that on a second call leaves `#unsub` set while
+	 * the subscription is gone, and every later call early-returns onto a dead
+	 * one.
+	 */
 	watchExternal(): () => void {
-		if (this.#unsub) return this.#unsub;
-		this.#unsub = bus.subscribe((e) => this.#onIncoming(e));
-		return () => {
-			this.#unsub?.();
-			this.#unsub = null;
-		};
+		if (!this.#unsub) this.#unsub = bus.subscribe((e) => this.#onIncoming(e));
+		// "Present" has to be able to become false again. A clock that stopped
+		// two minutes ago was still being reported as live, because nothing ever
+		// took the flag down. Even a 20 BPM clock is a tick every 125 ms.
+		if (browser && !this.#presenceTimer) {
+			this.#presenceTimer = window.setInterval(() => {
+				if (!this.externalPresent) return;
+				if (performance.now() - this.#lastClockAt < 1000) return;
+				this.externalPresent = false;
+				if (this.source === 'external') this.playing = false;
+			}, 400);
+		}
+		return () => this.unwatchExternal();
+	}
+
+	unwatchExternal(): void {
+		this.#unsub?.();
+		this.#unsub = null;
+		clearInterval(this.#presenceTimer);
+		this.#presenceTimer = 0;
+		this.externalPresent = false;
 	}
 
 	#onIncoming(e: MidiEvent) {

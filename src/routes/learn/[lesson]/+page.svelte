@@ -37,7 +37,7 @@
 	<LessonComponent />
 {:else}
 	<LessonShell lesson={meta}>
-		<div class="rounded-xl border border-dashed p-8 text-center">
+		<div class="rounded-lg border border-dashed p-8 text-center">
 			<p class="text-sm text-muted-foreground">
 				This lesson has not been written yet. Its objectives above are the plan.
 			</p>

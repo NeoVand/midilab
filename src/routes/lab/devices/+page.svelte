@@ -24,7 +24,7 @@
 
 		<Tabs.Content value="profile"><DeviceProfileEditor /></Tabs.Content>
 		<Tabs.Content value="learn" class="flex flex-col gap-3">
-			<p class="text-sm leading-relaxed text-muted-foreground">
+			<p class="measure text-sm leading-relaxed text-muted-foreground">
 				Move anything on your controller. This shows every controller number it sends, on which
 				channel, and the range it actually covers — which is often not what the manual says.
 			</p>

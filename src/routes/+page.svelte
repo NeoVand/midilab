@@ -57,21 +57,21 @@
 	<!-- ── hero ──────────────────────────────────────────────────────────── -->
 	<header class="flex flex-col gap-5">
 		<p class="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">MIDI Lab</p>
-		<h1 class="max-w-3xl text-[2.6rem] leading-[1.08] font-semibold tracking-tight text-balance">
+		<h1 class="max-w-3xl text-4xl font-semibold">
 			Learn MIDI by making it happen, one byte at a time.
 		</h1>
-		<p class="max-w-2xl text-[17px] leading-relaxed text-pretty text-muted-foreground">
+		<p class="max-w-2xl text-lg leading-relaxed text-pretty text-muted-foreground">
 			Thirty lessons that start at "what even is a MIDI message" and end with you running a rig of
 			several instruments from one clock — or from your own code. Everything here is wired to a live
 			engine, so nothing is a diagram: press a key below and watch the actual bytes.
 		</p>
 		<div class="flex flex-wrap items-center gap-3 pt-1">
-			<Button href={lessonPath(nextLesson)} size="lg">
+			<Button href={lessonPath(nextLesson)} size="xl">
 				{overall > 0 ? 'Continue' : 'Start the course'}
 				<HugeiconsIcon icon={ArrowRight01Icon} size={16} />
 			</Button>
 			{#if midiAccess.status !== 'granted' && midiAccess.status !== 'unsupported'}
-				<Button variant="outline" size="lg" onclick={() => midiAccess.request(false)}>
+				<Button variant="outline" size="xl" onclick={() => midiAccess.request(false)}>
 					<HugeiconsIcon icon={PlugSocketIcon} size={16} />
 					Connect your hardware
 				</Button>
@@ -83,35 +83,41 @@
 	</header>
 
 	<!-- ── first contact ─────────────────────────────────────────────────── -->
-	<section class="overflow-hidden rounded-xl border bg-card">
+	<!--
+		Cause above, effect below. Side by side, the keyboard column ran short
+		while the inspector ran long, and the byte cards were forced to wrap in a
+		25rem gutter; stacked, the three bytes sit in one row the way they sit on
+		the wire, and pressing a key reads down the page rather than across it.
+	-->
+	<section class="overflow-hidden rounded-lg border bg-card">
 		<div class="flex items-baseline justify-between border-b px-5 py-3">
 			<h2 class="text-sm font-medium">Press a key</h2>
-			<p class="text-xs text-muted-foreground">
+			<p class="tnum text-xs text-muted-foreground">
 				{noteState.heldCount} note{noteState.heldCount === 1 ? '' : 's'} held
 			</p>
 		</div>
-		<div class="grid gap-0 lg:grid-cols-[1fr_25rem]">
-			<div class="flex flex-col gap-3 p-5">
-				<Keyboard low={48} octaves={3} height={140} labels="c" />
-				<p class="text-xs leading-relaxed text-muted-foreground">
-					Watch the panel change twice: <span class="text-msg-note">Note On</span> when you press,
-					<span class="text-msg-note">Note Off</span> when you let go. A note is two messages, not one
-					— which is exactly why notes get stuck.
-				</p>
-			</div>
-			<div class="panel-sunken border-t p-5 lg:border-t-0 lg:border-l">
-				{#if latest}
-					<ByteInspector bytes={latest.bytes} message={latest.message} />
-				{:else}
-					<div class="flex h-full flex-col justify-center gap-2 text-sm text-muted-foreground">
-						<p class="font-medium">Nothing has happened yet.</p>
-						<p class="text-xs leading-relaxed">
-							Play a note and this panel will take the message apart — hex, bits, the one bit that
-							decides whether a byte is a command or a value, and what it all means in English.
-						</p>
-					</div>
-				{/if}
-			</div>
+
+		<div class="flex flex-col gap-3 p-5">
+			<Keyboard low={48} octaves={3} height={148} labels="c" />
+			<p class="text-xs text-muted-foreground">
+				Watch the panel below change twice: <span class="text-msg-note">Note On</span> when you
+				press, <span class="text-msg-note">Note Off</span> when you let go. A note is two messages, not
+				one — which is exactly why notes get stuck.
+			</p>
+		</div>
+
+		<div class="panel-sunken min-h-44 border-t p-5">
+			{#if latest}
+				<ByteInspector bytes={latest.bytes} message={latest.message} />
+			{:else}
+				<div class="flex h-full min-h-36 flex-col justify-center gap-2">
+					<p class="text-sm font-medium">Nothing has happened yet.</p>
+					<p class="measure text-xs text-muted-foreground">
+						Play a note and this panel will take the message apart — hex, bits, the one bit that
+						decides whether a byte is a command or a value, and what it all means in English.
+					</p>
+				</div>
+			{/if}
 		</div>
 	</section>
 
@@ -128,16 +134,16 @@
 				{@const frac = progress.fractionOf(act.lessons.map((l) => l.id))}
 				<a
 					href="/learn#{act.id}"
-					class="group flex flex-col gap-2 rounded-xl border bg-card p-4 transition-colors hover:border-foreground/25"
+					class="group flex flex-col gap-2 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
 					<div class="flex items-baseline gap-2">
-						<span class="font-mono text-xs text-muted-foreground/50">ACT {act.number}</span>
-						<span class="ml-auto font-mono text-[11px] text-muted-foreground">
+						<span class="font-mono text-xs text-muted-foreground">ACT {act.number}</span>
+						<span class="ml-auto font-mono text-xs text-muted-foreground">
 							{act.lessons.length} lessons
 						</span>
 					</div>
 					<h3 class="leading-snug font-medium">{act.title}</h3>
-					<p class="text-[13px] leading-relaxed text-muted-foreground">{act.subtitle}</p>
+					<p class="text-sm leading-relaxed text-muted-foreground">{act.subtitle}</p>
 					<div class="mt-2 h-1 overflow-hidden rounded-full bg-muted">
 						<div
 							class="h-full rounded-full bg-msg-note transition-[width]"
@@ -163,12 +169,12 @@
 			{#each tools as tool (tool.href)}
 				<a
 					href={tool.href}
-					class="group flex items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-foreground/25"
+					class="group flex items-start gap-3 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
 					<HugeiconsIcon icon={tool.icon} size={20} class="mt-0.5 shrink-0 text-muted-foreground" />
 					<span>
 						<span class="block text-sm font-medium">{tool.name}</span>
-						<span class="block text-[13px] text-muted-foreground">{tool.desc}</span>
+						<span class="block text-sm text-muted-foreground">{tool.desc}</span>
 					</span>
 				</a>
 			{/each}

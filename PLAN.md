@@ -111,15 +111,21 @@ These are the app's identity. Each is a proper instrument, not a form control.
   number / frequency labels, MPE glide + per-note bend visualisation.
 - **PadGrid** — 4×4 velocity pads with GM drum labels; also serves as a
   step-input surface.
-- **Knob / Fader / XYPad / PitchWheel / ModWheel** — inertia, fine-drag with
-  shift, value readout in both 0–127 and semantic units, 7-bit vs 14-bit mode
-  so stepping is audible _and_ visible.
+- **Knob / Fader / Wheel** — fine-drag with shift, value readout in both 0–127
+  and semantic units, 7-bit vs 14-bit mode so stepping is audible _and_ visible.
+  A separate XY pad was built and then deleted: the MPE lab already does
+  two-axis control properly, per note, which is the only place the app wanted
+  it.
 - **ByteInspector** — the signature widget. A message rendered as hex bytes →
   binary bits with the MSB flagged → status/channel nibble split → plain-English
   sentence. Scrub any field and the bytes update live. This is where "the whole
   protocol is built on one bit" stops being a claim.
 - **MidiMonitor** — colour-coded, filterable, freezable, with raw hex, decoded
   form, delta times, and per-source lanes. Exportable.
+- **ChannelState** — the other half of monitoring: not what happened, where you
+  are. One panel per channel that is carrying anything and nothing for the ones
+  that are not, showing notes held with velocities, bend read centre-out,
+  pressure, program and every controller that has been touched.
 - **PortGraph** — animated signal-flow diagram of your actual rig; packets
   travel the wires in their family colour as messages pass. Doubles as the
   patchbay UI and the loop/echo diagnosis tool.
@@ -205,13 +211,86 @@ cheat sheets, glossary, and a guide to reading a MIDI implementation chart.
 
 ## 7. Look and feel
 
-Desktop-first, and unapologetically so: a left icon rail (Learn / Lab /
-Reference / Settings), a content column that goes wide when the material wants
-room, an optional right inspector, and the persistent Engine Dock across the
-bottom. ⌘K command palette. Dark-first with a proper light mode, built on the
-existing mist/mira tokens plus the seven message hues. Motion is physical and
-restrained — notes bloom, packets travel, knobs carry inertia; nothing bounces
-for decoration.
+Desktop-first, and unapologetically so: a left rail (Learn / Lab / Reference,
+with the utilities below a divider), a content column that goes wide when the
+material wants room, an optional right inspector, and the persistent Engine
+Dock across the bottom. ⌘K command palette. Dark-first with a light mode that
+is designed rather than merely supported.
+
+### The rules, so they cannot drift
+
+Every one of these exists because the alternative had already happened
+somewhere in the codebase and had to be undone.
+
+**Type.** One ladder, ~1.18, anchored on 13px — the density a control surface
+wants. Tailwind's own steps are _redefined_ rather than added to, so there is
+no way to land between rungs: `2xs` 10 (uppercase micro-labels and text inside
+keys, and nothing smaller is permitted), `xs` 11, `sm` 13 (the interface
+default — `body` is set to it, not to the browser's 16), `base` 15 (reading
+size), `lg` 17, `xl` 21, `2xl` 26, `3xl` 32, `4xl` 40. Headings carry their
+optical tracking from the scale, not from utilities. Mono is set at `0.92em`
+inside prose because JetBrains Mono runs optically larger than Inter and a
+`code` chip at 1em interrupts its own line.
+
+**Measure.** Prose is capped at 52ch — measured with canvas text metrics, not
+guessed: Inter's average character is ~7px at 15px, so 52ch lands at about 70
+real characters. `.prose-body` carries size, leading and measure together, and
+is the _only_ way a lesson paragraph is styled. Widgets, tables and callouts
+keep the full column, and the resulting rhythm of narrow text against wide
+instruments is doing work, not decoration.
+
+**Radius.** `xs` 2px for step cells, `sm` for code chips and small controls,
+`md` for buttons and chips, `lg` for panels, `full` for pills and meters.
+Nothing else. The bare `rounded` utility is not used anywhere outside the
+vendored shadcn components.
+
+**Surfaces.** Three levels in both themes, and the same three: the page ground,
+`card` raised above it, `surface-sunken` recessed below. Light mode's ground is
+tinted (oklch 0.984) rather than pure white, so a white card can lift off it
+without depending entirely on its border. Chrome — the rail and the dock — is
+recessed relative to content in _both_ themes, because it is the frame the
+content sits inside.
+
+**Colour is two independent axes.** Message family (note / cc / expr / program
+/ clock / sysex / common) answers "what kind of message is this" and is used
+with total consistency from the monitor to the sequencer lanes. Channel hue
+answers "which of the sixteen addresses did it go to". Both take their
+lightness from the theme so the same thing reads as the same colour on a white
+keybed and on a dark panel.
+
+**Empty states earn their space.** Say what is missing, say what the panel will
+do once it is not, and offer the one action that fixes it. A box that only says
+"nothing yet" has spent attention and given nothing back. Where the answer is a
+concept — what a Standard MIDI File is, how a byte travels through the app —
+it gets drawn.
+
+**Contrast is measured, not judged.** Every piece of text that carries
+information clears 4.5:1 against the ground it actually sits on, in both
+themes — checked with a canvas-based checker rather than by eye, because oklch
+and alpha compositing are not things anyone should be estimating. There is no
+third, fainter text tier: a dimmer tier cannot clear AA when the second tier
+already sits near it, so faintness is reserved for _state_ whose meaning is
+also carried some other way (an unset bit that is also a different colour of
+cell, a muted track whose icon changes shape, tick marks between beat numbers).
+On a light ground all seven message hues sit at one lightness, which fixes the
+contrast and is the better palette anyway: no family shouts louder than
+another.
+
+**Keyboard.** Every custom control is a real control: pads and keys sound on
+Enter and Space, sliders take arrows, Page, Home and End. Every grid — step
+rows, pad banks, the channel strip, the note map, the GM tables — is a single
+tab stop with arrow movement inside it, the way your hands already use a
+hardware grid; the Programmer went from 150 tab stops to 47 and the Reference
+note map from 128 to one. Focus is always visible; mouse users never see it,
+keyboard users cannot work without it, and the ring itself clears 3:1 against
+every surface it can land on — a focus indicator you have to hunt for is not
+one.
+
+**Motion** is physical and restrained — notes bloom, packets travel, meters
+decay; nothing bounces for decoration. All of it is CSS, and all of it is
+removable: Reduce Motion is seeded from the operating system and every meter is
+driven by `requestAnimationFrame` instead, so nothing you came to read stops
+moving.
 
 ---
 
@@ -280,18 +359,20 @@ SysEx helpers with validation and identity parsing, a Standard MIDI File codec
 (read and write, VLQ, meta events), MPE zones with round-robin allocation, UMP
 conversion with MIDI 2.0's min-centre-max scaling, the lookahead scheduler and
 transport, the patchbay router, and semantic device profiles. Unit tests cover
-the message codec, the SMF round trip and the pattern language (46 tests).
+the message codec, the SMF round trip and the pattern language (45 tests),
+and a Playwright suite renders every route and every lesson (9 tests).
 
 **Audio** (`src/lib/audio/`) — a sixteen-channel multitimbral subtractive synth
 with per-channel state, a synthesised GM drum kit, generated-impulse reverb and
 delay, and scheduled note placement on the audio clock.
 
 **Widgets** (`src/lib/components/midi/`) — ByteInspector, Keyboard, PadGrid,
-Knob, Fader, Wheel, XYPad, MessageBuilder, MidiMonitor, ActivityStrip,
+Knob, Fader, Wheel, MessageBuilder, MidiMonitor, ChannelState, ActivityStrip,
 DevicePanel, Patchbay, CcPanel, CcLearn, RpnLab, SysExLab, MpeLab, ClockLab,
 JitterPlot, SchedulerLab, LatencyTest, GrooveLab, StepSequencer, PatternLab,
-MidiFileLab, DeviceProfileEditor, Troubleshooter, CableFigure, Scope,
-NoteExplorer, VelocityMeter, PhrasePlayer, Drone, ChannelGrid, CodeSandbox.
+MidiFileLab, DeviceProfileEditor, Troubleshooter, CableFigure, SmfDiagram,
+Scope, NoteExplorer, VelocityMeter, PhrasePlayer, Drone, ChannelGrid,
+TempoField, CodeSandbox.
 
 **Curriculum** — all 30 lessons written as Svelte components, with 110+ live
 checkpoints verified against the MIDI bus.

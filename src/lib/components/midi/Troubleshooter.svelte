@@ -157,8 +157,20 @@
 	const current = $derived(TREE[path[path.length - 1]]);
 	const isLeaf = $derived('diagnosis' in current);
 
+	/** What you have asserted so far, so the conclusion can be audited. */
+	const trail = $derived(
+		path.slice(0, -1).map((id, i) => {
+			const node = TREE[id] as Node;
+			return { id, index: i, question: node.question, yes: node.yes === path[i + 1] };
+		})
+	);
+
 	function answer(next: string) {
 		path = [...path, next];
+	}
+	/** Rewind to just before a given answer, so you can change your mind. */
+	function rewind(index: number) {
+		path = path.slice(0, index + 1);
 	}
 	function back() {
 		if (path.length > 1) path = path.slice(0, -1);
@@ -185,8 +197,10 @@
 
 <div class="flex flex-col gap-4">
 	<div
+		role="status"
+		aria-live="polite"
 		class={cn(
-			'flex items-center gap-3 rounded-lg border px-3 py-2 text-sm',
+			'flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors',
 			receiving ? 'border-ok/40 bg-ok/8' : 'text-muted-foreground'
 		)}
 	>
@@ -202,24 +216,25 @@
 		{:else if receiving}
 			<span class="text-ok">Messages are arriving right now.</span>
 		{:else}
-			<span
-				>Listening on {midiAccess.listening.length} input(s) — nothing has arrived recently.</span
-			>
+			<span>
+				Listening on {midiAccess.listening.length}
+				{midiAccess.listening.length === 1 ? 'input' : 'inputs'} — nothing has arrived recently.
+			</span>
 		{/if}
 	</div>
 
-	<div class="rounded-xl border p-5">
+	<div class="rounded-lg border p-5">
 		{#if isLeaf}
 			{@const leaf = current as Leaf}
 			<p
 				class={cn(
 					'text-lg font-medium',
-					leaf.tone === 'ok' ? 'text-ok' : leaf.tone === 'warn' ? 'text-warn' : 'text-msg-note'
+					leaf.tone === 'ok' ? 'text-ok' : leaf.tone === 'warn' ? 'text-warn' : 'text-foreground'
 				)}
 			>
 				{leaf.diagnosis}
 			</p>
-			<p class="mt-2 text-[15px] leading-relaxed">{leaf.fix}</p>
+			<p class="prose-body mt-2">{leaf.fix}</p>
 			<div class="mt-4 flex gap-2">
 				<Button variant="outline" size="sm" onclick={back}>Back one step</Button>
 				<Button variant="ghost" size="sm" class="gap-1.5" onclick={restart}>
@@ -228,12 +243,14 @@
 			</div>
 		{:else}
 			{@const node = current as Node}
-			<p class="text-[15px] leading-relaxed font-medium">{node.question}</p>
+			<p class="prose-body font-medium">{node.question}</p>
 			{#if node.why}
-				<p class="mt-2 text-sm leading-relaxed text-muted-foreground">{node.why}</p>
+				<p class="measure mt-2 text-sm leading-relaxed text-muted-foreground">{node.why}</p>
 			{/if}
 			<div class="mt-4 flex flex-wrap gap-2">
-				<Button size="sm" class="gap-1.5" onclick={() => answer(node.yes)}>
+				<!-- Equal weight on purpose: a primary "Yes" nudges the answer, and a
+				     diagnostic that nudges you is worse than no diagnostic. -->
+				<Button variant="outline" size="sm" class="gap-1.5" onclick={() => answer(node.yes)}>
 					<HugeiconsIcon icon={Tick02Icon} size={13} /> Yes
 				</Button>
 				<Button variant="outline" size="sm" class="gap-1.5" onclick={() => answer(node.no)}>
@@ -246,10 +263,31 @@
 		{/if}
 	</div>
 
-	{#if path.length > 1}
-		<p class="text-xs text-muted-foreground">
-			Step {path.length} · you have eliminated {path.length - 1}
-			{path.length === 2 ? 'possibility' : 'possibilities'}.
-		</p>
+	{#if trail.length > 0}
+		<div class="flex flex-col gap-1">
+			<p class="label">What you have ruled out</p>
+			<ol class="flex flex-col gap-px">
+				{#each trail as step (step.id)}
+					<li>
+						<button
+							class="group flex w-full items-start gap-2 rounded-md px-2 py-1 text-left text-xs transition-colors hover:bg-accent/50"
+							onclick={() => rewind(step.index)}
+						>
+							<HugeiconsIcon
+								icon={step.yes ? Tick02Icon : Cancel01Icon}
+								size={13}
+								class={cn('mt-px shrink-0', step.yes ? 'text-ok' : 'text-muted-foreground')}
+							/>
+							<span class="flex-1 text-muted-foreground">{step.question}</span>
+							<span
+								class="shrink-0 text-2xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+							>
+								change
+							</span>
+						</button>
+					</li>
+				{/each}
+			</ol>
+		</div>
 	{/if}
 </div>

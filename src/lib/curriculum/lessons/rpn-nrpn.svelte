@@ -16,12 +16,12 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Control Change gives you 128 knobs with 128 positions each. A modern synthesiser has rather
 			more than 128 parameters, many of which need more than 128 positions. MIDI's answer was not to
 			add a new message — it was to build a small protocol out of the messages it already had.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The mechanism is: <strong>say which parameter, then say what value</strong>. Both halves
 			travel as ordinary Control Changes, which is why an RPN edit looks like five unrelated CCs in
 			a monitor until you know what you are looking at.
@@ -29,18 +29,16 @@
 	</Section>
 
 	<div class="grid gap-4 lg:grid-cols-2">
-		<div class="flex flex-col gap-2 rounded-xl border border-msg-note/40 p-4">
-			<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">
-				RPN · registered
-			</p>
+		<div class="flex flex-col gap-2 rounded-lg border border-msg-note/40 p-4">
+			<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">RPN · registered</p>
 			<p class="text-sm leading-relaxed">
 				Numbers assigned by the MIDI Association. They mean the same thing on every device that
 				implements them, and there are only a handful. Selected with <strong>CC 101</strong>
 				(coarse) and <strong>CC 100</strong> (fine).
 			</p>
 		</div>
-		<div class="flex flex-col gap-2 rounded-xl border border-msg-sysex/40 p-4">
-			<p class="text-[11px] font-semibold tracking-wide text-msg-sysex uppercase">
+		<div class="flex flex-col gap-2 rounded-lg border border-msg-sysex/40 p-4">
+			<p class="text-xs font-semibold tracking-wide text-msg-sysex uppercase">
 				NRPN · non-registered
 			</p>
 			<p class="text-sm leading-relaxed">
@@ -52,9 +50,9 @@
 	</div>
 
 	<Section title="Every registered parameter there is">
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="w-20 px-3 py-2 text-left font-medium">MSB,LSB</th>
 						<th class="px-3 py-2 text-left font-medium">Parameter</th>
@@ -101,12 +99,10 @@
 	</Callout>
 
 	<Section title="Reading an NRPN table">
-		<p class="text-[15px] leading-relaxed">
-			A manufacturer's NRPN documentation typically looks like this:
-		</p>
-		<div class="overflow-hidden rounded-xl border">
+		<p class="prose-body">A manufacturer's NRPN documentation typically looks like this:</p>
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="px-3 py-2 text-left font-medium">Parameter</th>
 						<th class="px-3 py-2 text-left font-medium">NRPN MSB</th>

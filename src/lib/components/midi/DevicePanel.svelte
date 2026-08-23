@@ -54,37 +54,20 @@
 				</p>
 			</div>
 		</div>
-	{:else if midiAccess.status !== 'granted'}
-		<div class="flex flex-col items-start gap-3 rounded-lg border p-4">
-			<div>
-				<p class="text-sm font-medium">Not connected to your MIDI hardware yet.</p>
-				<p class="mt-1 text-sm text-muted-foreground">
-					The browser will ask permission. Nothing is opened automatically — you pick which ports to
-					listen to and which to send on.
-				</p>
-			</div>
-			<div class="flex items-center gap-2">
-				<Button
-					size="sm"
-					onclick={() => midiAccess.request(false)}
-					disabled={midiAccess.status === 'requesting'}
-				>
-					<HugeiconsIcon icon={PlugSocketIcon} size={15} />
-					{midiAccess.status === 'requesting' ? 'Asking…' : 'Connect MIDI'}
-				</Button>
-			</div>
-			{#if midiAccess.error}
-				<p class="text-xs text-destructive">{midiAccess.error}</p>
-			{/if}
-		</div>
-	{:else}
-		<div class={cn('grid gap-4', compact ? 'grid-cols-1' : 'sm:grid-cols-2')}>
-			<!-- Inputs -->
-			<section class="flex flex-col gap-1.5">
-				<header
-					class="flex items-center justify-between px-1 text-[10px] tracking-wide text-muted-foreground uppercase"
-				>
-					<span>Inputs — listen</span>
+	{/if}
+
+	<!--
+		Outputs are listed whatever the permission state, because there is always
+		at least one: the synth built into this page. Hiding the whole panel
+		behind "not connected yet" told you that you had nothing to play, which
+		was never true.
+	-->
+	<div class={cn('grid gap-4', compact ? 'grid-cols-1' : 'sm:grid-cols-2')}>
+		<!-- Inputs -->
+		<section class="flex flex-col gap-1.5">
+			<header class="label flex items-center justify-between px-1">
+				<span>Inputs — listen</span>
+				{#if midiAccess.status === 'granted'}
 					<button
 						class="hover:text-foreground"
 						onclick={() => midiAccess.refresh()}
@@ -92,75 +75,102 @@
 					>
 						<HugeiconsIcon icon={Refresh01Icon} size={13} />
 					</button>
-				</header>
-				{#if midiAccess.inputs.length === 0}
-					<p class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
-						No MIDI inputs found. Plug something in — the list updates itself.
-					</p>
-				{:else}
-					{#each midiAccess.inputs as port (port.id)}
-						<label
-							class={cn(
-								'flex cursor-pointer items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors hover:bg-accent/50',
-								midiAccess.isListening(port.id) && 'border-msg-cc/50 bg-msg-cc-bg'
-							)}
-						>
-							<HugeiconsIcon
-								icon={transportIcon(port.name)}
-								size={15}
-								class={midiAccess.isListening(port.id) ? 'text-msg-cc' : 'text-muted-foreground'}
-							/>
-							<span class="min-w-0 flex-1">
-								<span class="block truncate text-[13px] leading-tight">{port.name}</span>
-								{#if port.manufacturer}
-									<span class="block truncate text-[11px] text-muted-foreground"
-										>{port.manufacturer}</span
-									>
-								{/if}
-							</span>
-							{#if port.state === 'disconnected'}
-								<Badge variant="outline" class="text-[10px]">offline</Badge>
-							{/if}
-							<Switch
-								checked={midiAccess.isListening(port.id)}
-								onCheckedChange={() => midiAccess.toggleListen(port.id)}
-								disabled={port.state === 'disconnected'}
-							/>
-						</label>
-					{/each}
 				{/if}
-			</section>
+			</header>
 
-			<!-- Outputs -->
-			<section class="flex flex-col gap-1.5">
-				<header class="px-1 text-[10px] tracking-wide text-muted-foreground uppercase">
-					Outputs — send
-				</header>
-				{#each engine.outputs as out (out.id)}
+			{#if midiAccess.status === 'unsupported'}
+				<p class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
+					No Web MIDI in this browser, so no inputs can exist here.
+				</p>
+			{:else if midiAccess.status !== 'granted'}
+				<div class="flex flex-col items-start gap-2.5 rounded-lg border p-3">
+					<p class="text-xs leading-relaxed text-muted-foreground">
+						The browser will ask permission. Nothing is opened automatically — you pick which ports
+						to listen to and which to send on.
+					</p>
+					<Button
+						size="sm"
+						onclick={() => midiAccess.request(false)}
+						disabled={midiAccess.status === 'requesting'}
+					>
+						<HugeiconsIcon icon={PlugSocketIcon} size={15} />
+						{midiAccess.status === 'requesting' ? 'Asking…' : 'Connect MIDI'}
+					</Button>
+					{#if midiAccess.error}
+						<p class="text-xs text-destructive">{midiAccess.error}</p>
+					{/if}
+				</div>
+			{:else if midiAccess.inputs.length === 0}
+				<p class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
+					No MIDI inputs found. Plug something in — the list updates itself.
+				</p>
+			{:else}
+				{#each midiAccess.inputs as port (port.id)}
 					<label
 						class={cn(
 							'flex cursor-pointer items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors hover:bg-accent/50',
-							engine.isOutputActive(out.id) && 'border-msg-note/50 bg-msg-note-bg'
+							midiAccess.isListening(port.id) && 'border-msg-cc/50 bg-msg-cc-bg'
 						)}
 					>
 						<HugeiconsIcon
-							icon={out.kind === 'internal' ? AudioWaveformIcon : transportIcon(out.name)}
+							icon={transportIcon(port.name)}
 							size={15}
-							class={engine.isOutputActive(out.id) ? 'text-msg-note' : 'text-muted-foreground'}
+							class={midiAccess.isListening(port.id) ? 'text-msg-cc' : 'text-muted-foreground'}
 						/>
-						<span class="min-w-0 flex-1 truncate text-[13px]">{out.name}</span>
-						{#if !out.connected}
-							<Badge variant="outline" class="text-[10px]">offline</Badge>
+						<span class="min-w-0 flex-1">
+							<span class="block truncate text-sm leading-tight">{port.name}</span>
+							{#if port.manufacturer}
+								<span class="block truncate text-xs text-muted-foreground">{port.manufacturer}</span
+								>
+							{/if}
+						</span>
+						{#if port.state === 'disconnected'}
+							<Badge variant="outline" class="text-2xs">offline</Badge>
 						{/if}
 						<Switch
-							checked={engine.isOutputActive(out.id)}
-							onCheckedChange={() => engine.toggleOutput(out.id)}
+							checked={midiAccess.isListening(port.id)}
+							onCheckedChange={() => midiAccess.toggleListen(port.id)}
+							disabled={port.state === 'disconnected'}
 						/>
 					</label>
 				{/each}
-			</section>
-		</div>
+			{/if}
+		</section>
 
+		<!-- Outputs -->
+		<section class="flex flex-col gap-1.5">
+			<header class="label px-1">Outputs — send</header>
+			{#each engine.outputs as out (out.id)}
+				<label
+					class={cn(
+						'flex cursor-pointer items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors hover:bg-accent/50',
+						engine.isOutputActive(out.id) && 'border-msg-note/50 bg-msg-note-bg'
+					)}
+				>
+					<HugeiconsIcon
+						icon={out.kind === 'internal' ? AudioWaveformIcon : transportIcon(out.name)}
+						size={15}
+						class={engine.isOutputActive(out.id) ? 'text-msg-note' : 'text-muted-foreground'}
+					/>
+					<span class="min-w-0 flex-1 truncate text-sm">{out.name}</span>
+					{#if !out.connected}
+						<Badge variant="outline" class="text-2xs">offline</Badge>
+					{/if}
+					<Switch
+						checked={engine.isOutputActive(out.id)}
+						onCheckedChange={() => engine.toggleOutput(out.id)}
+					/>
+				</label>
+			{/each}
+			{#if midiAccess.status !== 'granted' && midiAccess.status !== 'unsupported'}
+				<p class="px-1 text-2xs leading-relaxed text-muted-foreground">
+					Your hardware outputs join this list once you connect.
+				</p>
+			{/if}
+		</section>
+	</div>
+
+	{#if midiAccess.status === 'granted'}
 		<div class="flex flex-wrap items-center gap-3 border-t pt-3">
 			<div class="flex items-center gap-2">
 				<HugeiconsIcon icon={LockIcon} size={14} class="text-muted-foreground" />
@@ -182,7 +192,7 @@
 				>
 					Enable SysEx
 				</Button>
-				<p class="w-full text-[11px] leading-snug text-muted-foreground">
+				<p class="w-full text-xs leading-snug text-muted-foreground">
 					SysEx is gated separately because it can reach a device's firmware. The browser will
 					prompt again.
 				</p>
@@ -191,8 +201,8 @@
 
 		<label class="flex items-center gap-3 rounded-lg border px-2.5 py-2 hover:bg-accent/40">
 			<span class="flex-1">
-				<span class="block text-[13px]">Audition incoming MIDI</span>
-				<span class="block text-[11px] text-muted-foreground">
+				<span class="block text-sm">Audition incoming MIDI</span>
+				<span class="block text-xs text-muted-foreground">
 					Play whatever arrives through the internal synth, so you can hear a controller with no
 					sound module attached.
 				</span>

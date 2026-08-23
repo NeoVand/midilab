@@ -8,7 +8,7 @@
 	 * noticing, so the toggle is right there.
 	 */
 	import { monitor } from '$lib/midi/monitor.svelte';
-	import type { MidiEvent } from '$lib/midi/bus';
+	import type { Direction, MidiEvent } from '$lib/midi/bus';
 	import {
 		FAMILY_LABELS,
 		family,
@@ -16,7 +16,8 @@
 		hexBytes,
 		shortLabel,
 		ch1,
-		type MessageFamily
+		type MessageFamily,
+		magnitude
 	} from '$lib/midi/messages';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
@@ -29,6 +30,7 @@
 		FilterIcon
 	} from '@hugeicons/core-free-icons';
 	import { Button } from '$lib/components/ui/button';
+	import SearchField from '$lib/components/shell/SearchField.svelte';
 	import * as Popover from '$lib/components/ui/popover';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Label } from '$lib/components/ui/label';
@@ -43,6 +45,13 @@
 	let { onSelect, selectedId = null, class: className, showToolbar = true }: Props = $props();
 
 	const rows = $derived(monitor.filtered);
+
+	/**
+	 * A column that says the same thing on every row is not a column, it is a
+	 * caption repeated a hundred times. Port only appears once there is more
+	 * than one of them, and then only on the row where it changes.
+	 */
+	const showPort = $derived(new Set(rows.map((e) => e.portId)).size > 1);
 	const allFamilies: MessageFamily[] = [
 		'note',
 		'cc',
@@ -53,9 +62,36 @@
 		'common'
 	];
 
+	/*
+	 * The ports the buffer has actually seen. With one interface a port filter
+	 * is a control with one option, so it does not appear; the moment a second
+	 * device shows up it does.
+	 */
+	const seenPorts = $derived.by(() => {
+		void monitor.version;
+		const map = new Map<string, string>();
+		for (const e of monitor.events) if (!map.has(e.portId)) map.set(e.portId, e.portName);
+		return [...map].map(([id, name]) => ({ id, name }));
+	});
+
+	/** Where the fill sits in the track, as CSS percentages from each edge. */
+	function bar(e: MidiEvent) {
+		const m = magnitude(e.message);
+		if (!m) return null;
+		const pct = (m.value / m.max) * 100;
+		if (m.centre === undefined) return { left: 0, right: 100 - pct, centre: false };
+		return {
+			left: Math.min(50, pct),
+			right: Math.min(50, 100 - pct),
+			centre: true
+		};
+	}
+
 	function deltaMs(i: number): string {
 		const next = rows[i + 1];
-		if (!next) return '';
+		// The oldest row has nothing to be a gap from. An em dash says that; a
+		// blank cell just looks like the column failed.
+		if (!next) return '—';
 		const d = rows[i].time - next.time;
 		return d < 1000 ? `+${d.toFixed(1)}` : `+${(d / 1000).toFixed(2)}s`;
 	}
@@ -81,44 +117,136 @@
 			<Popover.Root>
 				<Popover.Trigger>
 					{#snippet child({ props })}
-						<Button {...props} variant="ghost" size="sm" class="h-7 gap-1.5 px-2">
+						<Button
+							{...props}
+							variant="ghost"
+							size="sm"
+							class={cn('h-7 gap-1.5 px-2', monitor.filtering && 'text-msg-cc')}
+						>
 							<HugeiconsIcon icon={FilterIcon} size={14} />
 							<span class="text-xs">Filter</span>
+							<!--
+								A filter you have forgotten about looks exactly like a broken
+								app: messages arrive and nothing appears. It says so.
+							-->
+							{#if monitor.filtering}
+								<span class="size-1.5 rounded-full bg-msg-cc"></span>
+							{/if}
 						</Button>
 					{/snippet}
 				</Popover.Trigger>
-				<Popover.Content class="w-64" align="start">
-					<div class="flex flex-col gap-3">
-						<div class="flex items-center justify-between">
-							<Label for="hide-rt" class="text-xs font-normal">Hide clock &amp; sensing</Label>
-							<Switch id="hide-rt" bind:checked={monitor.hideRealTime} />
-						</div>
-						<div class="flex flex-col gap-1.5">
-							<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Families</span
-							>
-							{#each allFamilies as f (f)}
+				<Popover.Content class="flex w-72 flex-col gap-3.5" align="start">
+					<div class="flex items-center justify-between">
+						<Label for="hide-rt" class="text-xs font-normal">Hide clock &amp; sensing</Label>
+						<Switch id="hide-rt" bind:checked={monitor.hideRealTime} />
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<span class="label">Direction</span>
+						<div class="flex gap-1.5">
+							{#each [['in', 'Incoming'], ['out', 'Outgoing']] as [d, label] (d)}
+								{@const on = monitor.directions.includes(d as Direction)}
 								<button
-									class="flex items-center gap-2 rounded px-1.5 py-1 text-left text-xs hover:bg-accent"
-									onclick={() => monitor.toggleFamily(f)}
+									class={cn(
+										'flex-1 rounded-md border px-2 py-1 text-xs transition-colors',
+										on
+											? 'border-msg-cc/60 bg-msg-cc-bg text-msg-cc'
+											: 'text-muted-foreground hover:border-foreground/20'
+									)}
+									onclick={() => monitor.toggleDirection(d as Direction)}
 								>
-									<span
-										class="size-2.5 rounded-full transition-opacity"
-										style="background: {familyColor(f)}; opacity: {monitor.families.includes(f)
-											? 1
-											: 0.2}"
-									></span>
-									<span class={monitor.families.includes(f) ? '' : 'text-muted-foreground/60'}>
-										{FAMILY_LABELS[f]}
-									</span>
+									{label}
 								</button>
 							{/each}
 						</div>
 					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<span class="label">Families</span>
+						<div class="flex flex-col">
+							{#each allFamilies as f (f)}
+								{@const on = monitor.families.includes(f)}
+								<button
+									class="flex items-center gap-2 rounded-sm px-1.5 py-1 text-left text-xs transition-colors hover:bg-accent"
+									onclick={() => monitor.toggleFamily(f)}
+								>
+									<span
+										class="size-2.5 rounded-full transition-opacity"
+										style="background: {familyColor(f)}; opacity: {on ? 1 : 0.2}"
+									></span>
+									<span class={on ? '' : 'text-muted-foreground/60'}>{FAMILY_LABELS[f]}</span>
+								</button>
+							{/each}
+						</div>
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<span class="label flex items-baseline justify-between">
+							Channels
+							<span class="text-muted-foreground normal-case">
+								{monitor.channels.length ? `${monitor.channels.length} selected` : 'all'}
+							</span>
+						</span>
+						<div class="grid grid-cols-8 gap-1">
+							{#each Array.from({ length: 16 }, (_, c) => c) as c (c)}
+								{@const on = monitor.channels.includes(c)}
+								<button
+									class={cn(
+										'tnum rounded-sm border py-0.5 font-mono text-2xs transition-colors',
+										on
+											? 'border-msg-cc/60 bg-msg-cc-bg text-msg-cc'
+											: 'text-muted-foreground hover:border-foreground/20'
+									)}
+									onclick={() => monitor.toggleChannel(c)}
+									aria-pressed={on}
+								>
+									{c + 1}
+								</button>
+							{/each}
+						</div>
+					</div>
+
+					{#if seenPorts.length > 1}
+						<div class="flex flex-col gap-1.5">
+							<span class="label flex items-baseline justify-between">
+								Ports
+								<span class="text-muted-foreground normal-case">
+									{monitor.ports.length ? `${monitor.ports.length} selected` : 'all'}
+								</span>
+							</span>
+							{#each seenPorts as port (port.id)}
+								{@const on = monitor.ports.includes(port.id)}
+								<button
+									class={cn(
+										'truncate rounded-sm px-1.5 py-1 text-left text-xs transition-colors hover:bg-accent',
+										on ? 'text-msg-cc' : 'text-muted-foreground'
+									)}
+									aria-pressed={on}
+									onclick={() =>
+										(monitor.ports = on
+											? monitor.ports.filter((x) => x !== port.id)
+											: [...monitor.ports, port.id])}
+								>
+									{port.name}
+								</button>
+							{/each}
+						</div>
+					{/if}
+
+					{#if monitor.filtering}
+						<button
+							class="self-start text-xs text-muted-foreground underline decoration-border underline-offset-2 hover:text-foreground"
+							onclick={() => monitor.resetFilters()}
+						>
+							Show everything again
+						</button>
+					{/if}
 				</Popover.Content>
 			</Popover.Root>
 
 			<div class="flex-1"></div>
-			<span class="tnum font-mono text-[11px] text-muted-foreground">
+			<SearchField bind:value={monitor.search} placeholder="Port or type…" class="w-40 shrink-0" />
+			<span class="tnum shrink-0 font-mono text-xs text-muted-foreground">
 				{monitor.rate}/s · {monitor.total}
 			</span>
 		</div>
@@ -129,13 +257,33 @@
 			<div
 				class="grid h-full min-h-24 place-items-center p-6 text-center text-sm text-muted-foreground"
 			>
-				<div>
-					<p>Nothing on the wire yet.</p>
-					<p class="mt-1 text-xs">Play a note, or connect a device and send something.</p>
+				<div class="measure">
+					<p class="text-foreground">Nothing on the wire yet.</p>
+					<p class="mt-1.5 text-xs">
+						Play a note, or connect a device and send something. Each row will show the gap since
+						the previous message, its direction, its family colour, the channel, the raw bytes and
+						what they mean.
+					</p>
 				</div>
 			</div>
 		{:else}
-			<table class="w-full border-collapse font-mono text-[11.5px]">
+			<table class="w-full border-collapse font-mono text-xs">
+				<thead class="sticky top-0 z-10 bg-background/95 backdrop-blur">
+					<tr class="border-b">
+						<th class="label w-14 py-1 pr-1 pl-2 text-right font-medium">Δt</th>
+						<th class="label w-5 py-1 font-medium" title="Direction"
+							><span class="sr-only">Direction</span></th
+						>
+						<th class="label w-2 py-1 font-medium"><span class="sr-only">Family</span></th>
+						<th class="label w-7 py-1 pl-1.5 text-right font-medium">ch</th>
+						<th class="label w-[8.5rem] py-1 pl-3 text-left font-medium">bytes</th>
+						<th class="label py-1 pr-2 pl-2 text-left font-medium">message</th>
+						<th class="label hidden w-40 py-1 pr-3 text-left font-medium xl:table-cell">value</th>
+						{#if showPort}
+							<th class="label hidden w-32 py-1 pr-3 text-right font-medium lg:table-cell">port</th>
+						{/if}
+					</tr>
+				</thead>
 				<tbody>
 					{#each rows as e, i (e.id)}
 						{@const fam = family(e.message)}
@@ -147,7 +295,7 @@
 							)}
 							onclick={() => onSelect?.(e)}
 						>
-							<td class="w-14 py-[3px] pr-1 pl-2 text-right text-muted-foreground/70 tabular-nums">
+							<td class="w-14 py-[3px] pr-1 pl-2 text-right text-muted-foreground tabular-nums">
 								{deltaMs(i)}
 							</td>
 							<td class="w-5 py-[3px]">
@@ -173,11 +321,33 @@
 							<td class="truncate py-[3px] pr-2 pl-2">
 								{shortLabel(e.message, { octaveConvention: settings.octaveConvention })}
 							</td>
-							<td
-								class="hidden w-32 truncate py-[3px] pr-3 text-right text-muted-foreground/60 lg:table-cell"
-							>
-								{e.portName}
+							<!--
+								The same message drawn as a quantity. Scroll a CC sweep and it
+								is a staircase; a bend is a ramp out from the middle; a
+								crescendo looks like one. The column only appears where there
+								is room for it.
+							-->
+							<td class="hidden w-40 py-[3px] pr-3 align-middle xl:table-cell">
+								{#if bar(e)}
+									{@const b = bar(e)!}
+									<span class="relative block h-1 rounded-full bg-muted">
+										{#if b.centre}
+											<span class="absolute inset-y-0 left-1/2 w-px bg-border"></span>
+										{/if}
+										<span
+											class="absolute inset-y-0 rounded-full"
+											style="left: {b.left}%; right: {b.right}%; background: {familyColor(fam)}"
+										></span>
+									</span>
+								{/if}
 							</td>
+							{#if showPort}
+								<td
+									class="hidden w-32 truncate py-[3px] pr-3 text-right text-muted-foreground lg:table-cell"
+								>
+									{rows[i + 1]?.portId === e.portId ? '' : e.portName}
+								</td>
+							{/if}
 						</tr>
 					{/each}
 				</tbody>

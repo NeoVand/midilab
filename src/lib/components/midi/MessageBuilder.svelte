@@ -54,7 +54,7 @@
 		value = $bindable(64),
 		program = $bindable(0),
 		bend = $bindable(8192),
-		pressure = $bindable(64),
+		pressure = $bindable(0),
 		lockType = false,
 		autoSend = false,
 		class: className
@@ -92,12 +92,15 @@
 	const bytes = $derived(encode(message));
 
 	function send() {
-		engine.wake();
+		void engine.wake();
 		engine.send(message);
 		// A Note On you can never turn off is how the app teaches stuck notes,
-		// but not by accident: this one releases itself after a beat.
+		// but not by accident: this one releases itself after a beat. Capture the
+		// channel and note now — turning the knob during those 700 ms must not
+		// redirect the release to whatever is under your finger by then.
 		if (type === 'noteOn') {
-			setTimeout(() => engine.send({ type: 'noteOff', channel, note, velocity: 0 }), 700);
+			const [ch, n] = [channel, note];
+			setTimeout(() => engine.send({ type: 'noteOff', channel: ch, note: n, velocity: 0 }), 700);
 		}
 	}
 
@@ -108,11 +111,11 @@
 	});
 </script>
 
-<div class={cn('flex flex-col gap-5 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-5 rounded-lg border p-4', className)}>
 	<div class="flex flex-wrap items-end gap-4">
 		{#if !lockType}
 			<label class="flex flex-col gap-1">
-				<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Message</span>
+				<span class="label">Message</span>
 				<Select.Root type="single" bind:value={type as string}>
 					<Select.Trigger class="h-8 w-48 text-xs">
 						{TYPE_LABELS[type] ?? type}
@@ -180,7 +183,7 @@
 				colour="var(--msg-cc)"
 				size={46}
 			/>
-			<p class="max-w-40 text-[11px] leading-snug text-muted-foreground">
+			<p class="max-w-40 text-xs leading-snug text-muted-foreground">
 				{ccInfo(controller).name}
 			</p>
 		{/if}
@@ -194,7 +197,7 @@
 				colour="var(--msg-program)"
 				size={46}
 			/>
-			<p class="max-w-40 text-[11px] leading-snug text-muted-foreground">
+			<p class="max-w-40 text-xs leading-snug text-muted-foreground">
 				GM: {gmProgramName(program)}
 			</p>
 		{/if}
@@ -222,9 +225,8 @@
 			/>
 		{/if}
 
-		<div class="flex-1"></div>
 		{#if !autoSend}
-			<Button size="sm" onclick={send} class="gap-1.5">
+			<Button size="sm" onclick={send} class="ml-auto gap-1.5">
 				<HugeiconsIcon icon={SentIcon} size={14} />
 				Send
 			</Button>
@@ -233,13 +235,14 @@
 
 	{#if type === 'controlChange'}
 		<div class="flex flex-wrap items-center gap-1.5">
-			<span class="mr-1 text-[10px] tracking-wide text-muted-foreground uppercase">Jump to</span>
+			<span class="label mr-1">Jump to</span>
 			{#each ESSENTIAL_CCS as n (n)}
 				<button
 					class={cn(
-						'rounded border px-1.5 py-0.5 font-mono text-[10px] transition-colors hover:border-msg-cc',
+						'rounded-md border px-2 py-1 font-mono text-2xs transition-colors hover:border-msg-cc',
 						controller === n && 'border-msg-cc bg-msg-cc-bg text-msg-cc'
 					)}
+					aria-pressed={controller === n}
 					onclick={() => (controller = n)}
 				>
 					{n}

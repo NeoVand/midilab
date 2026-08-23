@@ -10,9 +10,10 @@
 	 */
 	import { onMount } from 'svelte';
 	import { bus } from '$lib/midi/bus';
-	import { engine } from '$lib/midi/engine.svelte';
+	import { engine, INTERNAL_OUTPUT_ID } from '$lib/midi/engine.svelte';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import EmptyState from '$lib/components/shell/EmptyState.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { StopWatchIcon } from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
@@ -27,8 +28,14 @@
 
 	let samples = $state<number[]>([]);
 	let running = $state(false);
+	let timedOut = $state(false);
 	let sentAt = 0;
 	let remaining = 0;
+	/*
+	 * Tracked so a finished run does not leave a timer behind that stops the
+	 * *next* run six seconds after the first one started.
+	 */
+	let giveUpTimer = 0;
 
 	const stats = $derived.by(() => {
 		if (samples.length === 0) return null;
@@ -50,6 +57,7 @@
 	function next() {
 		if (remaining <= 0) {
 			running = false;
+			clearTimeout(giveUpTimer);
 			return;
 		}
 		remaining--;
@@ -62,56 +70,68 @@
 
 	function start() {
 		samples = [];
+		timedOut = false;
 		remaining = 24;
 		running = true;
+		clearTimeout(giveUpTimer);
 		next();
-		// If nothing ever comes back, do not spin forever.
-		setTimeout(() => (running = false), 6000);
+		// If nothing ever comes back, do not spin forever — and say so, rather
+		// than dropping silently back to the "ready to measure" state as though
+		// nothing had been attempted.
+		giveUpTimer = window.setTimeout(() => {
+			if (!running) return;
+			running = false;
+			timedOut = samples.length === 0;
+		}, 6000);
 	}
 
-	const ready = $derived(midiAccess.listening.length > 0 && engine.activeOutputs.length > 0);
+	/*
+	 * The internal synth is always an active output and can never send anything
+	 * back, so counting it made the button look ready when the loop could not
+	 * possibly close.
+	 */
+	const ready = $derived(
+		midiAccess.listening.length > 0 && engine.activeOutputs.some((id) => id !== INTERNAL_OUTPUT_ID)
+	);
 </script>
 
-<div class={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
-	<div class="flex flex-wrap items-center gap-3">
-		<Button size="sm" class="gap-1.5" onclick={start} disabled={running || !ready}>
-			<HugeiconsIcon icon={StopWatchIcon} size={14} />
-			{running ? 'Measuring…' : 'Measure round trip'}
-		</Button>
-		{#if !ready}
-			<span class="text-xs text-muted-foreground">
-				Enable a hardware output and an input in the dock first, then loop one back into the other.
-			</span>
-		{/if}
-	</div>
+<div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
+	{#if stats || running}
+		<div class="flex flex-wrap items-center gap-3">
+			<Button size="sm" class="gap-1.5" onclick={start} disabled={running || !ready}>
+				<HugeiconsIcon icon={StopWatchIcon} size={14} />
+				{running ? 'Measuring…' : 'Measure again'}
+			</Button>
+		</div>
+	{/if}
 
 	{#if stats}
 		<div class="flex flex-wrap gap-x-8 gap-y-2">
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Mean round trip</p>
+				<p class="label">Mean round trip</p>
 				<p class="tnum font-mono text-3xl leading-none text-readout">
 					{stats.mean.toFixed(2)}<span class="text-base"> ms</span>
 				</p>
 			</div>
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Jitter (σ)</p>
+				<p class="label">Jitter (σ)</p>
 				<p class="tnum font-mono text-3xl leading-none">
 					{stats.sd.toFixed(2)}<span class="text-base"> ms</span>
 				</p>
 			</div>
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Range</p>
+				<p class="label">Range</p>
 				<p class="tnum font-mono text-lg leading-none">
 					{stats.min.toFixed(1)} – {stats.max.toFixed(1)} ms
 				</p>
-				<p class="mt-1 font-mono text-[10px] text-muted-foreground">{stats.n} samples</p>
+				<p class="mt-1 font-mono text-2xs text-muted-foreground">{stats.n} samples</p>
 			</div>
 		</div>
 
 		<div class="panel-sunken flex h-16 items-end gap-[3px] rounded-lg border p-2">
 			{#each samples as s (s)}
 				<div
-					class="min-w-[3px] flex-1 rounded-[1px] bg-msg-clock"
+					class="min-w-[3px] flex-1 rounded-xs bg-msg-clock"
 					style="height: {Math.min(100, (s / Math.max(1, stats.max)) * 100)}%"
 				></div>
 			{/each}
@@ -123,11 +143,36 @@
 			compensate for it, because it is different every time. A tight rig has a σ under a millisecond
 			or two.
 		</p>
+	{:else if timedOut}
+		<div class="flex flex-col items-start gap-3 py-2">
+			<div>
+				<p class="text-sm font-medium">Twenty-four probes went out. None came back.</p>
+				<p class="measure mt-1 text-xs leading-relaxed text-muted-foreground">
+					The loop is not closed. Check that the output you are sending on is physically or
+					virtually patched to the input you are listening on, that both ends are switched on in the
+					dock, and that nothing in between is filtering channel 16.
+				</p>
+			</div>
+			<Button size="sm" class="gap-1.5" onclick={start} disabled={!ready}>
+				<HugeiconsIcon icon={StopWatchIcon} size={14} />
+				Try again
+			</Button>
+		</div>
 	{:else if !running}
-		<p class="text-xs leading-relaxed text-muted-foreground">
-			No measurement yet. This needs a loop: connect a MIDI Out back to a MIDI In physically, or
-			create a virtual port (IAC Driver on macOS, loopMIDI on Windows) and enable both ends in the
-			dock.
-		</p>
+		<EmptyState
+			icon={StopWatchIcon}
+			class="border-0 py-2"
+			title={ready ? 'Ready to measure' : 'This one needs a loop'}
+			body={ready
+				? 'Sends twenty-four probe notes and times how long each takes to arrive back. The average is latency, which you can compensate for; the spread is jitter, which you cannot.'
+				: 'Connect a MIDI Out back to a MIDI In — physically, or with a virtual port such as the IAC Driver on macOS or loopMIDI on Windows — then enable both ends in the dock.'}
+		>
+			{#snippet action()}
+				<Button size="sm" class="gap-1.5" onclick={start} disabled={!ready}>
+					<HugeiconsIcon icon={StopWatchIcon} size={14} />
+					Measure round trip
+				</Button>
+			{/snippet}
+		</EmptyState>
 	{/if}
 </div>

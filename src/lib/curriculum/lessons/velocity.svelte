@@ -71,12 +71,12 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Every Note On carries a second number alongside the pitch: <strong>velocity</strong>, from 1
 			to 127. On a weighted keyboard it is literally a measurement — the instrument times how long
 			the key took to travel from top to bottom, and a fast key means a hard hit.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			What the receiver does with that number is, as always, entirely up to the receiver. Most
 			instruments make it louder. Good ones also make it <em>brighter</em>, because a real piano
 			string struck harder does not just get louder, it gets harsher. That combination is what makes
@@ -94,16 +94,16 @@
 
 	<Section title="Why it is not a volume control">
 		<div class="grid gap-3 sm:grid-cols-2">
-			<div class="flex flex-col gap-3 rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">Velocity</p>
+			<div class="flex flex-col gap-3 rounded-lg border p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">Velocity</p>
 				<p class="text-sm leading-relaxed">
 					Per note. Set once, at the instant the note starts, and never changes again for that note.
 					It describes <em>how it was played</em>.
 				</p>
 				<PhrasePlayer notes={PHRASE} bpm={112} label="Phrase, played dynamically" />
 			</div>
-			<div class="flex flex-col gap-3 rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+			<div class="flex flex-col gap-3 rounded-lg border p-4">
+				<p class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					The same phrase, flat
 				</p>
 				<p class="text-sm leading-relaxed">
@@ -163,7 +163,7 @@
 						vector-effect="non-scaling-stroke"
 					/>
 				</svg>
-				<p class="mt-1 text-center font-mono text-[9px] text-muted-foreground">played → sent</p>
+				<p class="mt-1 text-center font-mono text-2xs text-muted-foreground">played → sent</p>
 			</div>
 			<div class="flex flex-col gap-3">
 				<p class="text-sm text-muted-foreground">{CURVES[curve].note}</p>
@@ -184,7 +184,7 @@
 	</Callout>
 
 	<Section title="Release velocity">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Note Off carries a velocity too — how fast you <em>lifted</em> the key. Almost nothing transmits
 			it and almost nothing responds to it, so in practice it is 0 or 64 and safely ignored. Worth knowing
 			exists; not worth planning around.

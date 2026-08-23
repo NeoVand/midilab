@@ -11,36 +11,23 @@
 	import { router } from '$lib/midi/router.svelte';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { load, save } from '$lib/stores/persist';
+	import { WORKSHEETS } from '$lib/curriculum/worksheets';
 
 	const meta = lessonById('studio-routing')!;
 
-	let plan = $state<string>(
-		load(
-			'routing-plan',
-			`PORT / CHANNEL MAP
-
-ch 1   →
-ch 2   →
-ch 3   →
-ch 10  →  drums
-ch 11+ →  spare / MPE member channels
-
-CLOCK LEADER  →
-LOCAL CONTROL OFF ON  →
-NOTES:`
-		)
-	);
+	const SHEET = WORKSHEETS.find((w) => w.key === 'routing-plan')!;
+	let plan = $state<string>(load(SHEET.key, SHEET.template));
 	$effect(() => save('routing-plan', plan));
 </script>
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			You now know what every message does and what every socket is for. The remaining skill is
 			organisational: deciding, once, who talks to whom on which address, and writing it down so
 			that future-you can check reality against intention.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The real address in a studio is not the channel. It is <strong>port plus channel</strong>. A
 			channel number only has to be unique per cable, so a four-port interface gives you 64
 			addresses, not 16. Thinking in port-plus-channel is what stops you running out.
@@ -48,14 +35,14 @@ NOTES:`
 	</Section>
 
 	<Section title="Roles, not devices">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Sort your gear by what it is <em>doing this session</em>, not by what it is. The same
 			groovebox is a brain in one setup and a sound module in another.
 		</p>
 		<div class="grid gap-3 sm:grid-cols-3">
 			{#each [['Brains', 'Sequencers and hubs. They generate notes, send clock, and decide the arrangement. Usually one, occasionally two with one clearly subordinate.'], ['Controllers', 'Keyboards, pads, expressive surfaces. They generate performance data and consume nothing. Their MIDI Out goes to a brain, not to a synth.'], ['Voices', 'Anything that makes sound when told to. Set a receive channel, turn Local Control off if a brain is driving it, and forget about it.']] as [role, body] (role)}
-				<div class="rounded-xl border p-4">
-					<p class="text-[11px] font-semibold tracking-wide uppercase">{role}</p>
+				<div class="rounded-lg border p-4">
+					<p class="text-sm font-semibold">{role}</p>
 					<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">{body}</p>
 				</div>
 			{/each}
@@ -70,11 +57,17 @@ NOTES:`
 		</Callout>
 	</Section>
 
-	<TryThis title="Route your actual hardware">
+	<TryThis title="Route something, right now">
 		<p class="text-sm leading-relaxed">
 			This is a working patchbay, not an illustration. Anything arriving on an input can be sent to
 			any output, remapped to a different channel, transposed, velocity-scaled, split by note range
-			and filtered by message type. The curves light up when messages pass.
+			and filtered by message type. The curves light up when messages pass, and the routes keep
+			working while you use the rest of the app.
+		</p>
+		<p class="mt-2 text-sm leading-relaxed">
+			With nothing plugged in, the first input is this app's own controls — the keyboards, pads and
+			sequencer on these pages. Everything below works against them exactly as it would against a
+			controller, which is the point: the technique is the same either way.
 		</p>
 		<Patchbay />
 	</TryThis>
@@ -82,8 +75,8 @@ NOTES:`
 	<Section title="Things worth setting up here">
 		<div class="grid gap-3 sm:grid-cols-2">
 			{#each [['Keyboard split', 'Two routes from one keyboard: notes 0–59 to one output, 60–127 to another. Bass in the left hand, lead in the right, from a single controller.'], ['Layer', 'Two routes from one input to two outputs on different channels. Both play; you have doubled the sound without touching either instrument.'], ['Channel translation', 'Your controller transmits on channel 1 and your synth listens on 3. Rather than reconfiguring either, remap in the middle.'], ['Clock isolation', 'Turn the Clock filter off on routes to devices that should not follow — an easy way to stop an arpeggiator syncing when you did not want it to.']] as [title, body] (title)}
-				<div class="rounded-xl border p-4">
-					<p class="text-[11px] font-semibold tracking-wide uppercase">{title}</p>
+				<div class="rounded-lg border p-4">
+					<p class="text-sm font-semibold">{title}</p>
 					<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">{body}</p>
 				</div>
 			{/each}
@@ -91,7 +84,7 @@ NOTES:`
 	</Section>
 
 	<Section title="Write the plan down">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The document below is the single highest-value thing in this lesson. Fill it in for your own
 			rig. When something misbehaves in six months, the first question is always "is it wired the
 			way I think it is?" — and without a written plan there is no way to answer that except by

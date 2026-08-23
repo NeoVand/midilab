@@ -120,18 +120,18 @@ log('four second sweep — resonance is doing the work');`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The internal synth you have been playing for twenty-five lessons is about four hundred lines
 			of Web Audio. This lesson is enough of it to build your own.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Web Audio is a graph of nodes. You create sources, connect them through processors, and end at
 			the destination. Every parameter is an <strong>AudioParam</strong> with its own schedule — which
 			is the part that matters, because scheduling a parameter is how you get an envelope rather than
 			a click.
 		</p>
 		<div
-			class="flex flex-wrap items-center gap-2 rounded-xl border bg-surface-sunken p-4 font-mono text-sm"
+			class="flex flex-wrap items-center gap-2 rounded-lg border bg-surface-sunken p-4 font-mono text-sm"
 		>
 			<span class="text-msg-note">Oscillator</span>
 			<span class="text-muted-foreground">→</span>
@@ -141,7 +141,7 @@ log('four second sweep — resonance is doing the work');`
 			<span class="text-muted-foreground">→</span>
 			<span class="text-muted-foreground">destination</span>
 		</div>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			That chain is a subtractive synthesiser voice. Everything else — detuned second oscillators,
 			noise, reverb sends, an LFO on the detune — is more of the same idea.
 		</p>
@@ -149,27 +149,28 @@ log('four second sweep — resonance is doing the work');`
 
 	<Callout variant="key" title="Two clocks, and only one of them is musical">
 		<p>
-			<code class="rounded bg-muted px-1">AudioContext.currentTime</code> is a monotonic clock in
+			<code class="rounded-sm bg-muted px-1">AudioContext.currentTime</code> is a monotonic clock in
 			<em>seconds</em>, driven by the audio hardware. It is the only clock that matters for
-			scheduling sound. <code class="rounded bg-muted px-1">performance.now()</code> is a
+			scheduling sound. <code class="rounded-sm bg-muted px-1">performance.now()</code> is a
 			<em>millisecond</em> clock on the page, and it is what Web MIDI timestamps use.
 		</p>
 		<p class="mt-2">
 			They tick at nearly the same rate but from different zeros, and they drift apart over time.
 			Anything that must reach the synth and a hardware port together needs to be mapped between
-			them — that is what <code class="rounded bg-muted px-1">audioToPerf()</code> in this app does,
-			using <code class="rounded bg-muted px-1">getOutputTimestamp()</code> where the browser offers it.
+			them — that is what <code class="rounded-sm bg-muted px-1">audioToPerf()</code> in this app
+			does, using <code class="rounded-sm bg-muted px-1">getOutputTimestamp()</code> where the browser
+			offers it.
 		</p>
 	</Callout>
 
 	<Section title="Envelopes are scheduled, not polled">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The instinct is to change a gain value in an animation frame. Do not: that gives you a
 			stair-stepped envelope at 60 Hz and audible zipper noise, and it stops entirely when the tab
 			is busy. Instead, tell the AudioParam what to do in advance:
 		</p>
 		<pre
-			class="scrollbar-thin overflow-x-auto rounded-xl border bg-surface-sunken p-4 font-mono text-[12px] leading-relaxed"><code
+			class="scrollbar-thin overflow-x-auto rounded-lg border bg-surface-sunken p-4 font-mono text-sm leading-relaxed"><code
 				>{`gain.setValueAtTime(0.0001, t);                    // start silent
 gain.linearRampToValueAtTime(peak, t + attack);    // attack
 gain.setTargetAtTime(peak * sustain, t + attack, decay / 3);   // decay
@@ -193,30 +194,30 @@ gain.setTargetAtTime(0.0001, off, release / 4);    // release`}</code
 	</TryThis>
 
 	<Section title="Turning messages into sound">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			A MIDI-driven synth is a dictionary from note number to live voice. Note On creates and
 			stores; Note Off looks up, releases and deletes. The whole architecture of the synth in this
 			app is that, plus per-channel state, plus a fixed voice budget with stealing.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Two details make it feel professional rather than like a demo. <strong
 				>Velocity should touch the filter as well as the gain</strong
 			>
 			— that is what makes dynamics read as dynamics. And
 			<strong>controller changes must be smoothed</strong>, with
-			<code class="rounded bg-muted px-1">setTargetAtTime</code> rather than direct assignment, or every
-			CC 74 message becomes a click.
+			<code class="rounded-sm bg-muted px-1">setTargetAtTime</code> rather than direct assignment, or
+			every CC 74 message becomes a click.
 		</p>
 	</Section>
 
 	<Section title="When you need an AudioWorklet">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Everything above runs on the audio thread already — built-in nodes are native code, and the
 			main thread only schedules them. You need an AudioWorklet when you want to write the DSP
 			yourself: a custom oscillator, a wavefolder, a physical model. It runs in its own thread with
 			no DOM access and communicates by message port.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			For a MIDI application, the honest answer is usually that you do not need one. Reach for it
 			when a specific sound demands it, not as a default.
 		</p>
@@ -251,6 +252,7 @@ gain.setTargetAtTime(0.0001, off, release / 4);    // release`}</code
 			lesson={meta.id}
 			id="midi-synth"
 			label="Make incoming MIDI drive audio you wrote yourself"
+			hint="Needs a device sending into this page. Tick it by hand if you have none to hand."
 			test={(e) => e.direction === 'in' && e.message.type === 'noteOn'}
 		/>
 		<Checkpoint

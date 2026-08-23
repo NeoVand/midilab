@@ -39,7 +39,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Pitch bend, channel pressure and CC 74 are all channel-wide. That is a fact of MIDI 1.0 and
 			cannot be changed. Play a chord on one channel and bend it, and every note bends together —
 			you have already felt this in Lesson 8.
@@ -65,7 +65,7 @@
 				</div>
 			</div>
 		</TryThis>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			MPE's solution is almost crude in its simplicity: if the problem is that a channel holds many
 			notes, then <strong>put every note on its own channel</strong>. Channel-wide bend becomes
 			per-note bend, for free, with no new message types and no changes to any existing device's
@@ -74,21 +74,21 @@
 	</Section>
 
 	<Section title="Zones, masters and members">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			A <strong>zone</strong> is a master channel plus a run of member channels. The master carries anything
 			meant for the whole zone — sustain pedal, program changes, a global bend. Each member channel hosts
 			one sounding note at a time and carries that note's expression.
 		</p>
 		<div class="grid gap-4 lg:grid-cols-2">
-			<div class="flex flex-col gap-2 rounded-xl border border-msg-expr/40 p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-expr uppercase">Lower zone</p>
+			<div class="flex flex-col gap-2 rounded-lg border border-msg-expr/40 p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-expr uppercase">Lower zone</p>
 				<p class="text-sm leading-relaxed">
 					Master is <strong>channel 1</strong>; members count upward from channel 2. The common
 					case, and what almost every MPE controller uses by default.
 				</p>
 			</div>
-			<div class="flex flex-col gap-2 rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Upper zone</p>
+			<div class="flex flex-col gap-2 rounded-lg border p-4">
+				<p class="text-sm font-semibold">Upper zone</p>
 				<p class="text-sm leading-relaxed">
 					Master is <strong>channel 16</strong>; members count downward. Exists so one instrument
 					can host two independent MPE zones — a split, in effect.
@@ -107,9 +107,9 @@
 	</Section>
 
 	<Section title="The five dimensions of touch">
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="w-20 px-3 py-2 text-left font-medium">Dimension</th>
 						<th class="px-3 py-2 text-left font-medium">Carried as</th>
@@ -136,16 +136,16 @@
 	</Section>
 
 	<Section title="Declaring a zone">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			A controller announces its zone with the <strong>MPE Configuration Message</strong> — RPN 0,6 on
 			the master channel, with the number of member channels as the value. Sending zero tears the zone
 			down. It is exactly the RPN mechanism from Lesson 11, used for one more thing.
 		</p>
-		<div class="flex flex-col gap-2 rounded-xl border bg-surface-sunken p-4 font-mono text-xs">
+		<div class="flex flex-col gap-2 rounded-lg border bg-surface-sunken p-4 font-mono text-xs">
 			{#each [['CC 101 = 0', 'select RPN, coarse'], ['CC 100 = 6', 'RPN 0,6 — MPE configuration'], ['CC 6 = 8', 'reserve 8 member channels'], ['CC 101 = 127 / CC 100 = 127', 'deselect']] as [msg, why] (msg)}
 				<div class="flex flex-wrap items-baseline gap-3">
 					<code class="w-52 shrink-0 text-msg-cc">{msg}</code>
-					<span class="font-sans text-[11px] text-muted-foreground">{why}</span>
+					<span class="font-sans text-xs text-muted-foreground">{why}</span>
 				</div>
 			{/each}
 		</div>
@@ -169,13 +169,13 @@
 	</TryThis>
 
 	<Section title="MPE versus polyphonic aftertouch">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Both give per-note expression, and they are not competitors so much as different scopes. Poly
 			aftertouch gives you one extra dimension — pressure — per note, on a single channel, and
 			nothing else. MPE gives you pressure <em>and</em> pitch <em>and</em> timbre per note, at the cost
 			of consuming most of your channel space.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			That cost is real. An MPE controller using fifteen member channels leaves you nothing else on
 			that port. In a rig with several instruments, MPE controllers want their own port — which is
 			the port-plus-channel thinking from Lesson 21 arriving with a concrete consequence.

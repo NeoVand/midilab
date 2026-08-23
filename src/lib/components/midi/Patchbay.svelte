@@ -9,24 +9,33 @@
 	 */
 	import { onMount } from 'svelte';
 	import { midiAccess } from '$lib/midi/access.svelte';
-	import { engine, INTERNAL_OUTPUT_ID } from '$lib/midi/engine.svelte';
+	import {
+		engine,
+		INTERNAL_OUTPUT_ID,
+		VIRTUAL_INPUT_ID,
+		VIRTUAL_INPUT_NAME
+	} from '$lib/midi/engine.svelte';
 	import { router, newRoute } from '$lib/midi/router.svelte';
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import EmptyState from '$lib/components/shell/EmptyState.svelte';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Slider } from '$lib/components/ui/slider';
 	import * as Select from '$lib/components/ui/select';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { Add01Icon, Delete02Icon, AlertCircleIcon } from '@hugeicons/core-free-icons';
+	import {
+		Add01Icon,
+		Delete02Icon,
+		AlertCircleIcon,
+		Route02Icon
+	} from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
 
 	interface Props {
 		class?: string;
 	}
 	let { class: className }: Props = $props();
-
-	onMount(() => router.start());
 
 	let now = $state(performance.now());
 	onMount(() => {
@@ -39,7 +48,16 @@
 		return () => cancelAnimationFrame(frame);
 	});
 
-	const inputs = $derived(midiAccess.inputs);
+	/*
+	 * The app's own controls are the first input, always. Without them a laptop
+	 * with nothing plugged in has an empty patchbay and an unreachable lesson —
+	 * and it is not a stand-in: the keyboard, pads, sequencer and console on
+	 * these pages are the controller in this rig.
+	 */
+	const inputs = $derived([
+		{ id: VIRTUAL_INPUT_ID, name: VIRTUAL_INPUT_NAME, manufacturer: '', state: 'connected' },
+		...midiAccess.inputs
+	]);
 	const outputs = $derived(engine.outputs);
 
 	const ROW = 34;
@@ -63,7 +81,14 @@
 
 	function addRoute() {
 		const from = inputs[0]?.id ?? '';
-		router.add(newRoute(from, INTERNAL_OUTPUT_ID));
+		const hardwareOut = engine.outputs.find((o) => o.kind === 'hardware' && o.connected);
+		const to = hardwareOut?.id ?? INTERNAL_OUTPUT_ID;
+		const route = newRoute(from, to);
+		// A first route that plays every note twice in unison sounds broken. An
+		// octave up is unmistakably deliberate, and it is the layer example from
+		// the lesson, working on the first click.
+		if (from === VIRTUAL_INPUT_ID && to === INTERNAL_OUTPUT_ID) route.transpose = 12;
+		router.add(route);
 	}
 
 	const FILTER_KEYS = [
@@ -79,105 +104,110 @@
 
 <div class={cn('flex flex-col gap-4', className)}>
 	<!-- ── the graph ─────────────────────────────────────────────────────── -->
-	<div class="panel-sunken overflow-hidden rounded-xl border p-3">
-		{#if inputs.length === 0}
-			<p class="py-6 text-center text-xs text-muted-foreground">
-				No MIDI inputs. Connect hardware in the dock — the graph fills itself in.
-			</p>
-		{:else}
-			<svg
-				viewBox="0 0 600 {height}"
-				class="w-full"
-				style="height: {height}px"
-				role="img"
-				aria-label="Routing graph"
-			>
-				{#each inputs as port, i (port.id)}
-					<rect
-						x="4"
-						y={4 + i * ROW}
-						width="180"
-						height="26"
-						rx="5"
-						class="fill-card stroke-border"
-					/>
-					<text x="14" y={21 + i * ROW} font-size="10" class="fill-foreground">
-						{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
-					</text>
-					<circle
-						cx="188"
-						cy={17 + i * ROW}
-						r="3.5"
-						fill={midiAccess.isListening(port.id) ? 'var(--msg-cc)' : 'var(--grid-line-strong)'}
-					/>
-				{/each}
+	<div class="panel-sunken overflow-hidden rounded-lg border p-3">
+		<svg
+			viewBox="0 0 600 {height}"
+			class="w-full"
+			style="height: {height}px"
+			role="img"
+			aria-label="Routing graph"
+		>
+			{#each inputs as port, i (port.id)}
+				<rect
+					x="4"
+					y={4 + i * ROW}
+					width="180"
+					height="26"
+					rx="5"
+					class="fill-card stroke-border"
+				/>
+				<text x="14" y={21 + i * ROW} font-size="10" class="fill-foreground">
+					{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
+				</text>
+				<circle
+					cx="188"
+					cy={17 + i * ROW}
+					r="3.5"
+					fill={midiAccess.isListening(port.id) ? 'var(--msg-cc)' : 'var(--grid-line-strong)'}
+				/>
+			{/each}
 
-				{#each outputs as port, i (port.id)}
-					<rect
-						x="416"
-						y={4 + i * ROW}
-						width="180"
-						height="26"
-						rx="5"
-						class="fill-card stroke-border"
-					/>
-					<text x="426" y={21 + i * ROW} font-size="10" class="fill-foreground">
-						{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
-					</text>
-					<circle
-						cx="410"
-						cy={17 + i * ROW}
-						r="3.5"
-						fill={engine.isOutputActive(port.id) ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
-					/>
-				{/each}
+			{#each outputs as port, i (port.id)}
+				<rect
+					x="416"
+					y={4 + i * ROW}
+					width="180"
+					height="26"
+					rx="5"
+					class="fill-card stroke-border"
+				/>
+				<text x="426" y={21 + i * ROW} font-size="10" class="fill-foreground">
+					{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
+				</text>
+				<circle
+					cx="410"
+					cy={17 + i * ROW}
+					r="3.5"
+					fill={engine.isOutputActive(port.id) ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
+				/>
+			{/each}
 
-				{#each router.routes as route (route.id)}
-					{@const y1 = inputY(route.fromPortId)}
-					{@const y2 = outputY(route.toPortId)}
-					{#if y1 > 0 && y2 > 0}
-						{@const h = heat(route.id)}
-						<path
-							d="M192,{y1 - 3} C280,{y1 - 3} 320,{y2 - 3} 406,{y2 - 3}"
-							fill="none"
-							stroke={route.enabled ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
-							stroke-width={1.5 + h * 2}
-							opacity={route.enabled ? 0.35 + h * 0.65 : 0.25}
+			{#each router.routes as route (route.id)}
+				{@const y1 = inputY(route.fromPortId)}
+				{@const y2 = outputY(route.toPortId)}
+				{#if y1 > 0 && y2 > 0}
+					{@const h = heat(route.id)}
+					<path
+						d="M192,{y1 - 3} C280,{y1 - 3} 320,{y2 - 3} 406,{y2 - 3}"
+						fill="none"
+						stroke={route.enabled ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
+						stroke-width={1.5 + h * 2}
+						opacity={route.enabled ? 0.35 + h * 0.65 : 0.25}
+					/>
+					{#if h > 0}
+						<circle
+							r={2 + h * 1.5}
+							fill="var(--msg-note)"
+							opacity={h}
+							cx={192 + (1 - h) * 214}
+							cy={y1 - 3 + (1 - h) * (y2 - y1)}
 						/>
-						{#if h > 0}
-							<circle
-								r={2 + h * 1.5}
-								fill="var(--msg-note)"
-								opacity={h}
-								cx={192 + (1 - h) * 214}
-								cy={y1 - 3 + (1 - h) * (y2 - y1)}
-							/>
-						{/if}
 					{/if}
-				{/each}
-			</svg>
-		{/if}
+				{/if}
+			{/each}
+		</svg>
 	</div>
 
-	<div class="flex items-center gap-3">
-		<Button size="sm" class="gap-1.5" onclick={addRoute} disabled={inputs.length === 0}>
-			<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
-		</Button>
+	<div class="flex flex-col gap-2">
+		<!-- While the list is empty the empty state below carries the call to
+		     action; two "Add a route" buttons on one screen is one too many. -->
 		{#if router.routes.length > 0}
-			<Button variant="ghost" size="sm" class="text-xs" onclick={() => router.clear()}>
-				Remove all
-			</Button>
+			<div class="flex flex-wrap items-center gap-2">
+				<Button size="sm" class="gap-1.5" onclick={addRoute}>
+					<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
+				</Button>
+				<Button variant="ghost" size="sm" class="text-xs" onclick={() => router.clear()}>
+					Remove all
+				</Button>
+			</div>
 		{/if}
-		<span class="text-xs text-muted-foreground">
-			Routes are saved in this browser and keep working while you use the rest of the app.
-		</span>
+		<p class="measure text-xs leading-relaxed text-muted-foreground">
+			{#if midiAccess.inputs.length === 0}
+				With nothing plugged in you can still route <em>{VIRTUAL_INPUT_NAME}</em> — the keyboards, pads
+				and sequencer on these pages are the controller in this rig. Hardware inputs join the left column
+				the moment you connect.
+			{:else}
+				Routes are saved in this browser and keep working while you use the rest of the app.
+			{/if}
+		</p>
 	</div>
 
 	<!-- ── the routes ────────────────────────────────────────────────────── -->
 	<div class="flex flex-col gap-3">
 		{#each router.routes as route (route.id)}
 			{@const loop = router.isLoop(route)}
-			<div class={cn('flex flex-col gap-3 rounded-xl border p-4', loop && 'border-destructive/50')}>
+			{@const unison = router.isUnisonDouble(route)}
+			<div class={cn('flex flex-col gap-3 rounded-lg border p-4', loop && 'border-destructive/50')}>
 				<div class="flex flex-wrap items-center gap-3">
 					<Switch
 						checked={route.enabled}
@@ -189,7 +219,7 @@
 						onValueChange={(v) => router.update(route.id, { fromPortId: v })}
 					>
 						<Select.Trigger class="h-8 w-52 text-xs">
-							{midiAccess.inputName(route.fromPortId) || 'Choose an input'}
+							{inputs.find((p) => p.id === route.fromPortId)?.name ?? 'Choose an input'}
 						</Select.Trigger>
 						<Select.Content>
 							{#each inputs as p (p.id)}
@@ -232,21 +262,28 @@
 						<HugeiconsIcon icon={AlertCircleIcon} size={14} />
 						This route sends a port straight back to itself. It is disabled to prevent a feedback loop.
 					</p>
+				{:else if unison}
+					<p class="flex items-start gap-2 text-xs text-warn">
+						<HugeiconsIcon icon={AlertCircleIcon} size={14} class="mt-px shrink-0" />
+						<span>
+							Every note now reaches the synth twice, at the same pitch — once directly and once
+							through this route. That is phase cancellation, not a layer. Transpose it, remap the
+							channel, or narrow the note range to make it a part rather than a double.
+						</span>
+					</p>
 				{/if}
 
 				<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] tracking-wide text-muted-foreground uppercase">
-							Channel filter
-						</span>
+						<span class="label"> Channel filter </span>
 						<div class="flex flex-wrap gap-1">
 							{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 								<button
 									class={cn(
-										'tnum size-5 rounded border font-mono text-[9px] transition-colors',
+										'tnum size-5 rounded-md border font-mono text-2xs transition-colors',
 										route.channels.includes(c)
 											? 'border-msg-cc bg-msg-cc-bg text-msg-cc'
-											: 'text-muted-foreground/60 hover:border-foreground/40'
+											: 'text-muted-foreground hover:border-foreground/40'
 									)}
 									onclick={() =>
 										router.update(route.id, {
@@ -259,7 +296,7 @@
 								</button>
 							{/each}
 						</div>
-						<span class="text-[10px] text-muted-foreground">
+						<span class="text-2xs text-muted-foreground">
 							{route.channels.length === 0
 								? 'all channels pass'
 								: `${route.channels.length} selected`}
@@ -267,14 +304,12 @@
 					</div>
 
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Remap to</span>
+						<span class="label">Remap to</span>
 						<div class="flex flex-wrap gap-1">
 							<button
 								class={cn(
-									'rounded border px-1.5 text-[10px]',
-									route.remapTo === null
-										? 'border-msg-note text-msg-note'
-										: 'text-muted-foreground/60'
+									'rounded-md border px-1.5 text-2xs',
+									route.remapTo === null ? 'border-msg-note text-msg-note' : 'text-muted-foreground'
 								)}
 								onclick={() => router.update(route.id, { remapTo: null })}
 							>
@@ -283,10 +318,10 @@
 							{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 								<button
 									class={cn(
-										'tnum size-5 rounded border font-mono text-[9px]',
+										'tnum size-5 rounded-md border font-mono text-2xs',
 										route.remapTo === c
 											? 'border-msg-note bg-msg-note-bg text-msg-note'
-											: 'text-muted-foreground/60 hover:border-foreground/40'
+											: 'text-muted-foreground hover:border-foreground/40'
 									)}
 									onclick={() => router.update(route.id, { remapTo: c })}
 								>
@@ -298,9 +333,7 @@
 
 					<div class="flex flex-col gap-3">
 						<label class="flex flex-col gap-1">
-							<span
-								class="flex justify-between text-[10px] tracking-wide text-muted-foreground uppercase"
-							>
+							<span class="label flex justify-between">
 								Transpose <span class="tnum font-mono"
 									>{route.transpose > 0 ? '+' : ''}{route.transpose}</span
 								>
@@ -312,12 +345,11 @@
 								max={36}
 								step={1}
 								onValueChange={(v) => router.update(route.id, { transpose: v })}
+								aria-label="Transpose, in semitones"
 							/>
 						</label>
 						<label class="flex flex-col gap-1">
-							<span
-								class="flex justify-between text-[10px] tracking-wide text-muted-foreground uppercase"
-							>
+							<span class="label flex justify-between">
 								Velocity <span class="tnum font-mono">×{route.velocityScale.toFixed(2)}</span>
 							</span>
 							<Slider
@@ -327,15 +359,14 @@
 								max={2}
 								step={0.05}
 								onValueChange={(v) => router.update(route.id, { velocityScale: v })}
+								aria-label="Velocity scale"
 							/>
 						</label>
 					</div>
 
 					<div class="flex flex-col gap-3">
 						<div class="flex flex-col gap-1">
-							<span
-								class="flex justify-between text-[10px] tracking-wide text-muted-foreground uppercase"
-							>
+							<span class="label flex justify-between">
 								Note range
 								<span class="tnum font-mono">
 									{noteName(route.noteRange[0], {
@@ -350,16 +381,17 @@
 								max={127}
 								step={1}
 								onValueChange={(v) => router.update(route.id, { noteRange: [v[0], v[1]] })}
+								thumbLabels={['Lowest note passed', 'Highest note passed']}
 							/>
 						</div>
 						<div class="flex flex-wrap gap-1">
 							{#each FILTER_KEYS as [key, label] (key)}
 								<button
 									class={cn(
-										'rounded border px-1.5 py-0.5 text-[10px] transition-colors',
+										'rounded-md border px-1.5 py-0.5 text-2xs transition-colors',
 										route.pass[key]
 											? 'border-msg-note/60 bg-msg-note-bg text-msg-note'
-											: 'text-muted-foreground/50'
+											: 'text-muted-foreground'
 									)}
 									onclick={() =>
 										router.update(route.id, { pass: { ...route.pass, [key]: !route.pass[key] } })}
@@ -373,11 +405,19 @@
 			</div>
 		{/each}
 
-		{#if router.routes.length === 0}
-			<p class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
-				No routes yet. Add one to send an input somewhere — with channel remapping, transposition, a
-				velocity curve and message filtering on the way.
-			</p>
+		{#if router.routes.length === 0 && inputs.length > 0}
+			<EmptyState
+				icon={Route02Icon}
+				title="No routes yet"
+				body="Add one to send an input somewhere — with channel remapping, transposition, a velocity
+					curve, a note-range split and message filtering on the way."
+			>
+				{#snippet action()}
+					<Button size="sm" onclick={addRoute}>
+						<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
+					</Button>
+				{/snippet}
+			</EmptyState>
 		{/if}
 	</div>
 </div>

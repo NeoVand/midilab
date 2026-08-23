@@ -17,6 +17,18 @@ import { transport } from './clock.svelte';
 
 export const INTERNAL_OUTPUT_ID = 'internal:synth';
 
+/**
+ * The app's own controls, as an input port.
+ *
+ * In a hardware rig your controller is an input; here the on-screen keyboard,
+ * the pads, the sequencer and your own code are the controller. Naming that as
+ * a port is not a fudge — it is what it is, and it means the patchbay is a
+ * working instrument on a laptop with nothing plugged into it, which is what
+ * the rest of the course promises.
+ */
+export const VIRTUAL_INPUT_ID = 'app:controls';
+export const VIRTUAL_INPUT_NAME = 'MIDI Lab controls';
+
 export interface OutputTarget {
 	id: string;
 	name: string;
@@ -41,6 +53,7 @@ export class MidiEngine {
 	#started = false;
 	#unsub: (() => void) | null = null;
 	#meterTimer = 0;
+	#localListeners = new Set<(msg: MidiMessage, at?: number, audioTime?: number) => void>();
 
 	get outputs(): OutputTarget[] {
 		const internal: OutputTarget = {
@@ -108,7 +121,27 @@ export class MidiEngine {
 	 * whenever the JavaScript thread next gets a turn — the difference between
 	 * a tight sequencer and a sloppy one. See Lesson 17.
 	 */
+	/**
+	 * Called once per locally originated message, whatever it is sent to.
+	 *
+	 * The bus carries one event per active output, which is right for a monitor
+	 * and wrong for anything that wants the *message* rather than its copies —
+	 * the patchbay would route a single note once per open port. This is that
+	 * single tap.
+	 */
+	onLocalSend(fn: (msg: MidiMessage, at?: number, audioTime?: number) => void): () => void {
+		this.#localListeners.add(fn);
+		return () => this.#localListeners.delete(fn);
+	}
+
 	send(msg: MidiMessage, at?: number, audioTime?: number): void {
+		for (const fn of this.#localListeners) {
+			try {
+				fn(msg, at, audioTime);
+			} catch (err) {
+				console.error('[engine] local send listener threw', err);
+			}
+		}
 		const bytes = encode(msg);
 		for (const id of this.activeOutputs) {
 			if (id === INTERNAL_OUTPUT_ID) {

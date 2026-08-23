@@ -12,10 +12,10 @@
 	let { title = 'Try this', children, class: className }: Props = $props();
 </script>
 
-<div class={cn('overflow-hidden rounded-xl border', className)}>
+<div class={cn('overflow-hidden rounded-lg border', className)}>
 	<div class="flex items-center gap-2 border-b bg-muted/50 px-4 py-2">
 		<HugeiconsIcon icon={FlaskConicalIcon} size={15} class="text-muted-foreground" />
-		<span class="text-[11px] font-semibold tracking-wide uppercase">{title}</span>
+		<span class="text-sm font-semibold">{title}</span>
 	</div>
 	<div class="flex flex-col gap-4 p-4">
 		{@render children()}

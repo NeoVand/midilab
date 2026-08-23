@@ -145,7 +145,7 @@ export function describeSysEx(data: number[]): SysExDescription {
 	return {
 		kind: 'manufacturer',
 		manufacturer: manufacturerName(data),
-		summary: `${data.length} bytes of private data. Only that manufacturer's devices know what it means; everything else on the wire ignores it.`
+		summary: `${data.length} bytes between F0 and F7, all of them private. Only that manufacturer's devices know what they mean; everything else on the wire ignores them.`
 	};
 }
 

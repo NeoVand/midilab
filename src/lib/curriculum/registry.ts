@@ -365,7 +365,8 @@ export const CURRICULUM: Act[] = [
 					'Enumerate ports and react to hot-plug',
 					'Send and receive raw bytes from code',
 					'Explain the secure-context and permission model'
-				]
+				],
+				'better'
 			),
 			lesson(
 				'web-audio',
@@ -376,7 +377,8 @@ export const CURRICULUM: Act[] = [
 					'Build a voice from nodes and trigger it from a message',
 					'Explain AudioContext.currentTime versus performance.now()',
 					'Say why the audio thread must never wait for the main thread'
-				]
+				],
+				'better'
 			),
 			lesson(
 				'building-a-sequencer',

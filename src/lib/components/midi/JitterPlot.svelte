@@ -27,6 +27,9 @@
 </script>
 
 <div class={cn('flex flex-col gap-2', className)}>
+	<!-- Same height empty as full: a measurement panel that resizes the page the
+	     moment data arrives is a panel you cannot watch out of the corner of
+	     your eye, which is the only way anyone watches a jitter plot. -->
 	<div
 		class="panel-sunken graph-paper relative overflow-hidden rounded-lg border"
 		style="height: {height}px"
@@ -38,7 +41,7 @@
 					{@const dev = (v - stats.mean) / stats.spread}
 					<div class="relative h-full flex-1">
 						<div
-							class="absolute left-0 w-full rounded-[1px] bg-msg-clock"
+							class="absolute left-0 w-full rounded-xs bg-msg-clock"
 							style="height: {Math.max(1.5, Math.abs(dev) * 45)}%; {dev >= 0
 								? `bottom: 50%`
 								: `top: 50%`}; opacity: {0.4 + Math.min(1, Math.abs(dev)) * 0.6}"
@@ -47,11 +50,13 @@
 				{/each}
 			</div>
 		{:else}
-			<p class="grid h-full place-items-center text-xs text-muted-foreground">no clock arriving</p>
+			<p class="grid h-full place-items-center px-6 text-center text-xs text-muted-foreground">
+				No clock arriving. Start one from a device into this page and its steadiness is drawn here.
+			</p>
 		{/if}
 	</div>
 	{#if stats}
-		<div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[11px] text-muted-foreground">
+		<div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs text-muted-foreground">
 			<span>mean <span class="text-foreground">{stats.mean.toFixed(2)}</span> ms</span>
 			<span>σ <span class="text-msg-clock">{stats.sd.toFixed(2)}</span> ms</span>
 			<span>min {stats.min.toFixed(2)}</span>

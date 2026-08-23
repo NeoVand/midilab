@@ -33,11 +33,11 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			MIDI messages are almost always one, two or three bytes. A byte is eight bits, and a bit is a
 			1 or a 0. That is the entire alphabet.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The problem the designers faced in 1983 was this: bytes arrive down a wire one after another,
 			with nothing separating them. If you tune in halfway through a stream, how do you know whether
 			the byte you just caught is a <em>command</em> or a <em>number</em>? Their answer was to spend
@@ -86,13 +86,13 @@
 						>
 							{bit}
 						</button>
-						<span class="font-mono text-[9px] text-muted-foreground/60">{2 ** (7 - i)}</span>
+						<span class="font-mono text-2xs text-muted-foreground">{2 ** (7 - i)}</span>
 					</div>
 				{/each}
 			</div>
 
 			<div class="flex flex-col gap-1">
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">This byte is</p>
+				<p class="label">This byte is</p>
 				<p class="tnum font-mono text-3xl leading-none">
 					{hex(byte, true)}
 					<span class="text-lg text-muted-foreground">· {byte}</span>
@@ -116,7 +116,7 @@
 		<div class="flex flex-wrap gap-1.5">
 			{#each [[0x90, 'Note On, ch 1'], [0x9f, 'Note On, ch 16'], [0xb0, 'CC, ch 1'], [0x3c, 'the number 60'], [0x7f, 'the number 127'], [0xf8, 'Clock']] as [v, l] (v)}
 				<button
-					class="rounded border px-2 py-1 font-mono text-[10px] hover:border-foreground/40"
+					class="rounded-md border px-2 py-1 font-mono text-2xs hover:border-foreground/40"
 					onclick={() =>
 						(bits = binary(v as number)
 							.split('')
@@ -129,13 +129,13 @@
 	</TryThis>
 
 	<Section title="A status byte says two things at once">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Having spent one bit on "I am a command", MIDI splits the remaining seven — well, the
 			remaining <em>four and four</em>. A status byte is two hexadecimal digits, and each digit does
 			a different job.
 		</p>
 
-		<div class="flex flex-col gap-4 rounded-xl border bg-surface-sunken p-5">
+		<div class="flex flex-col gap-4 rounded-lg border bg-surface-sunken p-5">
 			<div class="flex items-center gap-3">
 				<code class="font-mono text-3xl text-msg-note">9</code>
 				<code class="font-mono text-3xl text-msg-cc">2</code>
@@ -143,20 +143,18 @@
 			</div>
 			<div class="grid gap-3 sm:grid-cols-2">
 				<div>
-					<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">
+					<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">
 						High nibble — what
 					</p>
 					<p class="mt-1 text-sm leading-relaxed">
-						<code class="rounded bg-muted px-1 font-mono">9</code> = Note On. Eight possible commands,
+						<code class="rounded-sm bg-muted px-1 font-mono">9</code> = Note On. Eight possible commands,
 						listed below.
 					</p>
 				</div>
 				<div>
-					<p class="text-[11px] font-semibold tracking-wide text-msg-cc uppercase">
-						Low nibble — who
-					</p>
+					<p class="text-xs font-semibold tracking-wide text-msg-cc uppercase">Low nibble — who</p>
 					<p class="mt-1 text-sm leading-relaxed">
-						<code class="rounded bg-muted px-1 font-mono">2</code> = channel 3. Sixteen channels, numbered
+						<code class="rounded-sm bg-muted px-1 font-mono">2</code> = channel 3. Sixteen channels, numbered
 						0–15 on the wire and 1–16 on every front panel ever made.
 					</p>
 				</div>
@@ -172,9 +170,9 @@
 			</p>
 		</Callout>
 
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="px-3 py-2 text-left font-medium">Nibble</th>
 						<th class="px-3 py-2 text-left font-medium">Status</th>
@@ -211,7 +209,7 @@
 	</TryThis>
 
 	<Section title="Reading raw bytes">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			With the one rule and the nibble split, you can decode anything a monitor shows you. Here are
 			two more, taken apart the same way — cover the captions and work them out first.
 		</p>

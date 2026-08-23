@@ -38,9 +38,10 @@
 			}
 		})
 	);
+	const ticking = $derived(transport.sendClock && transport.playing);
 </script>
 
-<div class={cn('flex flex-col gap-5 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-5 rounded-lg border p-4', className)}>
 	<div class="flex flex-wrap items-center gap-4">
 		<div class="flex items-center gap-1">
 			<Button variant="ghost" size="icon" class="size-8" onclick={() => transport.rewind()}>
@@ -59,7 +60,14 @@
 		<div class="flex items-center gap-3">
 			<span class="tnum font-mono text-lg text-readout">{transport.positionLabel}</span>
 			<div class="w-40">
-				<Slider type="single" bind:value={transport.bpm} min={40} max={220} step={0.5} />
+				<Slider
+					type="single"
+					bind:value={transport.bpm}
+					min={40}
+					max={220}
+					step={0.5}
+					aria-label="Tempo in beats per minute"
+				/>
 			</div>
 			<span class="tnum font-mono text-sm">{transport.bpm.toFixed(1)} BPM</span>
 			<Button variant="outline" size="sm" class="h-7 text-xs" onclick={() => transport.tap()}>
@@ -76,42 +84,56 @@
 	<!-- 24 ticks to the quarter note -->
 	<div class="flex flex-col gap-2">
 		<div class="flex items-baseline justify-between">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
-				One quarter note = 24 clock ticks
-			</p>
-			<p class="tnum font-mono text-[11px] text-muted-foreground">
+			<p class="label">One quarter note = 24 clock ticks</p>
+			<p class="tnum font-mono text-xs text-muted-foreground">
 				{ticks} ticks · {beats} beats
 			</p>
 		</div>
-		<div class="flex gap-[3px]">
+		<!--
+			The ruler counts real F8 bytes, which is the whole point of it — so
+			with the switch off it sits at zero while the transport visibly runs,
+			and looks broken. Say what is actually happening.
+		-->
+		{#if !transport.sendClock}
+			<p class="text-xs text-muted-foreground">
+				{transport.playing ? 'The transport is running, but no' : 'No'} clock is being transmitted — switch
+				<em>Send MIDI Clock</em> on and these blocks fill, one byte at a time.
+			</p>
+		{/if}
+		<!--
+			Nothing is lit unless bytes are actually going out. The playhead sitting
+			on tick 0 while the transport is stopped reads as "one tick has been
+			sent", one line under a paragraph saying none have.
+		-->
+		<div class={cn('flex gap-[3px] transition-opacity', !transport.sendClock && 'opacity-50')}>
 			{#each Array.from({ length: CLOCK_PPQ }, (_, i) => i) as i (i)}
 				<div
 					class={cn(
-						'h-5 flex-1 rounded-[2px] transition-colors duration-75',
+						'h-5 flex-1 rounded-xs transition-colors duration-75',
 						i === 0 ? 'ring-1 ring-msg-clock/40' : ''
 					)}
-					style:background={i === phase
-						? 'var(--msg-clock)'
-						: i < phase
-							? 'color-mix(in oklch, var(--msg-clock) 25%, transparent)'
-							: 'var(--muted)'}
+					style:background={!ticking
+						? 'var(--muted)'
+						: i === phase
+							? 'var(--msg-clock)'
+							: i < phase
+								? 'color-mix(in oklch, var(--msg-clock) 25%, transparent)'
+								: 'var(--muted)'}
 				></div>
 			{/each}
 		</div>
-		<p class="text-[11px] leading-relaxed text-muted-foreground">
-			Each block is one <code class="rounded bg-muted px-1 font-mono">F8</code> byte. Twenty-four of them
-			make a beat — that is the entire tempo mechanism. Change the BPM slider and the ticks simply arrive
-			faster; no number describing the tempo is ever transmitted.
+		<p class="text-xs leading-relaxed text-muted-foreground">
+			Each block is one <code class="rounded-sm bg-muted px-1 font-mono">F8</code> byte. Twenty-four of
+			them make a beat — that is the entire tempo mechanism. Change the BPM slider and the ticks simply
+			arrive faster; no number describing the tempo is ever transmitted.
 		</p>
 	</div>
 
 	<div class="flex flex-col gap-2">
 		<div class="flex items-baseline justify-between">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
-				Incoming clock stability
-			</p>
+			<p class="label">Incoming clock stability</p>
 			{#if transport.externalPresent}
-				<p class="tnum font-mono text-[11px] text-msg-clock">
+				<p class="tnum font-mono text-xs text-msg-clock">
 					external source: {transport.externalBpm.toFixed(2)} BPM ±{transport.externalJitter.toFixed(
 						2
 					)} ms
@@ -119,7 +141,7 @@
 			{/if}
 		</div>
 		<JitterPlot intervals={transport.clockIntervals} />
-		<p class="text-[11px] leading-relaxed text-muted-foreground">
+		<p class="text-xs leading-relaxed text-muted-foreground">
 			This measures clock arriving <em>into</em> this page. Enable a hardware input in the dock and start
 			your OP-XY, MPC or DAW — the plot shows how steady its clock actually is.
 		</p>

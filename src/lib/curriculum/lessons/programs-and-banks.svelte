@@ -30,12 +30,12 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			<strong>Program Change</strong> is the smallest useful message in MIDI: a status byte and one data
 			byte. "Switch to sound number 12." That is the entire message.
 		</p>
 		<ByteInspector bytes={[0xc0, program]} />
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			One data byte means 128 sounds. In 1983 that was luxurious. Today a single instrument might
 			ship with two thousand presets, which creates the problem the rest of this lesson is about.
 		</p>
@@ -63,7 +63,7 @@
 	</Callout>
 
 	<Section title="Bank Select: 128 becomes 2,097,152">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			MIDI never widened the Program Change message. Instead it added a <em>prefix</em>: two
 			ordinary Control Changes that say which bank of 128 you mean. CC 0 is the coarse half, CC 32
 			the fine half. Together they select one of 16,384 banks, each holding 128 programs.
@@ -78,7 +78,7 @@
 			</p>
 		</Callout>
 
-		<div class="flex flex-col gap-4 rounded-xl border p-4">
+		<div class="flex flex-col gap-4 rounded-lg border p-4">
 			<div class="flex flex-wrap items-end gap-6">
 				<Knob
 					bind:value={bankMsb}
@@ -144,27 +144,27 @@
 	</Section>
 
 	<Section title="How manufacturers actually use the two halves">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The specification does not say what MSB and LSB mean, only that there are two of them. So
 			everyone chose differently:
 		</p>
 		<div class="grid gap-3 sm:grid-cols-3">
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Roland-style</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Roland-style</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					MSB selects a broad category or map, LSB selects a variation within it. GS uses MSB 0 with
 					varying LSB.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Yamaha XG</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Yamaha XG</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					MSB carries the meaning — 0 for melodic, 64 for SFX, 126/127 for drum kits — and LSB picks
 					the variation.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Everyone else</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Everyone else</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					Whatever the manual says. Some devices ignore LSB entirely; some ignore MSB; some want
 					both and will not switch without them.
@@ -183,13 +183,13 @@
 	</Section>
 
 	<Section title="General MIDI, and what it is not">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			General MIDI is an agreement layered on top of MIDI, not part of it. It fixes the 128-program
 			list you clicked through above, reserves channel 10 for drums with a fixed note map, and
 			requires at least 24-voice polyphony. Its purpose was interchange: a file that sounds
 			<em>approximately</em> right anywhere.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Your Korg or Yamaha in its own native mode is very probably not in GM mode, and program 40
 			will not be a violin. That is not a fault. GM is a costume MIDI devices can put on, not their
 			natural state.

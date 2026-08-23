@@ -7,7 +7,7 @@
 	 * timestamps — so alternation and Euclidean placement are exact rather than
 	 * approximated by a step grid.
 	 */
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount, untrack } from 'svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { transport, PPQ, audioToPerf } from '$lib/midi/clock.svelte';
 	import {
@@ -20,9 +20,11 @@
 		type Node
 	} from '$lib/patterns';
 	import { parseNoteName } from '$lib/midi/notes';
+	import { load, save } from '$lib/stores/persist';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import * as Select from '$lib/components/ui/select';
+	import * as Popover from '$lib/components/ui/popover';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import {
 		PlayIcon,
@@ -30,7 +32,8 @@
 		Add01Icon,
 		Delete02Icon,
 		VolumeOffIcon,
-		VolumeHighIcon
+		VolumeHighIcon,
+		HelpCircleIcon
 	} from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
 
@@ -46,6 +49,8 @@
 	interface Props {
 		lanes?: Lane[];
 		beatsPerCycle?: number;
+		/** Remember these lanes under this key. Set by the Lab, not by lessons. */
+		persistKey?: string;
 		class?: string;
 	}
 
@@ -64,8 +69,19 @@
 			}
 		]),
 		beatsPerCycle = 4,
+		persistKey,
 		class: className
 	}: Props = $props();
+
+	const saved = untrack(() =>
+		persistKey ? load<Lane[] | null>(`patterns-${persistKey}`, null) : null
+	);
+	if (saved?.length) lanes = saved;
+
+	$effect(() => {
+		if (!persistKey) return;
+		save(`patterns-${persistKey}`, $state.snapshot(lanes));
+	});
 
 	let phase = $state(0);
 	let lastCycle = $state(0);
@@ -142,13 +158,32 @@
 
 	onDestroy(() => engine.panic());
 
-	function addLane() {
+	/*
+	 * The syntax is the whole feature, and it is unguessable. `hh(7,8)` means
+	 * nothing to anyone who has not met Bjorklund, so the notation ships with
+	 * the lab rather than living in a paragraph somewhere else — and every line
+	 * of it is a working pattern you can drop straight into a lane.
+	 */
+	const SYNTAX: Array<[string, string]> = [
+		['bd sd hh hh', 'Four events, one per quarter of the cycle.'],
+		['~', 'A rest. Holds its slot and stays silent.'],
+		['[bd sd]', 'Subdivide one slot into two.'],
+		['bd*3', 'Three of them inside one slot.'],
+		['<bd sd>', 'Alternate: bd this cycle, sd the next.'],
+		['bd(3,8)', 'Euclidean — three hits spread as evenly as possible over eight.'],
+		['bd(3,8,2)', 'The same, rotated two steps later.'],
+		['bd,hh*8', 'Stack: both at once, in one lane.']
+	];
+
+	const DRUM_WORDS = Object.entries(DRUM_ALIASES);
+
+	function addLane(source = '~', channel = 0) {
 		lanes = [
 			...lanes,
 			{
 				id: `l${Date.now().toString(36)}`,
-				source: '~',
-				channel: 0,
+				source,
+				channel,
 				root: 60,
 				scale: 'minor',
 				mute: false
@@ -157,8 +192,8 @@
 	}
 </script>
 
-<div class={cn('flex flex-col gap-3', className)}>
-	<div class="flex flex-wrap items-center gap-3">
+<div class={cn('flex flex-col overflow-hidden rounded-lg border bg-card', className)}>
+	<div class="flex flex-wrap items-center gap-x-3 gap-y-2 border-b px-3 py-2">
 		<Button
 			variant={transport.playing ? 'default' : 'outline'}
 			size="sm"
@@ -174,24 +209,93 @@
 		<span class="tnum font-mono text-sm text-readout">{transport.bpm.toFixed(1)} BPM</span>
 		<span class="tnum font-mono text-xs text-muted-foreground">cycle {lastCycle}</span>
 		<div class="flex-1"></div>
-		<Button variant="ghost" size="sm" class="gap-1.5 text-xs" onclick={addLane}>
+
+		<Popover.Root>
+			<Popover.Trigger
+				class="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+			>
+				<HugeiconsIcon icon={HelpCircleIcon} size={13} /> Notation
+			</Popover.Trigger>
+			<Popover.Content class="flex w-[26rem] flex-col gap-3" align="end">
+				<div class="flex flex-col gap-1">
+					<p class="text-sm font-medium">A pattern is not a list of events</p>
+					<p class="text-xs leading-relaxed text-muted-foreground">
+						It is a function from a cycle number to the events in that cycle. That is what lets
+						<code class="font-mono">&lt;a b&gt;</code> alternate, and why a lane can be infinite and still
+						fit on one line. Click any line to try it.
+					</p>
+				</div>
+				<div class="flex flex-col">
+					{#each SYNTAX as [src, meaning], i (src)}
+						<button
+							class={cn(
+								'grid grid-cols-[7.5rem_1fr] items-baseline gap-3 rounded-sm px-1.5 py-1.5 text-left transition-colors hover:bg-accent',
+								i > 0 && 'border-t'
+							)}
+							onclick={() => addLane(src, src.includes('bd') || src.includes('hh') ? 9 : 0)}
+						>
+							<code class="font-mono text-xs text-msg-note">{src}</code>
+							<span class="text-xs leading-snug text-muted-foreground">{meaning}</span>
+						</button>
+					{/each}
+				</div>
+				<div class="flex flex-col gap-1.5 border-t pt-3">
+					<p class="label">Drum words (channel 10)</p>
+					<div class="flex flex-wrap gap-x-3 gap-y-1">
+						{#each DRUM_WORDS as [word, note] (word)}
+							<span class="font-mono text-2xs text-muted-foreground">
+								{word}<span class="text-muted-foreground">·{note}</span>
+							</span>
+						{/each}
+					</div>
+					<p class="text-2xs leading-relaxed text-muted-foreground">
+						On a melodic channel, bare numbers are scale degrees — <code class="font-mono">0</code>
+						is the root, <code class="font-mono">7</code> is an octave up in a seven-note scale.
+						Note names like <code class="font-mono">c3</code> work anywhere.
+					</p>
+				</div>
+			</Popover.Content>
+		</Popover.Root>
+
+		<Button variant="ghost" size="sm" class="gap-1.5 text-xs" onclick={() => addLane()}>
 			<HugeiconsIcon icon={Add01Icon} size={13} /> Lane
 		</Button>
 	</div>
 
-	<div class="flex flex-col gap-2">
+	<div class="panel-sunken flex flex-col">
+		<!--
+			One ruler for every lane. It sits over the same inner width the lane
+			timelines use, so beat 3 in the ruler is beat 3 in every pattern below it.
+		-->
+		<div class="border-b px-3 pt-2 pb-1">
+			<div class="tnum relative font-mono text-2xs text-muted-foreground">
+				{#each Array.from({ length: beatsPerCycle }, (_, b) => b) as b (b)}
+					<span class="absolute" style="left: {(b / beatsPerCycle) * 100}%">{b + 1}</span>
+				{/each}
+				<span class="invisible">1</span>
+			</div>
+		</div>
+
 		{#each lanes as lane, i (lane.id)}
 			{@const p = parsed[i]}
-			<div class="flex flex-col gap-1.5 rounded-xl border p-3">
+			<div class={cn('flex flex-col gap-1.5 px-3 py-2.5', i > 0 && 'border-t')}>
 				<div class="flex flex-wrap items-center gap-2">
 					<button
-						class={cn('shrink-0', lane.mute ? 'text-muted-foreground/40' : 'text-msg-note')}
+						class={cn(
+							'shrink-0 transition-colors',
+							lane.mute ? 'text-muted-foreground/40' : 'text-msg-note'
+						)}
 						onclick={() => (lane.mute = !lane.mute)}
-						aria-label={lane.mute ? 'Unmute' : 'Mute'}
+						aria-label={lane.mute ? 'Unmute lane' : 'Mute lane'}
 					>
 						<HugeiconsIcon icon={lane.mute ? VolumeOffIcon : VolumeHighIcon} size={14} />
 					</button>
-					<Input bind:value={lane.source} class="h-8 flex-1 font-mono text-xs" spellcheck={false} />
+					<Input
+						bind:value={lane.source}
+						class={cn('h-8 flex-1 font-mono text-xs', p.error && 'border-destructive')}
+						spellcheck={false}
+						aria-invalid={p.error ? 'true' : undefined}
+					/>
 					<Select.Root
 						type="single"
 						value={String(lane.channel)}
@@ -230,9 +334,14 @@
 				</div>
 
 				{#if p.error}
-					<p class="font-mono text-[11px] text-destructive">{p.error}</p>
+					<p class="font-mono text-xs text-destructive">{p.error}</p>
 				{:else}
-					<div class="panel-sunken relative h-8 overflow-hidden rounded border">
+					<div
+						class={cn(
+							'relative h-8 overflow-hidden rounded-md border bg-background transition-opacity',
+							lane.mute && 'opacity-40'
+						)}
+					>
 						{#each Array.from({ length: beatsPerCycle * 4 }, (_, s) => s) as s (s)}
 							<div
 								class={cn(
@@ -244,7 +353,7 @@
 						{/each}
 						{#each p.haps as hap, hi (hi)}
 							<div
-								class="absolute inset-y-1 rounded-[2px] bg-msg-note"
+								class="absolute inset-y-1 rounded-xs bg-msg-note"
 								style="left: {hap.begin * 100}%; width: {Math.max(
 									1.2,
 									Math.min(hap.end - hap.begin, 0.24) * 100 * 0.8
@@ -252,7 +361,7 @@
 								title={hap.value}
 							>
 								<span
-									class="absolute inset-0 truncate px-1 font-mono text-[8px] leading-6 text-background"
+									class="absolute inset-0 truncate px-1 font-mono text-2xs leading-6 text-background"
 								>
 									{hap.value}
 								</span>
@@ -269,4 +378,10 @@
 			</div>
 		{/each}
 	</div>
+
+	<p class="border-t px-3 py-2 text-xs text-muted-foreground">
+		Each lane is one line of notation, queried once per cycle and scheduled all at once with
+		timestamps — so a Euclidean placement lands where the maths says it does, not where the browser
+		happened to wake up.
+	</p>
 </div>

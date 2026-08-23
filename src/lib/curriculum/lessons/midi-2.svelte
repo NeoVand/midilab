@@ -43,13 +43,13 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			MIDI 2.0 was ratified in 2020 and is real, shipping, and supported at the operating-system
 			level on macOS, Windows and Linux. It is also, in most studios in 2026, not yet the thing your
 			instruments actually speak. Both of those statements are true, and this lesson is about
 			holding them at the same time.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The headline is that MIDI 2.0 is <strong>bidirectional</strong>. MIDI 1.0 is a one-way
 			broadcast: a sender shouts into a cable and has no idea whether anything is listening, what it
 			is, or what it can do. MIDI 2.0 devices negotiate.
@@ -57,13 +57,13 @@
 	</Section>
 
 	<Section title="The Universal MIDI Packet">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Everything travels as 32-bit words. The first nibble is the <strong>message type</strong>,
 			which says how many words the packet occupies; the second is the <strong>group</strong>.
 		</p>
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="w-14 px-3 py-2 text-left font-medium">MT</th>
 						<th class="px-3 py-2 text-left font-medium">Type</th>
@@ -134,9 +134,7 @@
 
 		<div class="grid gap-4 lg:grid-cols-3">
 			<div class="flex flex-col gap-2">
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
-					MIDI 1.0 — on a cable
-				</p>
+				<p class="label">MIDI 1.0 — on a cable</p>
 				<div class="rounded-lg border p-3">
 					<code class="font-mono text-sm">
 						{encode(message)
@@ -150,9 +148,7 @@
 			</div>
 
 			<div class="flex flex-col gap-2">
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
-					UMP type 2 — MIDI 1.0, wrapped
-				</p>
+				<p class="label">UMP type 2 — MIDI 1.0, wrapped</p>
 				<div class="rounded-lg border p-3">
 					{#if ump1}
 						<code class="font-mono text-sm text-msg-cc">{hexWord(ump1.words[0])}</code>
@@ -166,9 +162,7 @@
 			</div>
 
 			<div class="flex flex-col gap-2">
-				<p class="text-[10px] tracking-wide text-msg-note uppercase">
-					UMP type 4 — native MIDI 2.0
-				</p>
+				<p class="label text-msg-note">UMP type 4 — native MIDI 2.0</p>
 				<div class="rounded-lg border border-msg-note/40 p-3">
 					{#if ump2}
 						<code class="font-mono text-sm text-msg-note">
@@ -190,8 +184,8 @@
 	<Section title="What actually changes">
 		<div class="grid gap-3 sm:grid-cols-2">
 			{#each [['Resolution', 'Velocity goes from 7 bits to 16. Controllers go from 7 bits to 32. The zipper-noise problem, the MSB/LSB pairing and the whole NRPN handshake all become unnecessary.'], ['Per-note controllers', 'Pitch bend, pressure and any controller can be addressed to a single note number natively — no channel-per-note trick required. MPE stops being a workaround and becomes a legacy compatibility mode.'], ['Bidirectional discovery', 'MIDI-CI lets two devices ask each other what they are and what they support, then agree on a protocol. This is the genuinely new idea.'], ['Property Exchange', 'A device can publish structured JSON describing its controllers, programs and state. Software can build an editor for an instrument it has never seen.'], ['Profiles', 'A device can declare "I behave as a drawbar organ", and a controller then knows what its knobs should do without a mapping session.'], ['Jitter reduction', 'Optional timestamps let a receiver place events precisely rather than when they happened to arrive.']] as [title, body] (title)}
-				<div class="rounded-xl border p-4">
-					<p class="text-[11px] font-semibold tracking-wide uppercase">{title}</p>
+				<div class="rounded-lg border p-4">
+					<p class="text-sm font-semibold">{title}</p>
 					<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">{body}</p>
 				</div>
 			{/each}
@@ -208,18 +202,38 @@
 	</Section>
 
 	<Section title="An honest assessment">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			MIDI 2.0 is backward compatible by design — a MIDI 2.0 connection carries MIDI 1.0 traffic
 			unchanged, and devices fall back automatically. So nothing you own becomes obsolete, and
 			nothing you learn here is wasted.
 		</p>
-		<p class="text-[15px] leading-relaxed">
-			But shipping hardware remains scarce, browser support for MIDI 2.0 is not there, and the
-			instruments in your studio almost certainly speak MIDI 1.0. The right posture is: understand
-			the shape of it, recognise the terminology, and keep building on MIDI 1.0 with an architecture
-			that will not need tearing up when 2.0 arrives properly.
+		<p class="prose-body">
+			What has actually shipped: operating-system support is real on all three desktop platforms —
+			CoreMIDI has carried UMP since macOS Monterey, Windows MIDI Services brings a universal USB
+			MIDI 2.0 class driver, and Linux carries UMP through ALSA and PipeWire. And the first Profiles
+			have moved from drafts to approved documents — Piano, Drum Note Mapping, and Note-On
+			Orchestral Articulation — so a compatible controller and a compatible piano instrument can now
+			agree on high-resolution velocity and per-note expression without a mapping session.
 		</p>
-		<p class="text-[15px] leading-relaxed">Which is what the rest of this course does.</p>
+		<p class="prose-body">
+			On the hardware side the list is short but it is no longer theoretical. Roland's A-88MK2 took
+			UMP and Property Exchange in a firmware update; Native Instruments' Kontrol S-series MK3 and
+			Studiologic's SL mk2 speak UMP over USB; CME's WIDI adapters carry it over Bluetooth; and
+			Yamaha's Montage M and MODX and Waldorf's Quantum and Iridium handle high-resolution MIDI 2.0
+			messages. If you own one of those, the resolution and per-note expression are already there
+			waiting for a host that asks for them.
+		</p>
+		<p class="prose-body">
+			What has not: the instruments in most studios still speak MIDI 1.0, and no browser exposes
+			MIDI 2.0 through the Web MIDI API. Which means the packets on this page are UMP that this app
+			encoded itself, not UMP off a cable — the encoding is real and matches the specification, but
+			nothing here has ever seen a MIDI 2.0 device.
+		</p>
+		<p class="prose-body">
+			The right posture is: understand the shape of it, recognise the terminology, and keep building
+			on MIDI 1.0 with an architecture that will not need tearing up when 2.0 arrives properly.
+			Which is what the rest of this course does.
+		</p>
 	</Section>
 
 	<Quiz

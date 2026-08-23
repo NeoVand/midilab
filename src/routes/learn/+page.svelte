@@ -2,90 +2,131 @@
 	import { CURRICULUM, ALL_LESSONS, TOTAL_MINUTES, lessonPath } from '$lib/curriculum/registry';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { Tick02Icon, Clock01Icon, PlugSocketIcon } from '@hugeicons/core-free-icons';
+	import { Tick02Icon, PlugSocketIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
+	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 
 	const overall = $derived(progress.fractionOf(ALL_LESSONS.map((l) => l.id)));
+	const doneLessons = $derived(ALL_LESSONS.filter((l) => progress.isLessonComplete(l.id)).length);
+	const nextLesson = $derived(
+		ALL_LESSONS.find((l) => !progress.isLessonComplete(l.id)) ?? ALL_LESSONS[0]
+	);
+
+	const HARDWARE_TITLE: Record<string, string> = {
+		better: 'Better with hardware attached',
+		required: 'Needs a MIDI device'
+	};
+
+	function actMinutes(lessons: { minutes: number }[]) {
+		return lessons.reduce((t, l) => t + l.minutes, 0);
+	}
 </script>
 
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-10 px-8 py-12">
 	<header class="flex flex-col gap-3">
 		<h1 class="text-3xl font-semibold tracking-tight">The course</h1>
-		<p class="max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
+		<p class="prose-body text-muted-foreground">
 			Six acts. You do not advance by clicking Next — each lesson ends in checkpoints that the
 			engine verifies by watching the MIDI stream. Everything works with no hardware attached; most
 			of it works better with some.
 		</p>
-		<div class="flex items-center gap-3 pt-1">
-			<div class="h-1.5 w-44 overflow-hidden rounded-full bg-muted">
-				<div
-					class="h-full rounded-full bg-msg-note transition-[width]"
-					style="width: {overall * 100}%"
-				></div>
+
+		<!--
+			The resume row. A thirty-lesson index without one makes you scroll
+			looking for the first title you don't recognise.
+		-->
+		<div
+			class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-lg border bg-card px-4 py-3"
+		>
+			<div class="flex min-w-0 flex-1 flex-col gap-1.5">
+				<p class="label">{doneLessons > 0 ? 'Up next' : 'Start here'}</p>
+				<p class="truncate text-sm font-medium">
+					{nextLesson.number}. {nextLesson.title}
+				</p>
 			</div>
-			<span class="tnum text-xs text-muted-foreground">
-				{Math.round(overall * 100)}% · {ALL_LESSONS.length} lessons · ~{Math.round(
-					TOTAL_MINUTES / 60
-				)}h
-			</span>
+			<div class="flex items-center gap-3">
+				<div class="hidden flex-col items-end gap-1.5 sm:flex">
+					<span class="tnum text-xs text-muted-foreground">
+						{doneLessons} of {ALL_LESSONS.length} done · {Math.round(TOTAL_MINUTES / 60)} hours in total
+					</span>
+					<div class="h-1.5 w-40 overflow-hidden rounded-full bg-border">
+						<div
+							class="h-full rounded-full bg-msg-note transition-[width] duration-500"
+							style="width: {Math.max(overall * 100, overall > 0 ? 2 : 0)}%"
+						></div>
+					</div>
+				</div>
+				<Button href={lessonPath(nextLesson)} size="lg">
+					{doneLessons > 0 ? 'Continue' : 'Begin'}
+					<HugeiconsIcon icon={ArrowRight01Icon} size={15} />
+				</Button>
+			</div>
 		</div>
 	</header>
 
 	{#each CURRICULUM as act (act.id)}
-		{@const frac = progress.fractionOf(act.lessons.map((l) => l.id))}
-		<section id={act.id} class="flex scroll-mt-8 flex-col gap-4">
-			<div class="flex items-baseline gap-3 border-b pb-3">
-				<span class="font-mono text-xs text-muted-foreground/50">ACT {act.number}</span>
-				<h2 class="text-lg font-semibold tracking-tight">{act.title}</h2>
-				<span class="tnum ml-auto font-mono text-[11px] text-muted-foreground">
-					{Math.round(frac * 100)}%
-				</span>
+		{@const done = act.lessons.filter((l) => progress.isLessonComplete(l.id)).length}
+		<section id={act.id} class="flex scroll-mt-8 flex-col gap-3">
+			<div class="flex flex-col gap-1">
+				<div class="flex items-baseline gap-3">
+					<span class="font-mono text-xs text-muted-foreground">ACT {act.number}</span>
+					<h2 class="text-lg font-semibold tracking-tight">{act.title}</h2>
+					<span class="tnum ml-auto shrink-0 font-mono text-xs text-muted-foreground">
+						{done}/{act.lessons.length} · {actMinutes(act.lessons)} min
+					</span>
+				</div>
+				<p class="text-sm text-muted-foreground">{act.subtitle}</p>
 			</div>
-			<p class="-mt-2 text-sm text-muted-foreground">{act.subtitle}</p>
 
-			<ol class="flex flex-col gap-1.5">
-				{#each act.lessons as lesson (lesson.id)}
+			<!--
+				One container, ruled rows. Thirty separately bordered cards down a
+				page is thirty rectangles competing for the same attention; a table
+				of contents is a list, and it should look like one.
+			-->
+			<ol class="overflow-hidden rounded-lg border bg-card">
+				{#each act.lessons as lesson, i (lesson.id)}
 					{@const complete = progress.isLessonComplete(lesson.id)}
-					{@const started = progress.visited.includes(lesson.id)}
+					{@const isNext = lesson.id === nextLesson.id}
 					<li>
 						<a
 							href={lessonPath(lesson)}
 							class={cn(
-								'group flex items-start gap-4 rounded-lg border px-4 py-3 transition-colors hover:border-foreground/25 hover:bg-accent/40',
-								complete && 'border-ok/35 bg-ok/5'
+								'relative grid grid-cols-[1.75rem_1fr_auto] items-baseline gap-x-4 px-4 py-3 transition-colors hover:bg-accent/50',
+								i > 0 && 'border-t'
 							)}
 						>
+							{#if isNext && doneLessons > 0}
+								<span class="absolute inset-y-0 left-0 w-[3px] bg-msg-note"></span>
+							{/if}
 							<span
 								class={cn(
-									'mt-0.5 grid size-6 shrink-0 place-items-center rounded-full font-mono text-[11px]',
-									complete
-										? 'bg-ok text-background'
-										: started
-											? 'bg-muted text-foreground'
-											: 'border text-muted-foreground'
+									'tnum self-start pt-0.5 text-center font-mono text-xs',
+									complete ? 'text-ok' : 'text-muted-foreground'
 								)}
 							>
 								{#if complete}
-									<HugeiconsIcon icon={Tick02Icon} size={13} strokeWidth={2.5} />
+									<HugeiconsIcon icon={Tick02Icon} size={14} strokeWidth={2.5} class="mx-auto" />
 								{:else}
-									{lesson.number}
+									{String(lesson.number).padStart(2, '0')}
 								{/if}
 							</span>
-							<span class="min-w-0 flex-1">
+							<span class="min-w-0">
 								<span class="block font-medium">{lesson.title}</span>
-								<span class="mt-0.5 block text-[13px] leading-relaxed text-muted-foreground">
+								<span class="mt-0.5 block text-sm leading-relaxed text-muted-foreground">
 									{lesson.blurb}
 								</span>
 							</span>
 							<span
-								class="mt-1 flex shrink-0 items-center gap-3 text-[11px] text-muted-foreground/70"
+								class="tnum flex shrink-0 items-center gap-2 self-start pt-0.5 text-xs text-muted-foreground"
 							>
-								{#if lesson.hardware !== 'none'}
-									<HugeiconsIcon icon={PlugSocketIcon} size={12} />
+								{#if lesson.hardware && lesson.hardware !== 'none'}
+									<HugeiconsIcon
+										icon={PlugSocketIcon}
+										size={12}
+										aria-label={HARDWARE_TITLE[lesson.hardware]}
+									/>
 								{/if}
-								<span class="tnum flex items-center gap-1">
-									<HugeiconsIcon icon={Clock01Icon} size={12} />{lesson.minutes}
-								</span>
+								{lesson.minutes} min
 							</span>
 						</a>
 					</li>

@@ -18,6 +18,7 @@
 import { browser } from '$app/environment';
 import { bus } from './bus';
 import { parse } from './messages';
+import { load, save } from '$lib/stores/persist';
 
 export type AccessStatus = 'unsupported' | 'idle' | 'requesting' | 'granted' | 'denied';
 
@@ -58,6 +59,16 @@ export class MidiAccessStore {
 
 	/** Input ports we are actively listening to. */
 	listening = $state<string[]>([]);
+	/**
+	 * The ports you chose last time.
+	 *
+	 * Not the same thing as opening everything automatically — that is how MIDI
+	 * loops are born and this panel still refuses to do it. This is remembering
+	 * a decision you already made, which is what the app does with routes,
+	 * profiles, patterns and every setting. A port only reopens if you had it
+	 * open and it is still there.
+	 */
+	#remembered: string[] = load('listening', []);
 
 	#access: MIDIAccess | null = null;
 	#handlers = new Map<string, (e: MIDIMessageEvent) => void>();
@@ -131,6 +142,10 @@ export class MidiAccessStore {
 		this.outputs = [...this.#access.outputs.values()].map(portInfo);
 		// A port that vanished cannot still be listened to.
 		this.listening = this.listening.filter((id) => this.inputs.some((p) => p.id === id));
+		// Reopen the ones you had open, now that they exist again.
+		for (const id of this.#remembered) {
+			if (!this.#handlers.has(id) && this.inputs.some((p) => p.id === id)) this.listen(id);
+		}
 	}
 
 	isListening(portId: string): boolean {
@@ -156,6 +171,7 @@ export class MidiAccessStore {
 		port.onmidimessage = handler;
 		this.#handlers.set(portId, handler);
 		if (!this.listening.includes(portId)) this.listening = [...this.listening, portId];
+		this.#remember(portId, true);
 	}
 
 	unlisten(portId: string): void {
@@ -165,9 +181,25 @@ export class MidiAccessStore {
 		this.listening = this.listening.filter((id) => id !== portId);
 	}
 
+	/**
+	 * Closing a port during teardown is not the same as choosing to stop
+	 * listening to it, so only the explicit toggle changes what is remembered.
+	 */
+	#remember(portId: string, on: boolean): void {
+		const next = on
+			? [...new Set([...this.#remembered, portId])]
+			: this.#remembered.filter((id) => id !== portId);
+		this.#remembered = next;
+		save('listening', next);
+	}
+
 	toggleListen(portId: string): void {
-		if (this.isListening(portId)) this.unlisten(portId);
-		else this.listen(portId);
+		if (this.isListening(portId)) {
+			this.unlisten(portId);
+			this.#remember(portId, false);
+		} else {
+			this.listen(portId);
+		}
 	}
 
 	/** Open every connected input. Convenient for lessons; never automatic. */

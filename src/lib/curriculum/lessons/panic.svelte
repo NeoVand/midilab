@@ -35,15 +35,15 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Controller numbers 120 to 127 are not controllers at all. They occupy Control Change's address
 			space, but instead of moving a parameter they change how the channel behaves. They are called
 			<strong>Channel Mode messages</strong>, and two of them are the reason every MIDI application
 			has a big red button.
 		</p>
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="w-14 px-3 py-2 text-left font-medium">CC</th>
 						<th class="px-3 py-2 text-left font-medium">Name</th>
@@ -66,21 +66,21 @@
 	</Section>
 
 	<Section title="All Notes Off is not All Sound Off">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			They sound like synonyms and behave very differently, and knowing which is which is the
 			difference between a panic button that works and one that only usually works.
 		</p>
 		<div class="grid gap-4 lg:grid-cols-2">
-			<div class="flex flex-col gap-2 rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">CC 123 · All Notes Off</p>
+			<div class="flex flex-col gap-2 rounded-lg border p-4">
+				<p class="text-sm font-semibold">CC 123 · All Notes Off</p>
 				<p class="text-sm leading-relaxed">
 					The polite one. It is equivalent to lifting your hands off the keys: notes enter their
 					release phase and fade naturally. <strong>The sustain pedal still applies</strong> — if CC 64
 					is down, everything keeps ringing.
 				</p>
 			</div>
-			<div class="flex flex-col gap-2 rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">CC 120 · All Sound Off</p>
+			<div class="flex flex-col gap-2 rounded-lg border p-4">
+				<p class="text-sm font-semibold">CC 120 · All Sound Off</p>
 				<p class="text-sm leading-relaxed">
 					The blunt one. Every voice is cut immediately, ignoring release tails, ignoring the
 					sustain pedal. Nothing survives it. It can produce an audible click, which is why it is
@@ -128,12 +128,12 @@
 	</Section>
 
 	<Section title="Writing a panic that actually works">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Real hardware is inconsistent about all of this. Some devices ignore CC 123. Some honour CC
 			120 but not 123. Some very old ones honour neither. A panic routine that works everywhere
 			therefore escalates:
 		</p>
-		<ol class="flex flex-col gap-2.5 text-[15px] leading-relaxed">
+		<ol class="prose-body flex flex-col gap-2.5">
 			<li class="flex gap-3">
 				<span class="mt-0.5 font-mono text-sm text-msg-common">1</span>
 				<span
@@ -176,13 +176,13 @@
 	</Section>
 
 	<Section title="Local Control, and the doubled-note mystery">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Here is a problem that sounds like a broken synth and is not. You connect a keyboard to a
 			computer, the computer echoes MIDI back to the keyboard so you can hear the software
 			instrument, and suddenly every note plays twice — once from the keyboard's own engine and once
 			from the echo. Slightly out of phase, slightly flanged, thoroughly wrong.
 		</p>
-		<div class="rounded-xl border bg-surface-sunken p-5">
+		<div class="rounded-lg border bg-surface-sunken p-5">
 			<svg
 				viewBox="0 0 520 150"
 				class="w-full max-w-xl"
@@ -270,7 +270,7 @@
 	</Section>
 
 	<Section title="The remaining four">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			CC 124–127 set Omni and Mono/Poly modes, and are largely historical. Omni On means "ignore
 			channel addresses and play everything" — occasionally useful for a quick test, always a
 			liability in a multi-device rig. Mono Mode restricts a channel to one note at a time and is

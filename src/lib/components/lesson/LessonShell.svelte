@@ -11,7 +11,6 @@
 	} from '@hugeicons/core-free-icons';
 	import { actOf, lessonPath, neighbours, type LessonMeta } from '$lib/curriculum/registry';
 	import { progress } from '$lib/curriculum/progress.svelte';
-	import { Button } from '$lib/components/ui/button';
 
 	interface Props {
 		lesson: LessonMeta;
@@ -44,16 +43,14 @@
 		</div>
 
 		<div class="flex items-start gap-4">
-			<span
-				class="tnum mt-0.5 font-mono text-3xl leading-none text-muted-foreground/40 tabular-nums"
-			>
+			<span class="tnum mt-0.5 font-mono text-3xl leading-none text-muted-foreground/60 tabular-nums">
 				{String(lesson.number).padStart(2, '0')}
 			</span>
 			<div class="min-w-0 flex-1">
 				<h1 class="text-3xl leading-tight font-semibold tracking-tight text-balance">
 					{lesson.title}
 				</h1>
-				<p class="mt-2 text-[15px] leading-relaxed text-pretty text-muted-foreground">
+				<p class="prose-body mt-2 text-pretty text-muted-foreground">
 					{lesson.blurb}
 				</p>
 			</div>
@@ -77,10 +74,8 @@
 		</div>
 	</header>
 
-	<section class="rounded-xl border bg-surface-sunken p-5">
-		<p class="mb-3 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-			By the end you can
-		</p>
+	<section class="rounded-lg border bg-surface-sunken p-5">
+		<p class="mb-3 text-sm font-medium">By the end you can</p>
 		<ul class="flex flex-col gap-2">
 			{#each lesson.objectives as o (o)}
 				<li class="flex gap-2.5 text-sm leading-relaxed">
@@ -91,36 +86,49 @@
 		</ul>
 	</section>
 
-	<div class="flex flex-col gap-10">
+	<div class="lesson-prose flex flex-col gap-10">
 		{@render children()}
 	</div>
 
-	<nav class="flex items-center justify-between gap-4 border-t pt-6">
+	<!--
+		The end of a lesson is a page turn, not a pair of links. Both directions
+		get the same weight and the same shape, and the title of what comes next
+		is the thing you are actually choosing.
+	-->
+	<nav class="grid gap-3 border-t pt-6 sm:grid-cols-2">
 		{#if prev}
-			<Button
-				variant="ghost"
+			<a
 				href={lessonPath(prev)}
-				class="h-auto flex-col items-start gap-0.5 px-3 py-2"
+				class="flex flex-col gap-1 rounded-lg border bg-card px-4 py-3 transition-colors hover:border-foreground/25"
 			>
-				<span class="flex items-center gap-1 text-[11px] text-muted-foreground">
+				<span class="flex items-center gap-1 text-xs text-muted-foreground">
 					<HugeiconsIcon icon={ArrowLeft01Icon} size={12} /> Previous
 				</span>
-				<span class="text-sm">{prev.title}</span>
-			</Button>
+				<span class="text-sm font-medium">{prev.title}</span>
+			</a>
 		{:else}
-			<span></span>
+			<span class="hidden sm:block"></span>
 		{/if}
 		{#if next}
-			<Button
-				variant="ghost"
+			<a
 				href={lessonPath(next)}
-				class="h-auto flex-col items-end gap-0.5 px-3 py-2 text-right"
+				class="flex flex-col items-end gap-1 rounded-lg border bg-card px-4 py-3 text-right transition-colors hover:border-foreground/25 sm:col-start-2"
 			>
-				<span class="flex items-center gap-1 text-[11px] text-muted-foreground">
+				<span class="flex items-center gap-1 text-xs text-muted-foreground">
 					Next <HugeiconsIcon icon={ArrowRight01Icon} size={12} />
 				</span>
-				<span class="text-sm">{next.title}</span>
-			</Button>
+				<span class="text-sm font-medium">{next.title}</span>
+			</a>
+		{:else}
+			<a
+				href="/learn"
+				class="flex flex-col items-end gap-1 rounded-lg border bg-card px-4 py-3 text-right transition-colors hover:border-foreground/25 sm:col-start-2"
+			>
+				<span class="flex items-center gap-1 text-xs text-muted-foreground">
+					That was the last one <HugeiconsIcon icon={ArrowRight01Icon} size={12} />
+				</span>
+				<span class="text-sm font-medium">Back to the course</span>
+			</a>
 		{/if}
 	</nav>
 </article>

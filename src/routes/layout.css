@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	--background: oklch(1 0 0);
+	--background: oklch(0.984 0.002 220);
 	--foreground: oklch(0.148 0.004 228.8);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.148 0.004 228.8);
@@ -15,30 +15,30 @@
 	--popover-foreground: oklch(0.148 0.004 228.8);
 	--primary: oklch(0.218 0.008 223.9);
 	--primary-foreground: oklch(0.987 0.002 197.1);
-	--secondary: oklch(0.963 0.002 197.1);
+	--secondary: oklch(0.955 0.003 220);
 	--secondary-foreground: oklch(0.218 0.008 223.9);
-	--muted: oklch(0.963 0.002 197.1);
-	--muted-foreground: oklch(0.56 0.021 213.5);
-	--accent: oklch(0.963 0.002 197.1);
+	--muted: oklch(0.955 0.003 220);
+	--muted-foreground: oklch(0.52 0.021 213.5);
+	--accent: oklch(0.955 0.003 220);
 	--accent-foreground: oklch(0.218 0.008 223.9);
-	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.925 0.005 214.3);
-	--input: oklch(0.925 0.005 214.3);
-	--ring: oklch(0.723 0.014 214.4);
+	--destructive: oklch(0.55 0.245 27.325);
+	--border: oklch(0.906 0.005 220);
+	--input: oklch(0.906 0.005 220);
+	--ring: oklch(0.58 0.03 214.4);
 	--chart-1: oklch(0.872 0.007 219.6);
 	--chart-2: oklch(0.56 0.021 213.5);
 	--chart-3: oklch(0.45 0.017 213.2);
 	--chart-4: oklch(0.378 0.015 216);
 	--chart-5: oklch(0.275 0.011 216.9);
 	--radius: 0.45rem;
-	--sidebar: oklch(0.987 0.002 197.1);
+	--sidebar: oklch(0.966 0.003 220);
 	--sidebar-foreground: oklch(0.148 0.004 228.8);
 	--sidebar-primary: oklch(0.218 0.008 223.9);
 	--sidebar-primary-foreground: oklch(0.987 0.002 197.1);
-	--sidebar-accent: oklch(0.963 0.002 197.1);
+	--sidebar-accent: oklch(0.925 0.004 220);
 	--sidebar-accent-foreground: oklch(0.218 0.008 223.9);
-	--sidebar-border: oklch(0.925 0.005 214.3);
-	--sidebar-ring: oklch(0.723 0.014 214.4);
+	--sidebar-border: oklch(0.906 0.005 220);
+	--sidebar-ring: oklch(0.58 0.03 214.4);
 }
 
 .dark {
@@ -59,20 +59,20 @@
 	--destructive: oklch(0.704 0.191 22.216);
 	--border: oklch(1 0 0 / 10%);
 	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.56 0.021 213.5);
+	--ring: oklch(0.62 0.03 213.5);
 	--chart-1: oklch(0.872 0.007 219.6);
 	--chart-2: oklch(0.56 0.021 213.5);
 	--chart-3: oklch(0.45 0.017 213.2);
 	--chart-4: oklch(0.378 0.015 216);
 	--chart-5: oklch(0.275 0.011 216.9);
-	--sidebar: oklch(0.218 0.008 223.9);
+	--sidebar: oklch(0.125 0.004 228.8);
 	--sidebar-foreground: oklch(0.987 0.002 197.1);
 	--sidebar-primary: oklch(0.488 0.243 264.376);
 	--sidebar-primary-foreground: oklch(0.987 0.002 197.1);
-	--sidebar-accent: oklch(0.275 0.011 216.9);
+	--sidebar-accent: oklch(0.245 0.01 220);
 	--sidebar-accent-foreground: oklch(0.987 0.002 197.1);
 	--sidebar-border: oklch(1 0 0 / 10%);
-	--sidebar-ring: oklch(0.56 0.021 213.5);
+	--sidebar-ring: oklch(0.62 0.03 213.5);
 }
 
 @theme inline {
@@ -139,33 +139,37 @@
 
 :root {
 	/* family hues — L/C tuned for a white ground */
-	--msg-note: oklch(0.58 0.16 150);
-	--msg-note-bg: oklch(0.58 0.16 150 / 12%);
-	--msg-cc: oklch(0.56 0.19 262);
-	--msg-cc-bg: oklch(0.56 0.19 262 / 12%);
-	--msg-expr: oklch(0.58 0.2 318);
-	--msg-expr-bg: oklch(0.58 0.2 318 / 12%);
-	--msg-program: oklch(0.62 0.15 75);
-	--msg-program-bg: oklch(0.62 0.15 75 / 14%);
-	--msg-clock: oklch(0.6 0.09 197);
-	--msg-clock-bg: oklch(0.6 0.09 197 / 12%);
-	--msg-sysex: oklch(0.58 0.19 20);
-	--msg-sysex-bg: oklch(0.58 0.19 20 / 12%);
-	--msg-common: oklch(0.55 0.02 220);
-	--msg-common-bg: oklch(0.55 0.02 220 / 10%);
+	--msg-note: oklch(0.50 0.16 150);
+	--msg-note-bg: oklch(0.50 0.16 150 / 12%);
+	--msg-cc: oklch(0.50 0.19 262);
+	--msg-cc-bg: oklch(0.50 0.19 262 / 12%);
+	--msg-expr: oklch(0.50 0.2 318);
+	--msg-expr-bg: oklch(0.50 0.2 318 / 12%);
+	--msg-program: oklch(0.50 0.15 75);
+	--msg-program-bg: oklch(0.50 0.15 75 / 14%);
+	--msg-clock: oklch(0.50 0.09 197);
+	--msg-clock-bg: oklch(0.50 0.09 197 / 12%);
+	--msg-sysex: oklch(0.50 0.19 20);
+	--msg-sysex-bg: oklch(0.50 0.19 20 / 12%);
+	--msg-common: oklch(0.50 0.02 220);
+	--msg-common-bg: oklch(0.50 0.02 220 / 10%);
 
 	/* structural accents */
 	--wire: oklch(0.8 0.01 220);
 	--wire-active: var(--msg-note);
-	--grid-line: oklch(0.92 0.004 220);
-	--grid-line-strong: oklch(0.85 0.005 220);
-	--surface-sunken: oklch(0.975 0.002 220);
+	--grid-line: oklch(0.906 0.005 220);
+	--grid-line-strong: oklch(0.842 0.006 220);
+	--surface-sunken: oklch(0.955 0.003 220);
 	--surface-raised: oklch(1 0 0);
 	--key-white: oklch(0.995 0.001 220);
 	--key-black: oklch(0.28 0.008 224);
+	--ring-on-key-white: oklch(0.42 0.09 214);
+	--ring-on-key-black: oklch(0.95 0.04 214);
 	--readout: oklch(0.45 0.02 200);
-	--ok: oklch(0.58 0.15 150);
-	--warn: oklch(0.68 0.15 75);
+	--ok: oklch(0.50 0.15 150);
+	--warn: oklch(0.50 0.15 75);
+	/* Per-channel track colour: hue varies, lightness follows the ground. */
+	--channel-l: 0.55;
 }
 
 .dark {
@@ -195,10 +199,47 @@
 	--readout: oklch(0.8 0.03 197);
 	--ok: oklch(0.78 0.16 152);
 	--warn: oklch(0.82 0.15 80);
+	--channel-l: 0.76;
 }
 
 @theme inline {
 	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
+
+	/* ------------------------------------------------------------------ */
+	/* Type scale                                                          */
+	/* ------------------------------------------------------------------ */
+	/* A single ~1.18 scale anchored on 13px, which is the density a control
+	   surface wants: small enough to fit a monitor row, large enough to read
+	   all day. Tailwind's default steps are redefined rather than added to, so
+	   there is exactly one ladder and no way to land between its rungs.
+	   `2xs` exists only for the uppercase labels and the text printed inside
+	   keys and step cells; nothing smaller is permitted. */
+	--text-2xs: 0.625rem; /* 10 */
+	--text-2xs--line-height: 1.4;
+	--text-2xs--letter-spacing: 0.02em;
+	--text-xs: 0.6875rem; /* 11 */
+	--text-xs--line-height: 1.45;
+	--text-sm: 0.8125rem; /* 13 */
+	--text-sm--line-height: 1.45;
+	--text-base: 0.9375rem; /* 15 */
+	--text-base--line-height: 1.6;
+	--text-lg: 1.0625rem; /* 17 */
+	--text-lg--line-height: 1.5;
+	--text-xl: 1.3125rem; /* 21 */
+	--text-xl--line-height: 1.3;
+	--text-xl--letter-spacing: -0.011em;
+	--text-2xl: 1.625rem; /* 26 */
+	--text-2xl--line-height: 1.24;
+	--text-2xl--letter-spacing: -0.016em;
+	--text-3xl: 2rem; /* 32 */
+	--text-3xl--line-height: 1.18;
+	--text-3xl--letter-spacing: -0.02em;
+	--text-4xl: 2.5rem; /* 40 */
+	--text-4xl--line-height: 1.1;
+	--text-4xl--letter-spacing: -0.024em;
+
+	/* Small enough for a step cell without becoming a dot. */
+	--radius-xs: 2px;
 
 	--color-msg-note: var(--msg-note);
 	--color-msg-note-bg: var(--msg-note-bg);
@@ -231,6 +272,23 @@
 	html {
 		color-scheme: light dark;
 	}
+	/*
+	 * The interface default is 13px, not the browser's 16px. Anything that
+	 * escapes an explicit size class lands on the ladder rather than a rung
+	 * that does not exist — and long-form prose opts up to `text-base`.
+	 */
+	body {
+		font-size: var(--text-sm);
+	}
+	:where(h1) {
+		font-size: var(--text-3xl);
+	}
+	:where(h2) {
+		font-size: var(--text-xl);
+	}
+	:where(h3) {
+		font-size: var(--text-base);
+	}
 	/* Tabular, slashed-zero numerics everywhere a value is read, not prose. */
 	.tnum {
 		font-variant-numeric: tabular-nums slashed-zero;
@@ -238,6 +296,14 @@
 	.font-mono {
 		font-variant-numeric: tabular-nums slashed-zero;
 		font-feature-settings: 'zero' 1;
+	}
+	/*
+	 * JetBrains Mono sets optically larger than Inter at the same pixel size, so
+	 * an inline `code` chip at 1em interrupts the line it sits in. Zero
+	 * specificity, so any explicit size utility still wins.
+	 */
+	:where(code, kbd, samp) {
+		font-size: 0.92em;
 	}
 	::selection {
 		background: var(--msg-note-bg);
@@ -260,6 +326,28 @@
 	.focus-ring {
 		@apply outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50;
 	}
+	/*
+	 * Draw the focus ring inside, for controls that tile edge to edge — piano
+	 * keys, pads. An offset ring on the outermost key is clipped by the panel it
+	 * sits in, which is exactly the key a keyboard user reaches first.
+	 */
+	.focus-inset:focus-visible {
+		outline-offset: -3px;
+	}
+	/*
+	 * A keybed keeps its own colours in both themes: ivory stays ivory when the
+	 * page goes dark. So its focus ring cannot use --ring, which is tuned to the
+	 * page background and lands around 2.7:1 on a white key — under the 3:1 that
+	 * a focus indicator has to clear. These two are tuned to the keys instead.
+	 */
+	.focus-key-white:focus-visible {
+		outline-color: var(--ring-on-key-white);
+		outline-offset: -3px;
+	}
+	.focus-key-black:focus-visible {
+		outline-color: var(--ring-on-key-black);
+		outline-offset: -3px;
+	}
 }
 
 /* Scrollbars that belong to an instrument, not a document. */
@@ -279,8 +367,123 @@
 	.scrollbar-thin::-webkit-scrollbar-track {
 		background: transparent;
 	}
+	/*
+	 * Reduce motion.
+	 *
+	 * Seeded from the OS preference and overridable in Settings. Every meter in
+	 * this app is driven by requestAnimationFrame rather than by CSS, so this
+	 * removes the decorative easing without freezing anything you need to read.
+	 */
+	.reduce-motion *,
+	.reduce-motion *::before,
+	.reduce-motion *::after {
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 1ms !important;
+	}
 	.no-drag {
 		-webkit-user-drag: none;
 		user-select: none;
+	}
+}
+
+/* ============================================================================
+   Typography and interaction primitives
+   ========================================================================== */
+
+@layer components {
+	/*
+	 * The uppercase micro-label.
+	 *
+	 * Used for the caption above a group of controls and nowhere else — it is
+	 * a structural marker, not a way to make text small. Defined once so that
+	 * size, tracking and colour cannot drift between panels.
+	 */
+	.label {
+		font-size: var(--text-2xs);
+		line-height: 1.4;
+		letter-spacing: 0.07em;
+		text-transform: uppercase;
+		font-weight: 500;
+		color: var(--muted-foreground);
+	}
+
+	/*
+	 * Prose measure.
+	 *
+	 * A lesson column is 54rem because the instruments in it want that room.
+	 * Running body text to the same width gives ~95 characters a line, which
+	 * is far past the point where the eye reliably finds the next line. So
+	 * paragraphs and lists are capped at 52ch — measured, not guessed: Inter's
+	 * `0` is 9.46px at 15px while its average character is 7px, so 52ch lands
+	 * at ~70 real characters — while widgets, tables and
+	 * callouts keep the full column — and the resulting rhythm of narrow text
+	 * against wide instruments is doing real work, not decoration.
+	 */
+	.measure,
+	.lesson-prose section > :where(p, ul, ol),
+	.lesson-prose > :where(p, ul, ol) {
+		max-width: 52ch;
+	}
+
+	/*
+	 * A paragraph of the course.
+	 *
+	 * This was written as `text-base leading-relaxed` on a hundred and
+	 * fifty-seven individual paragraphs, which meant the reading size of the
+	 * whole thirty-lesson course was a two-class incantation with no single
+	 * place to change it. It has a name now.
+	 */
+	/*
+	 * A workbench page.
+	 *
+	 * Most pages keep a measure because they are read. The monitor and the
+	 * console are not read, they are watched: a live stream of text beside a
+	 * fixed-width inspector, where every extra pixel goes to the stream. Those
+	 * fill the window — capped so an ultra-wide display does not stretch a
+	 * message log to a metre.
+	 *
+	 * The step grid and the routing graph are deliberately not on this list.
+	 * Wider steps are not better steps, and the patchbay is a drawing.
+	 */
+	.workbench {
+		max-width: 104rem;
+	}
+
+	.prose-body {
+		max-width: 52ch;
+		font-size: var(--text-base);
+		line-height: 1.65;
+	}
+}
+
+@layer base {
+	/*
+	 * Every custom control — knobs, faders, keys, pads, step cells — is a
+	 * <button> or has a slider role, and every one of them must show where
+	 * focus is. Mouse users never see this; keyboard users cannot work
+	 * without it.
+	 */
+	:where(
+		button,
+		[role='slider'],
+		[role='application'],
+		a,
+		summary,
+		input,
+		textarea,
+		select
+	):focus-visible {
+		outline: 2px solid var(--ring);
+		outline-offset: 2px;
+		border-radius: var(--radius-sm);
+	}
+
+	/* Headings carry their optical tracking from the scale, not from utilities. */
+	:where(h1, h2, h3) {
+		text-wrap: balance;
+	}
+	:where(p, li) {
+		text-wrap: pretty;
 	}
 }

@@ -40,33 +40,33 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			There is no "play a note for half a second" message. There is only <strong>start</strong> and
 			<strong>stop</strong>, sent separately, with the duration living in the gap between them. A
 			note is not an event; it is a state you switch on and later switch off.
 		</p>
 		<div class="grid gap-3 sm:grid-cols-2">
 			<div>
-				<p class="mb-2 text-[11px] font-semibold tracking-wide text-msg-note uppercase">
+				<p class="mb-2 text-xs font-semibold tracking-wide text-msg-note uppercase">
 					Press the key
 				</p>
 				<ByteInspector bytes={[0x90, 0x3c, 0x64]} compact />
 			</div>
 			<div>
-				<p class="mb-2 text-[11px] font-semibold tracking-wide text-msg-note uppercase">
+				<p class="mb-2 text-xs font-semibold tracking-wide text-msg-note uppercase">
 					Release the key
 				</p>
 				<ByteInspector bytes={[0x80, 0x3c, 0x40]} compact />
 			</div>
 		</div>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			This design is why MIDI can express a note held for eleven minutes without sending anything in
 			between, and also why the most famous MIDI failure mode exists.
 		</p>
 	</Section>
 
 	<Section title="The stuck note">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			If a Note On arrives and its matching Note Off never does — the cable was pulled, the software
 			crashed, a channel got remapped mid-note, the sequencer was stopped between the two — the
 			instrument has no way to know. It was told to hold the note. It is holding the note. It will
@@ -115,36 +115,36 @@
 	</Section>
 
 	<Section title="Note Off has two spellings">
-		<p class="text-[15px] leading-relaxed">
-			There is a real Note Off status — <code class="rounded bg-muted px-1 font-mono">0x8n</code> —
-			and there is a Note On whose velocity happens to be zero, which is
+		<p class="prose-body">
+			There is a real Note Off status — <code class="rounded-sm bg-muted px-1 font-mono">0x8n</code>
+			— and there is a Note On whose velocity happens to be zero, which is
 			<em>defined</em> to mean the same thing. Both are correct. Most hardware sends the second.
 		</p>
 		<div class="grid gap-3 sm:grid-cols-2">
-			<div class="flex flex-col gap-2 rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">The explicit form</p>
-				<code class="rounded bg-muted px-2 py-1 font-mono text-sm">80 3C 40</code>
+			<div class="flex flex-col gap-2 rounded-lg border p-4">
+				<p class="text-sm font-semibold">The explicit form</p>
+				<code class="rounded-sm bg-muted px-2 py-1 font-mono text-sm">80 3C 40</code>
 				<p class="text-xs leading-relaxed text-muted-foreground">
 					Status 0x80, note 60, release velocity 64. Unambiguous, and carries release velocity if
 					anything cares.
 				</p>
 			</div>
-			<div class="flex flex-col gap-2 rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">The velocity-zero form</p>
-				<code class="rounded bg-muted px-2 py-1 font-mono text-sm">90 3C 00</code>
+			<div class="flex flex-col gap-2 rounded-lg border p-4">
+				<p class="text-sm font-semibold">The velocity-zero form</p>
+				<code class="rounded-sm bg-muted px-2 py-1 font-mono text-sm">90 3C 00</code>
 				<p class="text-xs leading-relaxed text-muted-foreground">
 					Status 0x90 — Note <em>On</em> — with velocity 0. Identical effect. Looks wrong; is right.
 				</p>
 			</div>
 		</div>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			The second form exists because of a bandwidth trick, which is worth understanding because you
 			will see it in MIDI files and on real cables.
 		</p>
 	</Section>
 
 	<Section title="Running status">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			On a 31,250-bit-per-second wire, each byte takes 320 microseconds. A three-byte note takes
 			about a millisecond, and a ten-note chord takes ten — enough to hear as a strum. So the spec
 			allows a sender to <strong>omit a repeated status byte</strong>. Once it has said "Note On,
@@ -153,22 +153,22 @@
 		</p>
 
 		<div class="grid gap-3 lg:grid-cols-2">
-			<div class="flex flex-col gap-2 rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+			<div class="flex flex-col gap-2 rounded-lg border p-4">
+				<p class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					Four notes, spelled out — {RUN.flat().length} bytes
 				</p>
 				<code
-					class="overflow-x-auto rounded bg-muted px-2 py-1.5 font-mono text-xs whitespace-nowrap"
+					class="overflow-x-auto rounded-sm bg-muted px-2 py-1.5 font-mono text-xs whitespace-nowrap"
 				>
 					{RUN.map((m) => hexBytes(m)).join('  ')}
 				</code>
 			</div>
-			<div class="flex flex-col gap-2 rounded-xl border border-msg-note/40 p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">
+			<div class="flex flex-col gap-2 rounded-lg border border-msg-note/40 p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">
 					With running status — {withRunning.length} bytes
 				</p>
 				<code
-					class="overflow-x-auto rounded bg-muted px-2 py-1.5 font-mono text-xs whitespace-nowrap"
+					class="overflow-x-auto rounded-sm bg-muted px-2 py-1.5 font-mono text-xs whitespace-nowrap"
 				>
 					{hexBytes(withRunning)}
 				</code>
@@ -179,7 +179,7 @@
 			</div>
 		</div>
 
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Now the two ideas connect. Under running status, sending a real Note Off would mean re-sending
 			a status byte and breaking the run. Sending "note 60, velocity 0" keeps the run going. That is
 			the entire reason velocity-zero Note Off exists.

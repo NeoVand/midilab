@@ -29,6 +29,7 @@ export class NoteState {
 
 	#channels: ChannelSnapshot[] = Array.from({ length: 16 }, blank);
 	#unsub: (() => void) | null = null;
+	#visibility: (() => void) | null = null;
 	#dirty = false;
 	#frame = 0;
 
@@ -43,6 +44,15 @@ export class NoteState {
 			}
 		};
 		this.#frame = requestAnimationFrame(tick);
+		// A hidden tab pauses animation frames, which breaks this recursive
+		// chain. Restart it and flush on the way back, or held notes stay drawn
+		// as held after you return.
+		this.#visibility = () => {
+			if (document.hidden) return;
+			this.#dirty = true;
+			if (!this.#frame) this.#frame = requestAnimationFrame(tick);
+		};
+		document.addEventListener('visibilitychange', this.#visibility);
 		return () => this.stop();
 	}
 
@@ -50,6 +60,11 @@ export class NoteState {
 		this.#unsub?.();
 		this.#unsub = null;
 		cancelAnimationFrame(this.#frame);
+		this.#frame = 0;
+		if (this.#visibility) {
+			document.removeEventListener('visibilitychange', this.#visibility);
+			this.#visibility = null;
+		}
 	}
 
 	#ingest(e: MidiEvent) {
@@ -128,6 +143,24 @@ export class NoteState {
 			c.notes.clear();
 		}
 		this.version++;
+	}
+
+	/**
+	 * Forget everything, including controller values and which channels have
+	 * been used. `clear()` only silences held notes; this is what a state view
+	 * needs when you want to start watching from a known-empty page.
+	 */
+	reset(): void {
+		this.#channels = Array.from({ length: 16 }, blank);
+		this.version++;
+	}
+
+	/** Channels that have seen anything at all, in channel order. */
+	get usedChannels(): number[] {
+		void this.version;
+		const out: number[] = [];
+		for (let i = 0; i < 16; i++) if (this.#channels[i].lastActivity > 0) out.push(i);
+		return out;
 	}
 }
 

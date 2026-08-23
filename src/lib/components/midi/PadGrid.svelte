@@ -9,6 +9,7 @@
 	import { GM_DRUMS } from '$lib/midi/constants';
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { rovingGrid } from '$lib/a11y/roving';
 	import { capturePointer, cn } from '$lib/utils';
 
 	interface Props {
@@ -61,11 +62,37 @@
 		engine.noteOff(note, channel);
 		held.delete(e.pointerId);
 	}
+
+	/*
+	 * A pad that only listens for pointerdown is a dead control for anyone
+	 * driving the page from the keyboard: Enter and Space fire `click`, which
+	 * nothing here was listening to. Held while the key is down, released when
+	 * it comes up — the same shape as the pointer path, at a fixed velocity
+	 * because a keyboard has no strike position.
+	 */
+	const keyHeld = new Set<number>();
+
+	function keyDown(e: KeyboardEvent, note: number) {
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		e.preventDefault();
+		if (e.repeat || keyHeld.has(note)) return;
+		const v = velocity ?? 100;
+		keyHeld.add(note);
+		engine.noteOn(note, v, channel);
+		onTrigger?.(note, v);
+	}
+
+	function keyUp(e: KeyboardEvent, note: number) {
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		if (!keyHeld.delete(note)) return;
+		engine.noteOff(note, channel);
+	}
 </script>
 
 <div
 	class={cn('grid gap-1.5', className)}
 	style="grid-template-columns: repeat({columns}, minmax(0, 1fr))"
+	use:rovingGrid={{ columns }}
 >
 	{#each notes as note (note)}
 		{@const active = noteState.isHeld(note, channel)}
@@ -79,11 +106,16 @@
 			onpointerdown={(e) => hit(note, e)}
 			onpointerup={lift}
 			onpointercancel={lift}
+			onkeydown={(e) => keyDown(e, note)}
+			onkeyup={(e) => keyUp(e, note)}
+			onblur={() => {
+				if (keyHeld.delete(note)) engine.noteOff(note, channel);
+			}}
+			aria-label="{label(note)}, note {note}"
+			aria-pressed={active}
 		>
-			<span class="absolute top-1.5 right-2 font-mono text-[9px] text-muted-foreground/60"
-				>{note}</span
-			>
-			<span class="line-clamp-2 text-[10.5px] leading-tight font-medium">{label(note)}</span>
+			<span class="absolute top-1.5 right-2 font-mono text-2xs text-muted-foreground">{note}</span>
+			<span class="line-clamp-2 text-2xs leading-tight font-medium">{label(note)}</span>
 		</button>
 	{/each}
 </div>

@@ -112,7 +112,7 @@
 	}
 </script>
 
-<div class={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
 	<div class="flex flex-wrap items-center gap-3">
 		<div class="flex gap-1">
 			<Button
@@ -145,17 +145,15 @@
 
 	<div class="flex flex-col gap-2">
 		<div class="flex items-baseline justify-between">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
-				Deviation from the intended time
-			</p>
-			<p class="tnum font-mono text-[11px]">
+			<p class="label">Deviation from the intended time</p>
+			<p class="tnum font-mono text-xs">
 				worst
 				<span class={worst > 8 ? 'text-destructive' : worst > 3 ? 'text-warn' : 'text-ok'}>
 					{worst.toFixed(1)} ms
 				</span>
 			</p>
 		</div>
-		<div class="panel-sunken relative h-20 overflow-hidden rounded-lg border">
+		<div class="panel-sunken graph-paper relative h-20 overflow-hidden rounded-lg border">
 			<div class="absolute inset-x-0 top-1/2 h-px bg-msg-note/40"></div>
 			<div class="absolute inset-0 flex items-center gap-[3px] px-2">
 				{#each Array.from({ length: steps }, (_, i) => i) as i (i)}
@@ -164,7 +162,7 @@
 						{#if dev !== undefined}
 							<div
 								class={cn(
-									'absolute left-0 w-full rounded-[2px]',
+									'absolute left-0 w-full rounded-xs',
 									Math.abs(dev) > 8
 										? 'bg-destructive'
 										: Math.abs(dev) > 3
@@ -179,10 +177,10 @@
 					</div>
 				{/each}
 			</div>
-			<p class="absolute top-1 left-2 font-mono text-[9px] text-muted-foreground/60">late ↑</p>
-			<p class="absolute bottom-1 left-2 font-mono text-[9px] text-muted-foreground/60">early ↓</p>
+			<p class="absolute top-1 left-2 font-mono text-2xs text-muted-foreground">late ↑</p>
+			<p class="absolute bottom-1 left-2 font-mono text-2xs text-muted-foreground">early ↓</p>
 		</div>
-		<p class="text-[11px] leading-relaxed text-muted-foreground">
+		<p class="text-xs leading-relaxed text-muted-foreground">
 			{#if mode === 'naive'}
 				Every bar here is a note that arrived at the wrong time, and the wrong time is what you
 				hear. Block the thread and watch a note land tens of milliseconds late.

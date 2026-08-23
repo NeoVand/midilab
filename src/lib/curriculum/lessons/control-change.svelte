@@ -32,11 +32,11 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Notes are only half of a performance. The other half is everything you do <em>while</em> the
 			note is sounding: opening a filter, leaning on the mod wheel, pushing the sustain pedal,
 			swelling a phrase. All of that travels as <strong>Control Change</strong> — status
-			<code class="rounded bg-muted px-1 font-mono">0xBn</code>, then a controller number 0–127,
+			<code class="rounded-sm bg-muted px-1 font-mono">0xBn</code>, then a controller number 0–127,
 			then a value 0–127.
 		</p>
 		<ByteInspector bytes={[0xb0, 74, 96]} />
@@ -59,12 +59,12 @@
 	</Callout>
 
 	<Section title="The nine worth memorising">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			There are 128 controllers. You will use roughly nine of them nine tenths of the time.
 		</p>
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="w-14 px-3 py-2 text-left font-medium">CC</th>
 						<th class="px-3 py-2 text-left font-medium">Name</th>
@@ -110,7 +110,7 @@
 	</TryThis>
 
 	<Section title="Seven bits is not very many">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			A controller value has 128 possible positions. For a pan knob that is plenty. For a filter
 			sweep across ten octaves it is 12.8 steps per octave — and if the receiver applies each value
 			instantly, a slow sweep becomes an audible staircase. Engineers call the artefact
@@ -118,8 +118,8 @@
 		</p>
 
 		<div class="grid gap-4 sm:grid-cols-2">
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">7-bit · 128 steps</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">7-bit · 128 steps</p>
 				<svg viewBox="0 0 240 64" class="mt-3 w-full">
 					<path
 						d={staircase(16)}
@@ -133,8 +133,8 @@
 					Drawn at 16 steps so you can see it. The real thing has 128 — better, but still steps.
 				</p>
 			</div>
-			<div class="rounded-xl border border-msg-note/40 p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">
+			<div class="rounded-lg border border-msg-note/40 p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">
 					14-bit · 16,384 steps
 				</p>
 				<svg viewBox="0 0 240 64" class="mt-3 w-full">
@@ -152,13 +152,13 @@
 			</div>
 		</div>
 
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			MIDI's answer is the <strong>MSB/LSB pair</strong>. Controllers 0–31 each have a partner 32
 			higher: CC 1 is the coarse half of the mod wheel and CC 33 is the fine half. Send both and the
 			receiver combines them:
 		</p>
 		<div
-			class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border bg-surface-sunken p-4 font-mono text-sm"
+			class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg border bg-surface-sunken p-4 font-mono text-sm"
 		>
 			<span
 				><span class="text-msg-cc">CC 1</span> = 100

@@ -45,14 +45,14 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Here is the single most useful sentence in this entire course, and everything else follows
 			from it:
 		</p>
 		<p class="border-l-2 border-msg-note py-1 pl-4 text-lg leading-relaxed font-medium">
 			MIDI never carries sound. It carries instructions about what to play.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			A MIDI message is a note-sized piece of paper that says <em>press middle C, this hard, now</em
 			>. It does not contain a piano. Somewhere downstream there has to be something that reads the
 			paper and makes a noise — a synthesiser, a sampler, a software instrument, or the little synth
@@ -86,7 +86,7 @@
 
 		<p class="text-xs leading-relaxed text-muted-foreground">
 			What you just sent was 8 notes, and what changed between takes was one three-byte message:
-			<code class="rounded bg-muted px-1 font-mono"
+			<code class="rounded-sm bg-muted px-1 font-mono"
 				>C0 {program.toString(16).toUpperCase().padStart(2, '0')}</code
 			>
 			— "channel 1, use program {program}". Not one sample of audio moved.
@@ -95,18 +95,16 @@
 
 	<Section title="Why that difference is enormous">
 		<div class="grid gap-3 sm:grid-cols-2">
-			<div class="flex flex-col gap-2 rounded-xl border border-msg-note/30 bg-msg-note-bg p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">
-					MIDI · the intent
-				</p>
+			<div class="flex flex-col gap-2 rounded-lg border border-msg-note/30 bg-msg-note-bg p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">MIDI · the intent</p>
 				<p class="tnum font-mono text-2xl">{midiBytes} bytes</p>
 				<p class="text-sm leading-relaxed">
 					{events.length} messages. Every one of them is editable: change a note, change the tempo, change
 					the instrument, transpose the lot, and nothing degrades because there is nothing to degrade.
 				</p>
 			</div>
-			<div class="flex flex-col gap-2 rounded-xl border bg-muted/40 p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+			<div class="flex flex-col gap-2 rounded-lg border bg-muted/40 p-4">
+				<p class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					Audio · the result
 				</p>
 				<p class="tnum font-mono text-2xl">{(audioBytes / 1_000_000).toFixed(1)} MB</p>
@@ -116,7 +114,7 @@
 				</p>
 			</div>
 		</div>
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			That is roughly <strong>{Math.round(audioBytes / midiBytes).toLocaleString()}× smaller</strong
 			>, which is why a protocol designed in 1983 for a 31,250-bit-per-second cable is still how
 			every instrument in your studio talks to every other one. It was never trying to move sound.
@@ -136,7 +134,7 @@
 	</Callout>
 
 	<Section title="What MIDI cannot do">
-		<ul class="flex flex-col gap-2.5 text-[15px] leading-relaxed">
+		<ul class="prose-body flex flex-col gap-2.5">
 			<li class="flex gap-3">
 				<span class="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-current text-destructive"></span>
 				<span>
@@ -167,7 +165,7 @@
 	</Section>
 
 	<Section title="Your turn">
-		<p class="text-[15px] leading-relaxed">
+		<p class="prose-body">
 			Play a few notes. Nothing here is a picture — the keys below send real MIDI messages into the
 			same engine your hardware will plug into, and the dock at the bottom of the window is
 			watching.

@@ -10,7 +10,15 @@ class Settings {
 	showNoteNumbers = $state<boolean>(load('showNoteNumbers', false));
 	dockOpen = $state<boolean>(load('dockOpen', false));
 	dockTab = $state<string>(load('dockTab', 'devices'));
-	reduceMotion = $state<boolean>(load('reduceMotion', false));
+	/** Height of the expanded dock in pixels — dragged, then remembered. */
+	dockHeight = $state<number>(load('dockHeight', 240));
+	/** Seeded from the operating system, then yours to override. */
+	reduceMotion = $state<boolean>(
+		load(
+			'reduceMotion',
+			browser ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
+		)
+	);
 	masterVolume = $state<number>(load('masterVolume', 0.75));
 
 	constructor() {
@@ -24,7 +32,11 @@ class Settings {
 				$effect(() => save('showNoteNumbers', this.showNoteNumbers));
 				$effect(() => save('dockOpen', this.dockOpen));
 				$effect(() => save('dockTab', this.dockTab));
-				$effect(() => save('reduceMotion', this.reduceMotion));
+				$effect(() => save('dockHeight', this.dockHeight));
+				$effect(() => {
+					save('reduceMotion', this.reduceMotion);
+					this.applyMotion();
+				});
 				$effect(() => save('masterVolume', this.masterVolume));
 			});
 		}
@@ -40,6 +52,11 @@ class Settings {
 		if (!browser) return;
 		document.documentElement.classList.toggle('dark', this.resolvedTheme === 'dark');
 		document.documentElement.style.colorScheme = this.resolvedTheme;
+	}
+
+	applyMotion(): void {
+		if (!browser) return;
+		document.documentElement.classList.toggle('reduce-motion', this.reduceMotion);
 	}
 
 	toggleTheme(): void {

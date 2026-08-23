@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import Rail from '$lib/components/shell/Rail.svelte';
@@ -6,30 +7,52 @@
 	import CommandPalette from '$lib/components/shell/CommandPalette.svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { monitor } from '$lib/midi/monitor.svelte';
+	import { router } from '$lib/midi/router.svelte';
 	import '$lib/midi/notestate.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { handleShortcut } from '$lib/stores/shortcuts.svelte';
+	import { transport } from '$lib/midi/clock.svelte';
 	import { audio } from '$lib/audio/engine';
 	import { Toaster } from '$lib/components/ui/sonner';
 
 	let { children } = $props();
 	let paletteOpen = $state(false);
 
-	$effect(() => {
-		settings.applyTheme();
-		audio.setVolume(settings.masterVolume);
+	/*
+	 * The engine and the monitor are process-wide singletons, so their lifetime
+	 * is the page's — not a reactive effect's. Starting them inside an effect
+	 * that also reads the theme and the output level meant any change to either
+	 * tore the bus subscriptions down and rebuilt them, which is both wasteful
+	 * and a source of silent breakage.
+	 */
+	onMount(() => {
 		engine.start();
 		const stopMonitor = monitor.start();
+		// The patchbay used to start this itself, which meant a saved route
+		// stopped routing the moment you navigated away from the page that drew
+		// it — while the page promised the opposite in so many words.
+		const stopRouter = router.start();
 		return () => {
+			stopRouter();
 			stopMonitor();
 			engine.stop();
 		};
 	});
 
+	// These genuinely are reactive: they follow settings the user can change.
+	$effect(() => settings.applyTheme());
+	$effect(() => audio.setVolume(settings.masterVolume));
+
 	function onKeydown(e: KeyboardEvent) {
-		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-			e.preventDefault();
-			paletteOpen = !paletteOpen;
-		}
+		handleShortcut(e, {
+			togglePalette: () => (paletteOpen = !paletteOpen),
+			toggleTransport: async () => {
+				await engine.wake();
+				transport.toggle();
+			},
+			panic: () => engine.panic(),
+			toggleDock: () => (settings.dockOpen = !settings.dockOpen)
+		});
 	}
 </script>
 
