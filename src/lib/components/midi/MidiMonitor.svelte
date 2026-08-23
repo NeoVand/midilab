@@ -29,6 +29,7 @@
 		FilterIcon
 	} from '@hugeicons/core-free-icons';
 	import { Button } from '$lib/components/ui/button';
+	import SearchField from '$lib/components/shell/SearchField.svelte';
 	import * as Popover from '$lib/components/ui/popover';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Label } from '$lib/components/ui/label';
@@ -189,7 +190,8 @@
 			</Popover.Root>
 
 			<div class="flex-1"></div>
-			<span class="tnum font-mono text-xs text-muted-foreground">
+			<SearchField bind:value={monitor.search} placeholder="Port or type…" class="w-40 shrink-0" />
+			<span class="tnum shrink-0 font-mono text-xs text-muted-foreground">
 				{monitor.rate}/s · {monitor.total}
 			</span>
 		</div>
