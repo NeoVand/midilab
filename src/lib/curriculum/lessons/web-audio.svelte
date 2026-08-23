@@ -252,6 +252,7 @@ gain.setTargetAtTime(0.0001, off, release / 4);    // release`}</code
 			lesson={meta.id}
 			id="midi-synth"
 			label="Make incoming MIDI drive audio you wrote yourself"
+			hint="Needs a device sending into this page. Tick it by hand if you have none to hand."
 			test={(e) => e.direction === 'in' && e.message.type === 'noteOn'}
 		/>
 		<Checkpoint
