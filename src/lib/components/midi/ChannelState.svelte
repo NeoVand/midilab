@@ -16,7 +16,6 @@
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
 	import EmptyState from '$lib/components/shell/EmptyState.svelte';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { Grid3X3Icon } from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
 
