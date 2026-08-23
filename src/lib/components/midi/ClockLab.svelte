@@ -81,7 +81,18 @@
 				{ticks} ticks · {beats} beats
 			</p>
 		</div>
-		<div class="flex gap-[3px]">
+		<!--
+			The ruler counts real F8 bytes, which is the whole point of it — so
+			with the switch off it sits at zero while the transport visibly runs,
+			and looks broken. Say what is actually happening.
+		-->
+		{#if !transport.sendClock}
+			<p class="text-xs text-muted-foreground">
+				{transport.playing ? 'The transport is running, but no' : 'No'} clock is being transmitted — switch
+				<em>Send MIDI Clock</em> on and these blocks fill, one byte at a time.
+			</p>
+		{/if}
+		<div class={cn('flex gap-[3px] transition-opacity', !transport.sendClock && 'opacity-50')}>
 			{#each Array.from({ length: CLOCK_PPQ }, (_, i) => i) as i (i)}
 				<div
 					class={cn(
