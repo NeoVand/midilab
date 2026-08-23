@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import Rail from '$lib/components/shell/Rail.svelte';
@@ -16,9 +17,14 @@
 	let { children } = $props();
 	let paletteOpen = $state(false);
 
-	$effect(() => {
-		settings.applyTheme();
-		audio.setVolume(settings.masterVolume);
+	/*
+	 * The engine and the monitor are process-wide singletons, so their lifetime
+	 * is the page's — not a reactive effect's. Starting them inside an effect
+	 * that also reads the theme and the output level meant any change to either
+	 * tore the bus subscriptions down and rebuilt them, which is both wasteful
+	 * and a source of silent breakage.
+	 */
+	onMount(() => {
 		engine.start();
 		const stopMonitor = monitor.start();
 		return () => {
@@ -26,6 +32,10 @@
 			engine.stop();
 		};
 	});
+
+	// These genuinely are reactive: they follow settings the user can change.
+	$effect(() => settings.applyTheme());
+	$effect(() => audio.setVolume(settings.masterVolume));
 
 	function onKeydown(e: KeyboardEvent) {
 		handleShortcut(e, {

@@ -62,8 +62,18 @@
 		return out;
 	});
 
-	/** Fine positional nudges so the black keys sit where a real piano's do. */
-	const NUDGE: Record<number, number> = { 1: -0.09, 3: 0.09, 6: -0.13, 8: 0, 10: 0.13 };
+	/**
+	 * Black-key geometry, taken from the real instrument rather than guessed.
+	 *
+	 * A white key is 23.5mm at the base and a black key 13.7mm, so the black
+	 * key is 0.583 of a white one — not the 0.64 that looks about right and
+	 * reads subtly wrong. And black keys are not centred on the boundary
+	 * between white keys: the twelve chromatic keys are evenly spaced where
+	 * they enter the action, which pushes each one off centre by a different
+	 * amount. These are those offsets, in white-key widths.
+	 */
+	const BLACK_RATIO = 0.583;
+	const NUDGE: Record<number, number> = { 1: -0.1, 3: 0.1, 6: -0.15, 8: 0, 10: 0.15 };
 
 	function whiteIndexBelow(note: number): number {
 		let count = 0;
@@ -203,21 +213,34 @@
 			{@const active = noteState.isHeld(note)}
 			{@const owner = noteState.channelOf(note)}
 			<button
-				class="group relative flex-1 border-r border-b-[3px] border-black/15 first:rounded-bl-md last:rounded-br-md last:border-r-0"
+				class="group relative flex-1 border-r border-black/12 transition-[filter] duration-75 last:border-r-0"
 				style:background={active
-					? `color-mix(in oklch, ${channelColour(owner ?? ch)} 55%, var(--key-white))`
-					: 'var(--key-white)'}
+					? `color-mix(in oklch, ${channelColour(owner ?? ch)} 52%, var(--key-white))`
+					: 'linear-gradient(to bottom, color-mix(in oklch, var(--key-white) 92%, #000) 0%, var(--key-white) 8%, var(--key-white) 88%, color-mix(in oklch, var(--key-white) 88%, #000) 100%)'}
 				style:box-shadow={active
-					? 'inset 0 -2px 6px rgba(0,0,0,.18)'
-					: 'inset 0 -6px 10px -8px rgba(0,0,0,.35)'}
+					? 'inset 0 2px 5px rgba(0,0,0,.28), inset 0 -1px 0 rgba(0,0,0,.2)'
+					: 'inset 0 -3px 0 rgba(0,0,0,.16), inset -1px 0 2px -1px rgba(0,0,0,.18)'}
 				style:transform={active ? 'translateY(1px)' : 'none'}
 				onpointerdown={(e) => onPointerDown(note, e)}
 				onpointerenter={(e) => onPointerEnter(note, e)}
 				aria-label={noteName(note, { convention: settings.octaveConvention })}
 			>
+				<!--
+					The velocity hint. Hovering a key shades it from top to bottom,
+					which is the only way the "press lower to play harder" rule can
+					teach itself — a sentence under the keybed never will.
+				-->
+				{#if velocity === null}
+					<span
+						class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+						style="background: linear-gradient(to bottom, transparent 12%, color-mix(in oklch, {channelColour(
+							ch
+						)} 26%, transparent) 100%)"
+					></span>
+				{/if}
 				{#if labelFor(note)}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center font-mono text-2xs text-black/45"
+						class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center font-mono text-2xs text-black/40"
 					>
 						{labelFor(note)}
 					</span>
@@ -235,9 +258,13 @@
 			{@const owner = noteState.channelOf(note)}
 			<button
 				class="pointer-events-auto absolute top-0 rounded-b-[3px]"
-				style="left: {centre - w * 0.32}%; width: {w * 0.64}%; height: 62%;
-					background: {active ? channelColour(owner ?? ch) : 'var(--key-black)'};
-					box-shadow: {active ? 'inset 0 -2px 5px rgba(0,0,0,.4)' : '0 3px 4px -1px rgba(0,0,0,.5)'};
+				style="left: {centre - (w * BLACK_RATIO) / 2}%; width: {w * BLACK_RATIO}%; height: 63%;
+					background: {active
+					? channelColour(owner ?? ch)
+					: 'linear-gradient(to bottom, color-mix(in oklch, var(--key-black) 82%, #fff) 0%, var(--key-black) 34%, var(--key-black) 100%)'};
+					box-shadow: {active
+					? 'inset 0 2px 5px rgba(0,0,0,.55)'
+					: '0 3px 5px -1px rgba(0,0,0,.55), inset 0 -2px 0 rgba(255,255,255,.07)'};
 					transform: {active ? 'translateY(1px)' : 'none'};"
 				onpointerdown={(e) => onPointerDown(note, e)}
 				onpointerenter={(e) => onPointerEnter(note, e)}

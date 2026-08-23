@@ -68,11 +68,32 @@ export class MonitorStore {
 	#frame = 0;
 	#rateWindow: number[] = [];
 	#unsub: (() => void) | null = null;
+	#visibility: (() => void) | null = null;
 
+	/**
+	 * Idempotent, and it always hands back a stop function rather than the raw
+	 * unsubscribe. Returning the unsubscribe on a second call was a live bug:
+	 * the caller would run it, the bus subscription would go away while
+	 * `#unsub` stayed non-null, and every later `start()` would early-return
+	 * onto a dead subscription. The monitor simply stopped receiving, silently.
+	 */
 	start(): () => void {
-		if (this.#unsub) return this.#unsub;
-		this.#unsub = bus.subscribe((event) => this.#ingest(event));
-		if (browser) this.#tick();
+		if (!this.#unsub) this.#unsub = bus.subscribe((event) => this.#ingest(event));
+		if (browser && !this.#frame) this.#tick();
+		if (browser && !this.#visibility) {
+			this.#visibility = () => {
+				if (document.hidden) return;
+				// Coming back from a hidden tab: the animation frame chain was
+				// paused, so restart it and flush whatever accumulated while
+				// nobody was looking. Without this the monitor shows an empty
+				// list after you switch to your DAW, play something and switch
+				// back — the events are in the buffer, they were simply never
+				// rendered.
+				this.#dirty = this.#dirty || this.#buffer.length !== this.total;
+				if (!this.#frame) this.#tick();
+			};
+			document.addEventListener('visibilitychange', this.#visibility);
+		}
 		return () => this.stop();
 	}
 
@@ -81,6 +102,10 @@ export class MonitorStore {
 		this.#unsub = null;
 		if (this.#frame) cancelAnimationFrame(this.#frame);
 		this.#frame = 0;
+		if (this.#visibility) {
+			document.removeEventListener('visibilitychange', this.#visibility);
+			this.#visibility = null;
+		}
 	}
 
 	#ingest(event: MidiEvent) {

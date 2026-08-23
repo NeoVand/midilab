@@ -43,6 +43,13 @@
 	let { onSelect, selectedId = null, class: className, showToolbar = true }: Props = $props();
 
 	const rows = $derived(monitor.filtered);
+
+	/**
+	 * A column that says the same thing on every row is not a column, it is a
+	 * caption repeated a hundred times. Port only appears once there is more
+	 * than one of them, and then only on the row where it changes.
+	 */
+	const showPort = $derived(new Set(rows.map((e) => e.portId)).size > 1);
 	const allFamilies: MessageFamily[] = [
 		'note',
 		'cc',
@@ -128,13 +135,32 @@
 			<div
 				class="grid h-full min-h-24 place-items-center p-6 text-center text-sm text-muted-foreground"
 			>
-				<div>
-					<p>Nothing on the wire yet.</p>
-					<p class="mt-1 text-xs">Play a note, or connect a device and send something.</p>
+				<div class="measure">
+					<p class="text-foreground">Nothing on the wire yet.</p>
+					<p class="mt-1.5 text-xs">
+						Play a note, or connect a device and send something. Each row will show the gap since
+						the previous message, its direction, its family colour, the channel, the raw bytes and
+						what they mean.
+					</p>
 				</div>
 			</div>
 		{:else}
 			<table class="w-full border-collapse font-mono text-xs">
+				<thead class="sticky top-0 z-10 bg-background/95 backdrop-blur">
+					<tr class="border-b">
+						<th class="label w-14 py-1 pr-1 pl-2 text-right font-medium">Δt</th>
+						<th class="label w-5 py-1 font-medium" title="Direction"
+							><span class="sr-only">Direction</span></th
+						>
+						<th class="label w-2 py-1 font-medium"><span class="sr-only">Family</span></th>
+						<th class="label w-7 py-1 pl-1.5 text-right font-medium">ch</th>
+						<th class="label w-[8.5rem] py-1 pl-3 text-left font-medium">bytes</th>
+						<th class="label py-1 pr-2 pl-2 text-left font-medium">message</th>
+						{#if showPort}
+							<th class="label hidden w-32 py-1 pr-3 text-right font-medium lg:table-cell">port</th>
+						{/if}
+					</tr>
+				</thead>
 				<tbody>
 					{#each rows as e, i (e.id)}
 						{@const fam = family(e.message)}
@@ -172,11 +198,13 @@
 							<td class="truncate py-[3px] pr-2 pl-2">
 								{shortLabel(e.message, { octaveConvention: settings.octaveConvention })}
 							</td>
-							<td
-								class="hidden w-32 truncate py-[3px] pr-3 text-right text-muted-foreground/60 lg:table-cell"
-							>
-								{e.portName}
-							</td>
+							{#if showPort}
+								<td
+									class="hidden w-32 truncate py-[3px] pr-3 text-right text-muted-foreground/60 lg:table-cell"
+								>
+									{rows[i + 1]?.portId === e.portId ? '' : e.portName}
+								</td>
+							{/if}
 						</tr>
 					{/each}
 				</tbody>
