@@ -220,6 +220,25 @@ export class MonitorStore {
 			: [...this.directions, d];
 	}
 
+	/** Anything other than the defaults is on — used to badge the filter button. */
+	get filtering(): boolean {
+		return (
+			this.families.length < ALL_FAMILIES.length ||
+			this.directions.length < 2 ||
+			this.channels.length > 0 ||
+			this.ports.length > 0 ||
+			this.search.trim() !== ''
+		);
+	}
+
+	resetFilters(): void {
+		this.families = [...ALL_FAMILIES];
+		this.directions = ['in', 'out'];
+		this.channels = [];
+		this.ports = [];
+		this.search = '';
+	}
+
 	toggleChannel(c: number): void {
 		this.channels = this.channels.includes(c)
 			? this.channels.filter((x) => x !== c)

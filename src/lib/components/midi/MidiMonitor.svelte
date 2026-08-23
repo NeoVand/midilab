@@ -8,7 +8,7 @@
 	 * noticing, so the toggle is right there.
 	 */
 	import { monitor } from '$lib/midi/monitor.svelte';
-	import type { MidiEvent } from '$lib/midi/bus';
+	import type { Direction, MidiEvent } from '$lib/midi/bus';
 	import {
 		FAMILY_LABELS,
 		family,
@@ -88,38 +88,103 @@
 			<Popover.Root>
 				<Popover.Trigger>
 					{#snippet child({ props })}
-						<Button {...props} variant="ghost" size="sm" class="h-7 gap-1.5 px-2">
+						<Button
+							{...props}
+							variant="ghost"
+							size="sm"
+							class={cn('h-7 gap-1.5 px-2', monitor.filtering && 'text-msg-cc')}
+						>
 							<HugeiconsIcon icon={FilterIcon} size={14} />
 							<span class="text-xs">Filter</span>
+							<!--
+								A filter you have forgotten about looks exactly like a broken
+								app: messages arrive and nothing appears. It says so.
+							-->
+							{#if monitor.filtering}
+								<span class="size-1.5 rounded-full bg-msg-cc"></span>
+							{/if}
 						</Button>
 					{/snippet}
 				</Popover.Trigger>
-				<Popover.Content class="w-64" align="start">
-					<div class="flex flex-col gap-3">
-						<div class="flex items-center justify-between">
-							<Label for="hide-rt" class="text-xs font-normal">Hide clock &amp; sensing</Label>
-							<Switch id="hide-rt" bind:checked={monitor.hideRealTime} />
-						</div>
-						<div class="flex flex-col gap-1.5">
-							<span class="label">Families</span>
-							{#each allFamilies as f (f)}
+				<Popover.Content class="flex w-72 flex-col gap-3.5" align="start">
+					<div class="flex items-center justify-between">
+						<Label for="hide-rt" class="text-xs font-normal">Hide clock &amp; sensing</Label>
+						<Switch id="hide-rt" bind:checked={monitor.hideRealTime} />
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<span class="label">Direction</span>
+						<div class="flex gap-1.5">
+							{#each [['in', 'Incoming'], ['out', 'Outgoing']] as [d, label] (d)}
+								{@const on = monitor.directions.includes(d as Direction)}
 								<button
-									class="flex items-center gap-2 rounded-sm px-1.5 py-1 text-left text-xs hover:bg-accent"
-									onclick={() => monitor.toggleFamily(f)}
+									class={cn(
+										'flex-1 rounded-md border px-2 py-1 text-xs transition-colors',
+										on
+											? 'border-msg-cc/60 bg-msg-cc-bg text-msg-cc'
+											: 'text-muted-foreground hover:border-foreground/20'
+									)}
+									onclick={() => monitor.toggleDirection(d as Direction)}
 								>
-									<span
-										class="size-2.5 rounded-full transition-opacity"
-										style="background: {familyColor(f)}; opacity: {monitor.families.includes(f)
-											? 1
-											: 0.2}"
-									></span>
-									<span class={monitor.families.includes(f) ? '' : 'text-muted-foreground/60'}>
-										{FAMILY_LABELS[f]}
-									</span>
+									{label}
 								</button>
 							{/each}
 						</div>
 					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<span class="label">Families</span>
+						<div class="flex flex-col">
+							{#each allFamilies as f (f)}
+								{@const on = monitor.families.includes(f)}
+								<button
+									class="flex items-center gap-2 rounded-sm px-1.5 py-1 text-left text-xs transition-colors hover:bg-accent"
+									onclick={() => monitor.toggleFamily(f)}
+								>
+									<span
+										class="size-2.5 rounded-full transition-opacity"
+										style="background: {familyColor(f)}; opacity: {on ? 1 : 0.2}"
+									></span>
+									<span class={on ? '' : 'text-muted-foreground/60'}>{FAMILY_LABELS[f]}</span>
+								</button>
+							{/each}
+						</div>
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<span class="label flex items-baseline justify-between">
+							Channels
+							<span class="text-muted-foreground/60 normal-case">
+								{monitor.channels.length ? `${monitor.channels.length} selected` : 'all'}
+							</span>
+						</span>
+						<div class="grid grid-cols-8 gap-1">
+							{#each Array.from({ length: 16 }, (_, c) => c) as c (c)}
+								{@const on = monitor.channels.includes(c)}
+								<button
+									class={cn(
+										'tnum rounded-sm border py-0.5 font-mono text-2xs transition-colors',
+										on
+											? 'border-msg-cc/60 bg-msg-cc-bg text-msg-cc'
+											: 'text-muted-foreground hover:border-foreground/20'
+									)}
+									onclick={() => monitor.toggleChannel(c)}
+									aria-pressed={on}
+								>
+									{c + 1}
+								</button>
+							{/each}
+						</div>
+					</div>
+
+					{#if monitor.filtering}
+						<button
+							class="self-start text-xs text-muted-foreground underline decoration-border underline-offset-2 hover:text-foreground"
+							onclick={() => monitor.resetFilters()}
+						>
+							Show everything again
+						</button>
+					{/if}
 				</Popover.Content>
 			</Popover.Root>
 
