@@ -15,6 +15,7 @@
 	import { isBlackKey, noteName, noteOctave, noteToFrequency } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { GLOSSARY } from '$lib/curriculum/glossary';
+	import { rovingGrid } from '$lib/a11y/roving';
 	import { cn } from '$lib/utils';
 
 	let q = $state('');
@@ -438,7 +439,7 @@
 							{g.family}
 							<span class="font-mono text-muted-foreground">{g.f * 8}–{g.f * 8 + 7}</span>
 						</p>
-						<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+						<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4" use:rovingGrid>
 							{#each g.items as p (p)}
 								<button
 									class={cn(
@@ -471,7 +472,7 @@
 		<!-- Drums -->
 		<Tabs.Content value="drums">
 			{#if drumHits.length}
-				<div class="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+				<div class="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3" use:rovingGrid>
 					{#each drumHits as [n, name] (n)}
 						<button
 							class={cn(CHIP, 'hover:border-msg-note', sounding === n && 'border-msg-note')}
@@ -517,7 +518,12 @@
 			</div>
 
 			{#if noteRows.length}
-				<div class="overflow-hidden rounded-lg border">
+				<!--
+					One stop for the whole map, twelve columns wide: arrow keys walk it
+					the way a hand walks a keybed, and Tab steps over it to the note
+					underneath rather than through a hundred and twenty-eight of them.
+				-->
+				<div class="overflow-hidden rounded-lg border" use:rovingGrid={{ columns: 12 }}>
 					{#each noteRows as row, i (row.octave)}
 						<div class={cn('flex items-stretch', i > 0 && 'border-t')}>
 							<div
@@ -532,7 +538,7 @@
 										title="Note {n} · {noteName(n, {
 											convention: settings.octaveConvention
 										})} · {noteToFrequency(n).toFixed(2)} Hz{GM_DRUMS[n]
-											? ` · GM drum: ${GM_DRUMS[n]}`
+											? ` · on channel 10, ${GM_DRUMS[n]}`
 											: ''}"
 										class={cn(
 											'flex flex-col items-center gap-0.5 border-l px-1 py-1.5 transition-colors first:border-l-0',
