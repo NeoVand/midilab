@@ -11,7 +11,7 @@
 	import { PPQ, CLOCK_PPQ } from '$lib/midi/clock.svelte';
 
 	const meta = lessonById('ppqn-and-groove')!;
-	let swing = $state(0);
+	let swing = $state(50);
 
 	const RESOLUTIONS: Array<[string, number, string]> = [
 		['MIDI Clock on the wire', 24, 'Fixed by the specification since 1983. Not negotiable.'],
@@ -151,9 +151,9 @@
 			lesson={meta.id}
 			id="swing"
 			label="Hear the difference between straight and swung"
-			hint="Play the loop, then push swing past 50%."
+			hint="Play the loop, then push swing past 50% — 66% is triplet."
 			count={2}
-			key={() => (swing >= 40 ? 'swung' : 'straight')}
+			key={() => (swing > 52 ? 'swung' : 'straight')}
 			test={(e) => e.message.type === 'noteOn' && e.message.note === 42}
 		/>
 		<Checkpoint

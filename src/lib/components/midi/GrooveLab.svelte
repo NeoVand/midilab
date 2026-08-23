@@ -15,13 +15,14 @@
 
 	interface Props {
 		bpm?: number;
+		/** MPC convention: 50 is straight, 66.7 is triplet. */
 		swing?: number;
 		humanise?: number;
 		class?: string;
 	}
 	let {
 		bpm = 96,
-		swing = $bindable(0),
+		swing = $bindable(50),
 		humanise = $bindable(0),
 		class: className
 	}: Props = $props();
@@ -32,18 +33,25 @@
 		{ note: 42, name: 'Hat', steps: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }
 	];
 
-	/** Deterministic per-step wobble so the display matches what is played. */
+	/**
+	 * Deterministic per-step wobble in [-1, 1), so the markers show exactly the
+	 * displacement that gets played. `fract`, not `%` — the remainder operator
+	 * keeps the sign and would skew every hit early.
+	 */
+	const fract = (x: number) => x - Math.floor(x);
 	const wobble = LANES.map((l) =>
-		l.steps.map((s) => (Math.sin(s * 12.9898 + l.note) * 43758.5453) % 1)
+		l.steps.map((s) => fract(Math.sin(s * 12.9898 + l.note) * 43758.5453) * 2 - 1)
 	);
 
 	const player = new SequencePlayer();
 
+	/** Offset from the nominal grid position, in beats. */
 	function offsetFor(step: number, laneIndex: number, stepIndex: number): number {
-		// Swing delays every odd sixteenth by a fraction of a sixteenth.
-		const swung = step % 2 === 1 ? (swing / 100) * 0.5 : 0;
-		const human = (wobble[laneIndex][stepIndex] * 2 - 1) * (humanise / 1000) * (bpm / 60);
-		return swung * 0.25 + human;
+		// Swing delays every odd sixteenth. At 50% it sits halfway between its
+		// neighbours — straight. At 66.7% it sits two thirds of the way: triplet.
+		const swung = step % 2 === 1 ? ((swing - 50) / 50) * 0.25 : 0;
+		const human = wobble[laneIndex][stepIndex] * (humanise / 1000) * (bpm / 60);
+		return swung + human;
 	}
 
 	const notes = $derived.by((): NoteSpec[] => {
@@ -63,6 +71,19 @@
 	});
 
 	const events = $derived(notesToEvents(notes, bpm));
+
+	/**
+	 * Re-arm on release rather than on every pointer move: the markers track the
+	 * drag live, and the loop picks up the new feel the moment you let go —
+	 * without restarting sixty times on the way there.
+	 */
+	function reArm() {
+		if (player.playing) void player.play(events, { loop: true });
+	}
+
+	const FEEL = $derived(
+		swing < 51 ? 'straight' : swing < 60 ? 'light shuffle' : swing < 68 ? 'triplet' : 'hard shuffle'
+	);
 </script>
 
 <div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
@@ -77,16 +98,19 @@
 			{player.playing ? 'Stop' : 'Play the loop'}
 		</Button>
 
-		<label class="flex min-w-48 flex-1 items-center gap-3">
-			<span class="w-14 text-xs text-muted-foreground">Swing</span>
-			<Slider type="single" bind:value={swing} min={0} max={75} step={1} />
-			<span class="tnum w-10 text-right font-mono text-xs">{swing}%</span>
+		<label class="flex min-w-56 flex-1 items-center gap-3">
+			<span class="w-14 shrink-0 text-xs text-muted-foreground">Swing</span>
+			<Slider type="single" bind:value={swing} min={50} max={75} step={1} onValueCommit={reArm} />
+			<span class="w-24 shrink-0 text-right text-xs">
+				<span class="tnum font-mono">{swing}%</span>
+				<span class="text-muted-foreground"> · {FEEL}</span>
+			</span>
 		</label>
 
-		<label class="flex min-w-48 flex-1 items-center gap-3">
-			<span class="w-16 text-xs text-muted-foreground">Humanise</span>
-			<Slider type="single" bind:value={humanise} min={0} max={40} step={1} />
-			<span class="tnum w-12 text-right font-mono text-xs">±{humanise}ms</span>
+		<label class="flex min-w-56 flex-1 items-center gap-3">
+			<span class="w-16 shrink-0 text-xs text-muted-foreground">Humanise</span>
+			<Slider type="single" bind:value={humanise} min={0} max={40} step={1} onValueCommit={reArm} />
+			<span class="tnum w-16 shrink-0 text-right font-mono text-xs">±{humanise} ms</span>
 		</label>
 	</div>
 
@@ -109,7 +133,7 @@
 						{@const nominal = (step / 16) * 100}
 						{@const actual = ((step * 0.25 + offsetFor(step, li, si)) / 4) * 100}
 						<div
-							class="absolute inset-y-2 w-[3px] rounded-full bg-muted-foreground/25"
+							class="absolute inset-y-2 w-[3px] rounded-full bg-muted-foreground/40"
 							style="left: {nominal}%"
 						></div>
 						<div

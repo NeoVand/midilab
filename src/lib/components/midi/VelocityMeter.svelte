@@ -60,16 +60,18 @@
 		></div>
 	</div>
 
-	<div class="panel-sunken flex h-14 items-end gap-[2px] rounded-lg border p-1.5">
+	<div class="panel-sunken relative flex h-14 items-end gap-[2px] rounded-lg border p-1.5">
 		{#each history as v, i (i)}
 			<div
 				class="min-w-[3px] flex-1 rounded-xs bg-msg-note"
-				style="height: {(v / 127) * 100}%; opacity: {0.35 +
+				style="height: {Math.max(6, (v / 127) * 100)}%; opacity: {0.35 +
 					(i / Math.max(1, history.length)) * 0.65}"
 			></div>
 		{/each}
 		{#if history.length === 0}
-			<p class="w-full text-center text-xs text-muted-foreground">velocity history</p>
+			<p class="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
+				velocity history
+			</p>
 		{/if}
 	</div>
 </div>

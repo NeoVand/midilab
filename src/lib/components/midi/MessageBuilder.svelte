@@ -54,7 +54,7 @@
 		value = $bindable(64),
 		program = $bindable(0),
 		bend = $bindable(8192),
-		pressure = $bindable(64),
+		pressure = $bindable(0),
 		lockType = false,
 		autoSend = false,
 		class: className
@@ -92,12 +92,15 @@
 	const bytes = $derived(encode(message));
 
 	function send() {
-		engine.wake();
+		void engine.wake();
 		engine.send(message);
 		// A Note On you can never turn off is how the app teaches stuck notes,
-		// but not by accident: this one releases itself after a beat.
+		// but not by accident: this one releases itself after a beat. Capture the
+		// channel and note now — turning the knob during those 700 ms must not
+		// redirect the release to whatever is under your finger by then.
 		if (type === 'noteOn') {
-			setTimeout(() => engine.send({ type: 'noteOff', channel, note, velocity: 0 }), 700);
+			const [ch, n] = [channel, note];
+			setTimeout(() => engine.send({ type: 'noteOff', channel: ch, note: n, velocity: 0 }), 700);
 		}
 	}
 
@@ -222,9 +225,8 @@
 			/>
 		{/if}
 
-		<div class="flex-1"></div>
 		{#if !autoSend}
-			<Button size="sm" onclick={send} class="gap-1.5">
+			<Button size="sm" onclick={send} class="ml-auto gap-1.5">
 				<HugeiconsIcon icon={SentIcon} size={14} />
 				Send
 			</Button>
@@ -237,9 +239,10 @@
 			{#each ESSENTIAL_CCS as n (n)}
 				<button
 					class={cn(
-						'rounded-md border px-1.5 py-0.5 font-mono text-2xs transition-colors hover:border-msg-cc',
+						'rounded-md border px-2 py-1 font-mono text-2xs transition-colors hover:border-msg-cc',
 						controller === n && 'border-msg-cc bg-msg-cc-bg text-msg-cc'
 					)}
+					aria-pressed={controller === n}
 					onclick={() => (controller = n)}
 				>
 					{n}

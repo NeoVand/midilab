@@ -7,6 +7,7 @@
  * Lesson 17 explains.
  */
 
+import { onDestroy } from 'svelte';
 import { audio } from '$lib/audio/engine';
 import { engine } from './engine.svelte';
 import { audioToPerf } from './clock.svelte';
@@ -61,6 +62,16 @@ export class SequencePlayer {
 	#timer = 0;
 	#loop = false;
 	#onEnd: (() => void) | undefined;
+
+	/**
+	 * Construct this during component initialisation. It registers its own
+	 * teardown, so navigating away mid-phrase releases the notes and drops the
+	 * scheduling timer instead of leaving an orphan interval feeding the engine
+	 * from a component that no longer exists.
+	 */
+	constructor() {
+		onDestroy(() => this.stop());
+	}
 
 	async play(
 		events: ScheduledEvent[],
@@ -117,8 +128,12 @@ export class SequencePlayer {
 
 		if (this.#index >= this.#events.length && this.position > this.duration) {
 			if (this.#loop) {
+				// Advance the origin by arithmetic, not by reading the clock: the
+				// wake-up that noticed the end was up to INTERVAL ms late, and
+				// `startTime = now` would bake that lateness into every repeat.
 				this.#index = 0;
-				this.#startTime = now;
+				this.#startTime += this.duration;
+				this.position = Math.max(0, now - this.#startTime);
 			} else {
 				this.stop();
 				this.#onEnd?.();
