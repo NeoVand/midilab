@@ -363,7 +363,68 @@
 	}
 }
 
+/*
+ * The parts of the screen the operating system has already spoken for.
+ *
+ * A phone reserves the strip under the home indicator and, in landscape, the
+ * columns beside the notch. `env()` is zero everywhere else, so these are
+ * safe to apply unconditionally — but only to whatever is actually against
+ * that edge, or the padding lands in the middle of the layout.
+ */
+@layer utilities {
+	.pb-safe {
+		padding-bottom: env(safe-area-inset-bottom, 0px);
+	}
+	.pl-safe {
+		padding-left: env(safe-area-inset-left, 0px);
+	}
+	.pr-safe {
+		padding-right: env(safe-area-inset-right, 0px);
+	}
+	.px-safe {
+		padding-left: env(safe-area-inset-left, 0px);
+		padding-right: env(safe-area-inset-right, 0px);
+	}
+}
+
+/*
+ * Touch targets.
+ *
+ * Apple asks for 44 pt and Material for 48 dp, and both are describing the
+ * same physical fact: a fingertip is about 9 mm across and it lands where it
+ * lands. This grows a control to that size without changing how it looks —
+ * the visible part stays put and the target extends past it — so a row of
+ * small marks can stay a row of small marks and still be hittable.
+ */
+@layer utilities {
+	@media (pointer: coarse) {
+		.touch-target {
+			position: relative;
+		}
+		.touch-target::after {
+			content: '';
+			position: absolute;
+			inset: 50% 50%;
+			width: 44px;
+			height: 44px;
+			transform: translate(-50%, -50%);
+		}
+	}
+}
+
 /* Scrollbars that belong to an instrument, not a document. */
+@layer utilities {
+	/* A strip that scrolls because it has to, not because it wants to be seen
+	   scrolling. The overflow is discoverable by dragging it, which is how a
+	   finger discovers everything. */
+	.scrollbar-none {
+		scrollbar-width: none;
+	}
+	.scrollbar-none::-webkit-scrollbar {
+		display: none;
+	}
+}
+
 @layer utilities {
 	.scrollbar-thin {
 		scrollbar-width: thin;
