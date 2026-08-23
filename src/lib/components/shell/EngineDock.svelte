@@ -507,13 +507,12 @@
 	{#if settings.dockOpen}
 		<Tabs.Root bind:value={settings.dockTab} class="min-h-0 flex-1 gap-0">
 			<!--
-				A full-width strip so it reads as the tray's own header rather than a
-				row floating under the toolbar — but the tabs keep their natural
-				width inside it, since the shared trigger grows to fill by default.
+				Underlined text, not pills in a bordered strip inside a bordered tray.
+				The tabs sit on the rule that already separates the toolbar from the
+				tray, so the selected one is marked by the rule rather than by another
+				box drawn around it.
 			-->
-			<Tabs.List
-				class="mb-0 h-9 w-full shrink-0 justify-start gap-1 rounded-none border-b bg-transparent px-3 [&>*]:flex-none"
-			>
+			<Tabs.List variant="line" class="mb-0 h-9 w-full shrink-0 justify-start px-3 [&>*]:flex-none">
 				<Tabs.Trigger value="devices" class="text-xs">Devices</Tabs.Trigger>
 				<Tabs.Trigger value="monitor" class="text-xs">Monitor</Tabs.Trigger>
 				<Tabs.Trigger value="state" class="text-xs">State</Tabs.Trigger>

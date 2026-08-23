@@ -322,7 +322,7 @@
 	</PageHeader>
 
 	<Tabs.Root bind:value={tab} class="gap-4">
-		<Tabs.List class="w-fit flex-wrap">
+		<Tabs.List variant="line" class="w-fit flex-wrap">
 			{#each TABS as t (t.value)}
 				<Tabs.Trigger value={t.value} class={cn(query && !t.count && 'opacity-40')}>
 					{t.label}

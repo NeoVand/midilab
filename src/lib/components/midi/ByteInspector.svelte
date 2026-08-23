@@ -152,7 +152,8 @@
 					{/each}
 				</div>
 
-				<p class="mt-2 text-xs leading-snug text-muted-foreground">
+				<!-- Two lines of room, so cards in a row stay the same height. -->
+				<p class="mt-2 min-h-8 text-xs leading-snug text-muted-foreground">
 					{#if b0Caption(i, isStatus)}
 						<span class="font-medium text-foreground">{b0Caption(i, isStatus)}</span>
 					{/if}
@@ -191,7 +192,13 @@
 	{/if}
 
 	{#if !compact}
-		<p class="prose-body">
+		<!--
+			Two lines of room whether the sentence needs one or two. "Start playing
+			C3 (note 60) on channel 1 at velocity 96" wraps; the Note Off that
+			follows it a moment later does not, and the whole panel — and the page
+			under it — jumped twenty-five pixels every time you let go of a key.
+		-->
+		<p class="prose-body min-h-[2lh]">
 			<span
 				class="mr-2 inline-block size-2 translate-y-[-1px] rounded-full align-middle"
 				style="background: var(--fam)"
