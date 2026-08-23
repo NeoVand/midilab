@@ -165,7 +165,10 @@ setInterval(() => {
 			id="naive"
 			label="Play the pattern with the naive scheduler and block the thread"
 			hint="You should hear a note stumble."
-			test={(e) => e.message.type === 'noteOn' && e.message.velocity === 112}
+			test={(e) =>
+				e.message.type === 'noteOn' &&
+				e.message.velocity === 112 &&
+				e.time <= performance.now() + 5}
 		/>
 		<Checkpoint
 			lesson={meta.id}
@@ -174,7 +177,8 @@ setInterval(() => {
 			hint="This time it should not stumble."
 			count={8}
 			key={(e) => String(e.id)}
-			test={(e) => e.message.type === 'noteOn' && e.message.channel === 0}
+			test={(e) =>
+				e.message.type === 'noteOn' && e.message.channel === 0 && e.time > performance.now() + 20}
 		/>
 		<Checkpoint
 			lesson={meta.id}

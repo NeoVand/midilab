@@ -172,7 +172,8 @@ access.onstatechange = (e) => console.log(e.port.name, e.port.state);`}</code
 			hint="The scheduled-chord example."
 			count={4}
 			key={(e) => String(e.id)}
-			test={(e) => e.direction === 'out' && e.message.type === 'noteOn'}
+			test={(e) =>
+				e.direction === 'out' && e.message.type === 'noteOn' && e.time > performance.now() + 20}
 		/>
 	</Checkpoints>
 </LessonShell>
