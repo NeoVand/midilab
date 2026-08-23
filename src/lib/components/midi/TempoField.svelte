@@ -83,7 +83,7 @@
 		/>
 	{:else}
 		<button
-			class="tnum cursor-ns-resize rounded-sm px-0.5 font-mono text-sm tabular-nums hover:bg-accent"
+			class="tnum cursor-ns-resize rounded-sm px-1 py-0.5 font-mono text-sm tabular-nums hover:bg-accent"
 			title="Drag to change · click to type · double-click to tap"
 			aria-label="Tempo, {transport.bpm.toFixed(1)} beats per minute"
 			onpointerdown={onPointerDown}
@@ -101,7 +101,7 @@
 		<span class="label">bpm</span>
 	{/if}
 	<button
-		class="rounded-sm px-1 py-0.5 text-2xs text-muted-foreground uppercase hover:bg-accent hover:text-foreground"
+		class="rounded-sm px-1.5 py-1 text-2xs text-muted-foreground uppercase hover:bg-accent hover:text-foreground"
 		title="Tap four times in time"
 		onclick={() => transport.tap()}
 	>

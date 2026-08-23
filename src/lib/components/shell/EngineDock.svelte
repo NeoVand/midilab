@@ -366,7 +366,7 @@
 			<!-- output level -->
 			<div class="hidden md:flex">
 				<button
-					class="rounded-sm p-1 text-muted-foreground hover:text-foreground"
+					class="rounded-sm p-1.5 text-muted-foreground hover:text-foreground"
 					onclick={() => onVolume(settings.masterVolume > 0 ? 0 : 0.75)}
 					aria-label={settings.masterVolume > 0 ? 'Mute' : 'Unmute'}
 				>
