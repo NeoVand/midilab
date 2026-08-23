@@ -16,7 +16,7 @@
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { load, save } from '$lib/stores/persist';
-	import { writeMidiFile, type TrackEvent } from '$lib/midi/smf';
+	import { stepsToMidiFile, type SeqTrack } from '$lib/midi/steps';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import * as Popover from '$lib/components/ui/popover';
@@ -33,15 +33,6 @@
 		Delete01Icon
 	} from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
-
-	export interface SeqTrack {
-		id: string;
-		name: string;
-		note: number;
-		channel: number;
-		steps: number[];
-		mute: boolean;
-	}
 
 	interface Props {
 		steps?: number;
@@ -249,27 +240,7 @@
 	}
 
 	function exportMid() {
-		const division = 480;
-		const perStep = division / 4;
-		const out = tracks.map((t) => {
-			const events: TrackEvent[] = [];
-			t.steps.slice(0, stepCount).forEach((v, i) => {
-				if (!v) return;
-				const tick = i * perStep;
-				events.push({
-					delta: 0,
-					tick,
-					event: { type: 'noteOn', channel: t.channel, note: t.note, velocity: v }
-				});
-				events.push({
-					delta: 0,
-					tick: tick + Math.round(perStep * 0.85),
-					event: { type: 'noteOff', channel: t.channel, note: t.note, velocity: 0 }
-				});
-			});
-			return { name: t.name, events };
-		});
-		const bytes = writeMidiFile(out, { division, bpm: transport.bpm, name: 'MIDI Lab pattern' });
+		const bytes = stepsToMidiFile(tracks, { stepCount, bpm: transport.bpm });
 		const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'audio/midi' }));
 		const a = document.createElement('a');
 		a.href = url;
@@ -339,7 +310,13 @@
 		<Button variant="ghost" size="sm" class="gap-1.5 text-xs" onclick={clearAll}>
 			<HugeiconsIcon icon={Delete02Icon} size={13} /> Clear
 		</Button>
-		<Button variant="outline" size="sm" class="gap-1.5 text-xs" onclick={exportMid}>
+		<Button
+			variant="outline"
+			size="sm"
+			class="gap-1.5 text-xs"
+			onclick={exportMid}
+			title="Writes what you are hearing — muted parts are left out, because a MIDI file has no mute."
+		>
 			<HugeiconsIcon icon={CloudDownloadIcon} size={13} /> Export .mid
 		</Button>
 	</div>
