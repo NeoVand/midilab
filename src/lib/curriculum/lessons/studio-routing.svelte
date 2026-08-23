@@ -11,25 +11,12 @@
 	import { router } from '$lib/midi/router.svelte';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { load, save } from '$lib/stores/persist';
+	import { WORKSHEETS } from '$lib/curriculum/worksheets';
 
 	const meta = lessonById('studio-routing')!;
 
-	let plan = $state<string>(
-		load(
-			'routing-plan',
-			`PORT / CHANNEL MAP
-
-ch 1   →
-ch 2   →
-ch 3   →
-ch 10  →  drums
-ch 11+ →  spare / MPE member channels
-
-CLOCK LEADER  →
-LOCAL CONTROL OFF ON  →
-NOTES:`
-		)
-	);
+	const SHEET = WORKSHEETS.find((w) => w.key === 'routing-plan')!;
+	let plan = $state<string>(load(SHEET.key, SHEET.template));
 	$effect(() => save('routing-plan', plan));
 </script>
 

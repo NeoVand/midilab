@@ -15,23 +15,12 @@
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { load, save } from '$lib/stores/persist';
+	import { WORKSHEETS } from '$lib/curriculum/worksheets';
 
 	const meta = lessonById('capstone')!;
 
-	let notes = $state<string>(
-		load(
-			'capstone-notes',
-			`RIG FOR THIS SESSION
-
-clock leader   →
-ch __  →
-ch __  →
-ch 10  →  drums
-
-local control OFF on →
-what went wrong, and what fixed it:`
-		)
-	);
+	const SHEET = WORKSHEETS.find((w) => w.key === 'capstone-notes')!;
+	let notes = $state<string>(load(SHEET.key, SHEET.template));
 	$effect(() => save('capstone-notes', notes));
 
 	const done = $derived(

@@ -28,7 +28,7 @@
 		StopIcon,
 		CloudDownloadIcon
 	} from '@hugeicons/core-free-icons';
-	import { cn } from '$lib/utils';
+	import { cn, downloadFile } from '$lib/utils';
 
 	interface Props {
 		class?: string;
@@ -111,12 +111,7 @@
 			bpm: 110,
 			name: 'MIDI Lab demo'
 		});
-		const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'audio/midi' }));
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'midi-lab-demo.mid';
-		a.click();
-		URL.revokeObjectURL(url);
+		downloadFile(bytes as BlobPart, 'midi-lab-demo.mid', 'audio/midi');
 	}
 
 	/** Annotated view of the first bytes: the header chunk, byte by byte. */

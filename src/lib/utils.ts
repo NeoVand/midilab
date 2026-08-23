@@ -27,3 +27,25 @@ export function capturePointer(el: Element | null | undefined, pointerId: number
 		/* the pointer went away; carry on without capture */
 	}
 }
+
+/**
+ * Hand the browser a file to save.
+ *
+ * The anchor goes into the document before it is clicked and the object URL is
+ * released on the next tick rather than the same one: revoking synchronously
+ * can cancel the download that was just started, and a detached anchor is not
+ * clickable everywhere. Four places in this app export something; they all go
+ * through here so the awkward parts are only got right once.
+ */
+export function downloadFile(data: BlobPart, filename: string, type: string): void {
+	const url = URL.createObjectURL(new Blob([data], { type }));
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = filename;
+	a.rel = 'noopener';
+	a.style.display = 'none';
+	document.body.append(a);
+	a.click();
+	a.remove();
+	setTimeout(() => URL.revokeObjectURL(url), 0);
+}

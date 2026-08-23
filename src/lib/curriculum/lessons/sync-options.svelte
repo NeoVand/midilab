@@ -12,21 +12,12 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { load, save } from '$lib/stores/persist';
+	import { WORKSHEETS } from '$lib/curriculum/worksheets';
 
 	const meta = lessonById('sync-options')!;
 
-	let policy = $state<string>(
-		load(
-			'clock-policy',
-			`OP-XY jam            → OP-XY is clock leader
-MPC production       → MPC is clock leader
-Ableton / Push       → Live is clock leader
-Browser experiment   → this machine is leader
-
-Everything else set to EXTERNAL sync.
-Local Control OFF on anything being sequenced.`
-		)
-	);
+	const SHEET = WORKSHEETS.find((w) => w.key === 'clock-policy')!;
+	let policy = $state<string>(load(SHEET.key, SHEET.template));
 	$effect(() => save('clock-policy', policy));
 
 	const MTC_PARTS = [

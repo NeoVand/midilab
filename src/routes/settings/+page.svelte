@@ -3,6 +3,13 @@
 	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { load, remove } from '$lib/stores/persist';
+	import { downloadFile } from '$lib/utils';
+	import {
+		WORKSHEETS,
+		filledWorksheets,
+		worksheetsToText,
+		clearWorksheets
+	} from '$lib/curriculum/worksheets';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { ALL_LESSONS } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
@@ -29,6 +36,21 @@
 		remove('seq-programmer');
 		remove('patterns-programmer');
 		patternsSaved = false;
+	}
+
+	/*
+	 * The worksheets are the only bytes in local storage the user typed, so they
+	 * are the one thing that has to be takeable out of the browser.
+	 */
+	let written = $state(filledWorksheets().length);
+
+	function downloadWorksheets() {
+		downloadFile(worksheetsToText(), 'midi-lab-notes.txt', 'text/plain;charset=utf-8');
+	}
+
+	function forgetWorksheets() {
+		clearWorksheets();
+		written = 0;
 	}
 </script>
 
@@ -205,9 +227,31 @@
 					Forget patterns
 				</Button>
 			</div>
+			<div class="flex flex-wrap items-center justify-between gap-3 border-t pt-3">
+				<div class="min-w-0">
+					<p class="text-sm font-medium">Your worksheets</p>
+					<p class="text-xs text-muted-foreground">
+						{#if written}
+							{written} of {WORKSHEETS.length} written in — the routing plan, the clock policy and the
+							rig notes
+						{:else}
+							The routing plan, the clock policy and the rig notes — still as they came
+						{/if}
+					</p>
+				</div>
+				<div class="flex gap-2">
+					<Button variant="outline" size="sm" disabled={!written} onclick={downloadWorksheets}>
+						Download
+					</Button>
+					<Button variant="outline" size="sm" disabled={!written} onclick={forgetWorksheets}>
+						Forget notes
+					</Button>
+				</div>
+			</div>
 			<p class="border-t pt-3 text-xs leading-relaxed text-muted-foreground">
 				Everything is stored in this browser's local storage. Nothing is sent anywhere — this app
-				has no server.
+				has no server. Clearing the browser's site data clears all of it, which is why the
+				worksheets have a Download button.
 			</p>
 		</div>
 	</section>

@@ -29,7 +29,7 @@
 		Target02Icon,
 		AlertCircleIcon
 	} from '@hugeicons/core-free-icons';
-	import { cn } from '$lib/utils';
+	import { cn, downloadFile } from '$lib/utils';
 
 	interface Props {
 		class?: string;
@@ -107,14 +107,11 @@
 	}
 
 	function download() {
-		const url = URL.createObjectURL(
-			new Blob([devices.export(profile.id)], { type: 'application/json' })
+		downloadFile(
+			devices.export(profile.id),
+			`${profile.name.toLowerCase().replace(/\s+/g, '-')}.midiprofile.json`,
+			'application/json'
 		);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = `${profile.name.toLowerCase().replace(/\s+/g, '-')}.midiprofile.json`;
-		a.click();
-		URL.revokeObjectURL(url);
 	}
 
 	function doImport() {

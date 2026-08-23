@@ -32,7 +32,7 @@
 		VolumeHighIcon,
 		Delete01Icon
 	} from '@hugeicons/core-free-icons';
-	import { cn } from '$lib/utils';
+	import { cn, downloadFile } from '$lib/utils';
 
 	interface Props {
 		steps?: number;
@@ -241,12 +241,7 @@
 
 	function exportMid() {
 		const bytes = stepsToMidiFile(tracks, { stepCount, bpm: transport.bpm });
-		const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'audio/midi' }));
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'pattern.mid';
-		a.click();
-		URL.revokeObjectURL(url);
+		downloadFile(bytes as BlobPart, 'pattern.mid', 'audio/midi');
 	}
 </script>
 
