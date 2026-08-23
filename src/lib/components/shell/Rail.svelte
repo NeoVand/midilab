@@ -19,6 +19,15 @@
 	}
 	let { onOpenPalette }: Props = $props();
 
+	/*
+	 * Three destinations, and they are named.
+	 *
+	 * An unlabelled icon rail asks you to memorise a graduation cap, a flask
+	 * and a stack of books before you can navigate; a tooltip you have to hover
+	 * to read is a worse answer than a word that is simply there. The tooltips
+	 * stay, but they now carry what is *inside* each destination rather than
+	 * repeating its name.
+	 */
 	const items = [
 		{ href: '/learn', icon: GraduationCapIcon, label: 'Learn', hint: 'The course, Act I to VI' },
 		{
@@ -36,13 +45,14 @@
 	];
 
 	const current = $derived(page.url.pathname);
+	const isDark = $derived(settings.resolvedTheme === 'dark');
 </script>
 
 <nav
-	class="flex w-14 shrink-0 flex-col items-center gap-1 border-r bg-sidebar py-3"
+	class="flex w-[4.25rem] shrink-0 flex-col items-center gap-0.5 border-r bg-sidebar py-3"
 	aria-label="Primary"
 >
-	<a href="/" class="group mb-2 grid size-9 place-items-center" aria-label="MIDI Lab home">
+	<a href="/" class="mb-2 grid size-9 place-items-center" aria-label="MIDI Lab home">
 		<!-- The mark: a status byte's high bit, then seven data bits. -->
 		<svg viewBox="0 0 24 24" class="size-6" aria-hidden="true">
 			<rect x="1" y="4" width="4" height="16" rx="1.2" fill="var(--msg-note)" />
@@ -55,7 +65,7 @@
 
 	{#each items as item (item.href)}
 		{@const active = current === item.href || current.startsWith(item.href + '/')}
-		<Tooltip.Provider delayDuration={200}>
+		<Tooltip.Provider delayDuration={400}>
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					{#snippet child({ props })}
@@ -64,7 +74,7 @@
 							href={item.href}
 							aria-current={active ? 'page' : undefined}
 							class={cn(
-								'relative grid size-10 place-items-center rounded-lg transition-colors',
+								'relative flex w-14 flex-col items-center gap-1 rounded-lg py-2 transition-colors',
 								active
 									? 'bg-sidebar-accent text-sidebar-accent-foreground'
 									: 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'
@@ -72,24 +82,24 @@
 						>
 							{#if active}
 								<span
-									class="absolute top-1/2 -left-3 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-msg-note"
+									class="absolute top-1/2 -left-[9px] h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-msg-note"
 								></span>
 							{/if}
 							<HugeiconsIcon icon={item.icon} size={20} strokeWidth={1.7} />
+							<span class="text-2xs leading-none font-medium">{item.label}</span>
 						</a>
 					{/snippet}
 				</Tooltip.Trigger>
-				<Tooltip.Content side="right" class="flex flex-col gap-0.5">
-					<span class="font-medium">{item.label}</span>
-					<span class="text-xs text-muted-foreground">{item.hint}</span>
-				</Tooltip.Content>
+				<Tooltip.Content side="right">{item.hint}</Tooltip.Content>
 			</Tooltip.Root>
 		</Tooltip.Provider>
 	{/each}
 
 	<div class="flex-1"></div>
 
-	<Tooltip.Provider delayDuration={200}>
+	<div class="mb-1 h-px w-8 bg-sidebar-border"></div>
+
+	<Tooltip.Provider delayDuration={400}>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				{#snippet child({ props })}
@@ -107,29 +117,45 @@
 		</Tooltip.Root>
 	</Tooltip.Provider>
 
-	<button
-		onclick={() => settings.toggleTheme()}
-		class="grid size-10 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
-		aria-label="Toggle colour theme"
-	>
-		<HugeiconsIcon
-			icon={settings.resolvedTheme === 'dark' ? Sun03Icon : Moon02Icon}
-			size={19}
-			strokeWidth={1.7}
-		/>
-	</button>
+	<Tooltip.Provider delayDuration={400}>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<button
+						{...props}
+						onclick={() => settings.toggleTheme()}
+						class="grid size-10 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
+						aria-label={isDark ? 'Switch to the light theme' : 'Switch to the dark theme'}
+					>
+						<HugeiconsIcon icon={isDark ? Sun03Icon : Moon02Icon} size={19} strokeWidth={1.7} />
+					</button>
+				{/snippet}
+			</Tooltip.Trigger>
+			<Tooltip.Content side="right">{isDark ? 'Light theme' : 'Dark theme'}</Tooltip.Content>
+		</Tooltip.Root>
+	</Tooltip.Provider>
 
-	<a
-		href="/settings"
-		aria-current={current === '/settings' ? 'page' : undefined}
-		class={cn(
-			'grid size-10 place-items-center rounded-lg transition-colors',
-			current === '/settings'
-				? 'bg-sidebar-accent text-sidebar-accent-foreground'
-				: 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'
-		)}
-		aria-label="Settings"
-	>
-		<HugeiconsIcon icon={Settings02Icon} size={19} strokeWidth={1.7} />
-	</a>
+	<Tooltip.Provider delayDuration={400}>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<a
+						{...props}
+						href="/settings"
+						aria-current={current === '/settings' ? 'page' : undefined}
+						class={cn(
+							'grid size-10 place-items-center rounded-lg transition-colors',
+							current === '/settings'
+								? 'bg-sidebar-accent text-sidebar-accent-foreground'
+								: 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'
+						)}
+						aria-label="Settings"
+					>
+						<HugeiconsIcon icon={Settings02Icon} size={19} strokeWidth={1.7} />
+					</a>
+				{/snippet}
+			</Tooltip.Trigger>
+			<Tooltip.Content side="right">Settings</Tooltip.Content>
+		</Tooltip.Root>
+	</Tooltip.Provider>
 </nav>
