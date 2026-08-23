@@ -277,10 +277,12 @@ contrast and is the better palette anyway: no family shouts louder than
 another.
 
 **Keyboard.** Every custom control is a real control: pads and keys sound on
-Enter and Space, sliders take arrows, Page, Home and End, and the step grid is
-one tab stop with two-dimensional arrow movement rather than eighty. Focus is
-always visible; mouse users never see it, keyboard users cannot work without
-it.
+Enter and Space, sliders take arrows, Page, Home and End. Every grid — step
+rows, pad banks, the channel strip, the note map, the GM tables — is a single
+tab stop with arrow movement inside it, the way your hands already use a
+hardware grid; the Programmer went from 150 tab stops to 47 and the Reference
+note map from 128 to one. Focus is always visible; mouse users never see it,
+keyboard users cannot work without it.
 
 **Motion** is physical and restrained — notes bloom, packets travel, meters
 decay; nothing bounces for decoration. All of it is CSS, and all of it is

@@ -9,6 +9,7 @@
 	import { GM_DRUMS } from '$lib/midi/constants';
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { rovingGrid } from '$lib/a11y/roving';
 	import { capturePointer, cn } from '$lib/utils';
 
 	interface Props {
@@ -91,6 +92,7 @@
 <div
 	class={cn('grid gap-1.5', className)}
 	style="grid-template-columns: repeat({columns}, minmax(0, 1fr))"
+	use:rovingGrid={{ columns }}
 >
 	{#each notes as note (note)}
 		{@const active = noteState.isHeld(note, channel)}

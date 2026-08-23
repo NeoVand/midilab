@@ -13,6 +13,7 @@
 	import { synth } from '$lib/audio/synth';
 	import { gmProgramName } from '$lib/midi/constants';
 	import { channelColour } from '$lib/midi/channelcolour';
+	import { rovingGrid } from '$lib/a11y/roving';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -26,7 +27,7 @@
 	const colour = channelColour;
 </script>
 
-<div class={cn('grid grid-cols-2 gap-1 sm:grid-cols-4 xl:grid-cols-8', className)}>
+<div class={cn('grid grid-cols-2 gap-1 sm:grid-cols-4 xl:grid-cols-8', className)} use:rovingGrid>
 	{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 		{@const snap = noteState.channel(c)}
 		{@const active = snap.notes.size > 0}
