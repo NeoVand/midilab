@@ -22,6 +22,7 @@
 	import {
 		Add01Icon,
 		Delete02Icon,
+		Cancel01Icon,
 		Copy01Icon,
 		CloudDownloadIcon,
 		FileUploadIcon,
@@ -202,16 +203,17 @@
 		</label>
 		<label class="flex flex-col gap-1">
 			<span class="label">Channel</span>
-			<div class="flex flex-wrap gap-1">
+			<div class="grid w-fit grid-cols-8 gap-1">
 				{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 					<button
 						class={cn(
-							'tnum size-5 rounded border font-mono text-2xs',
+							'tnum size-6 rounded-sm border font-mono text-2xs transition-colors',
 							profile.channel === c
 								? 'border-msg-note bg-msg-note-bg text-msg-note'
-								: 'text-muted-foreground/60'
+								: 'text-muted-foreground/60 hover:border-foreground/40 hover:text-foreground'
 						)}
 						onclick={() => editable && devices.update(profile.id, { channel: c })}
+						aria-pressed={profile.channel === c}
 					>
 						{c + 1}
 					</button>
@@ -238,52 +240,58 @@
 		</p>
 	</div>
 
-	<!-- parameters -->
-	<div class="flex flex-col gap-4">
+	<!--
+		Parameters as a control panel rather than a list.
+		One knob per full-width row read as a settings screen and cost a whole
+		viewport for a dozen controls; laid out as a grid it reads as what it is
+		— the front of an instrument — and a profile fits on one screen.
+	-->
+	<div class="flex flex-col gap-5">
 		{#each groups as [group, items] (group)}
 			<div class="flex flex-col gap-2">
-				<p class="label">{group}</p>
-				{#each items as { p, i } (p.id)}
-					<div class="flex flex-wrap items-center gap-3 rounded-lg border px-3 py-2">
-						<Knob
-							value={values[p.id] ?? p.default ?? Math.round((p.min + p.max) / 2)}
-							min={p.min}
-							max={p.max}
-							default={p.default}
-							size={40}
-							colour="var(--msg-cc)"
-							onChange={(v) => send(p, v)}
-						/>
-						<div class="flex min-w-40 flex-col gap-0.5">
+				<div class="flex items-baseline gap-2">
+					<p class="label">{group}</p>
+					<span class="h-px flex-1 bg-border"></span>
+				</div>
+				<div class="grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+					{#each items as { p, i } (p.id)}
+						<div class="group relative flex flex-col items-center gap-1 text-center">
+							<Knob
+								value={values[p.id] ?? p.default ?? Math.round((p.min + p.max) / 2)}
+								min={p.min}
+								max={p.max}
+								default={p.default}
+								size={44}
+								colour="var(--msg-cc)"
+								onChange={(v) => send(p, v)}
+							/>
 							<Input
 								value={p.name}
-								class="h-6 border-0 px-0 text-xs shadow-none focus-visible:ring-0"
+								class="h-4 border-0 bg-transparent p-0 text-center text-xs shadow-none focus-visible:ring-0"
 								disabled={!editable}
 								oninput={(e) => updateParameter(i, { name: e.currentTarget.value })}
 							/>
-							<code class="font-mono text-2xs text-muted-foreground">{p.id}</code>
+							<span class="font-mono text-2xs text-msg-cc">{device.explain(p.id)}</span>
+							{#if p.unverified}
+								<span
+									class="font-mono text-2xs text-warn"
+									title="Community-reported, not from a manufacturer chart"
+								>
+									unverified
+								</span>
+							{/if}
+							{#if editable}
+								<button
+									class="absolute -top-1 -right-1 rounded-full bg-background p-0.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive focus-visible:opacity-100"
+									onclick={() => removeParameter(i)}
+									aria-label="Remove {p.name}"
+								>
+									<HugeiconsIcon icon={Cancel01Icon} size={11} />
+								</button>
+							{/if}
 						</div>
-						<span class="font-mono text-xs text-msg-cc">{device.explain(p.id)}</span>
-						<span class="font-mono text-2xs text-muted-foreground">
-							{p.min}–{p.max}{p.unit ? ` ${p.unit}` : ''}
-						</span>
-						{#if p.unverified}
-							<span class="text-2xs text-warn">unverified</span>
-						{/if}
-						<div class="flex-1"></div>
-						{#if editable}
-							<Button
-								variant="ghost"
-								size="icon"
-								class="size-6 text-muted-foreground hover:text-destructive"
-								onclick={() => removeParameter(i)}
-								aria-label="Remove parameter"
-							>
-								<HugeiconsIcon icon={Delete02Icon} size={13} />
-							</Button>
-						{/if}
-					</div>
-				{/each}
+					{/each}
+				</div>
 			</div>
 		{/each}
 

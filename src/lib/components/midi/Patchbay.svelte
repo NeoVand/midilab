@@ -14,11 +14,18 @@
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import EmptyState from '$lib/components/shell/EmptyState.svelte';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Slider } from '$lib/components/ui/slider';
 	import * as Select from '$lib/components/ui/select';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { Add01Icon, Delete02Icon, AlertCircleIcon } from '@hugeicons/core-free-icons';
+	import {
+		Add01Icon,
+		Delete02Icon,
+		AlertCircleIcon,
+		Route02Icon,
+		PlugSocketIcon
+	} from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -81,9 +88,41 @@
 	<!-- ── the graph ─────────────────────────────────────────────────────── -->
 	<div class="panel-sunken overflow-hidden rounded-lg border p-3">
 		{#if inputs.length === 0}
-			<p class="py-6 text-center text-xs text-muted-foreground">
-				No MIDI inputs. Connect hardware in the dock — the graph fills itself in.
-			</p>
+			<EmptyState
+				icon={Route02Icon}
+				class="border-0 py-4"
+				title="Nothing to route yet"
+				body="A patchbay needs somewhere for messages to come from. Connect an instrument and every
+					input it offers appears on the left, every destination on the right, and each route you
+					draw between them lights up as messages pass."
+			>
+				{#snippet action()}
+					<Button size="sm" onclick={() => midiAccess.request(false)}>
+						<HugeiconsIcon icon={PlugSocketIcon} size={14} />
+						Connect MIDI
+					</Button>
+				{/snippet}
+				{#snippet figure()}
+					<svg viewBox="0 0 300 64" class="w-full" role="img" aria-label="What a route looks like">
+						<rect x="2" y="18" width="96" height="28" rx="4" class="fill-card stroke-border" />
+						<text x="50" y="36" text-anchor="middle" font-size="10" class="fill-muted-foreground">
+							your controller
+						</text>
+						<path
+							d="M100,32 C150,32 150,32 198,32"
+							fill="none"
+							stroke="var(--msg-note)"
+							stroke-width="1.5"
+							stroke-dasharray="3 3"
+						/>
+						<circle cx="149" cy="32" r="3" fill="var(--msg-note)" />
+						<rect x="200" y="18" width="98" height="28" rx="4" class="fill-card stroke-border" />
+						<text x="249" y="36" text-anchor="middle" font-size="10" class="fill-muted-foreground">
+							a synth, or this one
+						</text>
+					</svg>
+				{/snippet}
+			</EmptyState>
 		{:else}
 			<svg
 				viewBox="0 0 600 {height}"
@@ -365,11 +404,19 @@
 			</div>
 		{/each}
 
-		{#if router.routes.length === 0}
-			<p class="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-				No routes yet. Add one to send an input somewhere — with channel remapping, transposition, a
-				velocity curve and message filtering on the way.
-			</p>
+		{#if router.routes.length === 0 && inputs.length > 0}
+			<EmptyState
+				icon={Route02Icon}
+				title="No routes yet"
+				body="Add one to send an input somewhere — with channel remapping, transposition, a velocity
+					curve, a note-range split and message filtering on the way."
+			>
+				{#snippet action()}
+					<Button size="sm" onclick={addRoute}>
+						<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
+					</Button>
+				{/snippet}
+			</EmptyState>
 		{/if}
 	</div>
 </div>
