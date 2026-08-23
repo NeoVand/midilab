@@ -38,6 +38,7 @@
 			}
 		})
 	);
+	const ticking = $derived(transport.sendClock && transport.playing);
 </script>
 
 <div class={cn('flex flex-col gap-5 rounded-lg border p-4', className)}>
@@ -99,6 +100,11 @@
 				<em>Send MIDI Clock</em> on and these blocks fill, one byte at a time.
 			</p>
 		{/if}
+		<!--
+			Nothing is lit unless bytes are actually going out. The playhead sitting
+			on tick 0 while the transport is stopped reads as "one tick has been
+			sent", one line under a paragraph saying none have.
+		-->
 		<div class={cn('flex gap-[3px] transition-opacity', !transport.sendClock && 'opacity-50')}>
 			{#each Array.from({ length: CLOCK_PPQ }, (_, i) => i) as i (i)}
 				<div
@@ -106,11 +112,13 @@
 						'h-5 flex-1 rounded-xs transition-colors duration-75',
 						i === 0 ? 'ring-1 ring-msg-clock/40' : ''
 					)}
-					style:background={i === phase
-						? 'var(--msg-clock)'
-						: i < phase
-							? 'color-mix(in oklch, var(--msg-clock) 25%, transparent)'
-							: 'var(--muted)'}
+					style:background={!ticking
+						? 'var(--muted)'
+						: i === phase
+							? 'var(--msg-clock)'
+							: i < phase
+								? 'color-mix(in oklch, var(--msg-clock) 25%, transparent)'
+								: 'var(--muted)'}
 				></div>
 			{/each}
 		</div>
