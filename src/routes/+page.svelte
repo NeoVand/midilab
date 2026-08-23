@@ -1,8 +1,6 @@
 <script lang="ts">
-	import Keyboard from '$lib/components/midi/Keyboard.svelte';
-	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
-	import { monitor } from '$lib/midi/monitor.svelte';
-	import { noteState } from '$lib/midi/notestate.svelte';
+	import InstrumentPanel from '$lib/components/midi/InstrumentPanel.svelte';
+	import RigDiagram from '$lib/components/midi/RigDiagram.svelte';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import {
 		CURRICULUM,
@@ -25,17 +23,6 @@
 		Grid3X3Icon,
 		Chip02Icon
 	} from '@hugeicons/core-free-icons';
-
-	/** The most recent thing that was not a clock tick — the "you just did that" panel. */
-	const latest = $derived.by(() => {
-		void monitor.version;
-		const events = monitor.events;
-		for (let i = events.length - 1; i >= 0; i--) {
-			const t = events[i].message.type;
-			if (t !== 'clock' && t !== 'activeSensing') return events[i];
-		}
-		return null;
-	});
 
 	const overall = $derived(progress.fractionOf(ALL_LESSONS.map((l) => l.id)));
 	const nextLesson = $derived(
@@ -60,78 +47,74 @@
 	];
 </script>
 
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-12 px-8 py-12">
-	<!-- ── hero ──────────────────────────────────────────────────────────── -->
-	<header class="flex flex-col gap-5">
-		<p class="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">MIDI Lab</p>
-		<h1 class="max-w-3xl text-4xl font-semibold">
-			Learn MIDI by making it happen, one byte at a time.
-		</h1>
-		<p class="max-w-2xl text-lg leading-relaxed text-pretty text-muted-foreground">
-			Thirty lessons that start at "what even is a MIDI message" and end with you running a rig of
-			several instruments from one clock — or from your own code. Everything here is wired to a live
-			engine, so nothing is a diagram: press a key below and watch the actual bytes.
-		</p>
-		<div class="flex flex-wrap items-center gap-3 pt-1">
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-12 px-8 pt-8 pb-12">
+	<!--
+		The instrument leads. Its faceplate is the masthead — a page about an
+		instrument does not need a marketing banner above the instrument, and the
+		banner was the single thing that made this read as a landing page rather
+		than as a machine you had just switched on.
+	-->
+	<InstrumentPanel />
+
+	<!-- ── what this is ──────────────────────────────────────────────────── -->
+	<header class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+		<div class="flex flex-col gap-3">
+			<h1 class="max-w-2xl text-3xl font-semibold tracking-tight text-balance">
+				Learn MIDI by making it happen, one byte at a time.
+			</h1>
+			<p class="max-w-xl leading-relaxed text-pretty text-muted-foreground">
+				Thirty lessons, from "what even is a MIDI message" to running a rig of several instruments
+				off one clock — or off your own code. Nothing here is an illustration: the panel above is
+				the same engine every lesson is built on.
+			</p>
+		</div>
+		<div class="flex shrink-0 flex-col items-start gap-2 sm:items-end">
 			<Button href={lessonPath(nextLesson)} size="xl">
 				{overall > 0 ? 'Continue' : 'Start the course'}
 				<HugeiconsIcon icon={ArrowRight01Icon} size={16} />
 			</Button>
-			{#if midiAccess.status !== 'granted' && midiAccess.status !== 'unsupported'}
-				<Button variant="outline" size="xl" onclick={() => midiAccess.request(false)}>
-					<HugeiconsIcon icon={PlugSocketIcon} size={16} />
-					Connect your hardware
-				</Button>
-			{/if}
-			<span class="text-sm text-muted-foreground">
+			<span class="text-xs text-muted-foreground">
 				{ALL_LESSONS.length} lessons · about {Math.round(TOTAL_MINUTES / 60)} hours
 			</span>
 		</div>
 	</header>
 
-	<!-- ── first contact ─────────────────────────────────────────────────── -->
-	<!--
-		Cause above, effect below. Side by side, the keyboard column ran short
-		while the inspector ran long, and the byte cards were forced to wrap in a
-		25rem gutter; stacked, the three bytes sit in one row the way they sit on
-		the wire, and pressing a key reads down the page rather than across it.
-	-->
-	<section class="overflow-hidden rounded-lg border bg-card">
-		<div class="flex items-baseline justify-between border-b px-5 py-3">
-			<h2 class="text-sm font-medium">Press a key</h2>
-			<p class="tnum text-xs text-muted-foreground">
-				{noteState.heldCount} note{noteState.heldCount === 1 ? '' : 's'} held
-			</p>
-		</div>
-
-		<div class="flex flex-col gap-3 p-5">
-			<Keyboard low={48} octaves={3} height={148} labels="c" />
-			<p class="text-xs text-muted-foreground">
-				Watch the panel below change twice: <span class="text-msg-note">Note On</span> when you
-				press, <span class="text-msg-note">Note Off</span> when you let go. A note is two messages, not
-				one — which is exactly why notes get stuck.
-			</p>
-		</div>
-
-		<div class="panel-sunken min-h-44 border-t p-5">
-			{#if latest}
-				<ByteInspector bytes={latest.bytes} message={latest.message} />
+	{#if midiAccess.status !== 'unsupported'}
+		<!--
+			What is actually plugged into this machine, drawn — the one part of the
+			app that is specific to the person using it. The connect button lives
+			here rather than in a hero, beside the drawing it fills in.
+		-->
+		<section class="flex flex-col gap-5">
+			<div class="flex items-baseline justify-between">
+				<h2 class="text-xl font-semibold tracking-tight">Your rig</h2>
+				{#if midiAccess.status === 'granted'}
+					<a href="/lab/patchbay" class="text-sm text-muted-foreground hover:text-foreground">
+						Route it →
+					</a>
+				{/if}
+			</div>
+			<div class="panel-sunken graph-paper overflow-hidden rounded-lg border px-4 py-5">
+				<RigDiagram />
+			</div>
+			{#if midiAccess.status === 'granted'}
+				<p class="measure -mt-1 text-xs leading-relaxed text-muted-foreground">
+					Solid cables are open; dashed ones exist but carry nothing yet. A cable lights the moment
+					a message runs down it.
+				</p>
 			{:else}
-				<!-- Centred, like every other "nothing yet" panel in the app. Pinned to
-				     the left of a panel this wide it reads as content that failed to
-				     load rather than as an invitation. -->
-				<div class="grid h-full min-h-36 place-items-center text-center">
-					<div class="measure flex flex-col gap-2">
-						<p class="text-sm font-medium">Nothing has happened yet.</p>
-						<p class="text-xs text-muted-foreground">
-							Play a note and this panel will take the message apart — hex, bits, the one bit that
-							decides whether a byte is a command or a value, and what it all means in English.
-						</p>
-					</div>
+				<div class="flex flex-wrap items-center gap-3">
+					<Button variant="outline" onclick={() => midiAccess.request(false)}>
+						<HugeiconsIcon icon={PlugSocketIcon} size={16} />
+						Connect your hardware
+					</Button>
+					<span class="text-xs text-muted-foreground">
+						Chrome, Edge or Firefox. Nothing leaves this page.
+					</span>
 				</div>
 			{/if}
-		</div>
-	</section>
+		</section>
+	{/if}
 
 	<!-- ── the course ────────────────────────────────────────────────────── -->
 	<section class="flex flex-col gap-5">

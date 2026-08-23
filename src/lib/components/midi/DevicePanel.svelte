@@ -7,6 +7,7 @@
 	 * makes you choose.
 	 */
 	import { midiAccess } from '$lib/midi/access.svelte';
+	import RigDiagram from './RigDiagram.svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import {
@@ -68,6 +69,13 @@
 		behind "not connected yet" told you that you had nothing to play, which
 		was never true.
 	-->
+	{#if midiAccess.status === 'granted' && !compact}
+		<!-- The lists below are a control surface; this is what they are of. -->
+		<div class="panel-sunken shrink-0 overflow-hidden rounded-lg border px-3 py-2">
+			<RigDiagram />
+		</div>
+	{/if}
+
 	<div class={cn('grid min-h-0 flex-1 gap-3', compact ? 'grid-cols-1' : 'sm:grid-cols-2')}>
 		<!-- Inputs -->
 		<section class="panel-sunken flex min-h-32 flex-col overflow-hidden rounded-lg border">
