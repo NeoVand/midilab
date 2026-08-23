@@ -44,9 +44,22 @@
 		class: className
 	}: Props = $props();
 
-	/** The range the bars are drawn over; the axis below reads from the same. */
-	const MIN_HZ = 32;
-	const MAX_HZ = 16000;
+	/*
+	 * The range the bars are drawn over, and the axis below reads from the same.
+	 *
+	 * The labelled span is the nine octave Cs from MIDI note 24 to note 120 — a
+	 * piano and then some. The right edge is note 127, the highest pitch a MIDI
+	 * note number can name, and the left edge is the same distance below note
+	 * 24: so every fundamental the protocol can ask for is inside the picture,
+	 * nothing above the highest of them is drawn as though it mattered, and the
+	 * first and last labels are not jammed against the sides.
+	 */
+	const LOWEST_LABEL = 24;
+	const HIGHEST_LABEL = 120;
+
+	const MARGIN = noteToFrequency(127) / noteToFrequency(HIGHEST_LABEL);
+	const MIN_HZ = noteToFrequency(LOWEST_LABEL) / MARGIN;
+	const MAX_HZ = noteToFrequency(HIGHEST_LABEL) * MARGIN;
 
 	/**
 	 * One tick per octave C, named the way the rest of the app names notes —
@@ -54,15 +67,12 @@
 	 * readout are talking about.
 	 */
 	const OCTAVES = $derived.by(() => {
-		void settings.octaveConvention;
 		const out: { label: string; left: number }[] = [];
 		const span = Math.log2(MAX_HZ / MIN_HZ);
-		for (let note = 24; note <= 108; note += 12) {
-			const hz = noteToFrequency(note);
-			if (hz < MIN_HZ || hz > MAX_HZ) continue;
+		for (let note = LOWEST_LABEL; note <= HIGHEST_LABEL; note += 12) {
 			out.push({
 				label: noteName(note, { convention: settings.octaveConvention }),
-				left: (Math.log2(hz / MIN_HZ) / span) * 100
+				left: (Math.log2(noteToFrequency(note) / MIN_HZ) / span) * 100
 			});
 		}
 		return out;

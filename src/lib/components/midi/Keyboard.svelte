@@ -52,16 +52,29 @@
 	}: Props = $props();
 
 	const ch = $derived(channel ?? engine.channel);
-	const high = $derived(low + octaves * 12);
+
+	/*
+	 * Z and X move the whole keybed, not just the typing row.
+	 *
+	 * They used to shift only which notes the A–' row sent, which meant
+	 * pressing them changed nothing you could see: the drawn keys stayed put,
+	 * and once the row had moved past the end of them the key you played did
+	 * not even light. A shortcut whose only evidence is a different pitch reads
+	 * as broken. Moving the keyboard is what every DAW does with this, and the
+	 * C labels sliding along with it are the readout.
+	 */
+	let shift = $state(0);
+	const viewLow = $derived(Math.max(0, Math.min(127 - octaves * 12, low + shift * 12)));
+	const high = $derived(viewLow + octaves * 12);
 
 	const whites = $derived.by(() => {
 		const out: number[] = [];
-		for (let n = low; n <= high; n++) if (!isBlackKey(n)) out.push(n);
+		for (let n = viewLow; n <= high; n++) if (!isBlackKey(n)) out.push(n);
 		return out;
 	});
 	const blacks = $derived.by(() => {
 		const out: number[] = [];
-		for (let n = low; n <= high; n++) if (isBlackKey(n)) out.push(n);
+		for (let n = viewLow; n <= high; n++) if (isBlackKey(n)) out.push(n);
 		return out;
 	});
 
@@ -80,7 +93,7 @@
 
 	function whiteIndexBelow(note: number): number {
 		let count = 0;
-		for (let n = low; n < note; n++) if (!isBlackKey(n)) count++;
+		for (let n = viewLow; n < note; n++) if (!isBlackKey(n)) count++;
 		return count;
 	}
 
@@ -154,19 +167,18 @@
 		';': 16,
 		"'": 17
 	};
-	let typingOctave = $state(0);
 	const typed = new Set<string>();
 
 	function onKeyDown(e: KeyboardEvent) {
 		if (!typing || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
 		const target = e.target as HTMLElement | null;
 		if (target && /input|textarea|select/i.test(target.tagName)) return;
-		if (e.key === 'z') return void (typingOctave = Math.max(-2, typingOctave - 1));
-		if (e.key === 'x') return void (typingOctave = Math.min(2, typingOctave + 1));
+		if (e.key === 'z') return void (shift = Math.max(-4, shift - 1));
+		if (e.key === 'x') return void (shift = Math.min(4, shift + 1));
 		const offset = TYPE_MAP[e.key.toLowerCase()];
 		if (offset === undefined) return;
 		e.preventDefault();
-		const note = low + 12 + typingOctave * 12 + offset;
+		const note = viewLow + 12 + offset;
 		if (typed.has(e.key)) return;
 		typed.add(e.key);
 		engine.noteOn(note, velocity ?? 96, ch);
@@ -178,7 +190,7 @@
 		const offset = TYPE_MAP[e.key.toLowerCase()];
 		if (offset === undefined) return;
 		typed.delete(e.key);
-		const note = low + 12 + typingOctave * 12 + offset;
+		const note = viewLow + 12 + offset;
 		engine.noteOff(note, ch);
 		onNoteOff?.(note);
 	}
@@ -339,5 +351,10 @@
 			class="rounded-sm bg-muted px-1 font-mono">'</kbd
 		>, shift octave with <kbd class="rounded-sm bg-muted px-1 font-mono">Z</kbd> /
 		<kbd class="rounded-sm bg-muted px-1 font-mono">X</kbd>. Press lower on a key for more velocity.
+		{#if shift !== 0}
+			<span class="tnum text-foreground">
+				Shifted {shift > 0 ? '+' : '−'}{Math.abs(shift)} octave{Math.abs(shift) === 1 ? '' : 's'}.
+			</span>
+		{/if}
 	</p>
 {/if}
