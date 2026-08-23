@@ -10,7 +10,7 @@
 	 */
 	import { onMount } from 'svelte';
 	import { bus } from '$lib/midi/bus';
-	import { engine } from '$lib/midi/engine.svelte';
+	import { engine, INTERNAL_OUTPUT_ID } from '$lib/midi/engine.svelte';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import EmptyState from '$lib/components/shell/EmptyState.svelte';
@@ -28,8 +28,14 @@
 
 	let samples = $state<number[]>([]);
 	let running = $state(false);
+	let timedOut = $state(false);
 	let sentAt = 0;
 	let remaining = 0;
+	/*
+	 * Tracked so a finished run does not leave a timer behind that stops the
+	 * *next* run six seconds after the first one started.
+	 */
+	let giveUpTimer = 0;
 
 	const stats = $derived.by(() => {
 		if (samples.length === 0) return null;
@@ -51,6 +57,7 @@
 	function next() {
 		if (remaining <= 0) {
 			running = false;
+			clearTimeout(giveUpTimer);
 			return;
 		}
 		remaining--;
@@ -63,14 +70,29 @@
 
 	function start() {
 		samples = [];
+		timedOut = false;
 		remaining = 24;
 		running = true;
+		clearTimeout(giveUpTimer);
 		next();
-		// If nothing ever comes back, do not spin forever.
-		setTimeout(() => (running = false), 6000);
+		// If nothing ever comes back, do not spin forever — and say so, rather
+		// than dropping silently back to the "ready to measure" state as though
+		// nothing had been attempted.
+		giveUpTimer = window.setTimeout(() => {
+			if (!running) return;
+			running = false;
+			timedOut = samples.length === 0;
+		}, 6000);
 	}
 
-	const ready = $derived(midiAccess.listening.length > 0 && engine.activeOutputs.length > 0);
+	/*
+	 * The internal synth is always an active output and can never send anything
+	 * back, so counting it made the button look ready when the loop could not
+	 * possibly close.
+	 */
+	const ready = $derived(
+		midiAccess.listening.length > 0 && engine.activeOutputs.some((id) => id !== INTERNAL_OUTPUT_ID)
+	);
 </script>
 
 <div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
@@ -121,6 +143,21 @@
 			compensate for it, because it is different every time. A tight rig has a σ under a millisecond
 			or two.
 		</p>
+	{:else if timedOut}
+		<div class="flex flex-col items-start gap-3 py-2">
+			<div>
+				<p class="text-sm font-medium">Twenty-four probes went out. None came back.</p>
+				<p class="measure mt-1 text-xs leading-relaxed text-muted-foreground">
+					The loop is not closed. Check that the output you are sending on is physically or
+					virtually patched to the input you are listening on, that both ends are switched on in the
+					dock, and that nothing in between is filtering channel 16.
+				</p>
+			</div>
+			<Button size="sm" class="gap-1.5" onclick={start} disabled={!ready}>
+				<HugeiconsIcon icon={StopWatchIcon} size={14} />
+				Try again
+			</Button>
+		</div>
 	{:else if !running}
 		<EmptyState
 			icon={StopWatchIcon}
