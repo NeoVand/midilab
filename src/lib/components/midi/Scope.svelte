@@ -64,7 +64,10 @@
 			if (mode !== 'spectrum') {
 				audio.waveform(wave);
 				ctx.beginPath();
-				ctx.strokeStyle = 'var(--msg-note)';
+				// Audio is not a MIDI message family, so it does not get a family
+				// colour. A bright trace on the sunken graph paper is what a scope
+				// looks like anyway.
+				ctx.strokeStyle = 'var(--foreground)';
 				ctx.lineWidth = 1.5;
 				for (let i = 0; i < wave.length; i++) {
 					const x = (i / wave.length) * w;
@@ -84,7 +87,7 @@
 	{#if label}
 		<div class="flex items-baseline justify-between border-b px-3 py-1.5">
 			<span class="label">{label}</span>
-			<span class="label" class:text-msg-note={live}>{live ? 'live' : 'idle'}</span>
+			<span class="label" class:text-ok={live}>{live ? 'live' : 'idle'}</span>
 		</div>
 	{/if}
 	<div class="panel-sunken graph-paper relative">

@@ -121,7 +121,7 @@
 					<p class="label">Inspector</p>
 					{#if pinned}
 						<button
-							class="flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-2xs text-msg-note transition-colors hover:bg-muted"
+							class="flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-2xs text-foreground transition-colors hover:bg-muted"
 							onclick={() => (pinned = null)}
 						>
 							Pinned <HugeiconsIcon icon={Cancel01Icon} size={10} strokeWidth={2.5} />

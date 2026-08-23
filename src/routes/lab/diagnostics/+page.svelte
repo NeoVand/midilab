@@ -22,7 +22,7 @@
 	<div class="grid gap-8 lg:grid-cols-2">
 		<section class="flex flex-col gap-3">
 			<h2 class="text-lg font-semibold tracking-tight">Round-trip latency</h2>
-			<p class="flex-1 text-sm text-muted-foreground">
+			<p class="text-sm text-muted-foreground">
 				Loop a MIDI output back into an input — physically, or with a virtual port such as the macOS
 				IAC Driver or loopMIDI on Windows — and this measures the real cost of a message leaving and
 				returning.
@@ -32,7 +32,7 @@
 
 		<section class="flex flex-col gap-3">
 			<h2 class="text-lg font-semibold tracking-tight">Incoming clock stability</h2>
-			<p class="flex-1 text-sm text-muted-foreground">
+			<p class="text-sm text-muted-foreground">
 				Start a clock from any device into this page. The average tells you its tempo; the spread
 				tells you whether it deserves to be your clock leader.
 			</p>
