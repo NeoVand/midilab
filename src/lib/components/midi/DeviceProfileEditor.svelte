@@ -234,23 +234,31 @@
 			Arm this, then move a knob, fader or pedal on the instrument. Whatever it sends — a Control
 			Change or a complete NRPN edit — becomes a parameter you can rename. This is the fast way to
 			map an instrument you have no chart for.
+			{#if !editable}
+				<span class="text-warn">
+					This profile is read-only, so the first control you learn starts an editable copy of it
+					and switches you to that.
+				</span>
+			{/if}
 		</p>
 	</div>
 
 	<!--
 		Parameters as a control panel rather than a list.
-		One knob per full-width row read as a settings screen and cost a whole
-		viewport for a dozen controls; laid out as a grid it reads as what it is
-		— the front of an instrument — and a profile fits on one screen.
+
+		The sections go side by side rather than stacked. Most groups hold two or
+		three controls, so one group per full-width row left five sixths of every
+		row empty and read as a layout that had not finished loading. Real front
+		panels put their sections next to each other for the same reason.
 	-->
-	<div class="flex flex-col gap-5">
+	<div class="grid gap-x-8 gap-y-6 md:grid-cols-2 2xl:grid-cols-3">
 		{#each groups as [group, items] (group)}
 			<div class="flex flex-col gap-2">
 				<div class="flex items-baseline gap-2">
 					<p class="label">{group}</p>
 					<span class="h-px flex-1 bg-border"></span>
 				</div>
-				<div class="grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+				<div class="flex flex-wrap gap-x-4 gap-y-4">
 					{#each items as { p, i } (p.id)}
 						<div class="group relative flex flex-col items-center gap-1 text-center">
 							<Knob
@@ -303,13 +311,20 @@
 	<!-- programs -->
 	{#if profile.programs.length > 0}
 		<div class="flex flex-col gap-2">
-			<p class="label">Programs</p>
+			<div class="flex items-baseline gap-2">
+				<p class="label">Programs</p>
+				<span class="font-mono text-2xs text-muted-foreground">
+					bank MSB : bank LSB : program — a dash means this device does not use that byte
+				</span>
+			</div>
 			<div class="flex flex-wrap gap-1.5">
 				{#each profile.programs as entry (entry.name)}
 					<button
 						class="rounded-md border px-2 py-1 text-xs transition-colors hover:border-msg-program"
+						title="CC 0 = {entry.bankMsb ?? 'not sent'} · CC 32 = {entry.bankLsb ??
+							'not sent'} · Program Change {entry.program}"
 						onclick={() => {
-							engine.wake();
+							void engine.wake();
 							engine.sendAll(device.selectProgram(entry.name));
 						}}
 					>
