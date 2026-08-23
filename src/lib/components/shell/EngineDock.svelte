@@ -22,6 +22,7 @@
 	import { ch1, family, familyColor, hexBytes, shortLabel } from '$lib/midi/messages';
 	import ActivityStrip from '$lib/components/midi/ActivityStrip.svelte';
 	import MidiMonitor from '$lib/components/midi/MidiMonitor.svelte';
+	import ChannelState from '$lib/components/midi/ChannelState.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
 	import TempoField from '$lib/components/midi/TempoField.svelte';
@@ -45,6 +46,16 @@
 	import { capturePointer, cn } from '$lib/utils';
 
 	let selected = $state<MidiEvent | null>(null);
+	/*
+	 * Same rule as the Monitor page: the inspector follows the newest message
+	 * until you click a row to hold one still. An empty pane beside a live
+	 * stream is the panel telling you to do work it could have done itself.
+	 */
+	const shown = $derived.by(() => {
+		if (selected) return selected;
+		void monitor.version;
+		return monitor.filtered[0] ?? null;
+	});
 
 	const inCount = $derived(midiAccess.listening.length);
 	const outCount = $derived(engine.activeOutputs.filter((id) => id !== INTERNAL_OUTPUT_ID).length);
@@ -422,6 +433,7 @@
 			<Tabs.List class="mx-3 mb-0 h-8 w-fit shrink-0">
 				<Tabs.Trigger value="devices" class="text-xs">Devices</Tabs.Trigger>
 				<Tabs.Trigger value="monitor" class="text-xs">Monitor</Tabs.Trigger>
+				<Tabs.Trigger value="state" class="text-xs">State</Tabs.Trigger>
 			</Tabs.List>
 
 			<Tabs.Content value="devices" class="min-h-0 flex-1 scrollbar-thin overflow-y-auto p-3">
@@ -434,20 +446,31 @@
 			>
 				<MidiMonitor
 					class="min-h-0 border-t"
-					onSelect={(e) => (selected = e)}
+					onSelect={(e) => (selected = selected?.id === e.id ? null : e)}
 					selectedId={selected?.id ?? null}
 				/>
 				<div
 					class="panel-sunken hidden min-h-0 scrollbar-thin overflow-y-auto border-t border-l p-3 lg:block"
 				>
-					{#if selected}
-						<ByteInspector bytes={selected.bytes} message={selected.message} />
+					{#if shown}
+						<ByteInspector bytes={shown.bytes} message={shown.message} />
 					{:else}
 						<p class="p-2 text-xs text-muted-foreground">
-							Select a message to take it apart, byte by byte.
+							Nothing on the wire yet. Whatever arrives next appears here, taken apart byte by byte.
 						</p>
 					{/if}
 				</div>
+			</Tabs.Content>
+
+			<!--
+				The other half of monitoring, in the panel that is on every page:
+				where every channel currently stands, without reading the log.
+			-->
+			<Tabs.Content
+				value="state"
+				class="min-h-0 flex-1 scrollbar-thin overflow-y-auto border-t p-3"
+			>
+				<ChannelState />
 			</Tabs.Content>
 		</Tabs.Root>
 	{/if}
