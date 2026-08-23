@@ -401,6 +401,20 @@
 	.lesson-prose > :where(p, ul, ol) {
 		max-width: 52ch;
 	}
+
+	/*
+	 * A paragraph of the course.
+	 *
+	 * This was written as `text-base leading-relaxed` on a hundred and
+	 * fifty-seven individual paragraphs, which meant the reading size of the
+	 * whole thirty-lesson course was a two-class incantation with no single
+	 * place to change it. It has a name now.
+	 */
+	.prose-body {
+		max-width: 52ch;
+		font-size: var(--text-base);
+		line-height: 1.65;
+	}
 }
 
 @layer base {

@@ -17,7 +17,7 @@
 		<h2 class="text-xl font-semibold tracking-tight">{title}</h2>
 	{/if}
 	{#if lead}
-		<p class="-mt-2 text-base leading-relaxed text-muted-foreground">{lead}</p>
+		<p class="prose-body -mt-2 text-muted-foreground">{lead}</p>
 	{/if}
 	{@render children()}
 </section>

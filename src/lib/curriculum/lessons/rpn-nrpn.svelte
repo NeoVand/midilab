@@ -16,12 +16,12 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Control Change gives you 128 knobs with 128 positions each. A modern synthesiser has rather
 			more than 128 parameters, many of which need more than 128 positions. MIDI's answer was not to
 			add a new message — it was to build a small protocol out of the messages it already had.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The mechanism is: <strong>say which parameter, then say what value</strong>. Both halves
 			travel as ordinary Control Changes, which is why an RPN edit looks like five unrelated CCs in
 			a monitor until you know what you are looking at.
@@ -99,9 +99,7 @@
 	</Callout>
 
 	<Section title="Reading an NRPN table">
-		<p class="text-base leading-relaxed">
-			A manufacturer's NRPN documentation typically looks like this:
-		</p>
+		<p class="prose-body">A manufacturer's NRPN documentation typically looks like this:</p>
 		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
 				<thead class="label bg-muted/50">

@@ -15,7 +15,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Everything so far has been about the messages. This act is about the wire — and the wire is
 			where most real-world MIDI problems actually live. The protocol is the same over every
 			transport; what changes is the speed, the number of addresses available, and the ways it can
@@ -24,7 +24,7 @@
 	</Section>
 
 	<Section title="Five-pin DIN">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The original, from 1983, and still on the back of most hardware. 31,250 bits per second, one
 			direction per cable, and an electrical design that has aged remarkably well.
 		</p>
@@ -39,7 +39,7 @@
 	</Section>
 
 	<Section title="TRS: the failure that looks like nothing">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Modern compact gear replaced the bulky DIN socket with a 3.5 mm jack. Unfortunately two
 			incompatible wirings became common before the MIDI Association standardised one of them.
 		</p>
@@ -56,14 +56,14 @@
 				are switchable, which is worth paying for.
 			</p>
 		</Callout>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Type A is now the standard, and Korg and Teenage Engineering both use it — so an OP-XY driving
 			a Korg needs one straight Type A adapter at each end and nothing else.
 		</p>
 	</Section>
 
 	<Section title="USB: who is the host?">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			USB MIDI is much faster than DIN and carries multiple virtual ports down one cable. It
 			introduces one concept that DIN never had, and it trips people constantly: exactly one end of
 			a USB connection must be the <strong>host</strong>, and the other must be the
@@ -94,7 +94,7 @@
 				boxes does nothing, this is almost always why.
 			</p>
 		</Callout>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			<strong>Class-compliant</strong> is the other word worth knowing: it means the device works with
 			the operating system's built-in driver and needs nothing installed. Almost all modern MIDI hardware
 			is class-compliant, which is also why it works with a browser.
@@ -124,7 +124,7 @@
 	</Section>
 
 	<Section title="What the browser can see">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Web MIDI does not care which transport a port uses. A DIN interface, a USB keyboard, a
 			Bluetooth device and a virtual loopback port all appear in the same list, with the same API.
 			If the operating system can see it, the browser can — with your permission.

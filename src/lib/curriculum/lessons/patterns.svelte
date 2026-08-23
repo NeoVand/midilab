@@ -112,13 +112,13 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A step sequencer stores a list of events. A pattern stores a <em>rule</em>, and produces the
 			events on demand. That difference sounds academic until you want something that changes every
 			cycle, or that is infinitely long, or that combines with another pattern without either of
 			them being flattened first.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The key idea, borrowed from TidalCycles and Strudel: a pattern is a
 			<strong>function from a cycle number to the events in that cycle</strong>. Ask it for cycle 0
 			and get one answer; ask for cycle 1 and get another.
@@ -126,7 +126,7 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 	</Section>
 
 	<Section title="Euclidean rhythms">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			In 2004 Godfried Toussaint noticed that an algorithm for spacing timing pulses in neutron
 			accelerators produces, almost exactly, the traditional rhythms of a large part of the world.
 			Distribute <em>p</em> hits as evenly as possible over <em>s</em> steps and you get music.
@@ -198,7 +198,7 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 	</Section>
 
 	<Section title="Mini-notation">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Writing rhythms as arrays of ones and zeros gets old quickly. A compact notation lets you say
 			what you mean:
 		</p>

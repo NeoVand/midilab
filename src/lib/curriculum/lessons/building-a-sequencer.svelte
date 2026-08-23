@@ -75,11 +75,11 @@ log('waiting for external clock — start your hardware');`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			You now have every part: a message language, a scheduler, a transport, and an audio engine. A
 			sequencer is what happens when you put them together, and it is smaller than you expect.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The whole job is: on each tick, work out which step we are on, look up what should happen, and
 			schedule it — <em>with the tick's own timestamp</em>, never with "now".
 		</p>
@@ -125,7 +125,7 @@ log('waiting for external clock — start your hardware');`
 	</TryThis>
 
 	<Section title="Following someone else's clock">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Everything above assumes you are the clock leader. To follow instead, you stop generating time
 			and start counting it: 24 incoming clock ticks make a quarter note, so every sixth tick is a
 			sixteenth. Start resets your position to zero, Continue does not, and Song Position Pointer
@@ -147,13 +147,13 @@ log('waiting for external clock — start your hardware');`
 	</Section>
 
 	<Section title="What to build next">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The step sequencer above is the smallest interesting version. The obvious extensions, roughly
 			in order of value: per-step velocity and length; more than one pattern with chaining; a
 			controller lane so you can sequence CC as well as notes; per-track length for polyrhythm; and
 			swing applied as a timing offset rather than a separate grid.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The Programmer in the Lab has several of these. None of them change the architecture — they
 			are all "what should happen on this tick", answered more elaborately.
 		</p>

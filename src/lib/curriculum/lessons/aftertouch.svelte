@@ -31,12 +31,12 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Velocity captures the moment a note begins and never speaks again. <strong>Aftertouch</strong>
 			is what a keyboard sends when you lean into a key that is already down — a continuous stream of
 			pressure readings for as long as you keep pushing.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			It comes in two flavours, and the difference between them is a good deal larger than the names
 			suggest.
 		</p>
@@ -114,8 +114,8 @@
 	</TryThis>
 
 	<Section title="Why poly aftertouch never caught on">
-		<p class="text-base leading-relaxed">Two reasons, one physical and one about bandwidth.</p>
-		<ul class="flex flex-col gap-2.5 text-base leading-relaxed">
+		<p class="prose-body">Two reasons, one physical and one about bandwidth.</p>
+		<ul class="prose-body flex flex-col gap-2.5">
 			<li class="flex gap-3">
 				<span class="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-msg-expr/60"></span>
 				<span>
@@ -144,13 +144,13 @@
 	</Section>
 
 	<Section title="Living with aftertouch">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Two practical notes. First, aftertouch is easy to send by accident — resting your hand on a
 			sensitive keybed can produce a continuous stream you never intended, which shows up as
 			mysterious wobble and eats bandwidth. Many sequencers offer an "ignore aftertouch" filter for
 			exactly this reason, and the patchbay in the Lab has one.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Second, when you release, send zero. A synth left at pressure 90 with no notes playing will
 			sound wrong the next time you play, and it is not obvious why. Reset All Controllers (CC 121)
 			clears it.

@@ -32,7 +32,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Notes are only half of a performance. The other half is everything you do <em>while</em> the
 			note is sounding: opening a filter, leaning on the mod wheel, pushing the sustain pedal,
 			swelling a phrase. All of that travels as <strong>Control Change</strong> — status
@@ -59,7 +59,7 @@
 	</Callout>
 
 	<Section title="The nine worth memorising">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			There are 128 controllers. You will use roughly nine of them nine tenths of the time.
 		</p>
 		<div class="overflow-hidden rounded-lg border">
@@ -110,7 +110,7 @@
 	</TryThis>
 
 	<Section title="Seven bits is not very many">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A controller value has 128 possible positions. For a pan knob that is plenty. For a filter
 			sweep across ten octaves it is 12.8 steps per octave — and if the receiver applies each value
 			instantly, a slow sweep becomes an audible staircase. Engineers call the artefact
@@ -152,7 +152,7 @@
 			</div>
 		</div>
 
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MIDI's answer is the <strong>MSB/LSB pair</strong>. Controllers 0–31 each have a partner 32
 			higher: CC 1 is the coarse half of the mod wheel and CC 33 is the fine half. Send both and the
 			receiver combines them:

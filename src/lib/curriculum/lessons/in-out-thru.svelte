@@ -36,7 +36,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Three sockets, and the third one is not what most people assume. Getting this distinction
 			right resolves an enormous number of routing puzzles.
 		</p>
@@ -60,7 +60,7 @@
 
 	<Section title="Two ways to reach several instruments">
 		<CableFigure kind="topology" />
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The chain works, and for two or three devices it is completely fine. What accumulates is not
 			an error but a smearing: each opto-isolator adds a small delay and rounds the edges of the
 			signal slightly, and eventually a device at the end of a long chain starts missing bytes. A
@@ -70,11 +70,11 @@
 	</Section>
 
 	<Section title="Loops, and how to recognise one">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			If a device's output can reach its own input — directly, or the long way round through a
 			computer or a Thru chain — messages will circulate. The symptoms are distinctive:
 		</p>
-		<ul class="flex flex-col gap-2.5 text-base leading-relaxed">
+		<ul class="prose-body flex flex-col gap-2.5">
 			<li class="flex gap-3">
 				<span class="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-destructive/70"></span>
 				<span>Every note plays twice, slightly apart — a flanged, doubled sound.</span>
@@ -91,7 +91,7 @@
 				</span>
 			</li>
 		</ul>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The monitor in the dock is the diagnostic. Play one note and count the rows. One note should
 			be one Note On. If it is forty, you have a loop.
 		</p>
@@ -106,7 +106,7 @@
 	</Section>
 
 	<Section title="Local Control, one more time">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The special case of a loop that involves only one device is the Local Control problem from
 			Lesson 12. A keyboard plays its own engine <em>and</em> sends to the computer, which echoes back
 			to the same engine. Turning Local Control off breaks the internal path and leaves the computer in
@@ -128,13 +128,13 @@
 	</Section>
 
 	<Section title="A routing rule of thumb">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Draw the arrows before you plug anything in. For each connection, ask: what generates the
 			messages, what consumes them, and is there any path by which a message can come back to where
 			it started? If the answer to the last question is yes, break it deliberately — with Local
 			Control off, with Thru disabled, or by not making the connection at all.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The next lesson makes you draw exactly that diagram for your own rig, in a patchbay that then
 			actually does the routing.
 		</p>

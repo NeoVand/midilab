@@ -28,7 +28,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Two numbers get called "PPQN" and they are not the same number. Confusing them makes timing
 			arguments unresolvable, so let us separate them once and for all.
 		</p>
@@ -83,20 +83,20 @@
 	</Section>
 
 	<Section title="Quantisation">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Quantising moves each note to the nearest point on a grid. It is the most useful and most
 			overused feature in every sequencer ever made, because perfectly-gridded music is also
 			perfectly lifeless music — the thing that makes a groove feel human is precisely the small
 			deviations quantising removes.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Most sequencers therefore offer <strong>quantise strength</strong>: move each note 50% of the
 			way to the grid rather than all of it. Tighten without flattening.
 		</p>
 	</Section>
 
 	<Section title="Swing is arithmetic">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Swing has a reputation for being mystical. It is not. Take the sixteenth-note grid and delay
 			every <em>second</em> sixteenth by a fraction of its own length. At 0% you get a straight grid;
 			at 66% the pairs approach a triplet feel; past that it starts to limp.
@@ -121,12 +121,12 @@
 	</Callout>
 
 	<Section title="Where the resolution actually runs out">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			At 120 BPM a quarter note is 500 ms, so one clock tick is about 20.8 ms — clearly audible as a
 			placement error if that were your grid. At 480 PPQN a tick is about 1 ms, which is below the
 			threshold at which most people hear placement differences. At 1920 it is a quarter of that.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			So sequencer resolution stops mattering fairly quickly, and something else takes over as the
 			limiting factor: how reliably the events actually leave the machine at the time they were
 			scheduled for. That is jitter, and it is Lesson 17.

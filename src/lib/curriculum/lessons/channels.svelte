@@ -94,12 +94,12 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Look again at a status byte: four bits for the command, four bits for a number 0–15. That
 			second nibble is the <strong>channel</strong>, and it turns one cable into sixteen independent
 			conversations happening at once.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A channel is an address, nothing more. It does not imply an instrument, a track or a sound —
 			it just says <em>this message is for whoever is listening on 3</em>. Who that is, and what
 			they do about it, is a decision made at the other end.
@@ -144,13 +144,13 @@
 	</TryThis>
 
 	<Section title="Multitimbral is the word for this">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			An instrument that can play different sounds on different channels at the same time is called
 			<strong>multitimbral</strong>. Most modern synths are, to some degree — your OP-XY, an MPC, a
 			software instrument rack, a General MIDI module. Some vintage synths are not, and will simply
 			play everything they receive with one sound regardless of channel.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Two settings govern what a receiver does with channels, and both live in its menus rather than
 			in the protocol:
 		</p>
@@ -174,7 +174,7 @@
 	</Section>
 
 	<Section title="Channel 10 and the drums">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			You will hear, constantly, that "channel 10 is drums". That is true in the same way that port
 			80 is a web server: it is an extremely well-observed convention with no enforcement behind it.
 			General MIDI reserves channel 10 for percussion and defines which note number is a kick, a

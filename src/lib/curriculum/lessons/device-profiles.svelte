@@ -55,7 +55,7 @@ log(JSON.stringify([
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Here is a design mistake that is very easy to make and very expensive to undo: putting CC
 			numbers into your music.
 		</p>
@@ -116,7 +116,7 @@ log(JSON.stringify([
   ]
 }`}</code
 			></pre>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Three parameters, three completely different delivery mechanisms, one calling convention. The
 			adapter turns <code class="rounded-sm bg-muted px-1">set('filter.resonance', 0.8)</code> into whichever
 			handshake that particular parameter needs — including the full four-message NRPN sequence, with
@@ -141,11 +141,11 @@ log(JSON.stringify([
 	</TryThis>
 
 	<Section title="Learning a device you have no documentation for">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The Learn button is not a toy. It is the fastest reliable way to map an instrument, and it
 			works even when the manual is missing, wrong, or in a language you do not read. The procedure:
 		</p>
-		<ol class="flex flex-col gap-2 text-base leading-relaxed">
+		<ol class="prose-body flex flex-col gap-2">
 			{#each ['Connect the instrument’s MIDI Out to this machine and enable it as an input in the dock.', 'Arm Learn, move one control, and rename the parameter it captures to something semantic.', 'Repeat for every control you care about. Twenty minutes gets you a usable profile.', 'Verify the other direction: turn the on-screen knob and confirm the hardware responds. Transmit and receive maps are not always the same.', 'Export the JSON and keep it with your project.'] as step, i (step)}
 				<li class="flex gap-3">
 					<span class="mt-0.5 font-mono text-sm text-msg-note">{i + 1}</span>
@@ -168,12 +168,12 @@ log(JSON.stringify([
 	</TryThis>
 
 	<Section title="Where this is going">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MIDI 2.0's Property Exchange lets a device publish this structure itself — its controllers,
 			its programs, its current state — as machine-readable data. Software could then build an
 			editor for an instrument it has never encountered.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Until then, you are the Property Exchange. The abstraction is worth building now precisely
 			because it will not need changing later: when instruments start describing themselves, the
 			profiles simply arrive pre-filled.

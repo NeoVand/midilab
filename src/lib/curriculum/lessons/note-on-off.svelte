@@ -40,7 +40,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			There is no "play a note for half a second" message. There is only <strong>start</strong> and
 			<strong>stop</strong>, sent separately, with the duration living in the gap between them. A
 			note is not an event; it is a state you switch on and later switch off.
@@ -59,14 +59,14 @@
 				<ByteInspector bytes={[0x80, 0x3c, 0x40]} compact />
 			</div>
 		</div>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			This design is why MIDI can express a note held for eleven minutes without sending anything in
 			between, and also why the most famous MIDI failure mode exists.
 		</p>
 	</Section>
 
 	<Section title="The stuck note">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			If a Note On arrives and its matching Note Off never does — the cable was pulled, the software
 			crashed, a channel got remapped mid-note, the sequencer was stopped between the two — the
 			instrument has no way to know. It was told to hold the note. It is holding the note. It will
@@ -115,7 +115,7 @@
 	</Section>
 
 	<Section title="Note Off has two spellings">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			There is a real Note Off status — <code class="rounded-sm bg-muted px-1 font-mono">0x8n</code>
 			— and there is a Note On whose velocity happens to be zero, which is
 			<em>defined</em> to mean the same thing. Both are correct. Most hardware sends the second.
@@ -137,14 +137,14 @@
 				</p>
 			</div>
 		</div>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The second form exists because of a bandwidth trick, which is worth understanding because you
 			will see it in MIDI files and on real cables.
 		</p>
 	</Section>
 
 	<Section title="Running status">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			On a 31,250-bit-per-second wire, each byte takes 320 microseconds. A three-byte note takes
 			about a millisecond, and a ten-note chord takes ten — enough to hear as a strum. So the spec
 			allows a sender to <strong>omit a repeated status byte</strong>. Once it has said "Note On,
@@ -179,7 +179,7 @@
 			</div>
 		</div>
 
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Now the two ideas connect. Under running status, sending a real Note Off would mean re-sending
 			a status byte and breaking the run. Sending "note 60, velocity 0" keeps the run going. That is
 			the entire reason velocity-zero Note Off exists.

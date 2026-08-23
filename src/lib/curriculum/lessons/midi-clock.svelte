@@ -27,7 +27,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Here is the surprising thing about MIDI synchronisation: <strong
 				>no tempo number is ever transmitted</strong
 			>. There is no "set BPM to 128" message. Instead the leader sends a single byte —
@@ -35,7 +35,7 @@
 			and every follower infers the tempo from how fast they arrive.
 		</p>
 		<ByteInspector bytes={[0xf8]} />
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			One byte. No channel, no data, nothing to decode. If you speed up, the ticks come closer
 			together and everyone follows within a beat, because they are not reading a number — they are
 			feeling a pulse.
@@ -60,7 +60,7 @@
 	</TryThis>
 
 	<Section title="The System Real-Time messages">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Clock belongs to a small family of single-byte messages with an unusual privilege: they may
 			appear <em>anywhere</em>, including in the middle of another message's data bytes. A receiver
 			must handle a clock byte arriving between a Note On's note number and its velocity, and carry
@@ -95,12 +95,12 @@
 	</Section>
 
 	<Section title="Start, Continue, and the difference that matters">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			<strong>Start</strong> means "from the top". <strong>Continue</strong> means "from where we were".
 			Sending Start when you meant Continue is why a follower sometimes jumps back to bar one in the middle
 			of a jam.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			"Where we were" is communicated by <strong>Song Position Pointer</strong> — a 14-bit count of
 			<em>sixteenth notes</em> from the start of the song. The correct sequence for locating is: send
 			Song Position Pointer, then send Continue. Position first, then go.
@@ -140,12 +140,12 @@
 	</Section>
 
 	<Section title="Deciding who is in charge">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Exactly one device in a rig should generate clock. Everything else follows. There is no
 			negotiation in MIDI 1.0 — no election, no handshake — so if two devices both send clock, both
 			will also be trying to follow, and the result is not a compromise but a mess.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The bad outcome is not choosing wrongly. It is choosing <em>accidentally</em>, because some
 			device shipped with clock output enabled and nobody noticed. Decide per session, write it
 			down, and check it before you wonder why the groove feels drunk.

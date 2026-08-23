@@ -43,7 +43,7 @@ Local Control OFF on anything being sequenced.`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MIDI Clock answers "what tempo are we at?" It does not answer "what time is it?" — and for
 			anything involving tape, video or a fixed timeline, that second question is the one that
 			matters. There are three common answers to synchronisation, and they solve different problems.
@@ -87,7 +87,7 @@ Local Control OFF on anything being sequenced.`
 	</div>
 
 	<Section title="What MIDI Time Code actually looks like">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MTC is delivered in a peculiar way. A full timecode position is eight
 			<strong>quarter-frame</strong> messages, each carrying one nibble, sent in sequence — so it takes
 			two frames to spell out one position, and the receiver is always slightly behind and interpolating.
@@ -135,13 +135,13 @@ Local Control OFF on anything being sequenced.`
 	</Callout>
 
 	<Section title="Choosing a leader, deliberately">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			There is no election in MIDI. Whoever is sending clock is the leader, and if two devices are
 			sending it you have two leaders and no followers. The failure mode is subtle: everything
 			starts, everything is roughly in time, and the groove is just slightly wrong in a way nobody
 			can point at.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The fix is a written policy. Not a metaphorical one — an actual note you keep, so that when a
 			session feels off you can check reality against intention in thirty seconds.
 		</p>
@@ -161,13 +161,13 @@ Local Control OFF on anything being sequenced.`
 	</Section>
 
 	<Section title="When to change the leader">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Some devices follow external clock less well than they lead. If the rig feels unstable, the
 			most effective single change is usually to <em>invert the relationship</em> — make the wobbly device
 			the leader and let the steadier ones follow. This is not a workaround so much as an acknowledgement
 			that clock-following quality varies enormously between devices and is rarely documented.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The jitter plot in the previous lesson is how you find out which device is which, rather than
 			arguing about it. Connect each candidate leader in turn, watch the spread, and pick the
 			narrowest.

@@ -191,7 +191,7 @@
 	{/if}
 
 	{#if !compact}
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			<span
 				class="mr-2 inline-block size-2 translate-y-[-1px] rounded-full align-middle"
 				style="background: var(--fam)"

@@ -71,12 +71,12 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Every Note On carries a second number alongside the pitch: <strong>velocity</strong>, from 1
 			to 127. On a weighted keyboard it is literally a measurement — the instrument times how long
 			the key took to travel from top to bottom, and a fast key means a hard hit.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			What the receiver does with that number is, as always, entirely up to the receiver. Most
 			instruments make it louder. Good ones also make it <em>brighter</em>, because a real piano
 			string struck harder does not just get louder, it gets harsher. That combination is what makes
@@ -184,7 +184,7 @@
 	</Callout>
 
 	<Section title="Release velocity">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Note Off carries a velocity too — how fast you <em>lifted</em> the key. Almost nothing transmits
 			it and almost nothing responds to it, so in practice it is 0 or 64 and safely ignored. Worth knowing
 			exists; not worth planning around.

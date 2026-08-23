@@ -35,7 +35,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Controller numbers 120 to 127 are not controllers at all. They occupy Control Change's address
 			space, but instead of moving a parameter they change how the channel behaves. They are called
 			<strong>Channel Mode messages</strong>, and two of them are the reason every MIDI application
@@ -66,7 +66,7 @@
 	</Section>
 
 	<Section title="All Notes Off is not All Sound Off">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			They sound like synonyms and behave very differently, and knowing which is which is the
 			difference between a panic button that works and one that only usually works.
 		</p>
@@ -128,12 +128,12 @@
 	</Section>
 
 	<Section title="Writing a panic that actually works">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Real hardware is inconsistent about all of this. Some devices ignore CC 123. Some honour CC
 			120 but not 123. Some very old ones honour neither. A panic routine that works everywhere
 			therefore escalates:
 		</p>
-		<ol class="flex flex-col gap-2.5 text-base leading-relaxed">
+		<ol class="prose-body flex flex-col gap-2.5">
 			<li class="flex gap-3">
 				<span class="mt-0.5 font-mono text-sm text-msg-common">1</span>
 				<span
@@ -176,7 +176,7 @@
 	</Section>
 
 	<Section title="Local Control, and the doubled-note mystery">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Here is a problem that sounds like a broken synth and is not. You connect a keyboard to a
 			computer, the computer echoes MIDI back to the keyboard so you can hear the software
 			instrument, and suddenly every note plays twice — once from the keyboard's own engine and once
@@ -270,7 +270,7 @@
 	</Section>
 
 	<Section title="The remaining four">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			CC 124–127 set Omni and Mono/Poly modes, and are largely historical. Omni On means "ignore
 			channel addresses and play everything" — occasionally useful for a quick test, always a
 			liability in a multi-device rig. Mono Mode restricts a channel to one note at a time and is

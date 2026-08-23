@@ -120,11 +120,11 @@ log('four second sweep — resonance is doing the work');`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The internal synth you have been playing for twenty-five lessons is about four hundred lines
 			of Web Audio. This lesson is enough of it to build your own.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Web Audio is a graph of nodes. You create sources, connect them through processors, and end at
 			the destination. Every parameter is an <strong>AudioParam</strong> with its own schedule — which
 			is the part that matters, because scheduling a parameter is how you get an envelope rather than
@@ -141,7 +141,7 @@ log('four second sweep — resonance is doing the work');`
 			<span class="text-muted-foreground">→</span>
 			<span class="text-muted-foreground">destination</span>
 		</div>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			That chain is a subtractive synthesiser voice. Everything else — detuned second oscillators,
 			noise, reverb sends, an LFO on the detune — is more of the same idea.
 		</p>
@@ -164,7 +164,7 @@ log('four second sweep — resonance is doing the work');`
 	</Callout>
 
 	<Section title="Envelopes are scheduled, not polled">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The instinct is to change a gain value in an animation frame. Do not: that gives you a
 			stair-stepped envelope at 60 Hz and audible zipper noise, and it stops entirely when the tab
 			is busy. Instead, tell the AudioParam what to do in advance:
@@ -194,12 +194,12 @@ gain.setTargetAtTime(0.0001, off, release / 4);    // release`}</code
 	</TryThis>
 
 	<Section title="Turning messages into sound">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A MIDI-driven synth is a dictionary from note number to live voice. Note On creates and
 			stores; Note Off looks up, releases and deletes. The whole architecture of the synth in this
 			app is that, plus per-channel state, plus a fixed voice budget with stealing.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Two details make it feel professional rather than like a demo. <strong
 				>Velocity should touch the filter as well as the gain</strong
 			>
@@ -211,13 +211,13 @@ gain.setTargetAtTime(0.0001, off, release / 4);    // release`}</code
 	</Section>
 
 	<Section title="When you need an AudioWorklet">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Everything above runs on the audio thread already — built-in nodes are native code, and the
 			main thread only schedules them. You need an AudioWorklet when you want to write the DSP
 			yourself: a custom oscillator, a wavefolder, a physical model. It runs in its own thread with
 			no DOM access and communicates by message port.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			For a MIDI application, the honest answer is usually that you do not need one. Reach for it
 			when a specific sound demands it, not as a default.
 		</p>

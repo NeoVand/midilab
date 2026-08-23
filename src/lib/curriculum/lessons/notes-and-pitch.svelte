@@ -39,7 +39,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MIDI has no idea what a chord is, what key you are in, or whether a note is sharp or flat. It
 			has one integer per pitch, from <strong>0 to 127</strong>, and that is the whole system. Note
 			number 60 is middle C. Add 12 and you go up an octave. Add 1 and you go up a semitone — the
@@ -74,7 +74,7 @@
 				</p>
 			</div>
 		</div>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A grand piano has 88 keys, from note 21 to note 108. MIDI's 128 notes cover more than any
 			acoustic instrument, with room to spare at both ends where the numbers stop being musically
 			useful and start being useful as triggers instead.
@@ -90,7 +90,7 @@
 	</TryThis>
 
 	<Section title="The C3 versus C4 argument">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Everyone agrees middle C is note 60. Nobody agrees what to call it. Yamaha and Roland
 			historically label it <strong>C3</strong>; scientific pitch notation, and therefore Steinberg,
 			Ableton and Logic, call it <strong>C4</strong>. Some manufacturers even use C5.
@@ -136,7 +136,7 @@
 	</TryThis>
 
 	<Section title="Just enough theory">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			You do not need music theory to work with MIDI, but three ideas will save you a lot of
 			counting.
 		</p>

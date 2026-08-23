@@ -82,7 +82,7 @@
 	<header class="flex flex-wrap items-end justify-between gap-4">
 		<div class="flex flex-col gap-3">
 			<h1 class="text-3xl font-semibold tracking-tight">The Lab</h1>
-			<p class="measure text-base leading-relaxed text-muted-foreground">
+			<p class="prose-body text-muted-foreground">
 				The instruments the lessons are built from, standing on their own. Nothing here is a demo —
 				these are the tools you keep.
 			</p>

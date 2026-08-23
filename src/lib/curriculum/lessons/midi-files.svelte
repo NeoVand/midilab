@@ -19,7 +19,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A live MIDI cable has no memory. A Standard MIDI File is the same messages written down, with
 			one thing added that the cable never needed: <strong
 				>how long to wait before the next one</strong
@@ -41,7 +41,7 @@
 				<span class="text-xs text-muted-foreground">…as many as the header said</span>
 			</div>
 		</div>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Three formats exist. <strong>Format 0</strong> squeezes everything into a single track —
 			simple to play, awkward to edit. <strong>Format 1</strong> keeps parallel tracks that share
 			one timeline, which is what almost everything writes today. <strong>Format 2</strong> holds independent
@@ -50,13 +50,13 @@
 	</Section>
 
 	<Section title="Variable-length quantities">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Delta times need to span from zero to hundreds of thousands of ticks, but most of them are
 			small. Spending four bytes on every one would be wasteful, so MIDI files use a
 			<strong>variable-length quantity</strong>: seven bits of number per byte, with the top bit
 			meaning "another byte follows".
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			This is the same seven-bit thinking as everywhere else in the protocol, applied to a different
 			problem. Values up to 127 take one byte; up to 16,383 take two; the maximum is four bytes.
 		</p>
@@ -115,7 +115,7 @@
 	</Callout>
 
 	<Section title="Meta events">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Files also carry things that make no sense on a cable: the tempo, the time signature, track
 			names, lyrics, markers, copyright. These are <strong>meta events</strong>, always beginning
 			<code class="rounded-sm bg-muted px-1 font-mono">FF</code>, and they exist only inside files.
@@ -140,13 +140,13 @@
 	</TryThis>
 
 	<Section title="What a file does not tell you">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A MIDI file contains program numbers, not sounds. Open the same file on two systems and you
 			get two different pieces of music — the note data is identical and the timbre is entirely at
 			the mercy of whatever is playing it. This is the "control, not sound" lesson from Act I,
 			arriving as a practical problem rather than a principle.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			If you want a file to sound approximately right elsewhere, write General MIDI program numbers
 			and keep drums on channel 10. If you want it to sound <em>exactly</em> right, you need the audio,
 			or the instrument, or both.

@@ -35,12 +35,12 @@ NOTES:`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			You now know what every message does and what every socket is for. The remaining skill is
 			organisational: deciding, once, who talks to whom on which address, and writing it down so
 			that future-you can check reality against intention.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The real address in a studio is not the channel. It is <strong>port plus channel</strong>. A
 			channel number only has to be unique per cable, so a four-port interface gives you 64
 			addresses, not 16. Thinking in port-plus-channel is what stops you running out.
@@ -48,7 +48,7 @@ NOTES:`
 	</Section>
 
 	<Section title="Roles, not devices">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Sort your gear by what it is <em>doing this session</em>, not by what it is. The same
 			groovebox is a brain in one setup and a sound module in another.
 		</p>
@@ -91,7 +91,7 @@ NOTES:`
 	</Section>
 
 	<Section title="Write the plan down">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The document below is the single highest-value thing in this lesson. Fill it in for your own
 			rig. When something misbehaves in six months, the first question is always "is it wired the
 			way I think it is?" — and without a written plan there is no way to answer that except by

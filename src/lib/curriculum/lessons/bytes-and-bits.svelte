@@ -33,11 +33,11 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MIDI messages are almost always one, two or three bytes. A byte is eight bits, and a bit is a
 			1 or a 0. That is the entire alphabet.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The problem the designers faced in 1983 was this: bytes arrive down a wire one after another,
 			with nothing separating them. If you tune in halfway through a stream, how do you know whether
 			the byte you just caught is a <em>command</em> or a <em>number</em>? Their answer was to spend
@@ -129,7 +129,7 @@
 	</TryThis>
 
 	<Section title="A status byte says two things at once">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Having spent one bit on "I am a command", MIDI splits the remaining seven — well, the
 			remaining <em>four and four</em>. A status byte is two hexadecimal digits, and each digit does
 			a different job.
@@ -209,7 +209,7 @@
 	</TryThis>
 
 	<Section title="Reading raw bytes">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			With the one rule and the nibble split, you can decode anything a monitor shows you. Here are
 			two more, taken apart the same way — cover the captions and work them out first.
 		</p>

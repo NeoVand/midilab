@@ -66,7 +66,7 @@ log('four notes scheduled ahead of time');`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Everything this app does, it does with one browser API. It is small — about six things worth
 			knowing — and you already understand the hard part, which is what the bytes mean.
 		</p>
@@ -101,9 +101,9 @@ access.onstatechange = (e) => console.log(e.port.name, e.port.state);`}</code
 		<Callout variant="key" title="Web MIDI gives you complete messages">
 			<p>
 				Unlike a raw serial stream, <code class="rounded-sm bg-muted px-1">onmidimessage</code>
-				hands you one whole message per event, with the status byte restored even if running status
-				was used on the wire. You never have to implement a streaming parser to <em>receive</em> — only
-				to read MIDI files.
+				hands you one whole message per event, with the status byte restored even if running status was
+				used on the wire. You never have to implement a streaming parser to <em>receive</em> — only to
+				read MIDI files.
 			</p>
 			<p class="mt-2">
 				The same applies going out: <code class="rounded-sm bg-muted px-1">send()</code> wants a complete

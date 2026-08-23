@@ -35,14 +35,14 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Pitch bend gets its own status byte and its own rules, and it is the only channel voice
 			message that is <strong>14-bit</strong>. It has 16,384 positions rather than 128, because
 			seven bits of pitch resolution across a whole-tone bend would be audibly steppy in a way a pan
 			knob never is.
 		</p>
 		<ByteInspector bytes={[0xe0, parts.lsb, parts.msb]} />
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Two oddities to internalise. First, the <strong>LSB comes first</strong> — the fine byte is
 			sent before the coarse one, which is backwards from how you would write the number down and
 			catches everyone once. Second, the centre is not zero but
@@ -96,7 +96,7 @@
 	</TryThis>
 
 	<Section title="How far is a full bend?">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The message says "bend as far as you can" — it does not say how far that is. The
 			<strong>bend range</strong> is a setting on the receiving instrument, and the default is usually
 			±2 semitones. It can be changed over MIDI, using the first mechanism in this course that is not
@@ -110,7 +110,7 @@
 				</div>
 			{/each}
 		</div>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Six Control Changes to set one number. That is RPN, and Lesson 11 covers it properly — for now
 			just note that <em>bend range is a negotiated setting, not a property of the message</em>.
 		</p>
@@ -143,13 +143,13 @@
 	</Section>
 
 	<Section title="Bend is channel-wide">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			There is one pitch bend value per channel. Hold a three-note chord and bend, and all three
 			notes move together — you cannot bend one note of a chord while the others stay put. For a
 			keyboard that is fine; for anyone trying to emulate a guitar or a fretless instrument it is a
 			hard wall.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The wall is real enough that an entire extension exists to get around it, by the elegantly
 			brutal method of giving every note its own channel. That is MPE, in Act V. Play the chord
 			above and bend it — feeling why per-note bend matters is the best preparation for that lesson.

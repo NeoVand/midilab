@@ -39,7 +39,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Pitch bend, channel pressure and CC 74 are all channel-wide. That is a fact of MIDI 1.0 and
 			cannot be changed. Play a chord on one channel and bend it, and every note bends together —
 			you have already felt this in Lesson 8.
@@ -65,7 +65,7 @@
 				</div>
 			</div>
 		</TryThis>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MPE's solution is almost crude in its simplicity: if the problem is that a channel holds many
 			notes, then <strong>put every note on its own channel</strong>. Channel-wide bend becomes
 			per-note bend, for free, with no new message types and no changes to any existing device's
@@ -74,7 +74,7 @@
 	</Section>
 
 	<Section title="Zones, masters and members">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A <strong>zone</strong> is a master channel plus a run of member channels. The master carries anything
 			meant for the whole zone — sustain pedal, program changes, a global bend. Each member channel hosts
 			one sounding note at a time and carries that note's expression.
@@ -136,7 +136,7 @@
 	</Section>
 
 	<Section title="Declaring a zone">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			A controller announces its zone with the <strong>MPE Configuration Message</strong> — RPN 0,6 on
 			the master channel, with the number of member channels as the value. Sending zero tears the zone
 			down. It is exactly the RPN mechanism from Lesson 11, used for one more thing.
@@ -169,13 +169,13 @@
 	</TryThis>
 
 	<Section title="MPE versus polyphonic aftertouch">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Both give per-note expression, and they are not competitors so much as different scopes. Poly
 			aftertouch gives you one extra dimension — pressure — per note, on a single channel, and
 			nothing else. MPE gives you pressure <em>and</em> pitch <em>and</em> timbre per note, at the cost
 			of consuming most of your channel space.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			That cost is real. An MPE controller using fifteen member channels leaves you nothing else on
 			that port. In a rig with several instruments, MPE controllers want their own port — which is
 			the port-plus-channel thinking from Lesson 21 arriving with a concrete consequence.

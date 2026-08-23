@@ -52,7 +52,7 @@
 				<h1 class="text-3xl leading-tight font-semibold tracking-tight text-balance">
 					{lesson.title}
 				</h1>
-				<p class="measure mt-2 text-base leading-relaxed text-pretty text-muted-foreground">
+				<p class="prose-body mt-2 text-pretty text-muted-foreground">
 					{lesson.blurb}
 				</p>
 			</div>

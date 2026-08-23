@@ -43,13 +43,13 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MIDI 2.0 was ratified in 2020 and is real, shipping, and supported at the operating-system
 			level on macOS, Windows and Linux. It is also, in most studios in 2026, not yet the thing your
 			instruments actually speak. Both of those statements are true, and this lesson is about
 			holding them at the same time.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The headline is that MIDI 2.0 is <strong>bidirectional</strong>. MIDI 1.0 is a one-way
 			broadcast: a sender shouts into a cable and has no idea whether anything is listening, what it
 			is, or what it can do. MIDI 2.0 devices negotiate.
@@ -57,7 +57,7 @@
 	</Section>
 
 	<Section title="The Universal MIDI Packet">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Everything travels as 32-bit words. The first nibble is the <strong>message type</strong>,
 			which says how many words the packet occupies; the second is the <strong>group</strong>.
 		</p>
@@ -202,12 +202,12 @@
 	</Section>
 
 	<Section title="An honest assessment">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			MIDI 2.0 is backward compatible by design — a MIDI 2.0 connection carries MIDI 1.0 traffic
 			unchanged, and devices fall back automatically. So nothing you own becomes obsolete, and
 			nothing you learn here is wasted.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			What has actually shipped: operating-system support is real on all three desktop platforms —
 			CoreMIDI has carried UMP since macOS Monterey, Windows MIDI Services brings a universal USB
 			MIDI 2.0 class driver, and Linux carries UMP through ALSA and PipeWire. And the first Profiles
@@ -215,13 +215,13 @@
 			Orchestral Articulation — so a compatible controller and a compatible piano instrument can now
 			agree on high-resolution velocity and per-note expression without a mapping session.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			What has not: the instruments in most studios still speak MIDI 1.0, and no browser exposes
 			MIDI 2.0 through the Web MIDI API. Which means the packets on this page are UMP that this app
 			encoded itself, not UMP off a cable — the encoding is real and matches the specification, but
 			nothing here has ever seen a MIDI 2.0 device.
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			The right posture is: understand the shape of it, recognise the terminology, and keep building
 			on MIDI 1.0 with an architecture that will not need tearing up when 2.0 arrives properly.
 			Which is what the rest of this course does.

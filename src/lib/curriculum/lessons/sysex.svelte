@@ -18,7 +18,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Every message so far has been tiny, fixed in length, and understood by everything. System
 			Exclusive is the deliberate exception: an arbitrarily long block of bytes addressed to one
 			manufacturer, meaning whatever that manufacturer decided it means.
@@ -38,7 +38,7 @@
 			<span class="text-msg-sysex">F7</span>
 			<span class="text-xs text-muted-foreground">end</span>
 		</div>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Only <code class="rounded-sm bg-muted px-1 font-mono">F0</code>, the manufacturer identifier
 			and
 			<code class="rounded-sm bg-muted px-1 font-mono">F7</code> are standardised. Everything between
@@ -58,7 +58,7 @@
 	</Callout>
 
 	<Section title="Who gets which number">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Manufacturer IDs are assigned by the MIDI Association. The early ones are a single byte;
 			latecomers get three, beginning with <code class="rounded-sm bg-muted px-1 font-mono">00</code
 			>. The single-byte numbers are a fossil record of the 1980s synthesiser industry.
@@ -79,7 +79,7 @@
 	</Section>
 
 	<Section title="Checksums">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Many manufacturers append a checksum so a corrupted patch dump is rejected rather than loaded.
 			The common Roland-style scheme is simple: sum the addressed bytes, take it modulo 128, and
 			send whatever value makes the total come out to zero.
@@ -106,7 +106,7 @@
 	</Section>
 
 	<Section title="Why your browser asks twice">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			SysEx is how firmware updates are delivered to a great many instruments. A web page with
 			unrestricted SysEx access could, in principle, write bad firmware to a synthesiser and brick
 			it. So the Web MIDI API treats it as a second, separate capability: you request
@@ -145,7 +145,7 @@
 				</div>
 			{/each}
 		</div>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			And one thing it is <em>not</em> good for: real-time performance. A long SysEx message monopolises
 			a 31,250-baud cable for as long as it takes to send — a 4 KB patch dump is over a second of solid
 			traffic, during which your notes are queued behind it. Send patch data between songs, never during

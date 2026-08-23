@@ -41,11 +41,11 @@ what went wrong, and what fixed it:`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			No new concepts. This is the whole course, at once, on your own hardware — and it is the point
 			at which "I have read about MIDI" becomes "I can run a rig".
 		</p>
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			If you have no external hardware to hand, everything below still works against the internal
 			synth on separate channels. That is a genuinely useful rehearsal; it just will not teach you
 			what your own cables do.
@@ -64,7 +64,7 @@ what went wrong, and what fixed it:`
 	</Section>
 
 	<Section title="The brief">
-		<ol class="flex flex-col gap-3 text-base leading-relaxed">
+		<ol class="prose-body flex flex-col gap-3">
 			{#each [['Wire it up', 'At least two destinations on separate channels — two hardware instruments, or one instrument plus the internal synth. Set receive channels deliberately and turn Local Control off on anything being sequenced.'], ['Choose a clock leader on purpose', 'One device generates clock; everything else follows. Write down which, before you start, and check it against reality afterwards.'], ['Recall a patch', 'Send a full Bank Select MSB → LSB → Program Change to at least one instrument, in the right order, and confirm on its screen that the right sound loaded. Note the off-by-one if there is one.'], ['Sequence it', 'A pattern that plays both destinations. Not necessarily good music — but in time, and repeatable.'], ['Automate something', 'A controller moving under the notes. A filter sweep is traditional and audible.'], ['Break it deliberately', 'Pull a cable mid-note, or stop the sequencer while notes are held. Get a stuck note on purpose.'], ['Recover cleanly', 'Panic, reconnect, and bring everything back to silence with nothing hanging and no controllers left in a strange state.'], ['Write it down', 'The channel map, the clock leader, and anything that surprised you. This is the artefact you keep.']] as [title, body], i (title)}
 				<li class="flex gap-4">
 					<span class="mt-0.5 shrink-0 font-mono text-sm text-msg-note">{i + 1}</span>
@@ -87,7 +87,7 @@ what went wrong, and what fixed it:`
 	</Section>
 
 	<Section title="Watch">
-		<p class="text-base leading-relaxed">
+		<p class="prose-body">
 			Keep this open while you work. Every claim you might make about what is happening can be
 			checked here in a second.
 		</p>

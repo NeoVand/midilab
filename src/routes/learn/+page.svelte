@@ -25,7 +25,7 @@
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-10 px-8 py-12">
 	<header class="flex flex-col gap-3">
 		<h1 class="text-3xl font-semibold tracking-tight">The course</h1>
-		<p class="measure text-base leading-relaxed text-muted-foreground">
+		<p class="prose-body text-muted-foreground">
 			Six acts. You do not advance by clicking Next — each lesson ends in checkpoints that the
 			engine verifies by watching the MIDI stream. Everything works with no hardware attached; most
 			of it works better with some.
