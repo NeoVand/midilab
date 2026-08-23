@@ -94,6 +94,7 @@
 	let preset = $state<string | null>(null);
 
 	function apply(p: (typeof PRESETS)[number]) {
+		forget();
 		attack = p.a;
 		decay = p.d;
 		sustain = p.s;
@@ -104,16 +105,42 @@
 	/** Any hand-drag stops claiming to be a preset. */
 	function touched() {
 		preset = null;
+		forget();
+	}
+
+	/**
+	 * Drop the ghost of the last note. It is only worth keeping while it is
+	 * still a picture of the shape beside it; once the shape has moved on, two
+	 * curves that no longer have anything to do with each other are just two
+	 * curves.
+	 */
+	function forget() {
+		if (!holding && heldTrace) {
+			heldTrace = '';
+			relTrace = '';
+			jump = null;
+		}
 	}
 
 	// ── the maths, used for both the picture and the sound ───────────────────
 	/**
-	 * Decay and release are `setTargetAtTime`, which is exponential and never
-	 * technically arrives; these are the tau values passed to it, so the curve
-	 * drawn is the curve scheduled.
+	 * Decay and release are `setTargetAtTime`, which approaches its target
+	 * exponentially and formally never arrives. "Decay time" has to mean
+	 * something anyway, so here it means what a manual means by it: the time
+	 * to get within one per cent of the sustain level. That is ln 100 time
+	 * constants — and because the last per cent is then explicitly scheduled
+	 * as a step, the stage genuinely ends when the number says it ends, and
+	 * the sustain can be drawn as the flat line it is rather than as a curve
+	 * still creeping downwards behind a label that claims otherwise.
 	 */
-	const decayTau = $derived(Math.max(0.01, decay / 3));
-	const releaseTau = $derived(Math.max(0.008, release / 4));
+	const SETTLE = Math.log(100);
+	const decayTau = $derived(Math.max(0.001, decay / SETTLE));
+	const releaseTau = $derived(Math.max(0.001, release / SETTLE));
+
+	/** Peak amplitude, and the two ends of the filter's travel. */
+	const PEAK = 0.26;
+	const F_MIN = 300;
+	const F_MAX = 5200;
 
 	/**
 	 * A set of envelope numbers, snapshotted.
@@ -124,23 +151,48 @@
 	 * at Note On rather than from the live controls, so that pressing a preset
 	 * mid-note redraws the patch without falsifying the note.
 	 */
-	type Env = { a: number; d: number; s: number; dTau: number; rTau: number };
+	type Env = { a: number; d: number; s: number; r: number; dTau: number; rTau: number };
 	const snapshot = (): Env => ({
 		a: attack,
 		d: decay,
 		s: sustain,
+		r: release,
 		dTau: decayTau,
 		rTau: releaseTau
 	});
 
-	/** Level at `t` seconds after Note On, assuming the key is still down. */
+	/**
+	 * Level at `t` seconds after Note On, while the key is still down.
+	 *
+	 * One function, used by the drawing, by the playhead and by the release —
+	 * which is the only way the three can be guaranteed to agree. Every
+	 * boundary is exact: it is 1 at the end of the attack and the sustain
+	 * level from the end of the decay onwards, so all three handles sit on the
+	 * curve rather than near it.
+	 */
+	/**
+	 * The microsecond of slack on the stage boundaries is not superstition.
+	 * The drawing arrives here through x → t → x, so the sample that ought to
+	 * land exactly on the end of a stage lands a part in 10^15 short of it,
+	 * takes the exponential branch, and comes back one per cent high — which
+	 * on a full-scale release is a visible pixel of daylight between the end
+	 * of the curve and the floor it is supposed to reach.
+	 */
+	const SLACK = 1e-6;
+
 	function levelOf(p: Env, t: number): number {
 		if (t <= 0) return 0;
 		if (t < p.a) return t / p.a;
+		if (t >= p.a + p.d - SLACK) return p.s;
 		return p.s + (1 - p.s) * Math.exp(-(t - p.a) / p.dTau);
 	}
 
-	const heldLevel = (t: number) => levelOf(snapshot(), t);
+	/** Level `dt` seconds after Note Off, having let go at level `from`. */
+	function releaseOf(p: Env, from: number, dt: number): number {
+		if (dt <= 0) return from;
+		if (dt >= p.r - SLACK) return 0;
+		return from * Math.exp(-dt / p.rTau);
+	}
 
 	// ── plot geometry ────────────────────────────────────────────────────────
 	/**
@@ -187,17 +239,26 @@
 	const xDecay = $derived(xHeld(attack + decay));
 	const xEnd = $derived(xRel(release));
 
-	/** The idle envelope, sampled along x so the curves read as curves. */
+	/**
+	 * The idle envelope.
+	 *
+	 * Sampled along x rather than along t, and the attack is sampled too. That
+	 * is not fussiness: x goes as the square root of time, so a ramp that is
+	 * straight in time is a *curve* here, and drawing the attack as a straight
+	 * line between two points drew a shape the played note then visibly did
+	 * not follow. The attack and the decay get their own point budgets so that
+	 * a two-millisecond attack beside a one-second decay is still resolved.
+	 */
 	const shape = $derived.by(() => {
-		const pts: string[] = [`${xHeld(0)},${yOf(0)}`, `${xAttack},${yOf(1)}`];
-		for (let i = 1; i <= 48; i++) {
-			const x = xAttack + ((xDecay - xAttack) * i) / 48;
-			pts.push(`${x.toFixed(1)},${yOf(heldLevel(tHeld(x))).toFixed(1)}`);
-		}
-		pts.push(`${xOff},${yOf(sustain)}`);
-		for (let i = 1; i <= 48; i++) {
-			const x = xOff + ((xEnd - xOff) * i) / 48;
-			pts.push(`${x.toFixed(1)},${yOf(sustain * Math.exp(-tRel(x) / releaseTau)).toFixed(1)}`);
+		const env = snapshot();
+		const pts: string[] = [];
+		const at = (x: number) => pts.push(`${x.toFixed(1)},${yOf(levelOf(env, tHeld(x))).toFixed(1)}`);
+		for (let i = 0; i <= 40; i++) at(PAD.l + ((xAttack - PAD.l) * i) / 40);
+		for (let i = 1; i <= 64; i++) at(xAttack + ((xDecay - xAttack) * i) / 64);
+		pts.push(`${xOff.toFixed(1)},${yOf(env.s).toFixed(1)}`);
+		for (let i = 1; i <= 64; i++) {
+			const x = xOff + ((xEnd - xOff) * i) / 64;
+			pts.push(`${x.toFixed(1)},${yOf(releaseOf(env, env.s, tRel(x))).toFixed(1)}`);
 		}
 		return 'M ' + pts.join(' L ');
 	});
@@ -276,26 +337,66 @@
 	// ── sound ────────────────────────────────────────────────────────────────
 	let voice: { osc: OscillatorNode; amp: GainNode; filter: BiquadFilterNode } | null = null;
 	let holding = $state(false);
-	/** The note actually being played, in plot coordinates. */
-	let trace = $state('');
+	/**
+	 * The note actually being played, in plot coordinates, in two halves.
+	 *
+	 * Two paths rather than one because Note Off is a discontinuity in the
+	 * axis, and a single path drawn straight across it would draw a horizontal
+	 * line that stands for no elapsed time at all. The held half stays on
+	 * screen after you let go — it is the part you just played, and throwing it
+	 * away the instant it becomes interesting would be an odd thing to do.
+	 */
+	let heldTrace = $state('');
+	let relTrace = $state('');
 	/** Where an early release jumped from, drawn as a deliberate connector. */
 	let jump = $state<{ x: number; y: number } | null>(null);
 	let head = $state<{ x: number; y: number } | null>(null);
 	let raf = 0;
-	let onAt = 0;
-	let offAt = 0;
+	/**
+	 * Both timestamps come from the audio clock, not from `performance.now()`.
+	 * They are the clock the envelope is actually scheduled against, they do
+	 * not drift against it, and they do not inherit the jitter of whenever an
+	 * animation frame happened to run.
+	 */
+	let startedAt = 0;
+	let releasedAt = 0;
 	let releaseFrom = 0;
 	/** The shape the sounding note was started with. */
 	let live: Env = snapshot();
 
+	/**
+	 * Whether the sounding note has entered its release.
+	 *
+	 * Needed because the level has to be worked out from a different formula
+	 * once it has, and cutting a releasing note off using the held formula
+	 * would jump it back up to the sustain first — a click, at the one moment
+	 * you least want one, which is when you play the next note.
+	 */
+	let releasing = false;
+	/** Guards against a Note Off that lands while the audio context wakes. */
+	let generation = 0;
+
+	function levelNow(t: number): number {
+		return releasing ? releaseOf(live, releaseFrom, t - releasedAt) : levelOf(live, t - startedAt);
+	}
+
+	const cutoffFor = (level: number) => F_MIN + (F_MAX - F_MIN) * level;
+
 	async function noteOn() {
 		if (holding) return;
+		const mine = ++generation;
 		const ctx = await audio.resume();
 		const dest = audio.destination;
 		if (!ctx || !dest) return;
+		// Waking the context can take a moment on the very first gesture, and
+		// a key released inside that moment must not leave a note holding.
+		if (mine !== generation) return;
 
-		silence(true);
+		stop('cut');
+		live = snapshot();
+		const { a, d, s: sus, dTau } = live;
 		const t = ctx.currentTime;
+
 		const osc = ctx.createOscillator();
 		osc.type = 'sawtooth';
 		osc.frequency.value = 220;
@@ -303,45 +404,83 @@
 		filter.type = 'lowpass';
 		filter.Q.value = 1.2;
 		const amp = ctx.createGain();
+
+		/*
+		 * Attack, then decay, then the last per cent as a step.
+		 *
+		 * That final `setValueAtTime` is the part worth explaining. Without it
+		 * the decay is asymptotic, so at the moment the label says the decay
+		 * has finished the level is still a per cent above the sustain and
+		 * still falling — which means the flat line drawn for the sustain was
+		 * never quite what was sounding. Scheduling the arrival makes the
+		 * picture and the sound the same thing. One per cent is far below
+		 * anything that could click.
+		 */
+		const settled = PEAK * Math.max(0.0004, sus);
 		amp.gain.setValueAtTime(0.0001, t);
+		amp.gain.linearRampToValueAtTime(PEAK, t + a);
+		amp.gain.setTargetAtTime(settled, t + a, dTau);
+		amp.gain.setValueAtTime(settled, t + a + d);
 
-		// The amplitude envelope, exactly as drawn.
-		amp.gain.linearRampToValueAtTime(0.26, t + Math.max(0.001, attack));
-		amp.gain.setTargetAtTime(0.26 * Math.max(0.0004, sustain), t + attack, decayTau);
-
-		// A filter on the same shape, because an envelope that only moves the
-		// volume sounds like someone turning a knob rather than like an
-		// instrument starting.
-		filter.frequency.setValueAtTime(300, t);
-		filter.frequency.linearRampToValueAtTime(5200, t + Math.max(0.001, attack));
-		filter.frequency.setTargetAtTime(600 + 3200 * sustain, t + attack, decayTau);
+		// The filter travels the same normalised curve, because an envelope
+		// that only moves the volume sounds like someone turning a knob rather
+		// than like an instrument starting.
+		filter.frequency.setValueAtTime(cutoffFor(0), t);
+		filter.frequency.linearRampToValueAtTime(cutoffFor(1), t + a);
+		filter.frequency.setTargetAtTime(cutoffFor(sus), t + a, dTau);
+		filter.frequency.setValueAtTime(cutoffFor(sus), t + a + d);
 
 		osc.connect(filter).connect(amp).connect(dest);
 		osc.start(t);
 		voice = { osc, amp, filter };
 
 		holding = true;
-		live = snapshot();
-		onAt = performance.now();
-		trace = '';
+		releasing = false;
+		startedAt = t;
+		heldTrace = '';
+		relTrace = '';
 		jump = null;
 		startTracing();
 	}
 
-	function silence(immediate = false) {
+	/**
+	 * End the sounding note — either into its release, or straight out.
+	 *
+	 * The level is computed and then written down before anything is
+	 * cancelled. `cancelScheduledValues` on its own discards the ramp still in
+	 * flight and drops the parameter back to the last value explicitly set, so
+	 * letting go during a slow attack used to cut the note dead while the
+	 * drawing showed a perfectly good release from the level it had reached.
+	 * The picture was right and the sound was wrong.
+	 */
+	function stop(mode: 'release' | 'cut') {
 		if (!voice) return;
 		const ctx = audio.context;
 		const v = voice;
 		voice = null;
 		if (!ctx) return;
 		const t = ctx.currentTime;
-		const r = immediate ? 0.004 : live.rTau;
+		const from = levelNow(t);
+		const tau = mode === 'cut' ? 0.004 : live.rTau;
+		const span = mode === 'cut' ? 0.02 : live.r;
+
+		if (mode === 'release') {
+			releaseFrom = from;
+			releasedAt = t;
+			releasing = true;
+		}
+
 		v.amp.gain.cancelScheduledValues(t);
-		v.amp.gain.setTargetAtTime(0.0001, t, r);
+		v.amp.gain.setValueAtTime(Math.max(0.0001, PEAK * from), t);
+		v.amp.gain.setTargetAtTime(0.0001, t, tau);
+		v.amp.gain.setValueAtTime(0.0001, t + span);
+
 		v.filter.frequency.cancelScheduledValues(t);
-		v.filter.frequency.setTargetAtTime(300, t, r);
+		v.filter.frequency.setValueAtTime(cutoffFor(from), t);
+		v.filter.frequency.setTargetAtTime(F_MIN, t, tau);
+
 		try {
-			v.osc.stop(t + r * 8 + 0.05);
+			v.osc.stop(t + span + 0.02);
 		} catch {
 			/* already stopped */
 		}
@@ -353,61 +492,97 @@
 	}
 
 	function noteOff() {
+		generation++;
 		if (!holding) return;
+		stop('release');
 		holding = false;
-		offAt = performance.now();
-		silence();
+	}
+
+	/** x for `e` seconds after Note On, easing into the unscaled held band. */
+	function xWhileHeld(e: number): number {
+		const knee = live.a + live.d;
+		if (e < knee) return xHeld(e);
+		const from = xHeld(knee);
+		return from + (xOff - from) * (1 - Math.exp(-(e - knee) / 0.9));
 	}
 
 	/**
-	 * The playhead.
+	 * Add points from `x0` to `x1`, never more than two pixels apart.
 	 *
-	 * While held it eases towards Note Off and never quite arrives, however
-	 * long you hold — which is the right picture, since that stretch of the
-	 * axis stands for an unbounded amount of time. Letting go moves it to the
-	 * Note Off line, and because that is a real jump on a broken axis it is
-	 * drawn as one: a dotted connector at the level the note had actually
-	 * reached, which is the level the release then starts from.
+	 * An animation frame is sixteen milliseconds and a plucked attack is two,
+	 * so a trace that records one point per frame does not merely round the
+	 * attack off — it never visits it. The first frame of a pluck lands well
+	 * past the peak, and the line drawn back to the origin cuts the corner off
+	 * the whole stage. Filling each frame's span at a fixed spacing in x makes
+	 * the recording independent of the frame rate: what is drawn is where the
+	 * envelope actually was, whether or not a frame happened to be there to
+	 * see it.
 	 */
+	const STEP = 2;
+	function fill(out: string[], x0: number, x1: number, y: (x: number) => number) {
+		const n = Math.max(1, Math.ceil((x1 - x0) / STEP));
+		for (let i = 1; i <= n; i++) {
+			const x = x0 + ((x1 - x0) * i) / n;
+			out.push(`${x.toFixed(1)},${y(x).toFixed(1)}`);
+		}
+	}
+
 	function startTracing() {
 		cancelAnimationFrame(raf);
-		const pts: string[] = [];
-		let last = { x: xHeld(0), y: yOf(0) };
+		const held: string[] = [`${PAD.l},${yOf(0)}`];
+		const rel: string[] = [];
+		let heldX = PAD.l;
+		let relX = xOff;
+		const yHeld = (x: number) => yOf(levelOf(live, tHeld(x)));
+		const yRel = (x: number) => yOf(releaseOf(live, releaseFrom, tRel(x)));
+
 		const step = () => {
-			const now = performance.now();
-			let x: number;
-			let v: number;
+			const now = audio.context?.currentTime ?? 0;
 			if (holding) {
-				const e = (now - onAt) / 1000;
+				const e = now - startedAt;
 				const knee = live.a + live.d;
-				v = levelOf(live, e);
-				if (e < knee) {
-					x = xHeld(e);
-				} else {
-					const from = xHeld(knee);
-					x = from + (xOff - from) * (1 - Math.exp(-(e - knee) / 0.9));
+				// The stages, at full resolution…
+				const settled = xHeld(Math.min(e, knee));
+				// …with a vertex planted exactly on the peak, because the top of
+				// a two-millisecond attack is a corner, and a corner that falls
+				// between two samples gets quietly rounded off.
+				const peak = xHeld(live.a);
+				if (heldX < peak && settled > peak) {
+					fill(held, heldX, peak, yHeld);
+					heldX = peak;
 				}
-				releaseFrom = v;
+				if (settled > heldX) {
+					fill(held, heldX, settled, yHeld);
+					heldX = settled;
+				}
+				// …and then the sustain, which is flat, so one point a frame is
+				// exact rather than merely enough.
+				const x = xWhileHeld(e);
+				if (e >= knee) held.push(`${x.toFixed(1)},${yOf(live.s).toFixed(1)}`);
+				if (held.length > 1200) held.splice(0, held.length - 1200);
+				heldTrace = 'M ' + held.join(' L ');
+				head = { x, y: yOf(levelOf(live, e)) };
 			} else {
-				const e = (now - offAt) / 1000;
 				if (!jump) {
-					jump = last;
-					pts.length = 0;
+					// Anchored to the release instant rather than to the last
+					// frame, so the connector meets the release curve exactly.
+					jump = { x: xWhileHeld(releasedAt - startedAt), y: yOf(releaseFrom) };
+					rel.push(`${xOff.toFixed(1)},${jump.y.toFixed(1)}`);
 				}
-				x = xRel(e);
-				v = releaseFrom * Math.exp(-e / live.rTau);
-				if (x > W - PAD.r || v < 0.0015) {
+				const e = now - releasedAt;
+				const done = e >= live.r;
+				const x = xRel(done ? live.r : e);
+				if (x > relX) {
+					fill(rel, relX, x, yRel);
+					relX = x;
+				}
+				relTrace = 'M ' + rel.join(' L ');
+				if (done) {
 					head = null;
-					trace = pts.length > 1 ? 'M ' + pts.join(' L ') : '';
 					return;
 				}
+				head = { x, y: yOf(releaseOf(live, releaseFrom, e)) };
 			}
-			const y = yOf(v);
-			last = { x, y };
-			pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
-			if (pts.length > 900) pts.shift();
-			trace = 'M ' + pts.join(' L ');
-			head = last;
 			raf = requestAnimationFrame(step);
 		};
 		raf = requestAnimationFrame(step);
@@ -415,7 +590,7 @@
 
 	onDestroy(() => {
 		cancelAnimationFrame(raf);
-		silence(true);
+		stop('cut');
 	});
 
 	const ms = (s: number) => (s < 1 ? `${Math.round(s * 1000)} ms` : `${s.toFixed(2)} s`);
@@ -444,7 +619,7 @@
 		{/each}
 	</div>
 
-	<div class="panel-sunken overflow-hidden rounded-lg border">
+	<div class="panel-sunken flex flex-col overflow-hidden rounded-lg border">
 		<svg
 			bind:this={svg}
 			viewBox="0 0 {W} {H}"
@@ -559,21 +734,24 @@
 					stroke-width="1.5"
 					stroke-dasharray="1 4"
 					stroke-linecap="round"
-					opacity="0.55"
+					opacity={head ? 0.55 : 0.3}
 					vector-effect="non-scaling-stroke"
 				/>
 			{/if}
-			{#if trace}
-				<path
-					d={trace}
-					fill="none"
-					stroke="var(--foreground)"
-					stroke-width="2.5"
-					stroke-linejoin="round"
-					stroke-linecap="round"
-					vector-effect="non-scaling-stroke"
-				/>
-			{/if}
+			{#each [heldTrace, relTrace] as d, i (i)}
+				{#if d}
+					<path
+						{d}
+						fill="none"
+						stroke="var(--foreground)"
+						stroke-width="2.5"
+						stroke-linejoin="round"
+						stroke-linecap="round"
+						opacity={head ? 1 : 0.45}
+						vector-effect="non-scaling-stroke"
+					/>
+				{/if}
+			{/each}
 			{#if head}
 				<circle cx={head.x} cy={head.y} r="5" fill="var(--foreground)" />
 			{/if}
@@ -625,6 +803,10 @@
 			)}
 			{@render handle('r', xEnd, yOf(0), 'Release time', ms(release), (release / R_MAX) * 100)}
 		</svg>
+		<p class="border-t px-3 py-1 text-2xs text-muted-foreground">
+			Time runs on a square-root scale, so a ten-millisecond attack is still something you can see,
+			and it restarts at Note Off. The stretch between has no scale: it is however long you hold.
+		</p>
 	</div>
 
 	<div class="flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -643,6 +825,7 @@
 			onkeyup={(e) => {
 				if (e.key === ' ' || e.key === 'Enter') noteOff();
 			}}
+			onblur={noteOff}
 			class={cn(
 				'rounded-md border px-4 py-2 text-sm font-medium transition-colors',
 				holding
@@ -663,7 +846,7 @@
 		</dl>
 
 		<span class="ml-auto text-2xs text-muted-foreground">
-			Time is square-root scaled, so a ten-millisecond attack is still something you can see.
+			One plain sawtooth voice, so the shape is the only thing that changes.
 		</span>
 	</div>
 
