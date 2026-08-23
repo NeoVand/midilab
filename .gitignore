@@ -23,3 +23,7 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 # Playwright
 test-results
+
+# The raw screen recording the banner was cut from — 211 MB of animated PNG.
+# The frame that ships is static/screenshot.png.
+/Screenshot.png

@@ -5,6 +5,48 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
+
+		<!--
+			Written out here rather than in a `<svelte:head>`, because this app
+			renders nothing on the server: the head a crawler receives is this
+			file, unchanged, and anything a component sets arrives long after
+			the crawler has left. The URLs are absolute for the same reason —
+			Open Graph requires it, and there is no request for a relative one
+			to be resolved against.
+		-->
+		<title>MIDI Lab — learn MIDI by making it happen</title>
+		<meta
+			name="description"
+			content="An interactive MIDI course and toolkit. Thirty-one lessons wired to a live engine, a monitor that decodes every byte on the wire, and a sixteen-channel synthesiser built in."
+		/>
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafb" />
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#090b0c" />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="MIDI Lab" />
+		<meta property="og:title" content="MIDI Lab — learn MIDI by making it happen" />
+		<meta
+			property="og:description"
+			content="Thirty-one lessons wired to a live MIDI engine, a monitor that decodes every byte, and a sixteen-channel synthesiser built in. No hardware required; better with it."
+		/>
+		<meta property="og:url" content="https://neovand.github.io/midilab/" />
+		<meta property="og:image" content="https://neovand.github.io/midilab/screenshot.png" />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:image:width" content="1600" />
+		<meta property="og:image:height" content="1028" />
+		<meta
+			property="og:image:alt"
+			content="The MIDI Lab instrument panel: notation, a spectrum analyser, a General MIDI voice bank, a keyboard with three notes held, and the bytes of the Note On decoded underneath."
+		/>
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="MIDI Lab — learn MIDI by making it happen" />
+		<meta
+			name="twitter:description"
+			content="Thirty-one lessons wired to a live MIDI engine, a monitor that decodes every byte, and a sixteen-channel synthesiser built in."
+		/>
+		<meta name="twitter:image" content="https://neovand.github.io/midilab/screenshot.png" />
+
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

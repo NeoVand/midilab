@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import Rail from '$lib/components/shell/Rail.svelte';
 	import EngineDock from '$lib/components/shell/EngineDock.svelte';
 	import CommandPalette from '$lib/components/shell/CommandPalette.svelte';
@@ -60,7 +59,12 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<!--
+		The icon and the social metadata live in `app.html`, because this app
+		renders nothing on the server and a crawler never sees anything set
+		here. This title is the short one the tab wants; the long one that
+		reads well as a link preview is in `app.html` too.
+	-->
 	<title>MIDI Lab</title>
 </svelte:head>
 <svelte:window onkeydown={onKeydown} />
