@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { chordName, spellNotes, vexKey } from './harmony';
+import { chordName, spellNotes, spellingName, vexKey } from './harmony';
 import { intervalName } from './notes';
 
 describe('intervalName', () => {
@@ -113,5 +113,19 @@ describe('spellNotes', () => {
 	it('spells a single note from the preference', () => {
 		expect(show([61])).toEqual(['c#/4']);
 		expect(show([61], true)).toEqual(['db/4']);
+	});
+});
+
+describe('spellingName', () => {
+	const say = (notes: number[], flats = false) =>
+		spellNotes(notes, flats).map((s) => spellingName(s));
+
+	it('agrees with the notation rather than the note number', () => {
+		expect(say([60, 63, 67, 70])).toEqual(['C3', 'E♭3', 'G3', 'B♭3']);
+	});
+
+	it('follows the octave convention', () => {
+		expect(spellingName(spellNotes([60])[0], 'c3')).toBe('C3');
+		expect(spellingName(spellNotes([60])[0], 'c4')).toBe('C4');
 	});
 });

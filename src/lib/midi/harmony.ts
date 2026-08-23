@@ -12,7 +12,7 @@
  * and neither does this.
  */
 
-import { pitchClass } from './notes';
+import { pitchClass, type OctaveConvention } from './notes';
 
 const NAMES_SHARP = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 const NAMES_FLAT = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'];
@@ -211,6 +211,19 @@ export function spellNotes(notes: number[], flats = false): Spelling[] {
 		const alter = ((((pitchClass(n) - NATURAL[letter] + 6) % 12) + 12) % 12) - 6;
 		return place(n, letter, alter);
 	});
+}
+
+/**
+ * The spelled name, for anywhere text sits beside the notation. Reading
+ * "D♯3" under a staff that says E flat is the kind of contradiction that
+ * makes a reader stop trusting both.
+ *
+ * `Spelling.octave` is scientific — middle C is C4 — and this converts to
+ * whichever convention the app is set to, the same way `noteName` does.
+ */
+export function spellingName(s: Spelling, convention: OctaveConvention = 'c3'): string {
+	const acc = s.alter === 0 ? '' : s.alter > 0 ? '♯'.repeat(s.alter) : '♭'.repeat(-s.alter);
+	return `${LETTERS[s.letter].toUpperCase()}${acc}${s.octave - (convention === 'c3' ? 1 : 0)}`;
 }
 
 /** VexFlow's key spelling: "eb/4" plus a separate "b" accidental modifier. */

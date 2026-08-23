@@ -11,8 +11,9 @@
 	 */
 	import Staff from './Staff.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
-	import { noteName, noteToFrequency, intervalName } from '$lib/midi/notes';
-	import { chordName } from '$lib/midi/harmony';
+	import { noteToFrequency, intervalName } from '$lib/midi/notes';
+	import { chordName, spellNotes, spellingName } from '$lib/midi/harmony';
+	import { settings } from '$lib/stores/settings.svelte';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -29,12 +30,22 @@
 	});
 
 	const chord = $derived(chordName(held, flats));
+	/**
+	 * Spelled the same way the staff spells them — the list beside the notation
+	 * has to agree with it, or neither is trustworthy.
+	 */
+	const names = $derived(
+		spellNotes(held, flats).map((s) => spellingName(s, settings.octaveConvention))
+	);
 
 	/** Every note measured from the lowest — the way you hear a chord. */
 	const steps = $derived(held.length > 1 ? held.slice(1).map((n) => n - held[0]) : []);
+
+	/** More than this and the list is longer than the panel; the staff still has them all. */
+	const listed = $derived(held.slice(0, 6));
 </script>
 
-<div class={cn('flex flex-col gap-2', className)}>
+<div class={cn('flex h-full flex-col gap-2', className)}>
 	<Staff {flats} class="shrink-0" />
 
 	{#if held.length === 0}
@@ -43,7 +54,7 @@
 		</p>
 	{:else if held.length === 1}
 		<div class="flex items-baseline gap-2">
-			<span class="text-xl leading-none font-medium">{noteName(held[0], { flats })}</span>
+			<span class="text-xl leading-none font-medium">{names[0]}</span>
 			<span class="tnum text-xs text-muted-foreground">
 				{held[0]} · {noteToFrequency(held[0]).toFixed(0)} Hz
 			</span>
@@ -71,5 +82,22 @@
 				{/each}
 			</ul>
 		</div>
+	{/if}
+
+	<!--
+		The same notes as numbers. This is the line that makes the panel a MIDI
+		tool rather than a music one: every row is exactly what went on the wire,
+		beside the notation of the same thing.
+	-->
+	{#if held.length > 1}
+		<dl class="tnum mt-auto grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 pt-2 text-2xs">
+			{#each listed as n, i (n)}
+				<dt class="text-foreground">{names[i]}</dt>
+				<dd class="text-muted-foreground">{n} · {noteToFrequency(n).toFixed(0)} Hz</dd>
+			{/each}
+			{#if held.length > listed.length}
+				<dt class="col-span-2 text-muted-foreground">+{held.length - listed.length} more</dt>
+			{/if}
+		</dl>
 	{/if}
 </div>
