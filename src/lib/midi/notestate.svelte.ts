@@ -144,6 +144,24 @@ export class NoteState {
 		}
 		this.version++;
 	}
+
+	/**
+	 * Forget everything, including controller values and which channels have
+	 * been used. `clear()` only silences held notes; this is what a state view
+	 * needs when you want to start watching from a known-empty page.
+	 */
+	reset(): void {
+		this.#channels = Array.from({ length: 16 }, blank);
+		this.version++;
+	}
+
+	/** Channels that have seen anything at all, in channel order. */
+	get usedChannels(): number[] {
+		void this.version;
+		const out: number[] = [];
+		for (let i = 0; i < 16; i++) if (this.#channels[i].lastActivity > 0) out.push(i);
+		return out;
+	}
 }
 
 export const noteState = new NoteState();
