@@ -16,14 +16,31 @@ interface Options {
 	columns?: number;
 	/** Selector for the focusable children. */
 	items?: string;
+	/**
+	 * `'visual'` walks the children in the order they appear on screen rather
+	 * than in the order they appear in the DOM. A piano keyboard draws its white
+	 * keys in one layer and its black keys in another on top, so DOM order would
+	 * march you through every white key and then come back for the sharps.
+	 */
+	order?: 'dom' | 'visual';
 }
 
 export function rovingGrid(node: HTMLElement, options: Options = {}) {
 	let opts = options;
 	let index = 0;
 
-	const list = () =>
-		Array.from(node.querySelectorAll<HTMLElement>(opts.items ?? 'button:not([disabled])'));
+	function list(): HTMLElement[] {
+		const found = Array.from(
+			node.querySelectorAll<HTMLElement>(opts.items ?? 'button:not([disabled])')
+		);
+		if (opts.order !== 'visual') return found;
+		return found
+			.map((el) => ({ el, box: el.getBoundingClientRect() }))
+			.sort(
+				(a, b) => Math.round(a.box.top / 8) - Math.round(b.box.top / 8) || a.box.left - b.box.left
+			)
+			.map((x) => x.el);
+	}
 
 	function columns(): number {
 		if (opts.columns) return opts.columns;

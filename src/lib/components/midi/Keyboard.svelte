@@ -15,6 +15,7 @@
 	import { settings } from '$lib/stores/settings.svelte';
 	import { channelColour } from '$lib/midi/channelcolour';
 	import { capturePointer, cn } from '$lib/utils';
+	import { rovingGrid } from '$lib/a11y/roving';
 
 	interface Props {
 		/** Lowest note shown. Defaults to C two octaves below middle C. */
@@ -232,6 +233,7 @@
 	style="height: {height}px"
 	role="application"
 	aria-label="Musical keyboard"
+	use:rovingGrid={{ columns: 12, order: 'visual' }}
 >
 	<!-- white keys -->
 	<div class="absolute inset-0 flex">
@@ -239,7 +241,7 @@
 			{@const active = noteState.isHeld(note)}
 			{@const owner = noteState.channelOf(note)}
 			<button
-				class="group relative flex-1 border-r border-black/12 transition-[filter] duration-75 last:border-r-0"
+				class="group focus-key-white relative flex-1 border-r border-black/12 transition-[filter] duration-75 last:border-r-0"
 				style:background={active
 					? `color-mix(in oklch, ${channelColour(owner ?? ch)} 52%, var(--key-white))`
 					: 'linear-gradient(to bottom, color-mix(in oklch, var(--key-white) 92%, #000) 0%, var(--key-white) 8%, var(--key-white) 88%, color-mix(in oklch, var(--key-white) 88%, #000) 100%)'}
@@ -290,7 +292,7 @@
 			{@const active = noteState.isHeld(note)}
 			{@const owner = noteState.channelOf(note)}
 			<button
-				class="pointer-events-auto absolute top-0 rounded-b-[3px]"
+				class="focus-key-black pointer-events-auto absolute top-0 rounded-b-[3px]"
 				style="left: {centre - (w * BLACK_RATIO) / 2}%; width: {w * BLACK_RATIO}%; height: 63%;
 					background: {active
 					? channelColour(owner ?? ch)

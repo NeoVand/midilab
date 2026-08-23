@@ -163,6 +163,8 @@
 	--surface-raised: oklch(1 0 0);
 	--key-white: oklch(0.995 0.001 220);
 	--key-black: oklch(0.28 0.008 224);
+	--ring-on-key-white: oklch(0.42 0.09 214);
+	--ring-on-key-black: oklch(0.95 0.04 214);
 	--readout: oklch(0.45 0.02 200);
 	--ok: oklch(0.50 0.15 150);
 	--warn: oklch(0.50 0.15 75);
@@ -323,6 +325,28 @@
 	}
 	.focus-ring {
 		@apply outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50;
+	}
+	/*
+	 * Draw the focus ring inside, for controls that tile edge to edge — piano
+	 * keys, pads. An offset ring on the outermost key is clipped by the panel it
+	 * sits in, which is exactly the key a keyboard user reaches first.
+	 */
+	.focus-inset:focus-visible {
+		outline-offset: -3px;
+	}
+	/*
+	 * A keybed keeps its own colours in both themes: ivory stays ivory when the
+	 * page goes dark. So its focus ring cannot use --ring, which is tuned to the
+	 * page background and lands around 2.7:1 on a white key — under the 3:1 that
+	 * a focus indicator has to clear. These two are tuned to the keys instead.
+	 */
+	.focus-key-white:focus-visible {
+		outline-color: var(--ring-on-key-white);
+		outline-offset: -3px;
+	}
+	.focus-key-black:focus-visible {
+		outline-color: var(--ring-on-key-black);
+		outline-offset: -3px;
 	}
 }
 
