@@ -160,7 +160,7 @@ log('waiting for external clock — start your hardware');`
 	</Section>
 
 	<Quiz
-		question="Your sequencer drifts noticeably flat over a minute of playing. What is the most likely cause?"
+		question="Your sequencer starts in time and is dragging noticeably behind the beat a minute later. What is the most likely cause?"
 		options={[
 			'The audio context sample rate is wrong',
 			'Time is being advanced from the current clock reading rather than by fixed arithmetic',
