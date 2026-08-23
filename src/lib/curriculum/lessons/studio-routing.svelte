@@ -70,11 +70,17 @@ NOTES:`
 		</Callout>
 	</Section>
 
-	<TryThis title="Route your actual hardware">
+	<TryThis title="Route something, right now">
 		<p class="text-sm leading-relaxed">
 			This is a working patchbay, not an illustration. Anything arriving on an input can be sent to
 			any output, remapped to a different channel, transposed, velocity-scaled, split by note range
-			and filtered by message type. The curves light up when messages pass.
+			and filtered by message type. The curves light up when messages pass, and the routes keep
+			working while you use the rest of the app.
+		</p>
+		<p class="mt-2 text-sm leading-relaxed">
+			With nothing plugged in, the first input is this app's own controls — the keyboards, pads and
+			sequencer on these pages. Everything below works against them exactly as it would against a
+			controller, which is the point: the technique is the same either way.
 		</p>
 		<Patchbay />
 	</TryThis>

@@ -16,7 +16,7 @@ import { bus, type MidiEvent } from './bus';
 import { midiAccess } from './access.svelte';
 import { encode, type MidiMessage } from './messages';
 import { synth } from '$lib/audio/synth';
-import { INTERNAL_OUTPUT_ID } from './engine.svelte';
+import { engine, INTERNAL_OUTPUT_ID, VIRTUAL_INPUT_ID } from './engine.svelte';
 import { load, save } from '$lib/stores/persist';
 
 export interface MessageFilters {
@@ -132,12 +132,16 @@ export class Router {
 	activity = $state<Record<string, number>>({});
 
 	#unsub: (() => void) | null = null;
+	#unsubLocal: (() => void) | null = null;
 	#frame = 0;
 	#pending = new Set<string>();
 
 	start(): () => void {
 		if (this.#unsub || !browser) return () => this.stop();
 		this.#unsub = bus.subscribe((e) => this.#route(e));
+		// The app's own controls are an input too, tapped once per message
+		// rather than once per open output port.
+		this.#unsubLocal = engine.onLocalSend((msg) => this.#routeLocal(msg));
 		const tick = () => {
 			this.#frame = requestAnimationFrame(tick);
 			if (this.#pending.size === 0) return;
@@ -154,6 +158,8 @@ export class Router {
 	stop(): void {
 		this.#unsub?.();
 		this.#unsub = null;
+		this.#unsubLocal?.();
+		this.#unsubLocal = null;
 		cancelAnimationFrame(this.#frame);
 	}
 
@@ -164,26 +170,39 @@ export class Router {
 		for (const route of this.routes) {
 			if (!route.enabled || route.fromPortId !== e.portId) continue;
 			if (route.toPortId === route.fromPortId) continue;
-			const out = transform(e.message, route);
-			if (!out) continue;
-			this.#pending.add(route.id);
-			if (route.toPortId === INTERNAL_OUTPUT_ID) {
-				synth.handle(out);
-			} else {
-				midiAccess.sendRaw(route.toPortId, encode(out));
-			}
-			bus.emit({
-				time: performance.now(),
-				portId: route.toPortId,
-				portName:
-					route.toPortId === INTERNAL_OUTPUT_ID
-						? 'Internal Synth'
-						: midiAccess.outputName(route.toPortId),
-				direction: 'out',
-				bytes: encode(out),
-				message: out
-			});
+			this.#pass(route, e.message);
 		}
+	}
+
+	/** Messages this page generated, offered to routes from the virtual input. */
+	#routeLocal(msg: MidiMessage) {
+		for (const route of this.routes) {
+			if (!route.enabled || route.fromPortId !== VIRTUAL_INPUT_ID) continue;
+			this.#pass(route, msg);
+		}
+	}
+
+	#pass(route: Route, message: MidiMessage) {
+		const out = transform(message, route);
+		if (!out) return;
+		this.#pending.add(route.id);
+		const bytes = encode(out);
+		if (route.toPortId === INTERNAL_OUTPUT_ID) {
+			synth.handle(out);
+		} else {
+			midiAccess.sendRaw(route.toPortId, bytes);
+		}
+		bus.emit({
+			time: performance.now(),
+			portId: route.toPortId,
+			portName:
+				route.toPortId === INTERNAL_OUTPUT_ID
+					? 'Internal Synth'
+					: midiAccess.outputName(route.toPortId),
+			direction: 'out',
+			bytes,
+			message: out
+		});
 	}
 
 	add(route: Route = newRoute()): void {
@@ -213,6 +232,20 @@ export class Router {
 	/** True if this route would send a port's traffic straight back to itself. */
 	isLoop(route: Route): boolean {
 		return route.fromPortId === route.toPortId;
+	}
+
+	/**
+	 * A route from the app's own controls straight to the internal synth with
+	 * nothing changed plays every note twice, in unison, which sounds like a
+	 * bug rather than a layer. Worth saying out loud in the editor.
+	 */
+	isUnisonDouble(route: Route): boolean {
+		return (
+			route.fromPortId === VIRTUAL_INPUT_ID &&
+			route.toPortId === INTERNAL_OUTPUT_ID &&
+			route.transpose === 0 &&
+			route.remapTo === null
+		);
 	}
 }
 

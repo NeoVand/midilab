@@ -9,7 +9,12 @@
 	 */
 	import { onMount } from 'svelte';
 	import { midiAccess } from '$lib/midi/access.svelte';
-	import { engine, INTERNAL_OUTPUT_ID } from '$lib/midi/engine.svelte';
+	import {
+		engine,
+		INTERNAL_OUTPUT_ID,
+		VIRTUAL_INPUT_ID,
+		VIRTUAL_INPUT_NAME
+	} from '$lib/midi/engine.svelte';
 	import { router, newRoute } from '$lib/midi/router.svelte';
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -23,8 +28,7 @@
 		Add01Icon,
 		Delete02Icon,
 		AlertCircleIcon,
-		Route02Icon,
-		PlugSocketIcon
+		Route02Icon
 	} from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
 
@@ -32,8 +36,6 @@
 		class?: string;
 	}
 	let { class: className }: Props = $props();
-
-	onMount(() => router.start());
 
 	let now = $state(performance.now());
 	onMount(() => {
@@ -46,7 +48,16 @@
 		return () => cancelAnimationFrame(frame);
 	});
 
-	const inputs = $derived(midiAccess.inputs);
+	/*
+	 * The app's own controls are the first input, always. Without them a laptop
+	 * with nothing plugged in has an empty patchbay and an unreachable lesson —
+	 * and it is not a stand-in: the keyboard, pads, sequencer and console on
+	 * these pages are the controller in this rig.
+	 */
+	const inputs = $derived([
+		{ id: VIRTUAL_INPUT_ID, name: VIRTUAL_INPUT_NAME, manufacturer: '', state: 'connected' },
+		...midiAccess.inputs
+	]);
 	const outputs = $derived(engine.outputs);
 
 	const ROW = 34;
@@ -70,7 +81,14 @@
 
 	function addRoute() {
 		const from = inputs[0]?.id ?? '';
-		router.add(newRoute(from, INTERNAL_OUTPUT_ID));
+		const hardwareOut = engine.outputs.find((o) => o.kind === 'hardware' && o.connected);
+		const to = hardwareOut?.id ?? INTERNAL_OUTPUT_ID;
+		const route = newRoute(from, to);
+		// A first route that plays every note twice in unison sounds broken. An
+		// octave up is unmistakably deliberate, and it is the layer example from
+		// the lesson, working on the first click.
+		if (from === VIRTUAL_INPUT_ID && to === INTERNAL_OUTPUT_ID) route.transpose = 12;
+		router.add(route);
 	}
 
 	const FILTER_KEYS = [
@@ -87,137 +105,98 @@
 <div class={cn('flex flex-col gap-4', className)}>
 	<!-- ── the graph ─────────────────────────────────────────────────────── -->
 	<div class="panel-sunken overflow-hidden rounded-lg border p-3">
-		{#if inputs.length === 0}
-			<EmptyState
-				icon={Route02Icon}
-				class="border-0 py-4"
-				title="Nothing to route yet"
-				body="A patchbay needs somewhere for messages to come from. Connect an instrument and every
-					input it offers appears on the left, every destination on the right, and each route you
-					draw between them lights up as messages pass."
-			>
-				{#snippet action()}
-					<Button size="sm" onclick={() => midiAccess.request(false)}>
-						<HugeiconsIcon icon={PlugSocketIcon} size={14} />
-						Connect MIDI
-					</Button>
-				{/snippet}
-				{#snippet figure()}
-					<svg viewBox="0 0 300 64" class="w-full" role="img" aria-label="What a route looks like">
-						<rect x="2" y="18" width="96" height="28" rx="4" class="fill-card stroke-border" />
-						<text x="50" y="36" text-anchor="middle" font-size="10" class="fill-muted-foreground">
-							your controller
-						</text>
-						<path
-							d="M100,32 C150,32 150,32 198,32"
-							fill="none"
-							stroke="var(--msg-note)"
-							stroke-width="1.5"
-							stroke-dasharray="3 3"
-						/>
-						<circle cx="149" cy="32" r="3" fill="var(--msg-note)" />
-						<rect x="200" y="18" width="98" height="28" rx="4" class="fill-card stroke-border" />
-						<text x="249" y="36" text-anchor="middle" font-size="10" class="fill-muted-foreground">
-							a synth, or this one
-						</text>
-					</svg>
-				{/snippet}
-			</EmptyState>
-		{:else}
-			<svg
-				viewBox="0 0 600 {height}"
-				class="w-full"
-				style="height: {height}px"
-				role="img"
-				aria-label="Routing graph"
-			>
-				{#each inputs as port, i (port.id)}
-					<rect
-						x="4"
-						y={4 + i * ROW}
-						width="180"
-						height="26"
-						rx="5"
-						class="fill-card stroke-border"
-					/>
-					<text x="14" y={21 + i * ROW} font-size="10" class="fill-foreground">
-						{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
-					</text>
-					<circle
-						cx="188"
-						cy={17 + i * ROW}
-						r="3.5"
-						fill={midiAccess.isListening(port.id) ? 'var(--msg-cc)' : 'var(--grid-line-strong)'}
-					/>
-				{/each}
+		<svg
+			viewBox="0 0 600 {height}"
+			class="w-full"
+			style="height: {height}px"
+			role="img"
+			aria-label="Routing graph"
+		>
+			{#each inputs as port, i (port.id)}
+				<rect
+					x="4"
+					y={4 + i * ROW}
+					width="180"
+					height="26"
+					rx="5"
+					class="fill-card stroke-border"
+				/>
+				<text x="14" y={21 + i * ROW} font-size="10" class="fill-foreground">
+					{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
+				</text>
+				<circle
+					cx="188"
+					cy={17 + i * ROW}
+					r="3.5"
+					fill={midiAccess.isListening(port.id) ? 'var(--msg-cc)' : 'var(--grid-line-strong)'}
+				/>
+			{/each}
 
-				{#each outputs as port, i (port.id)}
-					<rect
-						x="416"
-						y={4 + i * ROW}
-						width="180"
-						height="26"
-						rx="5"
-						class="fill-card stroke-border"
-					/>
-					<text x="426" y={21 + i * ROW} font-size="10" class="fill-foreground">
-						{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
-					</text>
-					<circle
-						cx="410"
-						cy={17 + i * ROW}
-						r="3.5"
-						fill={engine.isOutputActive(port.id) ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
-					/>
-				{/each}
+			{#each outputs as port, i (port.id)}
+				<rect
+					x="416"
+					y={4 + i * ROW}
+					width="180"
+					height="26"
+					rx="5"
+					class="fill-card stroke-border"
+				/>
+				<text x="426" y={21 + i * ROW} font-size="10" class="fill-foreground">
+					{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
+				</text>
+				<circle
+					cx="410"
+					cy={17 + i * ROW}
+					r="3.5"
+					fill={engine.isOutputActive(port.id) ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
+				/>
+			{/each}
 
-				{#each router.routes as route (route.id)}
-					{@const y1 = inputY(route.fromPortId)}
-					{@const y2 = outputY(route.toPortId)}
-					{#if y1 > 0 && y2 > 0}
-						{@const h = heat(route.id)}
-						<path
-							d="M192,{y1 - 3} C280,{y1 - 3} 320,{y2 - 3} 406,{y2 - 3}"
-							fill="none"
-							stroke={route.enabled ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
-							stroke-width={1.5 + h * 2}
-							opacity={route.enabled ? 0.35 + h * 0.65 : 0.25}
+			{#each router.routes as route (route.id)}
+				{@const y1 = inputY(route.fromPortId)}
+				{@const y2 = outputY(route.toPortId)}
+				{#if y1 > 0 && y2 > 0}
+					{@const h = heat(route.id)}
+					<path
+						d="M192,{y1 - 3} C280,{y1 - 3} 320,{y2 - 3} 406,{y2 - 3}"
+						fill="none"
+						stroke={route.enabled ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
+						stroke-width={1.5 + h * 2}
+						opacity={route.enabled ? 0.35 + h * 0.65 : 0.25}
+					/>
+					{#if h > 0}
+						<circle
+							r={2 + h * 1.5}
+							fill="var(--msg-note)"
+							opacity={h}
+							cx={192 + (1 - h) * 214}
+							cy={y1 - 3 + (1 - h) * (y2 - y1)}
 						/>
-						{#if h > 0}
-							<circle
-								r={2 + h * 1.5}
-								fill="var(--msg-note)"
-								opacity={h}
-								cx={192 + (1 - h) * 214}
-								cy={y1 - 3 + (1 - h) * (y2 - y1)}
-							/>
-						{/if}
 					{/if}
-				{/each}
-			</svg>
-		{/if}
+				{/if}
+			{/each}
+		</svg>
 	</div>
 
-	<!--
-		With nothing plugged in there is nothing to route from, so this row would
-		be a disabled button next to a sentence explaining a feature you cannot
-		reach. The empty state above already carries the one action that helps.
-	-->
-	{#if inputs.length > 0}
-		<div class="flex flex-wrap items-center gap-3">
-			<Button size="sm" class="gap-1.5" onclick={addRoute}>
-				<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
+	<div class="flex flex-wrap items-center gap-3">
+		<Button size="sm" class="gap-1.5" onclick={addRoute}>
+			<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route
+		</Button>
+		{#if router.routes.length > 0}
+			<Button variant="ghost" size="sm" class="text-xs" onclick={() => router.clear()}>
+				Remove all
 			</Button>
-			{#if router.routes.length > 0}
-				<Button variant="ghost" size="sm" class="text-xs" onclick={() => router.clear()}>
-					Remove all
-				</Button>
-			{/if}
-			<span class="text-xs text-muted-foreground">
+		{/if}
+		<span class="measure text-xs leading-relaxed text-muted-foreground">
+			{#if midiAccess.inputs.length === 0}
+				With nothing plugged in you can still route <em>{VIRTUAL_INPUT_NAME}</em> — the keyboards, pads
+				and sequencer on these pages are the controller in this rig. Hardware inputs join the left column
+				the moment you connect.
+			{:else}
 				Routes are saved in this browser and keep working while you use the rest of the app.
-			</span>
-		</div>
-	{/if}
+			{/if}
+		</span>
+	</div>
 
 	<!-- ── the routes ────────────────────────────────────────────────────── -->
 	<div class="flex flex-col gap-3">
@@ -235,7 +214,7 @@
 						onValueChange={(v) => router.update(route.id, { fromPortId: v })}
 					>
 						<Select.Trigger class="h-8 w-52 text-xs">
-							{midiAccess.inputName(route.fromPortId) || 'Choose an input'}
+							{inputs.find((p) => p.id === route.fromPortId)?.name ?? 'Choose an input'}
 						</Select.Trigger>
 						<Select.Content>
 							{#each inputs as p (p.id)}

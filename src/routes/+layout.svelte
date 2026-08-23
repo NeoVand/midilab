@@ -7,6 +7,7 @@
 	import CommandPalette from '$lib/components/shell/CommandPalette.svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { monitor } from '$lib/midi/monitor.svelte';
+	import { router } from '$lib/midi/router.svelte';
 	import '$lib/midi/notestate.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { handleShortcut } from '$lib/stores/shortcuts.svelte';
@@ -27,7 +28,12 @@
 	onMount(() => {
 		engine.start();
 		const stopMonitor = monitor.start();
+		// The patchbay used to start this itself, which meant a saved route
+		// stopped routing the moment you navigated away from the page that drew
+		// it — while the page promised the opposite in so many words.
+		const stopRouter = router.start();
 		return () => {
+			stopRouter();
 			stopMonitor();
 			engine.stop();
 		};
