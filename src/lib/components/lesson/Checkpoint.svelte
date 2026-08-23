@@ -6,7 +6,7 @@
 	 * moment the thing actually happens — on the internal synth or on your OP-XY,
 	 * it makes no difference, because both go through the same bus.
 	 */
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount, untrack } from 'svelte';
 	import { bus, type MidiEvent } from '$lib/midi/bus';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
@@ -31,8 +31,23 @@
 	const done = $derived(progress.isDone(lesson, id));
 	let seen = $state(new Set<string>());
 	let flash = $state(false);
+	let flashTimer = 0;
 
 	const progressText = $derived(count > 1 && !done ? `${seen.size} of ${count}` : '');
+
+	/*
+	 * Un-ticking a finished checkpoint has to put the counter back to zero. It
+	 * used to keep every key it had already seen, so the box read "4 of 4" next
+	 * to an empty circle, and — for a checkpoint whose keys are exhaustible,
+	 * like "send four different kinds of message" — nothing you did afterwards
+	 * could ever complete it again.
+	 */
+	$effect(() => {
+		if (done) return;
+		untrack(() => {
+			if (seen.size) seen = new Set();
+		});
+	});
 
 	onMount(() => {
 		progress.register(lesson, id);
@@ -56,7 +71,8 @@
 				}
 				progress.complete(lesson, id);
 				flash = true;
-				setTimeout(() => (flash = false), 1200);
+				clearTimeout(flashTimer);
+				flashTimer = window.setTimeout(() => (flash = false), 1200);
 			});
 		}
 		return () => {
@@ -64,6 +80,8 @@
 			progress.unregister(lesson, id);
 		};
 	});
+
+	onDestroy(() => clearTimeout(flashTimer));
 </script>
 
 <div
@@ -82,7 +100,8 @@
 				: 'border-muted-foreground/40 text-transparent hover:border-foreground'
 		)}
 		onclick={() => progress.toggle(lesson, id)}
-		aria-label={done ? 'Mark as not done' : 'Mark as done manually'}
+		aria-pressed={done}
+		aria-label="Mark done: {label}"
 		title={done ? 'Completed' : 'Tick manually if your hardware will not cooperate'}
 	>
 		<HugeiconsIcon icon={done ? Tick02Icon : Target02Icon} size={12} strokeWidth={2.4} />
