@@ -13,6 +13,7 @@
 	} from '@hugeicons/core-free-icons';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { path, routeOf } from '$lib/nav';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -45,7 +46,9 @@
 		}
 	];
 
-	const current = $derived(page.url.pathname);
+	// Compared against the routes in `items`, so the base path comes off
+	// first — under one, every pathname starts with it.
+	const current = $derived(routeOf(page.url.pathname));
 	const isDark = $derived(settings.resolvedTheme === 'dark');
 </script>
 
@@ -63,7 +66,7 @@
 	class="flex w-[3.25rem] shrink-0 flex-col items-center gap-1 border-r bg-sidebar py-3"
 	aria-label="Primary"
 >
-	<a href="/" class="mb-2.5 grid size-8 place-items-center" aria-label="MIDI Lab home">
+	<a href={path('/')} class="mb-2.5 grid size-8 place-items-center" aria-label="MIDI Lab home">
 		<HugeiconsIcon icon={MusicNote02Icon} size={22} strokeWidth={1.7} class="text-msg-note" />
 	</a>
 
@@ -75,7 +78,7 @@
 					{#snippet child({ props })}
 						<a
 							{...props}
-							href={item.href}
+							href={path(item.href)}
 							aria-current={active ? 'page' : undefined}
 							class={cn(
 								'relative flex w-full flex-col items-center gap-1 py-1.5 transition-colors',
@@ -143,7 +146,7 @@
 				{#snippet child({ props })}
 					<a
 						{...props}
-						href="/settings"
+						href={path('/settings')}
 						aria-current={current === '/settings' ? 'page' : undefined}
 						class={cn(
 							'relative grid size-9 place-items-center transition-colors',

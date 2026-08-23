@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { path } from '$lib/nav';
 	import { page } from '$app/state';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { loadLesson } from '$lib/curriculum/lessons';
@@ -28,7 +29,7 @@
 	<div class="mx-auto max-w-2xl px-8 py-20 text-center">
 		<h1 class="text-2xl font-semibold">No such lesson</h1>
 		<p class="mt-2 text-muted-foreground">
-			<a href="/learn" class="underline">Back to the course</a>
+			<a href={path('/learn')} class="underline">Back to the course</a>
 		</p>
 	</div>
 {:else if loading}

@@ -10,7 +10,8 @@
 		Target02Icon,
 		Tick02Icon
 	} from '@hugeicons/core-free-icons';
-	import { actOf, lessonPath, neighbours, type LessonMeta } from '$lib/curriculum/registry';
+	import { actOf, neighbours, type LessonMeta } from '$lib/curriculum/registry';
+	import { lessonHref, path } from '$lib/nav';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { cn } from '$lib/utils';
 
@@ -37,10 +38,12 @@
 <article class="mx-auto flex w-full max-w-[54rem] flex-col gap-10 px-8 py-10">
 	<header class="flex flex-col gap-3">
 		<div class="flex items-center gap-2 text-xs text-muted-foreground">
-			<a href="/learn" class="hover:text-foreground">Learn</a>
+			<a href={path('/learn')} class="hover:text-foreground">Learn</a>
 			<span>/</span>
 			{#if act}
-				<a href="/learn#{act.id}" class="hover:text-foreground">Act {act.number} · {act.title}</a>
+				<a href="{path('/learn')}#{act.id}" class="hover:text-foreground"
+					>Act {act.number} · {act.title}</a
+				>
 			{/if}
 		</div>
 
@@ -106,7 +109,7 @@
 	<nav class="grid gap-3 border-t pt-6 sm:grid-cols-2">
 		{#if prev}
 			<a
-				href={lessonPath(prev)}
+				href={lessonHref(prev)}
 				class="flex flex-col gap-1 rounded-lg border bg-card px-4 py-3 transition-colors hover:border-foreground/25"
 			>
 				<span class="flex items-center gap-1 text-xs text-muted-foreground">
@@ -119,7 +122,7 @@
 		{/if}
 		{#if next}
 			<a
-				href={lessonPath(next)}
+				href={lessonHref(next)}
 				class="flex flex-col items-end gap-1 rounded-lg border bg-card px-4 py-3 text-right transition-colors hover:border-foreground/25 sm:col-start-2"
 			>
 				<span class="flex items-center gap-1 text-xs text-muted-foreground">
@@ -129,7 +132,7 @@
 			</a>
 		{:else}
 			<a
-				href="/learn"
+				href={path('/learn')}
 				class="flex flex-col items-end gap-1 rounded-lg border bg-card px-4 py-3 text-right transition-colors hover:border-foreground/25 sm:col-start-2"
 			>
 				<span class="flex items-center gap-1 text-xs text-muted-foreground">

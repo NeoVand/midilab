@@ -476,7 +476,12 @@ export function actOf(id: string): Act | undefined {
 	return CURRICULUM.find((a) => a.lessons.some((l) => l.id === id));
 }
 
-export function lessonPath(l: LessonMeta | string): string {
+/**
+ * The route of a lesson — no base path. `lessonHref` in `$lib/nav` is the
+ * form that goes in markup; this one is what the app compares against and
+ * what the tests read.
+ */
+export function lessonRoute(l: LessonMeta | string): string {
 	return `/learn/${typeof l === 'string' ? l : l.id}`;
 }
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { path } from '$lib/nav';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import {
 		Activity03Icon,
@@ -113,7 +114,7 @@
 	<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 		{#each tools as tool (tool.href)}
 			<a
-				href={tool.href}
+				href={path(tool.href)}
 				class="group flex flex-col gap-2.5 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 			>
 				<!--

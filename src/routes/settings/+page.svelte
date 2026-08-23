@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { path } from '$lib/nav';
 	import PageHeader from '$lib/components/shell/PageHeader.svelte';
 	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -215,7 +216,7 @@
 						{devices.user.length} of your own, plus the built-in ones
 					</p>
 				</div>
-				<Button variant="outline" size="sm" href="/lab/devices">Open Device Lab</Button>
+				<Button variant="outline" size="sm" href={path('/lab/devices')}>Open Device Lab</Button>
 			</div>
 			<div class="flex flex-wrap items-center justify-between gap-3 border-t pt-3">
 				<div>

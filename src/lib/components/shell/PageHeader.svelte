@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { path } from '$lib/nav';
 	import type { Snippet } from 'svelte';
 	import { cn } from '$lib/utils';
 
@@ -15,7 +16,7 @@
 <header class={cn('flex flex-wrap items-end justify-between gap-4', className)}>
 	<div class="flex min-w-0 flex-1 flex-col gap-2">
 		{#if back}
-			<a href={back.href} class="text-xs text-muted-foreground hover:text-foreground">
+			<a href={path(back.href)} class="text-xs text-muted-foreground hover:text-foreground">
 				← {back.label}
 			</a>
 		{/if}

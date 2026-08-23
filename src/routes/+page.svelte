@@ -4,7 +4,8 @@
 	import CourseMap from '$lib/components/shell/CourseMap.svelte';
 	import ToolFigure from '$lib/components/shell/ToolFigure.svelte';
 	import { progress } from '$lib/curriculum/progress.svelte';
-	import { ALL_LESSONS, TOTAL_MINUTES, lessonPath } from '$lib/curriculum/registry';
+	import { ALL_LESSONS, TOTAL_MINUTES } from '$lib/curriculum/registry';
+	import { lessonHref, path } from '$lib/nav';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
@@ -70,7 +71,7 @@
 			</p>
 		</div>
 		<div class="flex shrink-0 flex-col items-start gap-2 sm:items-end">
-			<Button href={lessonPath(nextLesson)} size="xl">
+			<Button href={lessonHref(nextLesson)} size="xl">
 				{overall > 0 ? 'Continue' : 'Start the course'}
 				<HugeiconsIcon icon={ArrowRight01Icon} size={16} />
 			</Button>
@@ -90,7 +91,10 @@
 			<div class="flex items-baseline justify-between">
 				<h2 class="text-xl font-semibold tracking-tight">Your rig</h2>
 				{#if midiAccess.status === 'granted'}
-					<a href="/lab/patchbay" class="text-sm text-muted-foreground hover:text-foreground">
+					<a
+						href={path('/lab/patchbay')}
+						class="text-sm text-muted-foreground hover:text-foreground"
+					>
 						Route it →
 					</a>
 				{/if}
@@ -132,7 +136,9 @@
 	<section class="flex flex-col gap-5">
 		<div class="flex items-baseline justify-between">
 			<h2 class="text-xl font-semibold tracking-tight">The Lab</h2>
-			<a href="/lab" class="text-sm text-muted-foreground hover:text-foreground">Open the lab →</a>
+			<a href={path('/lab')} class="text-sm text-muted-foreground hover:text-foreground"
+				>Open the lab →</a
+			>
 		</div>
 		<p class="measure -mt-3 text-sm text-muted-foreground">
 			The tools the lessons are built on, standing alone. These are the parts you keep using after
@@ -141,7 +147,7 @@
 		<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 			{#each tools as tool (tool.href)}
 				<a
-					href={tool.href}
+					href={path(tool.href)}
 					class="group flex flex-col gap-3 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
 					<span class="panel-sunken block rounded-md px-3.5 py-3">
@@ -157,10 +163,10 @@
 	</section>
 
 	<footer class="flex flex-wrap gap-x-6 gap-y-2 border-t pt-6 text-xs text-muted-foreground">
-		<a href="/reference" class="flex items-center gap-1.5 hover:text-foreground">
+		<a href={path('/reference')} class="flex items-center gap-1.5 hover:text-foreground">
 			<HugeiconsIcon icon={LibraryIcon} size={13} /> Reference tables
 		</a>
-		<a href="/lab" class="flex items-center gap-1.5 hover:text-foreground">
+		<a href={path('/lab')} class="flex items-center gap-1.5 hover:text-foreground">
 			<HugeiconsIcon icon={FlaskConicalIcon} size={13} /> Lab tools
 		</a>
 		<span>Web MIDI needs Chrome, Edge or Firefox — Safari has none.</span>

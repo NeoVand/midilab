@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { path } from '$lib/nav';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
 
@@ -27,10 +28,10 @@
 			{/if}
 		</p>
 		<div class="mt-2 flex flex-wrap justify-center gap-2">
-			<Button href="/">Home</Button>
-			<Button variant="outline" href="/learn">The course</Button>
-			<Button variant="outline" href="/lab">The Lab</Button>
-			<Button variant="outline" href="/reference">Reference</Button>
+			<Button href={path('/')}>Home</Button>
+			<Button variant="outline" href={path('/learn')}>The course</Button>
+			<Button variant="outline" href={path('/lab')}>The Lab</Button>
+			<Button variant="outline" href={path('/reference')}>Reference</Button>
 		</div>
 	</div>
 </div>

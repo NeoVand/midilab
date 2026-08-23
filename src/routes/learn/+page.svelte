@@ -1,11 +1,6 @@
 <script lang="ts">
-	import {
-		CURRICULUM,
-		ALL_LESSONS,
-		TOTAL_MINUTES,
-		ACT_ICON,
-		lessonPath
-	} from '$lib/curriculum/registry';
+	import { lessonHref } from '$lib/nav';
+	import { CURRICULUM, ALL_LESSONS, TOTAL_MINUTES, ACT_ICON } from '$lib/curriculum/registry';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { Tick02Icon, PlugSocketIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
@@ -62,7 +57,7 @@
 						></div>
 					</div>
 				</div>
-				<Button href={lessonPath(nextLesson)} size="lg">
+				<Button href={lessonHref(nextLesson)} size="lg">
 					{doneLessons > 0 ? 'Continue' : 'Begin'}
 					<HugeiconsIcon icon={ArrowRight01Icon} size={15} />
 				</Button>
@@ -122,7 +117,7 @@
 					{@const isNext = lesson.id === nextLesson.id}
 					<li>
 						<a
-							href={lessonPath(lesson)}
+							href={lessonHref(lesson)}
 							class={cn(
 								'relative grid grid-cols-[1.75rem_1fr_auto] items-baseline gap-x-4 px-4 py-3 transition-colors hover:bg-accent/50',
 								i > 0 && 'border-t'

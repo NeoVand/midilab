@@ -11,7 +11,8 @@
 	import { engine } from '$lib/midi/engine.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { transport } from '$lib/midi/clock.svelte';
-	import { CURRICULUM, ALL_LESSONS, lessonPath } from '$lib/curriculum/registry';
+	import { CURRICULUM, ALL_LESSONS } from '$lib/curriculum/registry';
+	import { lessonHref, path } from '$lib/nav';
 	import { load, save } from '$lib/stores/persist';
 
 	interface Props {
@@ -34,7 +35,7 @@
 		id,
 		label,
 		keywords,
-		run: () => goto(href)
+		run: () => goto(path(href))
 	});
 
 	const destinations: Cmd[] = [
@@ -140,7 +141,7 @@
 		id: `lesson-${l.id}`,
 		label: `${l.number}. ${l.title}`,
 		keywords: terms(`${l.blurb} ${l.objectives.join(' ')}`),
-		run: () => goto(lessonPath(l))
+		run: () => goto(lessonHref(l))
 	}));
 
 	const all = $derived([...destinations, ...actions, ...lessons]);

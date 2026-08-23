@@ -14,6 +14,7 @@
 	 * shows up immediately rather than shipping as a broken link.
 	 */
 	import { lessonById } from '$lib/curriculum/registry';
+	import { lessonHref } from '$lib/nav';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -29,7 +30,7 @@
 
 {#if meta}
 	<a
-		href="/learn/{to}"
+		href={lessonHref(to)}
 		class={cn(
 			'underline decoration-foreground/25 decoration-1 underline-offset-[3px] transition-colors hover:decoration-foreground',
 			className

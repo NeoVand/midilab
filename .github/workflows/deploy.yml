@@ -1,0 +1,94 @@
+# Build the site and publish it to GitHub Pages.
+#
+# Two things about this app shape the workflow, and both are handled here
+# rather than in its config, because both are facts about this host rather
+# than about the site:
+#
+#   - A project site is served from /<repo>/, not from the root of a domain,
+#     so the build needs a base path. SvelteKit does not rewrite hand-written
+#     links, so `$lib/nav` puts the prefix on and a unit test keeps anyone
+#     from quietly writing one that skips it.
+#   - It is a single-page application. Nothing is prerendered, so the only
+#     HTML in the build is one shell, and Pages has no rewrite rules to point
+#     deep links at it — see the fallback step.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # So a deploy can be re-run from the Actions tab without an empty commit.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it half-published, and
+# queue at most one behind it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install the browser the tests drive
+        run: npx playwright install --with-deps chromium
+
+      - name: Types, lint and formatting
+        run: |
+          npm run check
+          npm run lint
+
+      - name: Tests
+        # Before the build below, because the end-to-end run builds and
+        # previews the site itself and would otherwise leave `build/` holding
+        # a copy without the base path.
+        run: |
+          npm run test:unit -- --run
+          npm run test:e2e
+
+      - name: Build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}
+        run: npm run build
+
+      - name: Add the SPA fallback
+        # Pages has no rewrite rules: a request for /midilab/learn/envelope is
+        # a request for a file that does not exist, and Pages answers those
+        # with the project's 404.html. Making that the app shell is what lets
+        # a deep link — or a refresh on one — boot the router rather than show
+        # an error page. It is served with a 404 status, which is untidy and
+        # is also how every SPA on Pages works.
+        run: cp build/index.html build/404.html
+
+      - uses: actions/configure-pages@v5
+        with:
+          # Turn Pages on and point it at Actions the first time this runs,
+          # so the repository needs no clicking through Settings.
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

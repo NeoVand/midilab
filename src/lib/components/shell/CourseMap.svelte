@@ -10,7 +10,8 @@
 	 */
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
-	import { CURRICULUM, ACT_ICON, lessonPath, type LessonMeta } from '$lib/curriculum/registry';
+	import { CURRICULUM, ACT_ICON, type LessonMeta } from '$lib/curriculum/registry';
+	import { lessonHref, path } from '$lib/nav';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { cn } from '$lib/utils';
 
@@ -37,7 +38,7 @@
 			<div class="flex min-w-0 items-baseline gap-2.5">
 				<span class="label shrink-0">Act {ROMAN[a]}</span>
 				<a
-					href="/learn#{act.id}"
+					href="{path('/learn')}#{act.id}"
 					class="truncate leading-snug font-medium hover:underline hover:underline-offset-4"
 				>
 					{act.title}
@@ -57,7 +58,7 @@
 				{#each act.lessons as l (l.id)}
 					{@const isDone = progress.isLessonComplete(l.id)}
 					<a
-						href={lessonPath(l)}
+						href={lessonHref(l)}
 						aria-label="Lesson {l.number}, {l.title}"
 						onmouseenter={() => (peek = l)}
 						onmouseleave={() => (peek = null)}
@@ -91,7 +92,7 @@
 </div>
 
 <a
-	href="/learn"
+	href={path('/learn')}
 	class="mt-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
 >
 	Every lesson, with what each one covers
