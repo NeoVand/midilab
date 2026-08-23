@@ -89,7 +89,7 @@
 		25rem gutter; stacked, the three bytes sit in one row the way they sit on
 		the wire, and pressing a key reads down the page rather than across it.
 	-->
-	<section class="overflow-hidden rounded-xl border bg-card">
+	<section class="overflow-hidden rounded-lg border bg-card">
 		<div class="flex items-baseline justify-between border-b px-5 py-3">
 			<h2 class="text-sm font-medium">Press a key</h2>
 			<p class="tnum text-xs text-muted-foreground">
