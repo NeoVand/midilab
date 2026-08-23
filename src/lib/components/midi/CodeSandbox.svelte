@@ -181,7 +181,12 @@
 		</div>
 	{/if}
 
-	<div class="panel-sunken relative overflow-hidden rounded-lg border">
+	<!-- The textarea's own text is transparent — the colours you see are the
+	     highlighted <pre> underneath — so its focus has to be shown by the frame,
+	     or tabbing into the editor looks like tabbing into nothing. -->
+	<div
+		class="panel-sunken relative overflow-hidden rounded-lg border transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/30"
+	>
 		<pre
 			aria-hidden="true"
 			class="pointer-events-none absolute inset-0 overflow-hidden p-3 font-mono text-sm leading-[1.55] break-words whitespace-pre-wrap">{@html highlight(
