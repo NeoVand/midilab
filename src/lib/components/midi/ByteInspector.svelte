@@ -115,10 +115,12 @@
 		{#each bytes as byte, i (i)}
 			{@const bits = binary(byte)}
 			{@const isStatus = byte >= 0x80}
-			<div
-				class="min-w-[8.5rem] flex-1 rounded-lg border bg-card p-3"
-				class:border-[var(--fam)]={i === 0}
-			>
+			<!--
+				No coloured outline on the status byte. The card is headed "Status
+				byte", its top bit is already drawn in the family colour, and a
+				third marker saying the same thing is chrome, not information.
+			-->
+			<div class="min-w-[8.5rem] flex-1 rounded-lg border bg-card p-3">
 				<div class="label mb-1 flex items-baseline justify-between">
 					<span>{roles[i]?.title ?? `Byte ${i}`}</span>
 					<span class="tnum">{i}</span>
@@ -193,12 +195,13 @@
 
 	{#if !compact}
 		<!--
-			Two lines of room whether the sentence needs one or two. "Start playing
-			C3 (note 60) on channel 1 at velocity 96" wraps; the Note Off that
-			follows it a moment later does not, and the whole panel — and the page
-			under it — jumped twenty-five pixels every time you let go of a key.
+			This is a status line, not prose, so it does not take the 52-character
+			measure the rest of the app reads at — and at full width the sentences
+			that alternate fastest ("Start playing C3…" and the Note Off right
+			behind it) both fit on one line, which is what stops the panel jumping.
+			Reserving a second line instead just left a hole under every short one.
 		-->
-		<p class="prose-body min-h-[2lh]">
+		<p class="text-base leading-relaxed">
 			<span
 				class="mr-2 inline-block size-2 translate-y-[-1px] rounded-full align-middle"
 				style="background: var(--fam)"

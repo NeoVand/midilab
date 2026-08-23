@@ -48,10 +48,30 @@ class Settings {
 		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 	}
 
+	/**
+	 * Flip the theme in one frame.
+	 *
+	 * Well over a hundred elements on a busy page carry `transition-colors`,
+	 * which is right when a single button changes under the cursor and wrong
+	 * when every colour on the page changes at once: the whole screen
+	 * cross-fades for the length of the transition and the switch reads as
+	 * slow and smeary. So transitions are turned off for the flip and turned
+	 * back on the frame after, which is what makes it feel instant.
+	 */
 	applyTheme(): void {
 		if (!browser) return;
-		document.documentElement.classList.toggle('dark', this.resolvedTheme === 'dark');
-		document.documentElement.style.colorScheme = this.resolvedTheme;
+		const root = document.documentElement;
+		const freeze = document.createElement('style');
+		freeze.textContent = '*,*::before,*::after{transition:none!important;animation:none!important}';
+		document.head.appendChild(freeze);
+
+		root.style.colorScheme = this.resolvedTheme;
+		root.classList.toggle('dark', this.resolvedTheme === 'dark');
+
+		// Read something layout-dependent so the browser commits the new colours
+		// while transitions are still suppressed.
+		void root.offsetHeight;
+		requestAnimationFrame(() => freeze.remove());
 	}
 
 	applyMotion(): void {

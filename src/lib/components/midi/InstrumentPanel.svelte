@@ -18,11 +18,11 @@
 	import Keyboard from './Keyboard.svelte';
 	import ByteInspector from './ByteInspector.svelte';
 	import Scope from './Scope.svelte';
+	import NowPlaying from './NowPlaying.svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { bus } from '$lib/midi/bus';
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
-	import { FAMILY_PRESETS } from '$lib/audio/presets';
 	import { GM_FAMILIES } from '$lib/midi/constants';
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { cn } from '$lib/utils';
@@ -53,7 +53,6 @@
 		})
 	);
 
-	const preset = $derived(FAMILY_PRESETS[family]);
 	/** Set by the scope: is anything actually coming out, right now. */
 	let sounding = $state(false);
 
@@ -68,38 +67,6 @@
 		return null;
 	});
 
-	/*
-	 * The amplitude envelope of the selected voice, drawn to scale — nearly.
-	 * Real stage times span three orders of magnitude (a 2 ms piano attack
-	 * beside a 4 s pad release), so the time axis is square-root compressed:
-	 * fast stages stay visible, slow ones still read as unmistakably slower.
-	 */
-	const ENV_W = 200;
-	const ENV_H = 44;
-	const env = $derived.by(() => {
-		const top = 4;
-		const bot = ENV_H - 6;
-		const a = Math.sqrt(preset.attack);
-		const d = Math.sqrt(preset.decay);
-		const r = Math.sqrt(preset.release);
-		const hold = 0.5;
-		const total = a + d + hold + r || 1;
-		const x1 = (a / total) * ENV_W;
-		const x2 = x1 + (d / total) * ENV_W;
-		const x3 = x2 + (hold / total) * ENV_W;
-		const ys = bot - preset.sustain * (bot - top);
-		const line = `M 0 ${bot} L ${x1} ${top} L ${x2} ${ys} L ${x3} ${ys} L ${ENV_W} ${bot}`;
-		return { line, fill: `${line} L 0 ${bot} Z`, x1, x2, x3, bot };
-	});
-
-	/** A shape name a beginner can hear, not an oscillator enum. */
-	const OSC_LABEL: Record<string, string> = {
-		sine: 'sine',
-		square: 'square',
-		sawtooth: 'saw',
-		triangle: 'triangle'
-	};
-
 	/**
 	 * The readout before anything has been played. Same three cards as the real
 	 * thing, so the panel does not resize the moment a note arrives.
@@ -112,9 +79,6 @@
 		{ title: 'Note number', note: '0–127, middle C is 60' },
 		{ title: 'Velocity', note: 'How hard it was struck' }
 	];
-
-	const hz = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)} kHz` : `${Math.round(v)} Hz`);
-	const ms = (s: number) => (s >= 1 ? `${s.toFixed(1)} s` : `${Math.round(s * 1000)} ms`);
 </script>
 
 <!--
@@ -147,69 +111,24 @@
 		</div>
 	</div>
 
-	<!-- ── screen: scope and patch on the left, voice bank on the right ──── -->
-	<div class="grid lg:grid-cols-[1fr_21rem]">
-		<div class="panel-sunken graph-paper flex flex-col">
+	<!-- ── screen: what you played, what it sounds like, what voice ─────── -->
+	<div class="panel-sunken grid border-b lg:grid-cols-[13rem_1fr_20rem]">
+		<!-- Notation first: it is the thing you can read back to someone else. -->
+		<div class="flex flex-col border-b px-3 pt-2.5 pb-3 lg:border-r lg:border-b-0">
+			<span class="label mb-1.5">Notation</span>
+			<NowPlaying />
+		</div>
+
+		<div class="flex flex-col border-b lg:border-r lg:border-b-0">
 			<div class="flex items-baseline justify-between px-3 pt-2.5 pb-1">
 				<span class="label">Output</span>
 				<span class="label" class:text-ok={sounding}>{sounding ? 'sounding' : 'silent'}</span>
 			</div>
-			<Scope
-				bare
-				height={108}
-				idleShape={preset.osc1}
-				bind:sounding
-				ariaLabel="Live output waveform and spectrum"
-			/>
-			<!-- The patch sheet: what the chosen voice actually is. -->
-			<div class="flex flex-1 items-center gap-5 border-t px-4 py-3">
-				<svg
-					viewBox="0 0 {ENV_W} {ENV_H}"
-					class="h-11 w-[200px] shrink-0"
-					role="img"
-					aria-label="Amplitude envelope: attack {preset.attack}s, decay {preset.decay}s, sustain {Math.round(
-						preset.sustain * 100
-					)}%, release {preset.release}s"
-				>
-					<path d={env.fill} class="fill-foreground/8" />
-					<path
-						d={env.line}
-						fill="none"
-						class="stroke-foreground"
-						stroke-width="1.5"
-						stroke-linejoin="round"
-					/>
-					{#each [env.x1, env.x2, env.x3] as x (x)}
-						<line
-							x1={x}
-							y1="0"
-							x2={x}
-							y2={env.bot}
-							class="stroke-border"
-							stroke-width="1"
-							stroke-dasharray="2 3"
-						/>
-					{/each}
-				</svg>
-				<dl class="grid flex-1 grid-cols-[auto_1fr_auto_1fr] gap-x-3 gap-y-1.5 text-2xs">
-					<dt class="label">shape</dt>
-					<dd class="text-foreground">
-						{OSC_LABEL[preset.osc1] ?? preset.osc1}{preset.osc2Level > 0.05
-							? ` + ${OSC_LABEL[preset.osc2] ?? preset.osc2}`
-							: ''}
-					</dd>
-					<dt class="label">attack</dt>
-					<dd class="tnum text-foreground">{ms(preset.attack)}</dd>
-					<dt class="label">filter</dt>
-					<dd class="tnum text-foreground">{hz(preset.cutoff)}</dd>
-					<dt class="label">release</dt>
-					<dd class="tnum text-foreground">{ms(preset.release)}</dd>
-				</dl>
-			</div>
+			<Scope bare class="flex-1 pb-1" bind:sounding />
 		</div>
 
 		<!-- Voice bank. Two columns of eight, the way a patch list sits on a screen. -->
-		<div class="panel-sunken flex flex-col border-t lg:border-t-0 lg:border-l">
+		<div class="flex flex-col">
 			<div class="flex items-baseline justify-between px-3 pt-2.5 pb-1">
 				<span class="label">Voice</span>
 				<span class="tnum text-2xs text-muted-foreground">
@@ -239,7 +158,7 @@
 	</div>
 
 	<!-- ── keybed ───────────────────────────────────────────────────────── -->
-	<div class="border-t px-4 py-4">
+	<div class="px-4 py-4">
 		<Keyboard low={48} octaves={3} height={150} labels="c" />
 	</div>
 
@@ -257,12 +176,7 @@
 			<div class="flex flex-col gap-4">
 				<div class="flex flex-wrap gap-2.5">
 					{#each GHOST as card, i (card.title)}
-						<div
-							class={cn(
-								'min-w-[8.5rem] flex-1 rounded-lg border border-dashed p-3',
-								i === 0 && 'border-msg-note/40'
-							)}
-						>
+						<div class="min-w-[8.5rem] flex-1 rounded-lg border border-dashed p-3">
 							<div class="label mb-1 flex items-baseline justify-between">
 								<span>{card.title}</span>
 								<span class="tnum">{i}</span>
@@ -276,11 +190,20 @@
 							</div>
 							<div class="flex gap-[3px]" aria-hidden="true">
 								{#each BITS as b (b)}
+									<!--
+										An empty cell has no text to make it visible, so it cannot
+										borrow `bg-muted` from the real card — on a light card that
+										leaves one green square floating in nothing.
+									-->
 									<span
-										class="h-6 w-[15px] rounded-xs"
-										class:bg-msg-note={i === 0 && b === 0}
-										class:bg-muted-foreground={i !== 0 && b === 0}
-										class:bg-muted={b !== 0}
+										class={cn(
+											'h-6 w-[15px] rounded-xs',
+											b !== 0
+												? 'bg-foreground/10'
+												: i === 0
+													? 'bg-msg-note/70'
+													: 'bg-muted-foreground/45'
+										)}
 									></span>
 								{/each}
 							</div>
@@ -288,7 +211,7 @@
 						</div>
 					{/each}
 				</div>
-				<p class="prose-body min-h-[2lh] text-muted-foreground">
+				<p class="text-base leading-relaxed text-muted-foreground">
 					Play a key. This reads the message back to you in hex, in bits, and in English.
 				</p>
 			</div>

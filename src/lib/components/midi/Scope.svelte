@@ -1,236 +1,194 @@
 <script lang="ts">
 	/**
-	 * Master-bus waveform and spectrum, straight off the analyser node.
+	 * The spectrum of whatever this page is making, one bar per semitone.
 	 *
-	 * Two things here are worth knowing:
+	 * This was a hand-rolled canvas analyser and it was wrong: the frequency
+	 * axis was a made-up power curve rather than a real logarithmic scale, so
+	 * the bars did not sit where the frequencies actually are. It is
+	 * audioMotion-analyzer now, which does the octave-band maths properly and
+	 * is a far better piece of engineering than anything worth writing here.
 	 *
-	 * A canvas cannot read CSS custom properties. `ctx.strokeStyle =
-	 * 'var(--foreground)'` is not an error — the assignment is simply ignored
-	 * and the property keeps whatever it had, which is black. So every colour is
-	 * resolved off the element's computed style and re-resolved when the theme
-	 * changes.
-	 *
-	 * And the trace is triggered, the way a real scope is: the draw starts at
-	 * the first rising zero crossing rather than at sample zero. Without that,
-	 * a steady tone slides sideways every frame and the instrument looks like it
-	 * is guessing. With it, a held note stands still.
+	 * The one choice that is ours: 1/12th-octave bands, which puts exactly one
+	 * bar on every semitone. Play a C and the C bar lights, then the C an
+	 * octave up, then the G above that — the harmonic series, on the same axis
+	 * as the note numbers this whole app is about.
 	 */
 	import { onMount } from 'svelte';
+	import AudioMotionAnalyzer from 'audiomotion-analyzer';
 	import { audio } from '$lib/audio/engine';
+	import { noteName, noteToFrequency } from '$lib/midi/notes';
+	import { settings } from '$lib/stores/settings.svelte';
 	import { cn } from '$lib/utils';
 
 	interface Props {
 		height?: number;
-		mode?: 'wave' | 'spectrum' | 'both';
-		/** Names the panel. Without it the scope is an unexplained empty rectangle. */
+		/** Names the panel. Without it the analyser is an unexplained rectangle. */
 		label?: string;
-		/**
-		 * What the canvas is, for a screen reader. A canvas has no accessible
-		 * name of its own, so without this the trace is an anonymous blank.
-		 */
-		ariaLabel?: string;
-		/** Draw only the trace — for a scope set into a larger front panel. */
+		/** Draw only the bars — for an analyser set into a larger front panel. */
 		bare?: boolean;
+		/** Draw the octave axis under the bars. */
+		scale?: boolean;
 		/**
-		 * With nothing sounding, draw this oscillator shape as a faint reference
-		 * trace. A scope showing the shape the current voice *will* make is both
-		 * honest and useful; an empty rectangle is neither.
-		 */
-		idleShape?: OscillatorType;
-		/**
-		 * Reads back whether the bus is actually carrying signal — so a panel
-		 * around this can label its own screen without duplicating the test.
+		 * Reads back whether the bus is actually carrying signal, so a panel
+		 * around this can label its own screen without repeating the test.
 		 */
 		sounding?: boolean;
 		class?: string;
 	}
 	let {
-		height = 96,
-		mode = 'both',
+		height = 108,
 		label,
-		ariaLabel = 'Output waveform',
 		bare = false,
-		idleShape,
+		scale = true,
 		sounding = $bindable(false),
 		class: className
 	}: Props = $props();
 
-	/** Enough cycles to name the shape at a glance, few enough to read it. */
-	const IDLE_CYCLES = 3;
+	/** The range the bars are drawn over; the axis below reads from the same. */
+	const MIN_HZ = 32;
+	const MAX_HZ = 16000;
 
-	/** One period of each oscillator, phase in turns. */
-	function shapeAt(shape: OscillatorType, phase: number): number {
-		const t = phase - Math.floor(phase);
-		switch (shape) {
-			case 'square':
-				return t < 0.5 ? 1 : -1;
-			case 'sawtooth':
-				return 2 * t - 1;
-			case 'triangle':
-				return t < 0.5 ? 4 * t - 1 : 3 - 4 * t;
-			default:
-				return Math.sin(t * Math.PI * 2);
+	/**
+	 * One tick per octave C, named the way the rest of the app names notes —
+	 * so a bar lighting under "C3" is the same C3 the keyboard and the byte
+	 * readout are talking about.
+	 */
+	const OCTAVES = $derived.by(() => {
+		void settings.octaveConvention;
+		const out: { label: string; left: number }[] = [];
+		const span = Math.log2(MAX_HZ / MIN_HZ);
+		for (let note = 24; note <= 108; note += 12) {
+			const hz = noteToFrequency(note);
+			if (hz < MIN_HZ || hz > MAX_HZ) continue;
+			out.push({
+				label: noteName(note, { convention: settings.octaveConvention }),
+				left: (Math.log2(hz / MIN_HZ) / span) * 100
+			});
 		}
-	}
+		return out;
+	});
 
-	let canvas = $state<HTMLCanvasElement | null>(null);
-	/** The audio graph only exists after the first gesture that wakes it. */
-	let live = $state(false);
+	let host = $state<HTMLDivElement | null>(null);
 
 	onMount(() => {
+		// The graph is built here rather than waited for: suspended and silent,
+		// but present, so the analyser has something to attach to and the panel
+		// shows its resting floor instead of an empty rectangle.
+		audio.prime();
+		let analyzer: AudioMotionAnalyzer | null = null;
 		let frame = 0;
-		const wave = new Float32Array(2048);
-		const spectrum = new Uint8Array(1024);
+		let themeWatch: MutationObserver | null = null;
 
-		let ink = '#000';
-		let rule = '#888';
-		let bars = '#888';
-		let sweepInk = '#888';
-		const readTheme = () => {
-			if (!canvas) return;
-			const cs = getComputedStyle(canvas);
-			ink = cs.getPropertyValue('--foreground').trim() || cs.color;
-			rule = cs.getPropertyValue('--grid-line-strong').trim() || ink;
-			// Not a family colour. Blue is Control Change everywhere else in this
-			// app, and a spectrum is not a control change.
-			bars = `color-mix(in oklch, ${ink} 15%, transparent)`;
-			sweepInk = `color-mix(in oklch, ${ink} 38%, transparent)`;
+		/**
+		 * audioMotion needs real colours, and CSS custom properties are not
+		 * real colours until something computes them — so they are read off the
+		 * element and read again whenever the theme flips.
+		 */
+		const paint = (a: AudioMotionAnalyzer) => {
+			if (!host) return;
+			const cs = getComputedStyle(host);
+			const ink = cs.getPropertyValue('--foreground').trim() || cs.color;
+			const dim = cs.getPropertyValue('--muted-foreground').trim() || ink;
+			a.registerGradient('lab', {
+				bgColor: 'transparent',
+				colorStops: [
+					{ pos: 0, color: `color-mix(in oklch, ${ink} 92%, transparent)` },
+					{ pos: 0.55, color: `color-mix(in oklch, ${ink} 55%, transparent)` },
+					{ pos: 1, color: `color-mix(in oklch, ${dim} 30%, transparent)` }
+				]
+			});
+			a.gradient = 'lab';
 		};
-		readTheme();
-		// The theme lives as a class and a data attribute on <html>; both flip
-		// every colour under it, and neither fires an event.
-		const themeWatch = new MutationObserver(readTheme);
-		themeWatch.observe(document.documentElement, {
-			attributes: true,
-			attributeFilter: ['class', 'style', 'data-theme']
-		});
 
-		const draw = () => {
-			frame = requestAnimationFrame(draw);
-			const ctx = canvas?.getContext('2d');
-			if (!ctx || !canvas) return;
-			const dpr = window.devicePixelRatio || 1;
-			const w = canvas.clientWidth;
-			const h = canvas.clientHeight;
-			if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
-				canvas.width = w * dpr;
-				canvas.height = h * dpr;
-			}
-			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-			ctx.clearRect(0, 0, w, h);
-			const mid = Math.round(h / 2) + 0.5;
+		const build = () => {
+			const node = audio.analyser;
+			if (!node || !host || analyzer) return;
+			analyzer = new AudioMotionAnalyzer(host, {
+				source: node,
+				// The master bus already reaches the speakers; this is a tap.
+				connectSpeakers: false,
+				// One band per semitone. Everything else here follows from that.
+				mode: 2,
+				frequencyScale: 'log',
+				minFreq: MIN_HZ,
+				maxFreq: MAX_HZ,
+				ansiBands: false,
+				// audioMotion's own axis is drawn on a hardcoded black bar with
+				// light text, which is a black stripe across a light panel. The
+				// axis below is ours, in the app's colours and in its octave
+				// naming — the same C3 the rest of the app means.
+				showScaleX: false,
+				showScaleY: false,
+				showBgColor: false,
+				overlay: true,
+				showPeaks: true,
+				peakFadeTime: 900,
+				peakHoldTime: 400,
+				smoothing: 0.6,
+				fftSize: 8192,
+				colorMode: 'gradient',
+				roundBars: false,
+				alphaBars: false,
+				channelLayout: 'single'
+			});
+			paint(analyzer);
+			themeWatch = new MutationObserver(() => analyzer && paint(analyzer));
+			themeWatch.observe(document.documentElement, {
+				attributes: true,
+				attributeFilter: ['class', 'style', 'data-theme']
+			});
+		};
 
-			// A scope at rest still shows its zero line, and a real one sweeps it.
-			// A blank rectangle reads as broken; a swept flat line reads as a
-			// switched-on instrument with nothing plugged into it, which is what
-			// this is.
-			const hasAnalyser = !!audio.analyser;
-			let rms = 0;
-			if (hasAnalyser) {
-				audio.waveform(wave);
-				for (let i = 0; i < wave.length; i++) rms += wave[i] * wave[i];
-				rms = Math.sqrt(rms / wave.length);
-			}
-			// A hair above the noise floor of a silent bus, well below anything
-			// audible.
-			const signal = rms > 0.0015;
-			if (live !== signal) live = signal;
-			if (sounding !== signal) sounding = signal;
-			if (!signal) {
-				ctx.strokeStyle = rule;
-				ctx.lineWidth = 1;
-				ctx.beginPath();
-				ctx.moveTo(0, mid);
-				ctx.lineTo(w, mid);
-				ctx.stroke();
-
-				if (idleShape) {
-					ctx.strokeStyle = sweepInk;
-					ctx.lineWidth = 1.25;
-					ctx.lineJoin = 'round';
-					ctx.beginPath();
-					const amp = (h / 2) * 0.3;
-					for (let px = 0; px <= w; px++) {
-						const phase = (px / w) * IDLE_CYCLES;
-						const y = mid - shapeAt(idleShape, phase) * amp;
-						if (px === 0) ctx.moveTo(px, y);
-						else ctx.lineTo(px, y);
-					}
-					ctx.stroke();
-				}
+		/*
+		 * The audio graph does not exist until the first gesture that wakes it,
+		 * and nothing announces when it does — so watch for it, and read the
+		 * level off the same node while we are here.
+		 */
+		const tick = () => {
+			frame = requestAnimationFrame(tick);
+			if (!analyzer) {
+				build();
 				return;
 			}
-
-			if (mode !== 'wave') {
-				audio.spectrum(spectrum);
-				const count = Math.min(96, spectrum.length);
-				const bw = w / count;
-				ctx.fillStyle = bars;
-				for (let i = 0; i < count; i++) {
-					const v = spectrum[Math.floor((i / count) ** 1.7 * spectrum.length)] / 255;
-					ctx.fillRect(i * bw, h - v * h, Math.max(1, bw - 1), v * h);
-				}
-			}
-
-			if (mode !== 'spectrum') {
-				// Trigger: start at the first rising zero crossing so a steady tone
-				// holds still instead of scrolling. Half the buffer is reserved for
-				// the search, half for the draw.
-				const span = wave.length >> 1;
-				let start = 0;
-				for (let i = 1; i < span; i++) {
-					if (wave[i - 1] <= 0 && wave[i] > 0) {
-						start = i;
-						break;
-					}
-				}
-
-				ctx.beginPath();
-				// Audio is not a MIDI message family, so it does not get a family
-				// colour. A bright trace on the sunken graph paper is what a scope
-				// looks like anyway.
-				ctx.strokeStyle = ink;
-				ctx.lineWidth = 1.5;
-				ctx.lineJoin = 'round';
-				for (let i = 0; i < span; i++) {
-					const x = (i / span) * w;
-					const y = h / 2 - wave[start + i] * (h / 2) * 0.9;
-					if (i === 0) ctx.moveTo(x, y);
-					else ctx.lineTo(x, y);
-				}
-				ctx.stroke();
-			}
+			// A hair above the noise floor of a silent bus, far below audible.
+			const level = analyzer.getEnergy();
+			const on = level > 0.008;
+			if (on !== sounding) sounding = on;
 		};
-		frame = requestAnimationFrame(draw);
+		frame = requestAnimationFrame(tick);
+
 		return () => {
 			cancelAnimationFrame(frame);
-			themeWatch.disconnect();
+			themeWatch?.disconnect();
+			analyzer?.destroy();
 		};
 	});
 </script>
 
-<div class={cn(!bare && 'overflow-hidden rounded-lg border bg-card', className)}>
+<div class={cn('flex flex-col', !bare && 'overflow-hidden rounded-lg border bg-card', className)}>
 	{#if label}
 		<div class="flex items-baseline justify-between border-b px-3 py-1.5">
 			<span class="label">{label}</span>
-			<span class="label" class:text-ok={live}>{live ? 'live' : 'idle'}</span>
+			<span class="label" class:text-ok={sounding}>{sounding ? 'sounding' : 'silent'}</span>
 		</div>
 	{/if}
-	<div class={cn('relative', !bare && 'panel-sunken graph-paper')}>
-		<!--
-			Fallback content, not an aria-label: a canvas is an interactive element
-			as far as ARIA is concerned, and its accessible description is what is
-			written between the tags.
-		-->
-		<canvas bind:this={canvas} class="block w-full" style="height: {height}px">
-			{ariaLabel}
-		</canvas>
-		{#if !live}
-			<p class="pointer-events-none absolute bottom-1.5 left-3 text-2xs text-muted-foreground">
-				{idleShape
-					? `Silent — the ${idleShape === 'sawtooth' ? 'saw' : idleShape} this voice starts from`
-					: 'Silent — the audio wakes on the first note you play'}
-			</p>
-		{/if}
-	</div>
+	<div
+		bind:this={host}
+		class={cn('relative min-h-0 w-full flex-1', !bare && 'panel-sunken')}
+		style={bare ? undefined : `height: ${height}px`}
+		role="img"
+		aria-label="Live spectrum analyser, one bar per semitone"
+	></div>
+	{#if scale}
+		<div class="relative h-4 shrink-0 select-none" aria-hidden="true">
+			{#each OCTAVES as tick (tick.label)}
+				<span
+					class="tnum absolute top-0 -translate-x-1/2 text-2xs text-muted-foreground"
+					style="left: {tick.left}%"
+				>
+					{tick.label}
+				</span>
+			{/each}
+		</div>
+	{/if}
 </div>

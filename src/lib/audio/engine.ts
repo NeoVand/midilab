@@ -60,6 +60,23 @@ export class AudioEngine {
 		return this.#noiseBuffer;
 	}
 
+	/**
+	 * Build the graph without starting it.
+	 *
+	 * Rule 1 above says the context cannot *start* without a gesture — but it
+	 * can be *constructed* before one, and it comes up suspended and silent.
+	 * The analyser has to exist for a meter or an analyser display to have
+	 * anything to attach to, and a spectrum panel that is an empty rectangle
+	 * until you happen to press a key looks broken rather than quiet.
+	 *
+	 * `ready` still means running, so nothing that schedules sound changes.
+	 */
+	prime(): AudioContext | null {
+		if (!browser) return null;
+		if (!this.#ctx) this.#build();
+		return this.#ctx;
+	}
+
 	/** Idempotent. Safe to call from any input handler. */
 	async resume(): Promise<AudioContext | null> {
 		if (!browser) return null;
