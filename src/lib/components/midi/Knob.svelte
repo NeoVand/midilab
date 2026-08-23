@@ -80,18 +80,29 @@
 		(e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
 	}
 
+	/**
+	 * Only while focused. On the web the wheel is how you move down the page,
+	 * and a knob that eats it is a knob that silently retunes itself every time
+	 * you scroll past. Click it first and the gesture is yours.
+	 */
 	function onWheel(e: WheelEvent) {
-		if (disabled) return;
+		if (disabled || document.activeElement !== e.currentTarget) return;
 		e.preventDefault();
-		set(value + (e.deltaY < 0 ? 1 : -1) * (e.shiftKey ? 1 : Math.max(1, (max - min) / 64)));
+		set(value + (e.deltaY < 0 ? 1 : -1) * (e.shiftKey ? 1 : coarse));
 	}
 
+	const coarse = $derived(Math.max(1, (max - min) / 64));
+
 	function onKeyDown(e: KeyboardEvent) {
-		const step = e.shiftKey ? 1 : Math.max(1, (max - min) / 64);
+		if (disabled) return;
+		const step = e.shiftKey ? 1 : coarse;
 		if (e.key === 'ArrowUp' || e.key === 'ArrowRight') set(value + step);
 		else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') set(value - step);
+		else if (e.key === 'PageUp') set(value + coarse * 8);
+		else if (e.key === 'PageDown') set(value - coarse * 8);
 		else if (e.key === 'Home') set(min);
 		else if (e.key === 'End') set(max);
+		else if ((e.key === 'Enter' || e.key === ' ') && dflt !== undefined) set(dflt);
 		else return;
 		e.preventDefault();
 	}
@@ -124,6 +135,12 @@
 		aria-valuenow={value}
 		aria-valuemin={min}
 		aria-valuemax={max}
+		aria-valuetext={format ? display : undefined}
+		aria-orientation="vertical"
+		aria-disabled={disabled || undefined}
+		title={dflt !== undefined
+			? 'Drag to change · Shift for fine · double-click to reset'
+			: 'Drag to change · Shift for fine'}
 		class={cn(
 			'relative cursor-ns-resize touch-none select-none',
 			disabled && 'cursor-not-allowed opacity-50'

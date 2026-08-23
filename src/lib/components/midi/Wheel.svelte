@@ -117,6 +117,7 @@
 		aria-valuenow={value}
 		aria-valuemin={min}
 		aria-valuemax={max}
+		aria-orientation="vertical"
 		class="panel-sunken relative w-9 cursor-ns-resize touch-none overflow-hidden rounded-lg border select-none"
 		style="height: {height}px"
 		onpointerdown={(e) => {

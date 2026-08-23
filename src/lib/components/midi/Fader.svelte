@@ -43,6 +43,18 @@
 		const t = horizontal ? (e.clientX - r.left) / r.width : 1 - (e.clientY - r.top) / r.height;
 		set(min + Math.max(0, Math.min(1, t)) * (max - min));
 	}
+
+	function onKeyDown(e: KeyboardEvent) {
+		const step = e.shiftKey ? 1 : 4;
+		if (e.key === 'ArrowUp' || e.key === 'ArrowRight') set(value + step);
+		else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') set(value - step);
+		else if (e.key === 'PageUp') set(value + 16);
+		else if (e.key === 'PageDown') set(value - 16);
+		else if (e.key === 'Home') set(min);
+		else if (e.key === 'End') set(max);
+		else return;
+		e.preventDefault();
+	}
 </script>
 
 <div class={cn('flex flex-col items-center gap-1.5', className)}>
@@ -54,6 +66,7 @@
 		aria-valuenow={value}
 		aria-valuemin={min}
 		aria-valuemax={max}
+		aria-orientation={horizontal ? 'horizontal' : 'vertical'}
 		class={cn(
 			'panel-sunken relative touch-none rounded-md border select-none',
 			horizontal ? 'h-4 w-full cursor-ew-resize' : 'w-4 cursor-ns-resize'
@@ -67,13 +80,7 @@
 		onpointermove={(e) => dragging && fromPointer(e)}
 		onpointerup={() => (dragging = false)}
 		onpointercancel={() => (dragging = false)}
-		onkeydown={(e) => {
-			const step = e.shiftKey ? 1 : 4;
-			if (e.key === 'ArrowUp' || e.key === 'ArrowRight') set(value + step);
-			else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') set(value - step);
-			else return;
-			e.preventDefault();
-		}}
+		onkeydown={onKeyDown}
 	>
 		<div
 			class="absolute rounded-xs transition-none"
