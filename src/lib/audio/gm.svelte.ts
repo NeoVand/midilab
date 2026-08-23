@@ -12,17 +12,22 @@
  * asked for, and while it is on its way the built-in synth covers — silence
  * while a sample loads would be worse than an approximation.
  *
- * What sampling costs: a sampled note cannot bend or be filtered after it has
- * started. Pitch bend is applied at note-on and does not glide, and CC 74 does
- * nothing here. That is a real limitation of every sample player, and it is
- * why the built-in synth stays: the lessons on continuous expression need an
- * engine that can actually be modulated while a note is sounding.
+ * What sampling costs: a sampled note cannot be changed after it has started.
+ * Bend, brightness and release are all applied at note-on and stay put; a
+ * sample already playing cannot be re-tuned, re-filtered or re-shaped. That is
+ * a real limitation of every sample player, and it is why the built-in synth
+ * stays — the lessons on continuous expression need an engine that can be
+ * modulated while a note is sounding.
+ *
+ * Which controllers survive that is not arbitrary, and `sampledCannot` below
+ * is the honest list. It is worth reading: it is the same list a General MIDI
+ * Level 2 sample module of 1999 would have given you.
  */
 
 import { Soundfont, getSoundfontNames } from 'smplr';
 import type { Smplr, StopFn } from 'smplr';
 import { audio } from './engine';
-import { synth } from './synth';
+import { synth, timeScale } from './synth';
 import { load as loadSetting, save } from '$lib/stores/persist';
 import { GM_PROGRAMS } from '$lib/midi/constants';
 import type { MidiMessage } from '$lib/midi/messages';
@@ -61,6 +66,51 @@ const PACK: (string | null)[] = (() => {
 		return available.has(mapped) ? mapped : null;
 	});
 })();
+
+/**
+ * smplr's own defaults, so that a controller sitting at 64 asks for exactly
+ * what the instrument would have done unasked.
+ */
+const RELEASE_BASE = 0.3;
+const OPEN_HZ = 20000;
+
+/** CC 72, as seconds of amplitude release on the sample. */
+export const sampledRelease = (v: number) => RELEASE_BASE * timeScale(v);
+
+/**
+ * CC 74, as a lowpass cutoff.
+ *
+ * Only downwards. A recording is exactly as bright as it was recorded, so
+ * there is nothing above 64 for this to add — which is itself the difference
+ * between filtering a synthesiser and filtering a sample, and is why the knob
+ * feels one-sided here and two-sided on the synth.
+ */
+export const sampledCutoff = (v: number) =>
+	Math.max(120, Math.min(OPEN_HZ, OPEN_HZ * Math.pow(2, (v - 64) / 10)));
+
+/**
+ * Why a controller has nowhere to land on a recorded instrument.
+ *
+ * Not a list of things left unimplemented — a list of things a sample player
+ * cannot do, which is a different and much more interesting list. Every entry
+ * here is a real property of playing back a recording rather than generating
+ * a sound, and every one of them was true of the hardware modules this format
+ * was written for.
+ */
+const SAMPLED_CANNOT: Record<number, string> = {
+	1: 'Vibrato has to happen while the note sounds, and a sample cannot be modulated once it has started.',
+	7: 'One recording is shared by every channel playing that program, so a per-channel level has nowhere to go.',
+	10: 'Pan is per channel, and one recording is shared by every channel playing that program.',
+	71: 'Resonance belongs to a filter the recording does not have.',
+	73: 'The attack is part of the recording. A sampler cannot give you a swell nobody recorded.',
+	75: 'So is the decay. The sample simply plays.',
+	91: 'The reverb here belongs to the synth; the sampled path goes straight to the master.'
+};
+
+/** The reason a controller does nothing on the sampled engine, or null. */
+export function sampledCannot(cc: number): string | null {
+	return SAMPLED_CANNOT[cc] ?? null;
+}
 
 export type LoadState = 'idle' | 'loading' | 'ready' | 'failed';
 
@@ -137,8 +187,10 @@ class GeneralMidi {
 				this.noteOff(msg.channel, msg.note, audioTime);
 				return;
 			case 'controlChange':
-				// Sustain is the one controller a sample player implements
-				// properly; the rest are the synth's business.
+				// The synth owns the channel state either way; `noteOn` reads
+				// the release and the cutoff back out of it when it starts a
+				// sample. Sustain is the one controller that has to reach the
+				// player itself, because it holds notes that already exist.
 				synth.handle(msg, audioTime);
 				if (msg.controller === 64) {
 					for (const player of this.#players.values()) player.setCC(64, msg.value);
@@ -168,17 +220,20 @@ class GeneralMidi {
 			synth.noteOn(channel, note, velocity, audioTime);
 			return;
 		}
-		const bend = synth.channels[channel].bend;
-		const range = synth.channels[channel].bendRange;
-		// Bend is applied once, at the start. A sample already playing cannot
-		// be re-tuned, which is the honest limit of this engine.
-		const detune = ((bend - 8192) / 8192) * range * 100;
+		const state = synth.channels[channel];
+		// Everything here is applied once, at the start. A sample already
+		// playing cannot be re-tuned, re-filtered or re-shaped, which is the
+		// honest limit of this engine — and the reason CC 74 moves a held note
+		// on the synth and only the next note here.
+		const detune = ((state.bend - 8192) / 8192) * state.bendRange * 100;
 		const stop = player.start({
 			note,
 			velocity,
 			detune,
 			time: audioTime,
-			stopId: note
+			stopId: note,
+			ampRelease: sampledRelease(state.releaseTime),
+			lpfCutoffHz: sampledCutoff(state.cutoff)
 		});
 		this.#sounding.set(key(channel, note), stop);
 	}

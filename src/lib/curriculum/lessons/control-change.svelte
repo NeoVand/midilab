@@ -2,6 +2,7 @@
 	import LessonShell from '$lib/components/lesson/LessonShell.svelte';
 	import Section from '$lib/components/lesson/Section.svelte';
 	import Callout from '$lib/components/lesson/Callout.svelte';
+	import EngineToggle from '$lib/components/midi/EngineToggle.svelte';
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
@@ -99,6 +100,10 @@
 			Start a drone, then move the controls. Every knob turn is a real Control Change going to every
 			output enabled in the dock — including your hardware, if it is connected.
 		</p>
+		<EngineToggle
+			needs="synth"
+			because="This lesson is about changing a sound while it is already sounding, and a recording cannot be."
+		/>
 		<div class="flex flex-wrap items-center gap-3">
 			<Drone notes={[40, 52, 55, 59]} label="Hold a chord" />
 			<span class="text-xs text-muted-foreground">

@@ -208,13 +208,11 @@
 
 	<TryThis title="Reshape this instrument from the wire">
 		<p class="text-sm leading-relaxed">
-			These knobs send real Control Changes, and the built-in synth answers them. Pick a voice, turn
-			Release up, hold a chord and let go — the sound outlives your hands.
+			These knobs send real Control Changes, and the instrument answers whichever of them it can.
+			Pick a voice, turn Release up, hold a chord and let go — the sound outlives your hands. Then
+			change the receiver and turn the same knobs again.
 		</p>
-		<EngineToggle
-			needs="synth"
-			because="Sampled instruments are recordings. There is no envelope inside one to reach into, so these three will do nothing until you switch."
-		/>
+		<EngineToggle />
 		<div class="flex flex-wrap gap-1.5">
 			{#each VOICES as p (p)}
 				<button
@@ -244,6 +242,30 @@
 			</p>
 		</Callout>
 	</TryThis>
+
+	<Section title="Half of them land on a sampler, and it is always the same half">
+		<p class="prose-body">
+			Switch the receiver above to the sampled instruments and turn the knobs again. Release and
+			Brightness still work. Attack and Decay do nothing at all, and no amount of sending them
+			harder will change that: the attack of a recorded trumpet is a recording of a trumpet
+			starting, and there is no parameter inside it to turn.
+		</p>
+		<p class="prose-body">
+			This is not a shortcoming of this page. It is the shape of the whole era. The Sound
+			Controllers were written for synthesisers, and by the time General MIDI Level 2 arrived the
+			boxes people actually owned were sample players — which is why CC 73 has a reputation for
+			being ignored, and why nobody sequences with it. A message being defined, transmitted
+			correctly and received correctly does not oblige anything to happen.
+		</p>
+		<Callout variant="note" title="What a sample player can be told">
+			<p>
+				Release, because the tail is a fade the player applies. Brightness, because a filter can be
+				put after anything — though only downwards, since a recording is exactly as bright as it was
+				recorded. Sustain-pedal behaviour, because that is about when notes stop rather than what
+				they sound like. Everything else in the envelope was decided by whoever held the microphone.
+			</p>
+		</Callout>
+	</Section>
 
 	<Section title="What velocity is really doing">
 		<p class="prose-body">

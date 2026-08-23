@@ -105,6 +105,7 @@
 					default={0}
 					label="Program"
 					sub="{program} · {gmProgramName(program)}"
+					width={190}
 					colour="var(--msg-program)"
 				/>
 				<div class="flex-1"></div>

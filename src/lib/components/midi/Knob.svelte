@@ -17,10 +17,27 @@
 		/** Text under the value, e.g. "CC 74". */
 		sub?: string;
 		size?: number;
+		/**
+		 * Footprint of the whole cell, caption included.
+		 *
+		 * The caption is the widest part of a knob and it changes as you turn
+		 * it — "CC 74 · 64" becomes "CC 74 · 127" — so a cell sized to its
+		 * contents grows by a character mid-drag and shunts every knob to its
+		 * right along with it. Fixing the width costs nothing and stops the
+		 * row moving under the hand that is using it. Widen it at the call
+		 * site when the caption is genuinely long.
+		 */
+		width?: number;
 		colour?: string;
 		/** Show the raw integer instead of a formatted unit. */
 		format?: (v: number) => string;
 		bipolar?: boolean;
+		/**
+		 * Replaces the drag hint in the tooltip. For when there is something
+		 * more useful to say about this control than how to turn it — such as
+		 * that the thing at the other end has nowhere to put its value.
+		 */
+		hint?: string;
 		disabled?: boolean;
 		onChange?: (v: number) => void;
 		class?: string;
@@ -34,9 +51,11 @@
 		label,
 		sub,
 		size = 52,
+		width,
 		colour = 'var(--msg-cc)',
 		format,
 		bipolar = false,
+		hint,
 		disabled = false,
 		onChange,
 		class: className
@@ -123,11 +142,12 @@
 		return `M ${a.x} ${a.y} A ${radius} ${radius} 0 ${large} ${sweep} ${b.x} ${b.y}`;
 	}
 
+	const cell = $derived(width ?? Math.max(size, 76));
 	const fillFrom = $derived(bipolar ? START + ARC / 2 : START);
 	const display = $derived(format ? format(value) : String(value));
 </script>
 
-<div class={cn('flex flex-col items-center gap-1', className)}>
+<div class={cn('flex shrink-0 flex-col items-center gap-1', className)} style="width: {cell}px">
 	<div
 		role="slider"
 		tabindex={disabled ? -1 : 0}
@@ -138,9 +158,10 @@
 		aria-valuetext={format ? display : undefined}
 		aria-orientation="vertical"
 		aria-disabled={disabled || undefined}
-		title={dflt !== undefined
-			? 'Drag to change · Shift for fine · double-click to reset'
-			: 'Drag to change · Shift for fine'}
+		title={hint ??
+			(dflt !== undefined
+				? 'Drag to change · Shift for fine · double-click to reset'
+				: 'Drag to change · Shift for fine')}
 		class={cn(
 			'relative cursor-ns-resize touch-none select-none',
 			disabled && 'cursor-not-allowed opacity-50'
@@ -191,11 +212,16 @@
 		{/if}
 	</div>
 	{#if label || sub}
-		<div class="flex flex-col items-center leading-tight">
+		<div class="flex w-full min-w-0 flex-col items-center leading-tight">
 			{#if label}
-				<span class="text-xs font-medium">{label}</span>
+				<span class="w-full truncate text-center text-xs font-medium" title={label}>{label}</span>
 			{/if}
-			<span class="tnum font-mono text-2xs text-muted-foreground">{sub ?? display}</span>
+			<span
+				class="tnum w-full truncate text-center font-mono text-2xs text-muted-foreground"
+				title={sub ?? display}
+			>
+				{sub ?? display}
+			</span>
 		</div>
 	{/if}
 </div>
