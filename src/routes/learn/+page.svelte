@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { device } from '$lib/stores/device.svelte';
 	import { lessonHref } from '$lib/nav';
 	import { CURRICULUM, ALL_LESSONS, TOTAL_MINUTES, ACT_ICON } from '$lib/curriculum/registry';
 	import { progress } from '$lib/curriculum/progress.svelte';
@@ -95,13 +96,23 @@
 					/>
 				</span>
 				<div class="min-w-0 flex-1">
-					<div class="flex items-baseline gap-2.5">
+					<div class="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
 						<span class="label text-muted-foreground">Act {act.number}</span>
 						<h2 class="text-lg leading-tight font-semibold tracking-tight">{act.title}</h2>
+						<!--
+							On a phone the count rides with the title instead of holding a
+							column of its own: at this width a third column squeezed the
+							title into two lines to save a number eight characters long.
+						-->
+						<span class="tnum ml-auto shrink-0 font-mono text-xs text-muted-foreground sm:hidden">
+							{done}/{act.lessons.length} · {actMinutes(act.lessons)} min
+						</span>
 					</div>
 					<p class="mt-0.5 text-sm text-muted-foreground">{act.subtitle}</p>
 				</div>
-				<span class="tnum shrink-0 self-center font-mono text-xs text-muted-foreground">
+				<span
+					class="tnum hidden shrink-0 self-center font-mono text-xs text-muted-foreground sm:inline"
+				>
 					{done}/{act.lessons.length} · {actMinutes(act.lessons)} min
 				</span>
 			</div>
@@ -119,7 +130,7 @@
 						<a
 							href={lessonHref(lesson)}
 							class={cn(
-								'relative grid grid-cols-[1.75rem_1fr_auto] items-baseline gap-x-4 px-4 py-3 transition-colors hover:bg-accent/50',
+								'relative grid grid-cols-[1.75rem_1fr_auto] items-baseline gap-x-3 px-3 py-2.5 transition-colors hover:bg-accent/50 sm:gap-x-4 sm:px-4 sm:py-3',
 								i > 0 && 'border-t'
 							)}
 						>
@@ -140,9 +151,17 @@
 							</span>
 							<span class="min-w-0">
 								<span class="block font-medium">{lesson.title}</span>
-								<span class="mt-0.5 block text-sm leading-relaxed text-muted-foreground">
-									{lesson.blurb}
-								</span>
+								<!--
+									Three lines of blurb, thirty-one times, is seven screens of
+									scrolling to find a lesson you already know the name of. A
+									table of contents on a phone is titles; the sentence is on
+									the other side of the tap.
+								-->
+								{#if !device.narrow}
+									<span class="mt-0.5 block text-sm leading-relaxed text-muted-foreground">
+										{lesson.blurb}
+									</span>
+								{/if}
 							</span>
 							<span
 								class="tnum flex shrink-0 items-center gap-2 self-start pt-0.5 text-xs text-muted-foreground"

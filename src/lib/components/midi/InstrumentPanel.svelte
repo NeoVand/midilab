@@ -110,11 +110,16 @@
 -->
 <section class="overflow-hidden rounded-xl border bg-card shadow-sm">
 	<!-- ── faceplate ─────────────────────────────────────────────────────── -->
-	<div class="flex items-center gap-3 border-b px-4 py-2.5">
-		<span class="label text-foreground">MIDI Lab</span>
-		<span class="text-border select-none" aria-hidden="true">/</span>
-		<span class="tnum text-2xs text-muted-foreground">
-			transmitting on channel {engine.channel + 1}
+	<div class="flex items-center gap-2 border-b px-3 py-2 sm:gap-3 sm:px-4 sm:py-2.5">
+		<span class="label shrink-0 text-foreground">MIDI Lab</span>
+		<span class="shrink-0 text-border select-none" aria-hidden="true">/</span>
+		<!--
+			The sentence is for a faceplate with room for one. On a phone it wraps
+			to two lines and pushes the held count off the edge, so it says the
+			same thing the way a panel silkscreen would.
+		-->
+		<span class="tnum shrink-0 text-2xs text-muted-foreground">
+			{device.narrow ? `ch ${engine.channel + 1}` : `transmitting on channel ${engine.channel + 1}`}
 		</span>
 		<div class="ml-auto flex items-center gap-2">
 			<!-- Voice LEDs. Eight, because past eight you stop counting anyway. -->
@@ -127,7 +132,7 @@
 					></span>
 				{/each}
 			</div>
-			<span class="tnum w-16 text-right text-2xs text-muted-foreground">
+			<span class="tnum w-12 shrink-0 text-right text-2xs text-muted-foreground sm:w-16">
 				{noteState.heldCount} held
 			</span>
 		</div>
@@ -149,9 +154,9 @@
 	{#snippet notationPane()}
 		<!-- Notation first: it is the thing you can read back to someone else. -->
 		<div
-			class="flex min-h-0 flex-col overflow-hidden border-b px-3 pt-2.5 pb-3 lg:border-r lg:border-b-0"
+			class="flex min-h-0 flex-col overflow-hidden border-b px-3 pt-2 pb-2 sm:pt-2.5 sm:pb-3 lg:border-r lg:border-b-0"
 		>
-			<span class="label mb-1.5">Notation</span>
+			<span class="label mb-1.5" class:hidden={device.narrow}>Notation</span>
 			<NowPlaying />
 		</div>
 	{/snippet}
@@ -264,7 +269,7 @@
 				{/each}
 			</div>
 			<!-- One height for all three, so switching tabs never moves the keys. -->
-			<div class="grid h-[11.5rem] [&>*]:min-w-0">
+			<div class="grid h-[12.25rem] [&>*]:min-w-0">
 				{#if pane === 'notation'}
 					{@render notationPane()}
 				{:else if pane === 'output'}
@@ -283,12 +288,12 @@
 	{/if}
 
 	<!-- ── keybed ───────────────────────────────────────────────────────── -->
-	<div class="px-4 py-4">
+	<div class="px-2 py-2.5 sm:px-4 sm:py-4">
 		<Keyboard low={48} octaves={3} height={150} labels="c" />
 	</div>
 
 	<!-- ── readout ──────────────────────────────────────────────────────── -->
-	<div class="panel-sunken min-h-44 border-t p-5">
+	<div class="panel-sunken border-t p-3 sm:min-h-44 sm:p-5">
 		<ByteInspector bytes={latest?.bytes ?? null} message={latest?.message} />
 	</div>
 </section>

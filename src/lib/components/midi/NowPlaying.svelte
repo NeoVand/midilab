@@ -15,6 +15,7 @@
 	import { chordName, spellNotes, spellingName } from '$lib/midi/harmony';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { cn } from '$lib/utils';
+	import { device } from '$lib/stores/device.svelte';
 
 	interface Props {
 		flats?: boolean;
@@ -52,7 +53,15 @@
 	 * Two lines of intervals covers a five-note chord, which is as many as ten
 	 * fingers put on a three-octave keyboard in practice.
 	 */
-	const INTERVAL_LINES = 2;
+	/*
+	 * Two lines of intervals on a desk, one on a phone.
+	 *
+	 * The slot is fixed either way — that is the whole point of this column,
+	 * that nothing moves as you play — but reserving a second line a phone
+	 * rarely fills costs twenty pixels out of a pane that has none to give,
+	 * and a six-note chord that wraps is the rarer case.
+	 */
+	const INTERVAL_LINES = $derived(device.narrow ? 1 : 2);
 </script>
 
 <!--
@@ -72,7 +81,9 @@
 	<div class="flex h-9 shrink-0 flex-col justify-center gap-0.5">
 		{#if held.length === 0}
 			<span class="text-lg leading-none font-medium text-muted-foreground/35">—</span>
-			<span class="text-2xs text-muted-foreground">the chord you are holding</span>
+			<span class="text-2xs text-muted-foreground">
+				{device.narrow ? 'play something' : 'the chord you are holding'}
+			</span>
 		{:else if held.length === 1}
 			<span class="text-lg leading-none font-medium">{names[0]}</span>
 			<span class="tnum text-2xs text-muted-foreground">
@@ -118,7 +129,7 @@
 	-->
 	<p
 		class="tnum mt-auto shrink-0 overflow-hidden text-2xs leading-[1.4] text-muted-foreground"
-		style="height: 2.8em"
+		style="height: {device.narrow ? 1.5 : 2.8}em"
 	>
 		{#if held.length === 0}
 			<span class="label">note · number</span>
