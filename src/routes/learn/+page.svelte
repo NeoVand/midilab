@@ -1,17 +1,14 @@
 <script lang="ts">
-	import { CURRICULUM, ALL_LESSONS, TOTAL_MINUTES, lessonPath } from '$lib/curriculum/registry';
+	import {
+		CURRICULUM,
+		ALL_LESSONS,
+		TOTAL_MINUTES,
+		ACT_ICON,
+		lessonPath
+	} from '$lib/curriculum/registry';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import {
-		Tick02Icon,
-		PlugSocketIcon,
-		ArrowRight01Icon,
-		BinaryCodeIcon,
-		Message01Icon,
-		Clock01Icon,
-		AudioWaveformIcon,
-		SourceCodeIcon
-	} from '@hugeicons/core-free-icons';
+	import { Tick02Icon, PlugSocketIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 
@@ -29,21 +26,6 @@
 	function actMinutes(lessons: { minutes: number }[]) {
 		return lessons.reduce((t, l) => t + l.minutes, 0);
 	}
-
-	/**
-	 * One mark per act, chosen for what the act is about rather than for
-	 * decoration: bits, messages, time, the wire, expression, code. Six acts
-	 * that all looked identical made a table of contents you had to read
-	 * linearly; six marks make it something you can navigate by shape.
-	 */
-	const ACT_ICON: Record<string, typeof BinaryCodeIcon> = {
-		foundations: BinaryCodeIcon,
-		language: Message01Icon,
-		time: Clock01Icon,
-		physical: PlugSocketIcon,
-		expression: AudioWaveformIcon,
-		programming: SourceCodeIcon
-	};
 </script>
 
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-10 px-8 py-12">

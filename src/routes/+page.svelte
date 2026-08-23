@@ -4,7 +4,14 @@
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { progress } from '$lib/curriculum/progress.svelte';
-	import { CURRICULUM, ALL_LESSONS, TOTAL_MINUTES, lessonPath } from '$lib/curriculum/registry';
+	import {
+		CURRICULUM,
+		ALL_LESSONS,
+		TOTAL_MINUTES,
+		ACT_ICON,
+		lessonPath
+	} from '$lib/curriculum/registry';
+	import { cn } from '$lib/utils';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
@@ -141,8 +148,21 @@
 					href="/learn#{act.id}"
 					class="group flex flex-col gap-2 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
-					<div class="flex items-baseline gap-2">
-						<span class="font-mono text-xs text-muted-foreground">ACT {act.number}</span>
+					<div class="flex items-center gap-2.5">
+						<span
+							class="grid size-8 shrink-0 place-items-center rounded-lg border bg-surface-sunken transition-colors group-hover:border-foreground/25 group-hover:bg-accent"
+						>
+							<HugeiconsIcon
+								icon={ACT_ICON[act.id]}
+								size={16}
+								strokeWidth={1.6}
+								class={cn(
+									'transition-colors',
+									frac === 1 ? 'text-ok' : 'text-muted-foreground group-hover:text-foreground'
+								)}
+							/>
+						</span>
+						<span class="label text-muted-foreground">Act {act.number}</span>
 						<span class="ml-auto font-mono text-xs text-muted-foreground">
 							{act.lessons.length} lessons
 						</span>
@@ -151,7 +171,7 @@
 					<p class="text-sm leading-relaxed text-muted-foreground">{act.subtitle}</p>
 					<div class="mt-2 h-1 overflow-hidden rounded-full bg-muted">
 						<div
-							class="h-full rounded-full bg-msg-note transition-[width]"
+							class="h-full rounded-full bg-ok transition-[width]"
 							style="width: {frac * 100}%"
 						></div>
 					</div>
