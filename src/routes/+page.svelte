@@ -49,7 +49,7 @@
 	] as const;
 </script>
 
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-12 px-8 pt-8 pb-12">
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 pt-8 pb-12 sm:px-8">
 	<!--
 		The instrument leads. Its faceplate is the masthead — a page about an
 		instrument does not need a marketing banner above the instrument, and the

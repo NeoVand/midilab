@@ -91,6 +91,20 @@ The single most important screen, and the one furthest from working.
 - An honest word about Web MIDI on iOS, where there is none — everything except
   hardware still works, and the app should say so once rather than fail quietly.
 
+## Progress
+
+- [x] **Foundations** — `h-dvh`, `viewport-fit=cover`, safe-area utilities, the
+      `device` store, the bottom tab bar, the scrolling dock strip with panic and
+      the tray handle pinned, and the `PageHeader` collapse. Four Playwright
+      tests now run at 375×812 so none of it can rot unnoticed.
+- [x] **The instrument** — the keyboard narrows its window until keys are 34 px
+      instead of 10 and moves the octave to two buttons; the three screen
+      regions become tabs so the keys sit 322 px down the page instead of 1100;
+      the analyser gets a band width and an axis density the screen can show.
+- [ ] The Lab — monitor, programmer, then the rest
+- [ ] The course — widgets, checkpoints, tables
+- [ ] Polish — manifest, haptics, landscape
+
 ## Order of work
 
 1. **Foundations** — dvh, safe areas, the device store, the tab bar, the dock

@@ -4,7 +4,7 @@
 	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
 </script>
 
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-8 py-8">
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-8">
 	<PageHeader
 		title="Patchbay"
 		lead="Any input to any output, with channel remapping, transposition, velocity scaling, note-range splits and message filtering on the way. Routes are saved and keep working across the whole app."

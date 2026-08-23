@@ -55,7 +55,7 @@
 	}
 </script>
 
-<div class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-8 py-8">
+<div class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8 sm:px-8">
 	<PageHeader title="Settings" />
 
 	<section class="flex flex-col gap-4">

@@ -12,7 +12,7 @@
 	import { DangerIcon } from '@hugeicons/core-free-icons';
 </script>
 
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-8 py-8">
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-8">
 	<PageHeader
 		title="Diagnostics"
 		lead="Measure instead of guessing: round-trip latency, incoming clock stability, scheduler accuracy — and a decision tree for when nothing is arriving at all."

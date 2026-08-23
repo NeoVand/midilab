@@ -26,7 +26,7 @@
 </script>
 
 {#if !meta}
-	<div class="mx-auto max-w-2xl px-8 py-20 text-center">
+	<div class="mx-auto max-w-2xl px-4 py-20 text-center sm:px-8">
 		<h1 class="text-2xl font-semibold">No such lesson</h1>
 		<p class="mt-2 text-muted-foreground">
 			<a href={path('/learn')} class="underline">Back to the course</a>

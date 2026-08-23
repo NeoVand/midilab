@@ -17,6 +17,9 @@
 	import { capturePointer, cn } from '$lib/utils';
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { momentary } from '$lib/a11y/momentary';
+	import { device } from '$lib/stores/device.svelte';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 
 	interface Props {
 		/** Lowest note shown. Defaults to C two octaves below middle C. */
@@ -69,13 +72,42 @@
 	const MAX_SHIFT = 2;
 	const stripLow = $derived(Math.max(0, low - MAX_SHIFT * 12));
 	const stripHigh = $derived(Math.min(127, low + octaves * 12 + MAX_SHIFT * 12));
-	/** How far Z and X can go before the strip runs out of keys either side. */
+
+	/**
+	 * How many octaves are actually on screen, which is not the same question
+	 * as how many the caller asked for.
+	 *
+	 * `octaves` describes the instrument — the span you can reach without
+	 * moving. What fits in front of you is a matter of arithmetic: three
+	 * octaves across a phone is a white key 10 pixels wide, and a fingertip is
+	 * about nine millimetres, so a key you can hit is one you can see. The
+	 * window narrows until the keys are wide enough and the rest of the range
+	 * stays where it was, one octave button away.
+	 *
+	 * A piano key is a tall thin target rather than a square one, so it does
+	 * not need the full 44: the hard direction is horizontal, and 34 is what
+	 * a phone piano that people actually play uses.
+	 */
+	const MIN_WHITE = 34;
+	let bedWidth = $state(0);
+	const view = $derived.by(() => {
+		if (!device.coarse || bedWidth === 0) return octaves;
+		for (let o = octaves; o > 1; o--) if (bedWidth / (o * 7 + 1) >= MIN_WHITE) return o;
+		return 1;
+	});
+
+	/** How far the octave controls can go before the strip runs out either side. */
 	const shiftDown = $derived(Math.floor((low - stripLow) / 12));
-	const shiftUp = $derived(Math.floor((stripHigh - octaves * 12 - low) / 12));
+	const shiftUp = $derived(Math.floor((stripHigh - view * 12 - low) / 12));
 
 	let shift = $state(0);
+	// Narrowing the window can strand the view past the end of the strip.
+	$effect(() => {
+		if (shift > shiftUp) shift = shiftUp;
+		if (shift < -shiftDown) shift = -shiftDown;
+	});
 	const viewLow = $derived(low + shift * 12);
-	const high = $derived(viewLow + octaves * 12);
+	const high = $derived(viewLow + view * 12);
 
 	const whites = $derived.by(() => {
 		const out: number[] = [];
@@ -94,7 +126,7 @@
 	 */
 	const windowWhites = $derived.by(() => {
 		let n = 0;
-		for (let x = low; x <= low + octaves * 12; x++) if (!isBlackKey(x)) n++;
+		for (let x = low; x <= low + view * 12; x++) if (!isBlackKey(x)) n++;
 		return n;
 	});
 	/** The strip is this much wider than what you can see. */
@@ -200,7 +232,7 @@
 	);
 	/** Below this the keys are too short to print on without crowding them. */
 	const CAP_MIN_HEIGHT = 108;
-	const showCaps = $derived(typing && height >= CAP_MIN_HEIGHT);
+	const showCaps = $derived(typing && !device.coarse && height >= CAP_MIN_HEIGHT);
 
 	function capFor(note: number): string {
 		return showCaps ? (TYPE_CAP[note - (viewLow + 12)] ?? '') : '';
@@ -285,6 +317,7 @@
 <svelte:window onkeydown={onKeyDown} onkeyup={onKeyUp} onpointerup={onPointerUp} />
 
 <div
+	bind:clientWidth={bedWidth}
 	class={cn(
 		'panel-sunken relative w-full touch-none overflow-hidden rounded-lg border select-none',
 		className
@@ -436,7 +469,44 @@
 	</div>
 </div>
 
-{#if typing}
+<!--
+	Two ways of saying the same thing, to two different readers.
+	
+	At a desk the octave moves with Z and X and the caption says so. A finger
+	has no Z and no X, and cannot be told to swipe either — a swipe across a
+	keybed is a glissando, and the instrument has to believe you meant it. So
+	on a touch screen the shift becomes what it always is on hardware: two
+	buttons, either side of the range they move.
+-->
+{#if device.coarse}
+	<div class="mt-1.5 flex items-center gap-2">
+		<button
+			type="button"
+			onclick={() => (shift = Math.max(-shiftDown, shift - 1))}
+			disabled={shift <= -shiftDown}
+			use:momentary
+			class="grid size-11 shrink-0 place-items-center rounded-md border text-muted-foreground transition-colors active:bg-accent disabled:opacity-30"
+			aria-label="Down an octave"
+		>
+			<HugeiconsIcon icon={ArrowLeft01Icon} size={18} strokeWidth={2} />
+		</button>
+		<p class="tnum min-w-0 flex-1 text-center font-mono text-xs text-muted-foreground">
+			{noteName(viewLow, { convention: settings.octaveConvention })} – {noteName(high, {
+				convention: settings.octaveConvention
+			})}
+		</p>
+		<button
+			type="button"
+			onclick={() => (shift = Math.min(shiftUp, shift + 1))}
+			disabled={shift >= shiftUp}
+			use:momentary
+			class="grid size-11 shrink-0 place-items-center rounded-md border text-muted-foreground transition-colors active:bg-accent disabled:opacity-30"
+			aria-label="Up an octave"
+		>
+			<HugeiconsIcon icon={ArrowRight01Icon} size={18} strokeWidth={2} />
+		</button>
+	</div>
+{:else if typing}
 	<p class="mt-1.5 text-xs text-muted-foreground">
 		Play with <kbd class="rounded-sm bg-muted px-1 font-mono">A</kbd>–<kbd
 			class="rounded-sm bg-muted px-1 font-mono">'</kbd
