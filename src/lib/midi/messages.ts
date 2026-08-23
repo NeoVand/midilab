@@ -483,7 +483,7 @@ export function shortLabel(msg: MidiMessage, opts: DescribeOptions = {}): string
 		case 'polyAftertouch':
 			return `${noteName(msg.note, { convention: conv })} pressure ${msg.pressure}`;
 		case 'sysex':
-			return `SysEx · ${msg.data.length} bytes`;
+			return `SysEx · ${sysexHeadline(msg.data)}`;
 		case 'songPosition':
 			return `Song position ${msg.beats}`;
 		case 'songSelect':
@@ -636,15 +636,33 @@ function describeCc(cc: number, value: number, channel: number, showCh: boolean)
 	}
 }
 
+/**
+ * The one-line name for a SysEx block, for the monitor.
+ *
+ * A bare byte count next to six visible bytes on the same row is a small lie —
+ * `data` is what sits *between* F0 and F7, so it always reads two short. Name
+ * the message where it is nameable, and say "data bytes" where it is not.
+ */
+function sysexHeadline(data: number[]): string {
+	if (data.length === 0) return 'empty';
+	if (data[0] === 0x7e || data[0] === 0x7f) {
+		if (data[0] === 0x7e && data[2] === 0x06 && data[3] === 0x01) return 'Identity Request';
+		if (data[0] === 0x7e && data[2] === 0x06 && data[3] === 0x02)
+			return `Identity Reply · ${manufacturerName(data.slice(4))}`;
+		return `Universal, sub-ID 0x${hex(data[2] ?? 0)}`;
+	}
+	return `${manufacturerName(data)} · ${data.length} data bytes`;
+}
+
 function describeSysEx(data: number[]): string {
 	if (data.length === 0) return 'An empty System Exclusive message.';
 	if (data[0] === 0x7e || data[0] === 0x7f) {
 		const kind = data[0] === 0x7e ? 'Universal Non-Real Time' : 'Universal Real Time';
 		if (data[0] === 0x7e && data[2] === 0x06 && data[3] === 0x01)
-			return `${kind} Identity Request — "what are you?" Every compliant device answers with its manufacturer, family and firmware version. ${data.length} bytes.`;
+			return `${kind} Identity Request — "what are you?" Every compliant device answers with its manufacturer, family and firmware version.`;
 		if (data[0] === 0x7e && data[2] === 0x06 && data[3] === 0x02)
-			return `${kind} Identity Reply from ${manufacturerName(data.slice(4))}. ${data.length} bytes.`;
-		return `${kind} System Exclusive, sub-ID 0x${hex(data[2] ?? 0)}. ${data.length} bytes.`;
+			return `${kind} Identity Reply from ${manufacturerName(data.slice(4))}.`;
+		return `${kind} System Exclusive, sub-ID 0x${hex(data[2] ?? 0)} — ${data.length} bytes between F0 and F7.`;
 	}
-	return `System Exclusive addressed to ${manufacturerName(data)} — ${data.length} bytes of manufacturer-private data. Only that maker's devices know what it means.`;
+	return `System Exclusive addressed to ${manufacturerName(data)} — ${data.length} bytes between F0 and F7, all of them manufacturer-private. Only that maker's devices know what it means.`;
 }

@@ -7,9 +7,27 @@
 	import type { MidiEvent } from '$lib/midi/bus';
 	import { Button } from '$lib/components/ui/button';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { CloudDownloadIcon } from '@hugeicons/core-free-icons';
+	import { CloudDownloadIcon, Cancel01Icon } from '@hugeicons/core-free-icons';
 
-	let selected = $state<MidiEvent | null>(null);
+	/**
+	 * The inspector follows the stream until you pin a row.
+	 *
+	 * An empty 26rem panel headed "select a message" is a large piece of the
+	 * screen doing nothing while the interesting thing scrolls past next to it.
+	 * Following by default means the byte view is always showing the most recent
+	 * message; clicking a row pins it so it stops moving under you.
+	 */
+	let pinned = $state<MidiEvent | null>(null);
+
+	const latest = $derived.by(() => {
+		void monitor.version;
+		return monitor.filtered[0] ?? null;
+	});
+	const shown = $derived(pinned ?? latest);
+
+	function select(e: MidiEvent) {
+		pinned = pinned?.id === e.id ? null : e;
+	}
 
 	function exportTsv() {
 		const url = URL.createObjectURL(
@@ -26,7 +44,7 @@
 <div class="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col gap-5 px-8 py-6">
 	<PageHeader
 		title="Monitor"
-		lead="Every byte in and out, colour-coded by family. Select a row to take it apart."
+		lead="Every byte in and out, colour-coded by family. Select a row to hold it still."
 		back={{ href: '/lab', label: 'Lab' }}
 	>
 		{#snippet actions()}
@@ -46,21 +64,30 @@
 
 	<div class="grid min-h-0 flex-1 gap-4 lg:grid-cols-[1fr_26rem]">
 		<div class="min-h-0 overflow-hidden rounded-lg border">
-			<MidiMonitor
-				class="h-full"
-				onSelect={(e) => (selected = e)}
-				selectedId={selected?.id ?? null}
-			/>
+			<MidiMonitor class="h-full" onSelect={select} selectedId={pinned?.id ?? null} />
 		</div>
 		<div class="flex min-h-0 flex-col overflow-hidden rounded-lg border">
-			<p class="label border-b px-4 py-2.5">Inspector</p>
+			<div class="flex items-center justify-between gap-2 border-b px-4 py-1.5">
+				<p class="label">Inspector</p>
+				{#if pinned}
+					<button
+						class="flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-2xs text-msg-note transition-colors hover:bg-muted"
+						onclick={() => (pinned = null)}
+					>
+						Pinned <HugeiconsIcon icon={Cancel01Icon} size={10} strokeWidth={2.5} />
+					</button>
+				{:else if shown}
+					<span class="label text-muted-foreground/60">following</span>
+				{/if}
+			</div>
 			<div class="min-h-0 flex-1 scrollbar-thin overflow-y-auto p-4">
-				{#if selected}
-					<ByteInspector bytes={selected.bytes} message={selected.message} />
+				{#if shown}
+					<ByteInspector bytes={shown.bytes} message={shown.message} />
 				{:else}
 					<p class="measure text-sm text-muted-foreground">
-						Select a message to see it as hex, as bits, split into its nibbles, and translated into
-						English.
+						Nothing to take apart yet. As soon as a message arrives this panel shows it as hex, as
+						bits, split into its nibbles and translated into English — and clicking a row holds that
+						one still while the rest scrolls past.
 					</p>
 				{/if}
 			</div>
