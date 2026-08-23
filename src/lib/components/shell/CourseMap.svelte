@@ -25,12 +25,10 @@
 		{@const done = act.lessons.filter((l) => progress.isLessonComplete(l.id)).length}
 		{@const complete = done === act.lessons.length}
 		<div class="grid grid-cols-[auto_1fr] gap-x-3.5 px-4 py-3.5 sm:grid-cols-[auto_1fr_auto]">
-			<span
-				class="row-span-2 mt-0.5 grid size-9 shrink-0 place-items-center self-start rounded-lg border bg-surface-sunken"
-			>
+			<span class="row-span-2 mt-1 grid size-6 shrink-0 place-items-center self-start">
 				<HugeiconsIcon
 					icon={ACT_ICON[act.id]}
-					size={17}
+					size={18}
 					strokeWidth={1.6}
 					class={complete ? 'text-ok' : 'text-muted-foreground'}
 				/>

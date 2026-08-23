@@ -122,9 +122,7 @@
 					rather than the card's mark.
 				-->
 				<div class="flex items-center gap-3">
-					<span
-						class="grid size-9 shrink-0 place-items-center rounded-lg border bg-surface-sunken transition-colors group-hover:border-foreground/25 group-hover:bg-accent"
-					>
+					<span class="grid size-6 shrink-0 place-items-center transition-colors">
 						<HugeiconsIcon
 							icon={tool.icon}
 							size={18}

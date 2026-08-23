@@ -48,11 +48,21 @@
 	const isDark = $derived(settings.resolvedTheme === 'dark');
 </script>
 
+<!--
+	Narrow, and nothing in a box.
+	
+	A rail is a margin, not a panel: every pill, plate and outline in it is a
+	frame around something that was already legible, and they add up to a strip
+	that looks heavier than the page it is beside. So the width is what the
+	longest label needs and no more, and the only thing that marks the current
+	destination is that it is the one drawn at full strength — with a hairline
+	on the edge it opens onto, which is a join rather than a container.
+-->
 <nav
-	class="flex w-[4.25rem] shrink-0 flex-col items-center gap-0.5 border-r bg-sidebar py-3"
+	class="flex w-[3.25rem] shrink-0 flex-col items-center gap-1 border-r bg-sidebar py-3"
 	aria-label="Primary"
 >
-	<a href="/" class="mb-2 grid size-9 place-items-center" aria-label="MIDI Lab home">
+	<a href="/" class="mb-2.5 grid size-8 place-items-center" aria-label="MIDI Lab home">
 		<!-- The mark: a status byte's high bit, then seven data bits. -->
 		<svg viewBox="0 0 24 24" class="size-6" aria-hidden="true">
 			<rect x="1" y="4" width="4" height="16" rx="1.2" fill="var(--msg-note)" />
@@ -74,18 +84,16 @@
 							href={item.href}
 							aria-current={active ? 'page' : undefined}
 							class={cn(
-								'relative flex w-12 flex-col items-center gap-1 rounded-lg py-2 transition-colors',
-								active
-									? 'bg-sidebar-accent text-sidebar-accent-foreground'
-									: 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'
+								'relative flex w-full flex-col items-center gap-1 py-1.5 transition-colors',
+								active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
 							)}
 						>
 							{#if active}
-								<span
-									class="absolute top-1/2 -left-[9px] h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-foreground"
-								></span>
+								<!-- Flush with the border it sits on, so it reads as this item
+								     joining the page rather than as a badge stuck to it. -->
+								<span class="absolute inset-y-0 -right-px w-px bg-foreground"></span>
 							{/if}
-							<HugeiconsIcon icon={item.icon} size={20} strokeWidth={1.7} />
+							<HugeiconsIcon icon={item.icon} size={19} strokeWidth={active ? 2 : 1.6} />
 							<span class="text-2xs leading-none font-medium">{item.label}</span>
 						</a>
 					{/snippet}
@@ -97,7 +105,7 @@
 
 	<div class="flex-1"></div>
 
-	<div class="mb-1 h-px w-8 bg-sidebar-border"></div>
+	<div class="mb-1 h-px w-6 bg-sidebar-border"></div>
 
 	<Tooltip.Provider delayDuration={400}>
 		<Tooltip.Root>
@@ -106,7 +114,7 @@
 					<button
 						{...props}
 						onclick={onOpenPalette}
-						class="grid size-10 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
+						class="grid size-9 place-items-center text-muted-foreground transition-colors hover:text-foreground"
 						aria-label="Open command palette"
 					>
 						<HugeiconsIcon icon={CommandIcon} size={19} strokeWidth={1.7} />
@@ -124,7 +132,7 @@
 					<button
 						{...props}
 						onclick={() => settings.toggleTheme()}
-						class="grid size-10 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
+						class="grid size-9 place-items-center text-muted-foreground transition-colors hover:text-foreground"
 						aria-label={isDark ? 'Switch to the light theme' : 'Switch to the dark theme'}
 					>
 						<HugeiconsIcon icon={isDark ? Sun03Icon : Moon02Icon} size={19} strokeWidth={1.7} />
@@ -144,14 +152,21 @@
 						href="/settings"
 						aria-current={current === '/settings' ? 'page' : undefined}
 						class={cn(
-							'grid size-10 place-items-center rounded-lg transition-colors',
+							'relative grid size-9 place-items-center transition-colors',
 							current === '/settings'
-								? 'bg-sidebar-accent text-sidebar-accent-foreground'
-								: 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'
+								? 'text-foreground'
+								: 'text-muted-foreground hover:text-foreground'
 						)}
 						aria-label="Settings"
 					>
-						<HugeiconsIcon icon={Settings02Icon} size={19} strokeWidth={1.7} />
+						{#if current === '/settings'}
+							<span class="absolute inset-y-0 -right-[7px] w-px bg-foreground"></span>
+						{/if}
+						<HugeiconsIcon
+							icon={Settings02Icon}
+							size={18}
+							strokeWidth={current === '/settings' ? 2 : 1.6}
+						/>
 					</a>
 				{/snippet}
 			</Tooltip.Trigger>

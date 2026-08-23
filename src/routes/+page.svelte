@@ -144,7 +144,7 @@
 					href={tool.href}
 					class="group flex flex-col gap-3 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
-					<span class="panel-sunken block rounded-md border px-3.5 py-3">
+					<span class="panel-sunken block rounded-md px-3.5 py-3">
 						<ToolFigure tool={tool.figure} />
 					</span>
 					<span>
