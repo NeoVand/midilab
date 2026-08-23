@@ -479,16 +479,32 @@
 					onSelect={(e) => (selected = selected?.id === e.id ? null : e)}
 					selectedId={selected?.id ?? null}
 				/>
-				<div
-					class="panel-sunken hidden min-h-0 scrollbar-thin overflow-y-auto border-t border-l p-3 lg:block"
-				>
-					{#if shown}
-						<ByteInspector bytes={shown.bytes} message={shown.message} />
-					{:else}
-						<p class="p-2 text-xs text-muted-foreground">
-							Nothing on the wire yet. Whatever arrives next appears here, taken apart byte by byte.
-						</p>
-					{/if}
+				<!--
+					Built the same way as the inspector on the Monitor page, because it
+					is the same thing: a header strip, and an empty state centred with
+					a headline rather than a paragraph pinned to the top-left corner
+					beside a stream that centres its own. It also stops both columns
+					opening with the words "Nothing on the wire yet".
+				-->
+				<div class="panel-sunken hidden min-h-0 flex-col border-t border-l lg:flex">
+					<!-- 45px, matching the stream's toolbar beside it, so the two panes
+					     share one horizontal rule instead of two at different heights. -->
+					<div class="label flex h-[45px] shrink-0 items-center border-b px-3">Inspector</div>
+					<div class="flex min-h-0 flex-1 scrollbar-thin flex-col overflow-y-auto p-3">
+						{#if shown}
+							<ByteInspector bytes={shown.bytes} message={shown.message} />
+						{:else}
+							<div class="grid flex-1 place-items-center text-center">
+								<div class="measure">
+									<p class="text-sm text-foreground">Nothing to take apart yet.</p>
+									<p class="mt-1.5 text-xs text-muted-foreground">
+										Whatever arrives next appears here as hex, as bits, split into its nibbles and
+										translated into English.
+									</p>
+								</div>
+							</div>
+						{/if}
+					</div>
 				</div>
 			</Tabs.Content>
 

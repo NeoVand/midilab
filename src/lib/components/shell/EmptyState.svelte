@@ -26,7 +26,10 @@
 
 <div
 	class={cn(
-		'flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed px-6 py-10 text-center',
+		// h-full so it fills a pane that has height to give — otherwise it sits at
+		// the top of the tray with a couple of hundred pixels of nothing under it.
+		// In a content-sized container this resolves to auto and changes nothing.
+		'flex h-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed px-6 py-10 text-center',
 		className
 	)}
 >
