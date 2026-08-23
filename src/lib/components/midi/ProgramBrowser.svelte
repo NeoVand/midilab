@@ -1,6 +1,7 @@
 <script lang="ts">
 	/** All 128 General MIDI programs, grouped by family. Click to switch and hear. */
 	import { onDestroy } from 'svelte';
+	import { rovingGrid } from '$lib/a11y/roving';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { synth } from '$lib/audio/synth';
 	import { GM_FAMILIES, GM_PROGRAMS } from '$lib/midi/constants';
@@ -42,7 +43,7 @@
 				{family}
 				<span class="ml-1 font-mono text-muted-foreground">{f * 8}–{f * 8 + 7}</span>
 			</p>
-			<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+			<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4" use:rovingGrid>
 				{#each Array.from({ length: 8 }, (_, i) => f * 8 + i) as p (p)}
 					<button
 						class={cn(
