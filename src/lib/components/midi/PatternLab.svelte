@@ -7,7 +7,7 @@
 	 * timestamps — so alternation and Euclidean placement are exact rather than
 	 * approximated by a step grid.
 	 */
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount, untrack } from 'svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { transport, PPQ, audioToPerf } from '$lib/midi/clock.svelte';
 	import {
@@ -20,6 +20,7 @@
 		type Node
 	} from '$lib/patterns';
 	import { parseNoteName } from '$lib/midi/notes';
+	import { load, save } from '$lib/stores/persist';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import * as Select from '$lib/components/ui/select';
@@ -48,6 +49,8 @@
 	interface Props {
 		lanes?: Lane[];
 		beatsPerCycle?: number;
+		/** Remember these lanes under this key. Set by the Lab, not by lessons. */
+		persistKey?: string;
 		class?: string;
 	}
 
@@ -66,8 +69,19 @@
 			}
 		]),
 		beatsPerCycle = 4,
+		persistKey,
 		class: className
 	}: Props = $props();
+
+	const saved = untrack(() =>
+		persistKey ? load<Lane[] | null>(`patterns-${persistKey}`, null) : null
+	);
+	if (saved?.length) lanes = saved;
+
+	$effect(() => {
+		if (!persistKey) return;
+		save(`patterns-${persistKey}`, $state.snapshot(lanes));
+	});
 
 	let phase = $state(0);
 	let lastCycle = $state(0);

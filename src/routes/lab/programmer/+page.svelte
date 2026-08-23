@@ -24,7 +24,7 @@
 		</Tabs.List>
 
 		<Tabs.Content value="steps" class="flex flex-col gap-4">
-			<StepSequencer />
+			<StepSequencer persistKey="programmer" />
 			<section class="flex flex-col gap-2 rounded-lg border bg-card px-4 py-3">
 				<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
 					<p class="label">Channels</p>
@@ -38,7 +38,7 @@
 		</Tabs.Content>
 
 		<Tabs.Content value="patterns">
-			<PatternLab />
+			<PatternLab persistKey="programmer" />
 		</Tabs.Content>
 
 		<Tabs.Content value="files">

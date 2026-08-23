@@ -2,6 +2,7 @@
 	import PageHeader from '$lib/components/shell/PageHeader.svelte';
 	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { load, remove } from '$lib/stores/persist';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { ALL_LESSONS } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
@@ -15,6 +16,20 @@
 
 	const completed = $derived(ALL_LESSONS.filter((l) => progress.isLessonComplete(l.id)).length);
 	let confirmReset = $state(false);
+
+	/*
+	 * The Programmer remembers what you left in it, so this page — which claims
+	 * to list everything stored — has to say so, and has to be able to undo it.
+	 */
+	let patternsSaved = $state(
+		load<unknown>('seq-programmer', null) !== null ||
+			load<unknown>('patterns-programmer', null) !== null
+	);
+	function clearPatterns() {
+		remove('seq-programmer');
+		remove('patterns-programmer');
+		patternsSaved = false;
+	}
 </script>
 
 <div class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-8 py-8">
@@ -178,6 +193,17 @@
 					</p>
 				</div>
 				<Button variant="outline" size="sm" href="/lab/devices">Open Device Lab</Button>
+			</div>
+			<div class="flex flex-wrap items-center justify-between gap-3 border-t pt-3">
+				<div>
+					<p class="text-sm font-medium">Programmer patterns</p>
+					<p class="text-xs text-muted-foreground">
+						{patternsSaved ? 'The step pattern and lanes you left in the Lab' : 'Nothing saved yet'}
+					</p>
+				</div>
+				<Button variant="outline" size="sm" disabled={!patternsSaved} onclick={clearPatterns}>
+					Forget patterns
+				</Button>
 			</div>
 			<p class="border-t pt-3 text-xs leading-relaxed text-muted-foreground">
 				Everything is stored in this browser's local storage. Nothing is sent anywhere — this app

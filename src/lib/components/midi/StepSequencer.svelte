@@ -15,6 +15,7 @@
 	import { GM_DRUMS } from '$lib/midi/constants';
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { load, save } from '$lib/stores/persist';
 	import { writeMidiFile, type TrackEvent } from '$lib/midi/smf';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -45,6 +46,13 @@
 	interface Props {
 		steps?: number;
 		tracks?: SeqTrack[];
+		/**
+		 * Remember the pattern under this key. The Programmer sets it, because
+		 * ten minutes of programming should survive a trip to the Reference
+		 * tables; the lessons deliberately do not, because a lesson should open
+		 * on the pattern it is about.
+		 */
+		persistKey?: string;
 		class?: string;
 	}
 
@@ -74,14 +82,31 @@
 		}
 	];
 
-	let { steps = 16, tracks = $bindable(DEFAULT), class: className }: Props = $props();
+	/*
+	 * Cloned per instance. DEFAULT is a module-level array, so handing the same
+	 * one to every sequencer meant editing the pattern in the Programmer
+	 * silently rewrote the demo pattern in Lesson 26.
+	 */
+	let {
+		steps = 16,
+		tracks = $bindable(structuredClone(DEFAULT)),
+		persistKey,
+		class: className
+	}: Props = $props();
+
+	interface Saved {
+		tracks: SeqTrack[];
+		stepCount: number;
+	}
+	const saved = untrack(() => (persistKey ? load<Saved | null>(`seq-${persistKey}`, null) : null));
+	if (saved?.tracks?.length) tracks = saved.tracks;
 
 	/**
 	 * Pattern length is a control, not a constant. One bar is where you start;
 	 * two is where a drum part usually ends up. Shrinking never truncates the
 	 * arrays, so going 32 → 16 → 32 gives you your second bar back.
 	 */
-	let stepCount = $state(untrack(() => steps));
+	let stepCount = $state(saved?.stepCount ?? untrack(() => steps));
 	function setStepCount(n: number) {
 		stepCount = n;
 		tracks = tracks.map((t) => ({
@@ -89,6 +114,11 @@
 			steps: t.steps.length >= n ? t.steps : [...t.steps, ...Array(n - t.steps.length).fill(0)]
 		}));
 	}
+
+	$effect(() => {
+		if (!persistKey) return;
+		save(`seq-${persistKey}`, { tracks: $state.snapshot(tracks), stepCount });
+	});
 
 	let current = $state(-1);
 	let painting = $state<number | null>(null);
