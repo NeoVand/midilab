@@ -23,35 +23,49 @@
 	import { bus } from '$lib/midi/bus';
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
-	import { GM_FAMILIES } from '$lib/midi/constants';
+	import { GM_FAMILIES, GM_PROGRAMS } from '$lib/midi/constants';
+	import { gm } from '$lib/audio/gm.svelte';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { cn } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	/**
-	 * The synth here has one timbre per General MIDI family, not 128 — so the
-	 * bank offers the sixteen that actually sound different rather than 128
-	 * buttons of which seven in eight are a lie. Each one sends the first
-	 * program of its family, which is why the numbers climb in eights.
+	 * All 128 programs, in two moves: the sixteen families as a grid, and a
+	 * stepper for the eight variants inside whichever family you are in.
+	 * Putting 128 buttons on the panel would be a wall; hiding 112 of them
+	 * behind a family would be a lie about what General MIDI is. The numbers
+	 * climbing in eights is the thing worth noticing — a family *is* eight
+	 * programs.
 	 */
+	let program = $state(0);
+	const family = $derived(program >> 3);
 	const familyProgram = (i: number) => i * 8;
-	let family = $state(0);
 
-	function pick(i: number) {
-		family = i;
-		engine.programChange(familyProgram(i));
+	function pick(p: number) {
+		program = ((p % 128) + 128) % 128;
+		engine.programChange(program);
+		gm.load(program);
 	}
 
 	// Follow the wire: a Program Change arriving from a controller moves the
 	// bank, because the bank is a view of the instrument's state, not a widget
 	// that owns it.
-	onMount(() =>
-		bus.subscribe((e) => {
+	onMount(() => {
+		// Fetch the sound that is already selected, so the first key you press
+		// is the instrument the panel says it is rather than the synth covering
+		// while the samples arrive.
+		gm.load(program);
+		return bus.subscribe((e) => {
 			if (e.message.type === 'programChange' && e.message.channel === engine.channel) {
-				family = Math.floor((e.message.program & 0x7f) / 8);
+				program = e.message.program & 0x7f;
 			}
-		})
-	);
+		});
+	});
+
+	const loading = $derived(gm.enabled && gm.stateOf(program) === 'loading');
+	const substituted = $derived(gm.enabled && gm.stateOf(program) === 'failed');
 
 	/** Set by the scope: is anything actually coming out, right now. */
 	let sounding = $state(false);
@@ -131,18 +145,23 @@
 		<div class="flex flex-col">
 			<div class="flex items-baseline justify-between px-3 pt-2.5 pb-1">
 				<span class="label">Voice</span>
-				<span class="tnum text-2xs text-muted-foreground">
-					PGM {String(familyProgram(family)).padStart(3, '0')}
-				</span>
+				<button
+					type="button"
+					onclick={() => (gm.enabled = !gm.enabled)}
+					title="Sampled instruments sound like the instrument. The synth can be bent and filtered while a note is sounding."
+					class="label rounded px-1 transition-colors hover:bg-accent hover:text-foreground"
+				>
+					{gm.enabled ? 'sampled' : 'synth'}
+				</button>
 			</div>
 			<div
-				class="grid flex-1 grid-cols-2 content-between gap-x-1 gap-y-px px-2 pt-1 pb-2.5"
+				class="grid flex-1 grid-cols-2 content-between gap-x-1 gap-y-px px-2 pt-1"
 				use:rovingGrid={{ columns: 2 }}
 			>
 				{#each GM_FAMILIES as name, i (name)}
 					<button
 						type="button"
-						onclick={() => pick(i)}
+						onclick={() => pick(familyProgram(i))}
 						aria-pressed={family === i}
 						class="flex items-center gap-1.5 rounded px-1.5 py-1 text-left text-2xs transition-colors
 							hover:bg-accent
@@ -153,6 +172,43 @@
 						<span class="truncate">{name}</span>
 					</button>
 				{/each}
+			</div>
+
+			<!--
+				The eight variants inside the family. This is where the other 112
+				programs live, and where you find out that a family is not one
+				sound but eight related ones.
+			-->
+			<div class="mt-2 flex items-center gap-1 border-t px-2 py-1.5">
+				<button
+					type="button"
+					onclick={() => pick(program - 1)}
+					aria-label="Previous program"
+					class="grid size-5 shrink-0 place-items-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+				>
+					<HugeiconsIcon icon={ArrowLeft01Icon} size={13} strokeWidth={2} />
+				</button>
+				<span class="tnum shrink-0 text-2xs text-muted-foreground">
+					{String(program).padStart(3, '0')}
+				</span>
+				<span class="min-w-0 flex-1 truncate text-2xs" title={GM_PROGRAMS[program]}>
+					{GM_PROGRAMS[program]}
+				</span>
+				{#if loading}
+					<span class="label shrink-0">loading</span>
+				{:else if substituted}
+					<span class="label shrink-0" title="Sample could not be fetched — the synth is covering">
+						synth
+					</span>
+				{/if}
+				<button
+					type="button"
+					onclick={() => pick(program + 1)}
+					aria-label="Next program"
+					class="grid size-5 shrink-0 place-items-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+				>
+					<HugeiconsIcon icon={ArrowRight01Icon} size={13} strokeWidth={2} />
+				</button>
 			</div>
 		</div>
 	</div>
