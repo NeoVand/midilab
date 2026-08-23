@@ -80,10 +80,10 @@
 			onpointerup={lift}
 			onpointercancel={lift}
 		>
-			<span class="absolute top-1.5 right-2 font-mono text-[9px] text-muted-foreground/60"
+			<span class="absolute top-1.5 right-2 font-mono text-2xs text-muted-foreground/60"
 				>{note}</span
 			>
-			<span class="line-clamp-2 text-[10.5px] leading-tight font-medium">{label(note)}</span>
+			<span class="line-clamp-2 text-2xs leading-tight font-medium">{label(note)}</span>
 		</button>
 	{/each}
 </div>

@@ -75,11 +75,11 @@ log('waiting for external clock — start your hardware');`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			You now have every part: a message language, a scheduler, a transport, and an audio engine. A
 			sequencer is what happens when you put them together, and it is smaller than you expect.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The whole job is: on each tick, work out which step we are on, look up what should happen, and
 			schedule it — <em>with the tick's own timestamp</em>, never with "now".
 		</p>
@@ -91,10 +91,8 @@ log('waiting for external clock — start your hardware');`
 
 	<Section title="Three things that separate working from good">
 		<div class="flex flex-col gap-3">
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">
-					1 · Schedule the Note Off with the Note On
-				</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">1 · Schedule the Note Off with the Note On</p>
 				<p class="mt-1.5 text-sm leading-relaxed text-muted-foreground">
 					Do not wait until the note should end and then send the release — by then anything might
 					have happened. Compute the end time when you schedule the start and hand both to the MIDI
@@ -102,20 +100,16 @@ log('waiting for external clock — start your hardware');`
 					the release was committed before you stopped.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">
-					2 · Track what is held anyway
-				</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">2 · Track what is held anyway</p>
 				<p class="mt-1.5 text-sm leading-relaxed text-muted-foreground">
 					Belt and braces. Keep a set of currently-sounding (channel, note) pairs and release them
 					on stop, on pattern change, on channel change and on unmount. Every hanging-note bug is a
 					place where one of those paths was forgotten.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">
-					3 · Advance time by arithmetic, never by measurement
-				</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">3 · Advance time by arithmetic, never by measurement</p>
 				<p class="mt-1.5 text-sm leading-relaxed text-muted-foreground">
 					<code class="rounded bg-muted px-1">nextTime += secondsPerStep</code> stays exact forever.
 					<code class="rounded bg-muted px-1">nextTime = now() + secondsPerStep</code> accumulates every
@@ -130,7 +124,7 @@ log('waiting for external clock — start your hardware');`
 	</TryThis>
 
 	<Section title="Following someone else's clock">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Everything above assumes you are the clock leader. To follow instead, you stop generating time
 			and start counting it: 24 incoming clock ticks make a quarter note, so every sixth tick is a
 			sixteenth. Start resets your position to zero, Continue does not, and Song Position Pointer
@@ -152,13 +146,13 @@ log('waiting for external clock — start your hardware');`
 	</Section>
 
 	<Section title="What to build next">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The step sequencer above is the smallest interesting version. The obvious extensions, roughly
 			in order of value: per-step velocity and length; more than one pattern with chaining; a
 			controller lane so you can sequence CC as well as notes; per-track length for polyrhythm; and
 			swing applied as a timing offset rather than a separate grid.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The Programmer in the Lab has several of these. None of them change the architecture — they
 			are all "what should happen on this tick", answered more elaborately.
 		</p>

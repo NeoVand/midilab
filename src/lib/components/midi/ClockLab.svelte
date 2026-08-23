@@ -40,7 +40,7 @@
 	);
 </script>
 
-<div class={cn('flex flex-col gap-5 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-5 rounded-lg border p-4', className)}>
 	<div class="flex flex-wrap items-center gap-4">
 		<div class="flex items-center gap-1">
 			<Button variant="ghost" size="icon" class="size-8" onclick={() => transport.rewind()}>
@@ -76,10 +76,8 @@
 	<!-- 24 ticks to the quarter note -->
 	<div class="flex flex-col gap-2">
 		<div class="flex items-baseline justify-between">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
-				One quarter note = 24 clock ticks
-			</p>
-			<p class="tnum font-mono text-[11px] text-muted-foreground">
+			<p class="label">One quarter note = 24 clock ticks</p>
+			<p class="tnum font-mono text-xs text-muted-foreground">
 				{ticks} ticks · {beats} beats
 			</p>
 		</div>
@@ -87,7 +85,7 @@
 			{#each Array.from({ length: CLOCK_PPQ }, (_, i) => i) as i (i)}
 				<div
 					class={cn(
-						'h-5 flex-1 rounded-[2px] transition-colors duration-75',
+						'h-5 flex-1 rounded-xs transition-colors duration-75',
 						i === 0 ? 'ring-1 ring-msg-clock/40' : ''
 					)}
 					style:background={i === phase
@@ -98,7 +96,7 @@
 				></div>
 			{/each}
 		</div>
-		<p class="text-[11px] leading-relaxed text-muted-foreground">
+		<p class="text-xs leading-relaxed text-muted-foreground">
 			Each block is one <code class="rounded bg-muted px-1 font-mono">F8</code> byte. Twenty-four of them
 			make a beat — that is the entire tempo mechanism. Change the BPM slider and the ticks simply arrive
 			faster; no number describing the tempo is ever transmitted.
@@ -107,11 +105,9 @@
 
 	<div class="flex flex-col gap-2">
 		<div class="flex items-baseline justify-between">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
-				Incoming clock stability
-			</p>
+			<p class="label">Incoming clock stability</p>
 			{#if transport.externalPresent}
-				<p class="tnum font-mono text-[11px] text-msg-clock">
+				<p class="tnum font-mono text-xs text-msg-clock">
 					external source: {transport.externalBpm.toFixed(2)} BPM ±{transport.externalJitter.toFixed(
 						2
 					)} ms
@@ -119,7 +115,7 @@
 			{/if}
 		</div>
 		<JitterPlot intervals={transport.clockIntervals} />
-		<p class="text-[11px] leading-relaxed text-muted-foreground">
+		<p class="text-xs leading-relaxed text-muted-foreground">
 			This measures clock arriving <em>into</em> this page. Enable a hardware input in the dock and start
 			your OP-XY, MPC or DAW — the plot shows how steady its clock actually is.
 		</p>

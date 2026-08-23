@@ -112,13 +112,13 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			A step sequencer stores a list of events. A pattern stores a <em>rule</em>, and produces the
 			events on demand. That difference sounds academic until you want something that changes every
 			cycle, or that is infinitely long, or that combines with another pattern without either of
 			them being flattened first.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The key idea, borrowed from TidalCycles and Strudel: a pattern is a
 			<strong>function from a cycle number to the events in that cycle</strong>. Ask it for cycle 0
 			and get one answer; ask for cycle 1 and get another.
@@ -126,13 +126,13 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 	</Section>
 
 	<Section title="Euclidean rhythms">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			In 2004 Godfried Toussaint noticed that an algorithm for spacing timing pulses in neutron
 			accelerators produces, almost exactly, the traditional rhythms of a large part of the world.
 			Distribute <em>p</em> hits as evenly as possible over <em>s</em> steps and you get music.
 		</p>
 
-		<div class="flex flex-col gap-4 rounded-xl border p-4">
+		<div class="flex flex-col gap-4 rounded-lg border p-4">
 			<div class="flex flex-wrap items-center gap-5">
 				<label class="flex min-w-40 flex-1 items-center gap-3">
 					<span class="w-14 text-xs text-muted-foreground">Pulses</span>
@@ -153,7 +153,7 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 			<div class="flex gap-1">
 				{#each euclidString(pulses, steps, rotation).split('') as c, i (i)}
 					<div
-						class="h-9 flex-1 rounded-[3px] border"
+						class="h-9 flex-1 rounded-xs border"
 						style:background={c === 'x' ? 'var(--msg-note)' : 'var(--surface-sunken)'}
 						style:border-color={c === 'x' ? 'var(--msg-note)' : ''}
 					></div>
@@ -178,11 +178,11 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 						rotation = 0;
 					}}
 				>
-					<code class="w-32 shrink-0 font-mono text-[11px] text-msg-note">
+					<code class="w-32 shrink-0 font-mono text-xs text-msg-note">
 						{euclidString(p, s)}
 					</code>
 					<span class="text-xs">{name}</span>
-					<span class="ml-auto font-mono text-[10px] text-muted-foreground">E({p},{s})</span>
+					<span class="ml-auto font-mono text-2xs text-muted-foreground">E({p},{s})</span>
 				</button>
 			{/each}
 		</div>
@@ -198,11 +198,11 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 	</Section>
 
 	<Section title="Mini-notation">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Writing rhythms as arrays of ones and zeros gets old quickly. A compact notation lets you say
 			what you mean:
 		</p>
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
 				<tbody>
 					{#each [['bd sd hh sd', 'Four events, one per quarter of the cycle.'], ['bd ~ sd ~', '~ is a rest.'], ['bd [sd sd]', 'Brackets subdivide one slot.'], ['bd*4', 'Four of them inside one slot.'], ['<bd sd>', 'Alternates between cycles — this is the part a step grid cannot do.'], ['bd(3,8)', 'Euclidean: three hits over eight steps.'], ['bd(3,8,2)', 'The same, rotated by two.'], ['bd*2,hh*8', 'A comma stacks: both at once.']] as [syntax, what] (syntax)}

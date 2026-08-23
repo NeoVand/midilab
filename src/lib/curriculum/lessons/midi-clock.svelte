@@ -27,7 +27,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Here is the surprising thing about MIDI synchronisation: <strong
 				>no tempo number is ever transmitted</strong
 			>. There is no "set BPM to 128" message. Instead the leader sends a single byte —
@@ -35,7 +35,7 @@
 			every follower infers the tempo from how fast they arrive.
 		</p>
 		<ByteInspector bytes={[0xf8]} />
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			One byte. No channel, no data, nothing to decode. If you speed up, the ticks come closer
 			together and everyone follows within a beat, because they are not reading a number — they are
 			feeling a pulse.
@@ -60,15 +60,15 @@
 	</TryThis>
 
 	<Section title="The System Real-Time messages">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Clock belongs to a small family of single-byte messages with an unusual privilege: they may
 			appear <em>anywhere</em>, including in the middle of another message's data bytes. A receiver
 			must handle a clock byte arriving between a Note On's note number and its velocity, and carry
 			on as if nothing happened.
 		</p>
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="w-16 px-3 py-2 text-left font-medium">Byte</th>
 						<th class="px-3 py-2 text-left font-medium">Message</th>
@@ -95,17 +95,17 @@
 	</Section>
 
 	<Section title="Start, Continue, and the difference that matters">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			<strong>Start</strong> means "from the top". <strong>Continue</strong> means "from where we were".
 			Sending Start when you meant Continue is why a follower sometimes jumps back to bar one in the middle
 			of a jam.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			"Where we were" is communicated by <strong>Song Position Pointer</strong> — a 14-bit count of
 			<em>sixteenth notes</em> from the start of the song. The correct sequence for locating is: send
 			Song Position Pointer, then send Continue. Position first, then go.
 		</p>
-		<div class="flex flex-col gap-2 rounded-xl border bg-surface-sunken p-4 font-mono text-xs">
+		<div class="flex flex-col gap-2 rounded-lg border bg-surface-sunken p-4 font-mono text-xs">
 			<div class="flex gap-4">
 				<code class="w-24 text-msg-clock">F2 40 00</code>
 				<span class="font-sans text-muted-foreground">
@@ -140,26 +140,26 @@
 	</Section>
 
 	<Section title="Deciding who is in charge">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Exactly one device in a rig should generate clock. Everything else follows. There is no
 			negotiation in MIDI 1.0 — no election, no handshake — so if two devices both send clock, both
 			will also be trying to follow, and the result is not a compromise but a mess.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The bad outcome is not choosing wrongly. It is choosing <em>accidentally</em>, because some
 			device shipped with clock output enabled and nobody noticed. Decide per session, write it
 			down, and check it before you wonder why the groove feels drunk.
 		</p>
 		<div class="grid gap-3 sm:grid-cols-2">
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Good leader</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Good leader</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					The device whose sequencer you are actually playing. A groovebox with a tight internal
 					clock; the DAW when the DAW is the arrangement.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Good follower</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Good follower</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					Anything with an arpeggiator, an LFO you want in time, a delay you want synced, or its own
 					sequencer running a subordinate part.

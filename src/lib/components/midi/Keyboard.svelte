@@ -217,7 +217,7 @@
 			>
 				{#if labelFor(note)}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center font-mono text-[9px] text-black/45"
+						class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center font-mono text-2xs text-black/45"
 					>
 						{labelFor(note)}
 					</span>
@@ -245,7 +245,7 @@
 			>
 				{#if labels === 'all' || labels === 'numbers'}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1 text-center font-mono text-[8px] text-white/55"
+						class="pointer-events-none absolute inset-x-0 bottom-1 text-center font-mono text-2xs text-white/55"
 					>
 						{labels === 'numbers'
 							? note
@@ -258,7 +258,7 @@
 </div>
 
 {#if typing}
-	<p class="mt-1.5 text-[11px] text-muted-foreground">
+	<p class="mt-1.5 text-xs text-muted-foreground">
 		Play with <kbd class="rounded bg-muted px-1 font-mono">A</kbd>–<kbd
 			class="rounded bg-muted px-1 font-mono">'</kbd
 		>, shift octave with <kbd class="rounded bg-muted px-1 font-mono">Z</kbd> /

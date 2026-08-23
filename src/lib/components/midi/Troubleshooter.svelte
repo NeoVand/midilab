@@ -208,7 +208,7 @@
 		{/if}
 	</div>
 
-	<div class="rounded-xl border p-5">
+	<div class="rounded-lg border p-5">
 		{#if isLeaf}
 			{@const leaf = current as Leaf}
 			<p
@@ -219,7 +219,7 @@
 			>
 				{leaf.diagnosis}
 			</p>
-			<p class="mt-2 text-[15px] leading-relaxed">{leaf.fix}</p>
+			<p class="mt-2 text-base leading-relaxed">{leaf.fix}</p>
 			<div class="mt-4 flex gap-2">
 				<Button variant="outline" size="sm" onclick={back}>Back one step</Button>
 				<Button variant="ghost" size="sm" class="gap-1.5" onclick={restart}>
@@ -228,7 +228,7 @@
 			</div>
 		{:else}
 			{@const node = current as Node}
-			<p class="text-[15px] leading-relaxed font-medium">{node.question}</p>
+			<p class="text-base leading-relaxed font-medium">{node.question}</p>
 			{#if node.why}
 				<p class="mt-2 text-sm leading-relaxed text-muted-foreground">{node.why}</p>
 			{/if}

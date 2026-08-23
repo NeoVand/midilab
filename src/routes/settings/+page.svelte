@@ -22,7 +22,7 @@
 
 	<section class="flex flex-col gap-4">
 		<h2 class="text-lg font-semibold tracking-tight">Appearance</h2>
-		<div class="flex flex-col gap-3 rounded-xl border p-4">
+		<div class="flex flex-col gap-3 rounded-lg border p-4">
 			<div class="flex items-center justify-between gap-4">
 				<div>
 					<p class="text-sm font-medium">Theme</p>
@@ -48,7 +48,7 @@
 
 	<section class="flex flex-col gap-4">
 		<h2 class="text-lg font-semibold tracking-tight">Notation</h2>
-		<div class="flex flex-col gap-4 rounded-xl border p-4">
+		<div class="flex flex-col gap-4 rounded-lg border p-4">
 			<div class="flex items-center justify-between gap-4">
 				<div>
 					<p class="text-sm font-medium">Octave convention</p>
@@ -75,7 +75,7 @@
 
 	<section class="flex flex-col gap-4">
 		<h2 class="text-lg font-semibold tracking-tight">Engine</h2>
-		<div class="flex flex-col gap-4 rounded-xl border p-4">
+		<div class="flex flex-col gap-4 rounded-lg border p-4">
 			<label class="flex items-center gap-4">
 				<span class="flex-1">
 					<span class="block text-sm font-medium">Master volume</span>
@@ -110,7 +110,7 @@
 
 	<section class="flex flex-col gap-4">
 		<h2 class="text-lg font-semibold tracking-tight">Stored data</h2>
-		<div class="flex flex-col gap-3 rounded-xl border p-4">
+		<div class="flex flex-col gap-3 rounded-lg border p-4">
 			<div class="flex flex-wrap items-center justify-between gap-3">
 				<div>
 					<p class="text-sm font-medium">Course progress</p>
@@ -164,7 +164,7 @@
 	<section class="flex flex-col gap-4">
 		<h2 class="text-lg font-semibold tracking-tight">About</h2>
 		<div
-			class="flex flex-col gap-2 rounded-xl border p-4 text-sm leading-relaxed text-muted-foreground"
+			class="flex flex-col gap-2 rounded-lg border p-4 text-sm leading-relaxed text-muted-foreground"
 		>
 			<p>
 				MIDI Lab is a static single-page application. The MIDI parser, the Standard MIDI File codec,

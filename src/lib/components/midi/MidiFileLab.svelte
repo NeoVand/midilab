@@ -159,17 +159,15 @@
 		<div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
 			{#each [['Format', String(summary.format)], ['Division', `${summary.division} PPQN`], ['Tracks', String(summary.trackCount)], ['Notes', String(summary.noteCount)], ['Tempo', `${summary.tempo.toFixed(1)} BPM`], ['Length', `${summary.durationSeconds.toFixed(1)} s`]] as [label, value] (label)}
 				<div class="rounded-lg border bg-surface-sunken p-3">
-					<p class="text-[10px] tracking-wide text-muted-foreground uppercase">{label}</p>
+					<p class="label">{label}</p>
 					<p class="tnum font-mono text-lg leading-tight">{value}</p>
 				</div>
 			{/each}
 		</div>
 
 		{#if headerBreakdown}
-			<div class="flex flex-col gap-1.5 rounded-xl border p-4">
-				<p class="mb-1 text-[10px] tracking-wide text-muted-foreground uppercase">
-					The header chunk, byte by byte
-				</p>
+			<div class="flex flex-col gap-1.5 rounded-lg border p-4">
+				<p class="label mb-1">The header chunk, byte by byte</p>
 				{#each headerBreakdown as part (part.label)}
 					<div class="flex flex-wrap items-baseline gap-3 text-xs">
 						<code class="w-28 shrink-0 font-mono text-msg-sysex">{hexBytes(part.bytes)}</code>
@@ -185,18 +183,18 @@
 				{@const notes = track.events.filter(
 					(e) => !isMeta(e.event) && e.event.type === 'noteOn'
 				).length}
-				<details class="rounded-xl border">
+				<details class="rounded-lg border">
 					<summary
 						class="flex cursor-pointer items-baseline gap-3 px-4 py-2.5 text-sm hover:bg-accent/40"
 					>
 						<span class="font-mono text-xs text-muted-foreground">{t}</span>
 						<span class="font-medium">{track.name ?? `Track ${t}`}</span>
-						<span class="ml-auto font-mono text-[11px] text-muted-foreground">
+						<span class="ml-auto font-mono text-xs text-muted-foreground">
 							{track.events.length} events · {notes} notes
 						</span>
 					</summary>
 					<div class="max-h-72 scrollbar-thin overflow-y-auto border-t">
-						<table class="w-full font-mono text-[11px]">
+						<table class="w-full font-mono text-xs">
 							<tbody>
 								{#each track.events.slice(0, 400) as e, i (i)}
 									<tr class="border-b border-border/40">

@@ -86,7 +86,7 @@
 		<div class="flex flex-wrap gap-1.5">
 			{#each examples as ex (ex.name)}
 				<button
-					class="rounded border px-2 py-1 text-[11px] transition-colors hover:border-foreground/40"
+					class="rounded border px-2 py-1 text-xs transition-colors hover:border-foreground/40"
 					onclick={() => (code = ex.code)}
 				>
 					{ex.name}
@@ -95,10 +95,10 @@
 		</div>
 	{/if}
 
-	<div class="panel-sunken relative overflow-hidden rounded-xl border">
+	<div class="panel-sunken relative overflow-hidden rounded-lg border">
 		<pre
 			aria-hidden="true"
-			class="pointer-events-none absolute inset-0 overflow-hidden p-3 font-mono text-[12.5px] leading-[1.55] break-words whitespace-pre-wrap">{@html highlight(
+			class="pointer-events-none absolute inset-0 overflow-hidden p-3 font-mono text-sm leading-[1.55] break-words whitespace-pre-wrap">{@html highlight(
 				code
 			) + '\n'}</pre>
 		<textarea
@@ -107,14 +107,14 @@
 			{rows}
 			spellcheck="false"
 			onkeydown={onKeyDown}
-			class="relative w-full resize-y bg-transparent p-3 font-mono text-[12.5px] leading-[1.55] break-words whitespace-pre-wrap text-transparent caret-foreground outline-none"
+			class="relative w-full resize-y bg-transparent p-3 font-mono text-sm leading-[1.55] break-words whitespace-pre-wrap text-transparent caret-foreground outline-none"
 			aria-label="JavaScript editor"></textarea>
 	</div>
 
 	<div class="flex flex-wrap items-center gap-2">
 		<Button size="sm" class="gap-1.5" onclick={start}>
 			<HugeiconsIcon icon={PlayIcon} size={14} /> Run
-			<kbd class="ml-1 text-[10px] opacity-60">⌘⏎</kbd>
+			<kbd class="ml-1 text-2xs opacity-60">⌘⏎</kbd>
 		</Button>
 		<Button variant="outline" size="sm" class="gap-1.5" onclick={stop} disabled={!running}>
 			<HugeiconsIcon icon={StopIcon} size={14} /> Stop
@@ -138,7 +138,7 @@
 		</span>
 	</div>
 
-	<div class="panel-sunken max-h-56 min-h-16 scrollbar-thin overflow-y-auto rounded-xl border p-3">
+	<div class="panel-sunken max-h-56 min-h-16 scrollbar-thin overflow-y-auto rounded-lg border p-3">
 		{#if logs.length === 0}
 			<p class="text-xs text-muted-foreground">
 				Output appears here. Use <code class="rounded bg-muted px-1 font-mono">log(...)</code> or
@@ -148,7 +148,7 @@
 			{#each logs as l, i (i)}
 				<pre
 					class={cn(
-						'font-mono text-[11.5px] leading-relaxed whitespace-pre-wrap',
+						'font-mono text-xs leading-relaxed whitespace-pre-wrap',
 						l.level === 'error' && 'text-destructive',
 						l.level === 'warn' && 'text-warn'
 					)}>{l.text}</pre>

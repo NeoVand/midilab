@@ -57,10 +57,10 @@
 	<!-- ── hero ──────────────────────────────────────────────────────────── -->
 	<header class="flex flex-col gap-5">
 		<p class="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">MIDI Lab</p>
-		<h1 class="max-w-3xl text-[2.6rem] leading-[1.08] font-semibold tracking-tight text-balance">
+		<h1 class="max-w-3xl text-4xl font-semibold">
 			Learn MIDI by making it happen, one byte at a time.
 		</h1>
-		<p class="max-w-2xl text-[17px] leading-relaxed text-pretty text-muted-foreground">
+		<p class="max-w-2xl text-lg leading-relaxed text-pretty text-muted-foreground">
 			Thirty lessons that start at "what even is a MIDI message" and end with you running a rig of
 			several instruments from one clock — or from your own code. Everything here is wired to a live
 			engine, so nothing is a diagram: press a key below and watch the actual bytes.
@@ -128,16 +128,16 @@
 				{@const frac = progress.fractionOf(act.lessons.map((l) => l.id))}
 				<a
 					href="/learn#{act.id}"
-					class="group flex flex-col gap-2 rounded-xl border bg-card p-4 transition-colors hover:border-foreground/25"
+					class="group flex flex-col gap-2 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
 					<div class="flex items-baseline gap-2">
 						<span class="font-mono text-xs text-muted-foreground/50">ACT {act.number}</span>
-						<span class="ml-auto font-mono text-[11px] text-muted-foreground">
+						<span class="ml-auto font-mono text-xs text-muted-foreground">
 							{act.lessons.length} lessons
 						</span>
 					</div>
 					<h3 class="leading-snug font-medium">{act.title}</h3>
-					<p class="text-[13px] leading-relaxed text-muted-foreground">{act.subtitle}</p>
+					<p class="text-sm leading-relaxed text-muted-foreground">{act.subtitle}</p>
 					<div class="mt-2 h-1 overflow-hidden rounded-full bg-muted">
 						<div
 							class="h-full rounded-full bg-msg-note transition-[width]"
@@ -163,12 +163,12 @@
 			{#each tools as tool (tool.href)}
 				<a
 					href={tool.href}
-					class="group flex items-start gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-foreground/25"
+					class="group flex items-start gap-3 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
 					<HugeiconsIcon icon={tool.icon} size={20} class="mt-0.5 shrink-0 text-muted-foreground" />
 					<span>
 						<span class="block text-sm font-medium">{tool.name}</span>
-						<span class="block text-[13px] text-muted-foreground">{tool.desc}</span>
+						<span class="block text-sm text-muted-foreground">{tool.desc}</span>
 					</span>
 				</a>
 			{/each}

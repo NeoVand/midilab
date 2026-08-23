@@ -30,7 +30,7 @@
 <div class={cn('flex flex-col gap-4', className)}>
 	{#each GM_FAMILIES as family, f (family)}
 		<div class="flex flex-col gap-1.5">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
+			<p class="label">
 				{family}
 				<span class="ml-1 font-mono text-muted-foreground/50">{f * 8}–{f * 8 + 7}</span>
 			</p>
@@ -38,14 +38,14 @@
 				{#each Array.from({ length: 8 }, (_, i) => f * 8 + i) as p (p)}
 					<button
 						class={cn(
-							'flex items-baseline gap-2 rounded-lg border px-2 py-1.5 text-left text-[11px] transition-colors',
+							'flex items-baseline gap-2 rounded-lg border px-2 py-1.5 text-left text-xs transition-colors',
 							current === p
 								? 'border-msg-program bg-msg-program-bg text-msg-program'
 								: 'hover:border-foreground/30 hover:bg-accent/40'
 						)}
 						onclick={() => pick(p)}
 					>
-						<span class="tnum w-6 shrink-0 font-mono text-[10px] text-muted-foreground">{p}</span>
+						<span class="tnum w-6 shrink-0 font-mono text-2xs text-muted-foreground">{p}</span>
 						<span class="truncate">{GM_PROGRAMS[p]}</span>
 					</button>
 				{/each}

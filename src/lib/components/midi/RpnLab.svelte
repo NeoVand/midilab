@@ -61,10 +61,10 @@
 	}
 </script>
 
-<div class={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
 	<div class="flex flex-wrap items-end gap-5">
 		<div class="flex flex-col gap-1">
-			<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Kind</span>
+			<span class="label">Kind</span>
 			<div class="flex gap-1">
 				<Button
 					variant={kind === 'rpn' ? 'default' : 'outline'}
@@ -130,16 +130,14 @@
 	{/if}
 
 	<div class="flex flex-col gap-1.5 rounded-lg border bg-surface-sunken p-3">
-		<p class="mb-1 text-[10px] tracking-wide text-muted-foreground uppercase">
-			What actually goes on the wire
-		</p>
+		<p class="label mb-1">What actually goes on the wire</p>
 		{#each sequence as m, i (i)}
 			{#if m.type === 'controlChange'}
 				<div class="flex flex-wrap items-baseline gap-3 font-mono text-xs">
 					<span class="w-4 text-muted-foreground/50">{i + 1}</span>
 					<code class="w-20 text-msg-cc">{hexBytes(encode(m))}</code>
 					<span class="w-24">CC {m.controller} = {m.value}</span>
-					<span class="font-sans text-[11px] text-muted-foreground">
+					<span class="font-sans text-xs text-muted-foreground">
 						{explain(m.controller, m.value)}
 					</span>
 				</div>
@@ -148,9 +146,7 @@
 	</div>
 
 	<div class="flex flex-col gap-1.5">
-		<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
-			Reassembled by the parser
-		</p>
+		<p class="label">Reassembled by the parser</p>
 		{#if decoded.length === 0}
 			<p class="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
 				Send something. A receiver has to reconstruct these edits from the CC stream — this is that
@@ -163,7 +159,7 @@
 					<span class="font-mono">{d.msb},{d.lsb}</span>
 					<span class="text-muted-foreground">=</span>
 					<span class="font-mono">{d.value}</span>
-					<span class="text-[11px] text-muted-foreground">
+					<span class="text-xs text-muted-foreground">
 						{d.fine ? '14-bit' : '7-bit'}{rpnInfo(d.msb, d.lsb) && d.kind === 'rpn'
 							? ` · ${rpnInfo(d.msb, d.lsb)!.name}`
 							: ''}

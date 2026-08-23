@@ -39,42 +39,42 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			MIDI has no idea what a chord is, what key you are in, or whether a note is sharp or flat. It
 			has one integer per pitch, from <strong>0 to 127</strong>, and that is the whole system. Note
 			number 60 is middle C. Add 12 and you go up an octave. Add 1 and you go up a semitone — the
 			distance from any key to the next key, black or white.
 		</p>
 		<div
-			class="flex flex-wrap items-center gap-x-8 gap-y-3 rounded-xl border bg-surface-sunken p-4"
+			class="flex flex-wrap items-center gap-x-8 gap-y-3 rounded-lg border bg-surface-sunken p-4"
 		>
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Lowest</p>
+				<p class="label">Lowest</p>
 				<p class="tnum font-mono text-lg">
 					0 <span class="text-xs text-muted-foreground">≈ 8.2 Hz</span>
 				</p>
 			</div>
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Middle C</p>
+				<p class="label">Middle C</p>
 				<p class="tnum font-mono text-lg text-msg-note">
 					60 <span class="text-xs text-muted-foreground">261.6 Hz</span>
 				</p>
 			</div>
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Concert A</p>
+				<p class="label">Concert A</p>
 				<p class="tnum font-mono text-lg">
 					69 <span class="text-xs text-muted-foreground">440 Hz</span>
 				</p>
 			</div>
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Highest</p>
+				<p class="label">Highest</p>
 				<p class="tnum font-mono text-lg">
 					127 <span class="text-xs text-muted-foreground">{noteToFrequency(127).toFixed(0)} Hz</span
 					>
 				</p>
 			</div>
 		</div>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			A grand piano has 88 keys, from note 21 to note 108. MIDI's 128 notes cover more than any
 			acoustic instrument, with room to spare at both ends where the numbers stop being musically
 			useful and start being useful as triggers instead.
@@ -90,7 +90,7 @@
 	</TryThis>
 
 	<Section title="The C3 versus C4 argument">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Everyone agrees middle C is note 60. Nobody agrees what to call it. Yamaha and Roland
 			historically label it <strong>C3</strong>; scientific pitch notation, and therefore Steinberg,
 			Ableton and Logic, call it <strong>C4</strong>. Some manufacturers even use C5.
@@ -136,27 +136,27 @@
 	</TryThis>
 
 	<Section title="Just enough theory">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			You do not need music theory to work with MIDI, but three ideas will save you a lot of
 			counting.
 		</p>
 		<div class="grid gap-3 sm:grid-cols-3">
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">Semitone</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">Semitone</p>
 				<p class="mt-1.5 text-sm leading-relaxed">
 					+1. The gap between adjacent keys. Twelve of them make an octave.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">Interval</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">Interval</p>
 				<p class="mt-1.5 text-sm leading-relaxed">
 					The distance between two notes. +7 is a {intervalName(7)}, +4 a {intervalName(4)}, +3 a {intervalName(
 						3
 					)}.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">Triad</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">Triad</p>
 				<p class="mt-1.5 text-sm leading-relaxed">
 					Three notes at once. Root, +4, +7 sounds major; root, +3, +7 sounds minor. One semitone
 					apart, entirely different mood.

@@ -66,12 +66,12 @@ log('four notes scheduled ahead of time');`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Everything this app does, it does with one browser API. It is small — about six things worth
 			knowing — and you already understand the hard part, which is what the bytes mean.
 		</p>
 		<pre
-			class="scrollbar-thin overflow-x-auto rounded-xl border bg-surface-sunken p-4 font-mono text-[12px] leading-relaxed"><code
+			class="scrollbar-thin overflow-x-auto rounded-lg border bg-surface-sunken p-4 font-mono text-sm leading-relaxed"><code
 				>{`// Secure context required: https, or localhost.
 const access = await navigator.requestMIDIAccess({ sysex: false });
 
@@ -92,8 +92,8 @@ access.onstatechange = (e) => console.log(e.port.name, e.port.state);`}</code
 	<Section title="The four things that will catch you out">
 		<div class="grid gap-3 sm:grid-cols-2">
 			{#each [['Safari has none', 'Web MIDI does not exist in Safari on macOS or iOS. Not partially, not behind a flag. Chromium browsers and Firefox only — and no iPhone or iPad at all.'], ['Secure context', 'HTTPS or localhost. A page served over plain http on another machine gets nothing, which is a surprisingly common way to lose an afternoon.'], ['Permission for everything', 'Chrome 124 and later prompt for all MIDI access, not just SysEx. Request it from a user gesture and handle the rejection.'], ['SysEx is a second gate', 'requestMIDIAccess({ sysex: true }) triggers its own prompt, because SysEx can reach firmware. Ask for it only when you need it.']] as [title, body] (title)}
-				<div class="rounded-xl border p-4">
-					<p class="text-[11px] font-semibold tracking-wide uppercase">{title}</p>
+				<div class="rounded-lg border p-4">
+					<p class="text-sm font-semibold">{title}</p>
 					<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">{body}</p>
 				</div>
 			{/each}
@@ -122,7 +122,7 @@ access.onstatechange = (e) => console.log(e.port.name, e.port.state);`}</code
 	</TryThis>
 
 	<Section title="The API you have here">
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
 				<tbody>
 					{#each [['midi.outputs / midi.inputs', 'The port lists, as plain objects.'], ['midi.raw', 'The actual MIDIAccess object, for doing it the platform way.'], ['midi.send(bytes | message, at?)', 'Raw byte array or a decoded message. `at` is a performance.now() timestamp.'], ['midi.note(n, vel, ms, ch)', 'Note On plus a scheduled Note Off — the lifecycle handled for you.'], ['midi.cc / .program / .bend / .panic', 'The obvious shorthands.'], ['midi.onMessage(fn) / midi.onNote(fn)', 'Subscribe to the bus. Returns an unsubscribe function.'], ['midi.now() / midi.perf() / midi.toPerf(t)', 'The audio clock, the page clock, and the map between them.'], ['midi.transport', 'start, stop, bpm, onTick — the app’s own scheduler.'], ['sleep(ms)', 'Awaitable pause that Stop can interrupt.']] as [sig, what] (sig)}

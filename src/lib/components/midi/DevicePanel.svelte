@@ -81,9 +81,7 @@
 		<div class={cn('grid gap-4', compact ? 'grid-cols-1' : 'sm:grid-cols-2')}>
 			<!-- Inputs -->
 			<section class="flex flex-col gap-1.5">
-				<header
-					class="flex items-center justify-between px-1 text-[10px] tracking-wide text-muted-foreground uppercase"
-				>
+				<header class="label flex items-center justify-between px-1">
 					<span>Inputs — listen</span>
 					<button
 						class="hover:text-foreground"
@@ -111,15 +109,15 @@
 								class={midiAccess.isListening(port.id) ? 'text-msg-cc' : 'text-muted-foreground'}
 							/>
 							<span class="min-w-0 flex-1">
-								<span class="block truncate text-[13px] leading-tight">{port.name}</span>
+								<span class="block truncate text-sm leading-tight">{port.name}</span>
 								{#if port.manufacturer}
-									<span class="block truncate text-[11px] text-muted-foreground"
+									<span class="block truncate text-xs text-muted-foreground"
 										>{port.manufacturer}</span
 									>
 								{/if}
 							</span>
 							{#if port.state === 'disconnected'}
-								<Badge variant="outline" class="text-[10px]">offline</Badge>
+								<Badge variant="outline" class="text-2xs">offline</Badge>
 							{/if}
 							<Switch
 								checked={midiAccess.isListening(port.id)}
@@ -133,9 +131,7 @@
 
 			<!-- Outputs -->
 			<section class="flex flex-col gap-1.5">
-				<header class="px-1 text-[10px] tracking-wide text-muted-foreground uppercase">
-					Outputs — send
-				</header>
+				<header class="label px-1">Outputs — send</header>
 				{#each engine.outputs as out (out.id)}
 					<label
 						class={cn(
@@ -148,9 +144,9 @@
 							size={15}
 							class={engine.isOutputActive(out.id) ? 'text-msg-note' : 'text-muted-foreground'}
 						/>
-						<span class="min-w-0 flex-1 truncate text-[13px]">{out.name}</span>
+						<span class="min-w-0 flex-1 truncate text-sm">{out.name}</span>
 						{#if !out.connected}
-							<Badge variant="outline" class="text-[10px]">offline</Badge>
+							<Badge variant="outline" class="text-2xs">offline</Badge>
 						{/if}
 						<Switch
 							checked={engine.isOutputActive(out.id)}
@@ -182,7 +178,7 @@
 				>
 					Enable SysEx
 				</Button>
-				<p class="w-full text-[11px] leading-snug text-muted-foreground">
+				<p class="w-full text-xs leading-snug text-muted-foreground">
 					SysEx is gated separately because it can reach a device's firmware. The browser will
 					prompt again.
 				</p>
@@ -191,8 +187,8 @@
 
 		<label class="flex items-center gap-3 rounded-lg border px-2.5 py-2 hover:bg-accent/40">
 			<span class="flex-1">
-				<span class="block text-[13px]">Audition incoming MIDI</span>
-				<span class="block text-[11px] text-muted-foreground">
+				<span class="block text-sm">Audition incoming MIDI</span>
+				<span class="block text-xs text-muted-foreground">
 					Play whatever arrives through the internal synth, so you can hear a controller with no
 					sound module attached.
 				</span>

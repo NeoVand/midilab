@@ -72,7 +72,7 @@
 	const ready = $derived(midiAccess.listening.length > 0 && engine.activeOutputs.length > 0);
 </script>
 
-<div class={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
 	<div class="flex flex-wrap items-center gap-3">
 		<Button size="sm" class="gap-1.5" onclick={start} disabled={running || !ready}>
 			<HugeiconsIcon icon={StopWatchIcon} size={14} />
@@ -88,30 +88,30 @@
 	{#if stats}
 		<div class="flex flex-wrap gap-x-8 gap-y-2">
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Mean round trip</p>
+				<p class="label">Mean round trip</p>
 				<p class="tnum font-mono text-3xl leading-none text-readout">
 					{stats.mean.toFixed(2)}<span class="text-base"> ms</span>
 				</p>
 			</div>
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Jitter (σ)</p>
+				<p class="label">Jitter (σ)</p>
 				<p class="tnum font-mono text-3xl leading-none">
 					{stats.sd.toFixed(2)}<span class="text-base"> ms</span>
 				</p>
 			</div>
 			<div>
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Range</p>
+				<p class="label">Range</p>
 				<p class="tnum font-mono text-lg leading-none">
 					{stats.min.toFixed(1)} – {stats.max.toFixed(1)} ms
 				</p>
-				<p class="mt-1 font-mono text-[10px] text-muted-foreground">{stats.n} samples</p>
+				<p class="mt-1 font-mono text-2xs text-muted-foreground">{stats.n} samples</p>
 			</div>
 		</div>
 
 		<div class="panel-sunken flex h-16 items-end gap-[3px] rounded-lg border p-2">
 			{#each samples as s (s)}
 				<div
-					class="min-w-[3px] flex-1 rounded-[1px] bg-msg-clock"
+					class="min-w-[3px] flex-1 rounded-xs bg-msg-clock"
 					style="height: {Math.min(100, (s / Math.max(1, stats.max)) * 100)}%"
 				></div>
 			{/each}

@@ -24,10 +24,10 @@
 	}
 </script>
 
-<div class={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
 	<div class="flex items-end gap-6">
 		<div>
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Note number</p>
+			<p class="label">Note number</p>
 			<p class="tnum font-mono text-4xl leading-none text-msg-note">{note}</p>
 		</div>
 		<div class="flex-1">
@@ -40,26 +40,26 @@
 
 	<div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
 		<div class="rounded-lg border bg-surface-sunken p-3">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Yamaha / Roland</p>
+			<p class="label">Yamaha / Roland</p>
 			<p class="tnum font-mono text-lg">{noteName(note, { convention: 'c3' })}</p>
-			<p class="text-[10px] text-muted-foreground">middle C = C3</p>
+			<p class="text-2xs text-muted-foreground">middle C = C3</p>
 		</div>
 		<div class="rounded-lg border bg-surface-sunken p-3">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Scientific</p>
+			<p class="label">Scientific</p>
 			<p class="tnum font-mono text-lg">{noteName(note, { convention: 'c4' })}</p>
-			<p class="text-[10px] text-muted-foreground">middle C = C4</p>
+			<p class="text-2xs text-muted-foreground">middle C = C4</p>
 		</div>
 		<div class="rounded-lg border bg-surface-sunken p-3">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Frequency</p>
+			<p class="label">Frequency</p>
 			<p class="tnum font-mono text-lg">
 				{noteToFrequency(note).toFixed(1)}<span class="text-xs"> Hz</span>
 			</p>
-			<p class="text-[10px] text-muted-foreground">A4 = 440 Hz</p>
+			<p class="text-2xs text-muted-foreground">A4 = 440 Hz</p>
 		</div>
 		<div class="rounded-lg border bg-surface-sunken p-3">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">On channel 10</p>
+			<p class="label">On channel 10</p>
 			<p class="truncate text-sm leading-tight font-medium">{GM_DRUMS[note] ?? '—'}</p>
-			<p class="text-[10px] text-muted-foreground">
+			<p class="text-2xs text-muted-foreground">
 				{isBlackKey(note) ? 'black key' : 'white key'} · pitch class {pitchClass(note)}
 			</p>
 		</div>

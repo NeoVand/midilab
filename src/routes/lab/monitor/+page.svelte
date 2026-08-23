@@ -39,7 +39,7 @@
 		{/snippet}
 	</PageHeader>
 
-	<div class="flex flex-wrap items-center gap-4 rounded-xl border px-4 py-3">
+	<div class="flex flex-wrap items-center gap-4 rounded-lg border px-4 py-3">
 		<ActivityStrip height={22} />
 		<div class="flex flex-wrap gap-3">
 			{#each families as f (f)}
@@ -56,7 +56,7 @@
 	</div>
 
 	<div class="grid min-h-0 flex-1 gap-4 lg:grid-cols-[1fr_26rem]">
-		<div class="min-h-0 overflow-hidden rounded-xl border">
+		<div class="min-h-0 overflow-hidden rounded-lg border">
 			<MidiMonitor
 				class="h-full"
 				onSelect={(e) => (selected = e)}
@@ -64,7 +64,7 @@
 			/>
 		</div>
 		<div class="flex min-h-0 scrollbar-thin flex-col gap-4 overflow-y-auto">
-			<div class="rounded-xl border p-4">
+			<div class="rounded-lg border p-4">
 				{#if selected}
 					<ByteInspector bytes={selected.bytes} message={selected.message} />
 				{:else}
@@ -74,7 +74,7 @@
 					</p>
 				{/if}
 			</div>
-			<div class="rounded-xl border p-4">
+			<div class="rounded-lg border p-4">
 				<DevicePanel compact />
 			</div>
 		</div>

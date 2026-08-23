@@ -64,6 +64,6 @@
 	});
 </script>
 
-<div class={cn('panel-sunken graph-paper overflow-hidden rounded-xl border', className)}>
+<div class={cn('panel-sunken graph-paper overflow-hidden rounded-lg border', className)}>
 	<canvas bind:this={canvas} class="block w-full" style="height: {height}px"></canvas>
 </div>

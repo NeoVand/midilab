@@ -103,8 +103,8 @@
 	</div>
 	{#if label}
 		<div class="flex flex-col items-center leading-tight">
-			<span class="text-[11px] font-medium">{label}</span>
-			<span class="tnum font-mono text-[10px] text-muted-foreground">
+			<span class="text-xs font-medium">{label}</span>
+			<span class="tnum font-mono text-2xs text-muted-foreground">
 				{format ? format(value) : value}
 			</span>
 		</div>

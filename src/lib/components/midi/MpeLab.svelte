@@ -139,7 +139,7 @@
 		bind:this={surface}
 		role="application"
 		aria-label="MPE playing surface"
-		class="panel-sunken relative h-44 touch-none overflow-hidden rounded-xl border select-none"
+		class="panel-sunken relative h-44 touch-none overflow-hidden rounded-lg border select-none"
 		onpointerdown={down}
 		onpointermove={move}
 		onpointerup={up}
@@ -155,7 +155,7 @@
 					: 'transparent'}; border-right: 1px solid var(--grid-line)"
 			>
 				{#if ((n % 12) + 12) % 12 === 0}
-					<span class="absolute bottom-1 left-1 font-mono text-[9px] text-muted-foreground/50">
+					<span class="absolute bottom-1 left-1 font-mono text-2xs text-muted-foreground/50">
 						{noteName(n, { convention: settings.octaveConvention })}
 					</span>
 				{/if}
@@ -201,15 +201,15 @@
 				)}
 			>
 				<div class="flex items-baseline justify-between">
-					<span class="tnum font-mono text-[11px]">ch {ch + 1}</span>
+					<span class="tnum font-mono text-xs">ch {ch + 1}</span>
 					{#if v}
-						<span class="font-mono text-[10px] text-msg-expr">
+						<span class="font-mono text-2xs text-msg-expr">
 							{noteName(v.note, { convention: settings.octaveConvention })}
 						</span>
 					{/if}
 				</div>
 				{#if v}
-					<div class="flex flex-col gap-0.5 font-mono text-[9px]">
+					<div class="flex flex-col gap-0.5 font-mono text-2xs">
 						<span class="text-muted-foreground">
 							bend {v.bend >= 0 ? '+' : ''}{(v.bend * zone.memberBendRange).toFixed(1)}
 						</span>
@@ -217,7 +217,7 @@
 						<span class="text-muted-foreground">cc74 {v.slide}</span>
 					</div>
 				{:else}
-					<span class="text-[9px] text-muted-foreground/40">free</span>
+					<span class="text-2xs text-muted-foreground/40">free</span>
 				{/if}
 			</div>
 		{/each}

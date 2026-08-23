@@ -94,8 +94,7 @@
 							<Switch id="hide-rt" bind:checked={monitor.hideRealTime} />
 						</div>
 						<div class="flex flex-col gap-1.5">
-							<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Families</span
-							>
+							<span class="label">Families</span>
 							{#each allFamilies as f (f)}
 								<button
 									class="flex items-center gap-2 rounded px-1.5 py-1 text-left text-xs hover:bg-accent"
@@ -118,7 +117,7 @@
 			</Popover.Root>
 
 			<div class="flex-1"></div>
-			<span class="tnum font-mono text-[11px] text-muted-foreground">
+			<span class="tnum font-mono text-xs text-muted-foreground">
 				{monitor.rate}/s · {monitor.total}
 			</span>
 		</div>
@@ -135,7 +134,7 @@
 				</div>
 			</div>
 		{:else}
-			<table class="w-full border-collapse font-mono text-[11.5px]">
+			<table class="w-full border-collapse font-mono text-xs">
 				<tbody>
 					{#each rows as e, i (e.id)}
 						{@const fam = family(e.message)}

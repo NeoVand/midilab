@@ -85,7 +85,7 @@
 			<div class="flex flex-wrap gap-1.5">
 				{#each PRESETS as [name, hex, why] (name)}
 					<button
-						class="rounded border px-2 py-1 text-[11px] transition-colors hover:border-foreground/40"
+						class="rounded border px-2 py-1 text-xs transition-colors hover:border-foreground/40"
 						title={why}
 						onclick={() => (text = hex)}
 					>
@@ -121,14 +121,14 @@
 
 			{#if summary}
 				<div class="rounded-lg border bg-surface-sunken p-3 text-sm">
-					<p class="text-[10px] tracking-wide text-msg-sysex uppercase">{summary.manufacturer}</p>
+					<p class="label text-msg-sysex">{summary.manufacturer}</p>
 					<p class="mt-1 leading-relaxed">{summary.summary}</p>
 				</div>
 			{/if}
 		</div>
 
 		<div class="flex flex-col gap-2">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Replies received</p>
+			<p class="label">Replies received</p>
 			{#if received.length === 0}
 				<p
 					class="rounded-lg border border-dashed p-4 text-xs leading-relaxed text-muted-foreground"
@@ -141,7 +141,7 @@
 					{@const data = e.message.type === 'sysex' ? e.message.data : []}
 					{@const id = parseIdentityReply(data)}
 					<div class="flex flex-col gap-1.5 rounded-lg border p-3">
-						<p class="text-[10px] text-muted-foreground">{e.portName}</p>
+						<p class="text-2xs text-muted-foreground">{e.portName}</p>
 						{#if id}
 							<p class="text-sm">
 								<span class="font-medium text-msg-sysex">{id.manufacturer}</span>
@@ -153,7 +153,7 @@
 							<p class="text-sm">{describeSysEx(data).summary}</p>
 						{/if}
 						<code
-							class="max-h-24 overflow-y-auto font-mono text-[10px] leading-relaxed text-muted-foreground"
+							class="max-h-24 overflow-y-auto font-mono text-2xs leading-relaxed text-muted-foreground"
 						>
 							{formatHexString([0xf0, ...data, 0xf7])}
 						</code>

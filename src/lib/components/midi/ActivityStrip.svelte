@@ -26,11 +26,11 @@
 					{#snippet child({ props })}
 						<div
 							{...props}
-							class="relative w-[5px] rounded-[2px] bg-muted/60"
+							class="relative w-[5px] rounded-xs bg-muted/60"
 							style="height: {height}px"
 						>
 							<div
-								class="absolute inset-x-0 bottom-0 rounded-[2px] transition-[height] duration-75"
+								class="absolute inset-x-0 bottom-0 rounded-xs transition-[height] duration-75"
 								style="height: {Math.max(8, level * 100)}%; background: {familyColor(
 									f
 								)}; opacity: {0.25 + level * 0.75}"

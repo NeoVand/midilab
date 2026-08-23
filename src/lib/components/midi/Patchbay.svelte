@@ -79,7 +79,7 @@
 
 <div class={cn('flex flex-col gap-4', className)}>
 	<!-- ── the graph ─────────────────────────────────────────────────────── -->
-	<div class="panel-sunken overflow-hidden rounded-xl border p-3">
+	<div class="panel-sunken overflow-hidden rounded-lg border p-3">
 		{#if inputs.length === 0}
 			<p class="py-6 text-center text-xs text-muted-foreground">
 				No MIDI inputs. Connect hardware in the dock — the graph fills itself in.
@@ -177,7 +177,7 @@
 	<div class="flex flex-col gap-3">
 		{#each router.routes as route (route.id)}
 			{@const loop = router.isLoop(route)}
-			<div class={cn('flex flex-col gap-3 rounded-xl border p-4', loop && 'border-destructive/50')}>
+			<div class={cn('flex flex-col gap-3 rounded-lg border p-4', loop && 'border-destructive/50')}>
 				<div class="flex flex-wrap items-center gap-3">
 					<Switch
 						checked={route.enabled}
@@ -236,14 +236,12 @@
 
 				<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] tracking-wide text-muted-foreground uppercase">
-							Channel filter
-						</span>
+						<span class="label"> Channel filter </span>
 						<div class="flex flex-wrap gap-1">
 							{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 								<button
 									class={cn(
-										'tnum size-5 rounded border font-mono text-[9px] transition-colors',
+										'tnum size-5 rounded border font-mono text-2xs transition-colors',
 										route.channels.includes(c)
 											? 'border-msg-cc bg-msg-cc-bg text-msg-cc'
 											: 'text-muted-foreground/60 hover:border-foreground/40'
@@ -259,7 +257,7 @@
 								</button>
 							{/each}
 						</div>
-						<span class="text-[10px] text-muted-foreground">
+						<span class="text-2xs text-muted-foreground">
 							{route.channels.length === 0
 								? 'all channels pass'
 								: `${route.channels.length} selected`}
@@ -267,11 +265,11 @@
 					</div>
 
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Remap to</span>
+						<span class="label">Remap to</span>
 						<div class="flex flex-wrap gap-1">
 							<button
 								class={cn(
-									'rounded border px-1.5 text-[10px]',
+									'rounded border px-1.5 text-2xs',
 									route.remapTo === null
 										? 'border-msg-note text-msg-note'
 										: 'text-muted-foreground/60'
@@ -283,7 +281,7 @@
 							{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 								<button
 									class={cn(
-										'tnum size-5 rounded border font-mono text-[9px]',
+										'tnum size-5 rounded border font-mono text-2xs',
 										route.remapTo === c
 											? 'border-msg-note bg-msg-note-bg text-msg-note'
 											: 'text-muted-foreground/60 hover:border-foreground/40'
@@ -298,9 +296,7 @@
 
 					<div class="flex flex-col gap-3">
 						<label class="flex flex-col gap-1">
-							<span
-								class="flex justify-between text-[10px] tracking-wide text-muted-foreground uppercase"
-							>
+							<span class="label flex justify-between">
 								Transpose <span class="tnum font-mono"
 									>{route.transpose > 0 ? '+' : ''}{route.transpose}</span
 								>
@@ -315,9 +311,7 @@
 							/>
 						</label>
 						<label class="flex flex-col gap-1">
-							<span
-								class="flex justify-between text-[10px] tracking-wide text-muted-foreground uppercase"
-							>
+							<span class="label flex justify-between">
 								Velocity <span class="tnum font-mono">×{route.velocityScale.toFixed(2)}</span>
 							</span>
 							<Slider
@@ -333,9 +327,7 @@
 
 					<div class="flex flex-col gap-3">
 						<div class="flex flex-col gap-1">
-							<span
-								class="flex justify-between text-[10px] tracking-wide text-muted-foreground uppercase"
-							>
+							<span class="label flex justify-between">
 								Note range
 								<span class="tnum font-mono">
 									{noteName(route.noteRange[0], {
@@ -356,7 +348,7 @@
 							{#each FILTER_KEYS as [key, label] (key)}
 								<button
 									class={cn(
-										'rounded border px-1.5 py-0.5 text-[10px] transition-colors',
+										'rounded border px-1.5 py-0.5 text-2xs transition-colors',
 										route.pass[key]
 											? 'border-msg-note/60 bg-msg-note-bg text-msg-note'
 											: 'text-muted-foreground/50'
@@ -374,7 +366,7 @@
 		{/each}
 
 		{#if router.routes.length === 0}
-			<p class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
+			<p class="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
 				No routes yet. Add one to send an input somewhere — with channel remapping, transposition, a
 				velocity curve and message filtering on the way.
 			</p>

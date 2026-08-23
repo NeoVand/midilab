@@ -43,7 +43,7 @@ Local Control OFF on anything being sequenced.`
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			MIDI Clock answers "what tempo are we at?" It does not answer "what time is it?" — and for
 			anything involving tape, video or a fixed timeline, that second question is the one that
 			matters. There are three common answers to synchronisation, and they solve different problems.
@@ -51,8 +51,8 @@ Local Control OFF on anything being sequenced.`
 	</Section>
 
 	<div class="grid gap-4 lg:grid-cols-3">
-		<div class="flex flex-col gap-2 rounded-xl border border-msg-clock/40 p-4">
-			<p class="text-[11px] font-semibold tracking-wide text-msg-clock uppercase">MIDI Clock</p>
+		<div class="flex flex-col gap-2 rounded-lg border border-msg-clock/40 p-4">
+			<p class="text-xs font-semibold tracking-wide text-msg-clock uppercase">MIDI Clock</p>
 			<p class="text-sm leading-relaxed">
 				Musical time. Tempo-relative, 24 ticks per quarter note, no absolute position except via
 				Song Position Pointer.
@@ -62,8 +62,8 @@ Local Control OFF on anything being sequenced.`
 				thinks in bars and beats.
 			</p>
 		</div>
-		<div class="flex flex-col gap-2 rounded-xl border p-4">
-			<p class="text-[11px] font-semibold tracking-wide uppercase">MIDI Time Code</p>
+		<div class="flex flex-col gap-2 rounded-lg border p-4">
+			<p class="text-sm font-semibold">MIDI Time Code</p>
 			<p class="text-sm leading-relaxed">
 				Wall-clock time. Hours, minutes, seconds, frames — SMPTE timecode carried over MIDI.
 				Completely independent of tempo.
@@ -73,8 +73,8 @@ Local Control OFF on anything being sequenced.`
 				regardless of what the tempo is doing.
 			</p>
 		</div>
-		<div class="flex flex-col gap-2 rounded-xl border p-4">
-			<p class="text-[11px] font-semibold tracking-wide uppercase">Ableton Link</p>
+		<div class="flex flex-col gap-2 rounded-lg border p-4">
+			<p class="text-sm font-semibold">Ableton Link</p>
 			<p class="text-sm leading-relaxed">
 				Peer-to-peer tempo and phase over a local network. No leader: any participant can change the
 				tempo and everyone follows, staying phase-aligned.
@@ -87,15 +87,15 @@ Local Control OFF on anything being sequenced.`
 	</div>
 
 	<Section title="What MIDI Time Code actually looks like">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			MTC is delivered in a peculiar way. A full timecode position is eight
 			<strong>quarter-frame</strong> messages, each carrying one nibble, sent in sequence — so it takes
 			two frames to spell out one position, and the receiver is always slightly behind and interpolating.
 		</p>
 		<ByteInspector bytes={[0xf1, 0x24]} />
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="w-16 px-3 py-2 text-left font-medium">Piece</th>
 						<th class="px-3 py-2 text-left font-medium">Carries</th>
@@ -135,13 +135,13 @@ Local Control OFF on anything being sequenced.`
 	</Callout>
 
 	<Section title="Choosing a leader, deliberately">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			There is no election in MIDI. Whoever is sending clock is the leader, and if two devices are
 			sending it you have two leaders and no followers. The failure mode is subtle: everything
 			starts, everything is roughly in time, and the groove is just slightly wrong in a way nobody
 			can point at.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The fix is a written policy. Not a metaphorical one — an actual note you keep, so that when a
 			session feels off you can check reality against intention in thirty seconds.
 		</p>
@@ -161,13 +161,13 @@ Local Control OFF on anything being sequenced.`
 	</Section>
 
 	<Section title="When to change the leader">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Some devices follow external clock less well than they lead. If the rig feels unstable, the
 			most effective single change is usually to <em>invert the relationship</em> — make the wobbly device
 			the leader and let the steadier ones follow. This is not a workaround so much as an acknowledgement
 			that clock-following quality varies enormously between devices and is rarely documented.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The jitter plot in the previous lesson is how you find out which device is which, rather than
 			arguing about it. Connect each candidate leader in turn, watch the spread, and pick the
 			narrowest.

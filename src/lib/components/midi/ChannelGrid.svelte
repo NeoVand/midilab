@@ -38,17 +38,17 @@
 			disabled={!selectable}
 		>
 			<span class="flex w-full items-baseline justify-between">
-				<span class="tnum font-mono text-[11px]" style:color={active ? colour(c) : ''}>
+				<span class="tnum font-mono text-xs" style:color={active ? colour(c) : ''}>
 					{c + 1}
 				</span>
 				{#if c === 9}
-					<span class="text-[8px] tracking-wide text-muted-foreground/60 uppercase">drums</span>
+					<span class="label text-muted-foreground/60">drums</span>
 				{:else if active}
-					<span class="tnum font-mono text-[9px] text-muted-foreground">{snap.notes.size}</span>
+					<span class="tnum font-mono text-2xs text-muted-foreground">{snap.notes.size}</span>
 				{/if}
 			</span>
 			{#if !compact}
-				<span class="w-full truncate text-[9px] leading-tight text-muted-foreground">
+				<span class="w-full truncate text-2xs leading-tight text-muted-foreground">
 					{c === 9 ? 'GM kit' : gmProgramName(synth.channels[c].program)}
 				</span>
 			{/if}

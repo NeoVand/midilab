@@ -183,7 +183,7 @@
 	<!-- identity -->
 	<div class="grid gap-3 sm:grid-cols-3">
 		<label class="flex flex-col gap-1">
-			<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Name</span>
+			<span class="label">Name</span>
 			<Input
 				value={profile.name}
 				class="h-8 text-xs"
@@ -192,7 +192,7 @@
 			/>
 		</label>
 		<label class="flex flex-col gap-1">
-			<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Manufacturer</span>
+			<span class="label">Manufacturer</span>
 			<Input
 				value={profile.manufacturer ?? ''}
 				class="h-8 text-xs"
@@ -201,12 +201,12 @@
 			/>
 		</label>
 		<label class="flex flex-col gap-1">
-			<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Channel</span>
+			<span class="label">Channel</span>
 			<div class="flex flex-wrap gap-1">
 				{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 					<button
 						class={cn(
-							'tnum size-5 rounded border font-mono text-[9px]',
+							'tnum size-5 rounded border font-mono text-2xs',
 							profile.channel === c
 								? 'border-msg-note bg-msg-note-bg text-msg-note'
 								: 'text-muted-foreground/60'
@@ -221,7 +221,7 @@
 	</div>
 
 	<!-- learn -->
-	<div class="flex flex-wrap items-center gap-3 rounded-xl border p-4">
+	<div class="flex flex-wrap items-center gap-3 rounded-lg border p-4">
 		<Button
 			variant={learning ? 'default' : 'outline'}
 			size="sm"
@@ -242,7 +242,7 @@
 	<div class="flex flex-col gap-4">
 		{#each groups as [group, items] (group)}
 			<div class="flex flex-col gap-2">
-				<p class="text-[10px] tracking-wide text-muted-foreground uppercase">{group}</p>
+				<p class="label">{group}</p>
 				{#each items as { p, i } (p.id)}
 					<div class="flex flex-wrap items-center gap-3 rounded-lg border px-3 py-2">
 						<Knob
@@ -261,14 +261,14 @@
 								disabled={!editable}
 								oninput={(e) => updateParameter(i, { name: e.currentTarget.value })}
 							/>
-							<code class="font-mono text-[10px] text-muted-foreground">{p.id}</code>
+							<code class="font-mono text-2xs text-muted-foreground">{p.id}</code>
 						</div>
-						<span class="font-mono text-[11px] text-msg-cc">{device.explain(p.id)}</span>
-						<span class="font-mono text-[10px] text-muted-foreground">
+						<span class="font-mono text-xs text-msg-cc">{device.explain(p.id)}</span>
+						<span class="font-mono text-2xs text-muted-foreground">
 							{p.min}–{p.max}{p.unit ? ` ${p.unit}` : ''}
 						</span>
 						{#if p.unverified}
-							<span class="text-[10px] text-warn">unverified</span>
+							<span class="text-2xs text-warn">unverified</span>
 						{/if}
 						<div class="flex-1"></div>
 						{#if editable}
@@ -288,7 +288,7 @@
 		{/each}
 
 		{#if profile.parameters.length === 0}
-			<p class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
+			<p class="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
 				No parameters yet. Use Learn to capture them from the hardware, or start from a built-in
 				profile and duplicate it.
 			</p>
@@ -298,18 +298,18 @@
 	<!-- programs -->
 	{#if profile.programs.length > 0}
 		<div class="flex flex-col gap-2">
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Programs</p>
+			<p class="label">Programs</p>
 			<div class="flex flex-wrap gap-1.5">
 				{#each profile.programs as entry (entry.name)}
 					<button
-						class="rounded border px-2 py-1 text-[11px] transition-colors hover:border-msg-program"
+						class="rounded border px-2 py-1 text-xs transition-colors hover:border-msg-program"
 						onclick={() => {
 							engine.wake();
 							engine.sendAll(device.selectProgram(entry.name));
 						}}
 					>
 						{entry.name}
-						<span class="ml-1 font-mono text-[9px] text-muted-foreground">
+						<span class="ml-1 font-mono text-2xs text-muted-foreground">
 							{entry.bankMsb ?? '–'}:{entry.bankLsb ?? '–'}:{entry.program}
 						</span>
 					</button>
@@ -319,7 +319,7 @@
 	{/if}
 
 	<!-- import -->
-	<details class="rounded-xl border">
+	<details class="rounded-lg border">
 		<summary class="flex cursor-pointer items-center gap-2 px-4 py-2.5 text-sm hover:bg-accent/40">
 			<HugeiconsIcon icon={FileUploadIcon} size={14} />
 			Import a profile

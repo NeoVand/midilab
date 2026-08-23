@@ -196,7 +196,7 @@
 			{#each [50, 80, 100, 127] as v (v)}
 				<button
 					class={cn(
-						'tnum rounded border px-1.5 py-0.5 font-mono text-[10px]',
+						'tnum rounded border px-1.5 py-0.5 font-mono text-2xs',
 						velocity === v
 							? 'border-msg-note bg-msg-note-bg text-msg-note'
 							: 'text-muted-foreground'
@@ -226,7 +226,7 @@
 				{#each Array.from({ length: steps }, (_, i) => i) as i (i)}
 					<div
 						class={cn(
-							'flex-1 text-center font-mono text-[9px]',
+							'flex-1 text-center font-mono text-2xs',
 							current === i && transport.playing ? 'text-msg-note' : 'text-muted-foreground/40'
 						)}
 					>
@@ -245,15 +245,15 @@
 						>
 							<HugeiconsIcon icon={track.mute ? VolumeOffIcon : VolumeHighIcon} size={13} />
 						</button>
-						<span class="truncate text-[11px]">{label(track)}</span>
-						<span class="ml-auto font-mono text-[9px] text-muted-foreground/50">
+						<span class="truncate text-xs">{label(track)}</span>
+						<span class="ml-auto font-mono text-2xs text-muted-foreground/50">
 							{track.channel + 1}
 						</span>
 					</div>
 					{#each track.steps.slice(0, steps) as v, i (i)}
 						<button
 							class={cn(
-								'h-7 flex-1 rounded-[3px] border transition-colors',
+								'h-7 flex-1 rounded-xs border transition-colors',
 								i % 4 === 0 && 'border-l-grid-line-strong',
 								current === i && transport.playing && 'ring-1 ring-msg-note/60'
 							)}
@@ -270,7 +270,7 @@
 			{/each}
 		</div>
 	</div>
-	<p class="text-[11px] text-muted-foreground">
+	<p class="text-xs text-muted-foreground">
 		Click a step to toggle it, drag across to paint. The playhead is driven by the same transport as
 		the dock, so this stays in time with anything else the app is doing.
 	</p>

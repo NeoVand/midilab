@@ -11,7 +11,7 @@
 		back={{ href: '/lab', label: 'Lab' }}
 	/>
 	<Patchbay />
-	<details class="rounded-xl border">
+	<details class="rounded-lg border">
 		<summary class="cursor-pointer px-4 py-2.5 text-sm hover:bg-accent/40">Ports</summary>
 		<div class="border-t p-4"><DevicePanel /></div>
 	</details>

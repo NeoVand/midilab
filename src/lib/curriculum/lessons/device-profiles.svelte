@@ -55,16 +55,16 @@ log(JSON.stringify([
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Here is a design mistake that is very easy to make and very expensive to undo: putting CC
 			numbers into your music.
 		</p>
 		<div class="grid gap-3 lg:grid-cols-2">
-			<div class="flex flex-col gap-2 rounded-xl border border-destructive/40 p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-destructive uppercase">
+			<div class="flex flex-col gap-2 rounded-lg border border-destructive/40 p-4">
+				<p class="text-xs font-semibold tracking-wide text-destructive uppercase">
 					Bound to one instrument
 				</p>
-				<pre class="font-mono text-[11px] leading-relaxed"><code
+				<pre class="font-mono text-xs leading-relaxed"><code
 						>{`{ cc: 74, value: 96, channel: 3 }`}</code
 					></pre>
 				<p class="text-xs leading-relaxed text-muted-foreground">
@@ -72,11 +72,11 @@ log(JSON.stringify([
 					possibly worse than meaningless, because it will still do something.
 				</p>
 			</div>
-			<div class="flex flex-col gap-2 rounded-xl border border-msg-note/40 p-4">
-				<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">
+			<div class="flex flex-col gap-2 rounded-lg border border-msg-note/40 p-4">
+				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">
 					Bound to an intention
 				</p>
-				<pre class="font-mono text-[11px] leading-relaxed"><code
+				<pre class="font-mono text-xs leading-relaxed"><code
 						>{`{ param: 'filter.cutoff', value: 0.75 }`}</code
 					></pre>
 				<p class="text-xs leading-relaxed text-muted-foreground">
@@ -98,7 +98,7 @@ log(JSON.stringify([
 
 	<Section title="The shape of a profile">
 		<pre
-			class="scrollbar-thin overflow-x-auto rounded-xl border bg-surface-sunken p-4 font-mono text-[12px] leading-relaxed"><code
+			class="scrollbar-thin overflow-x-auto rounded-lg border bg-surface-sunken p-4 font-mono text-sm leading-relaxed"><code
 				>{`{
   id: 'my-korg',
   name: 'Korg',
@@ -116,7 +116,7 @@ log(JSON.stringify([
   ]
 }`}</code
 			></pre>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Three parameters, three completely different delivery mechanisms, one calling convention. The
 			adapter turns <code class="rounded bg-muted px-1">set('filter.resonance', 0.8)</code> into whichever
 			handshake that particular parameter needs — including the full four-message NRPN sequence, with
@@ -141,11 +141,11 @@ log(JSON.stringify([
 	</TryThis>
 
 	<Section title="Learning a device you have no documentation for">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The Learn button is not a toy. It is the fastest reliable way to map an instrument, and it
 			works even when the manual is missing, wrong, or in a language you do not read. The procedure:
 		</p>
-		<ol class="flex flex-col gap-2 text-[15px] leading-relaxed">
+		<ol class="flex flex-col gap-2 text-base leading-relaxed">
 			{#each ['Connect the instrument’s MIDI Out to this machine and enable it as an input in the dock.', 'Arm Learn, move one control, and rename the parameter it captures to something semantic.', 'Repeat for every control you care about. Twenty minutes gets you a usable profile.', 'Verify the other direction: turn the on-screen knob and confirm the hardware responds. Transmit and receive maps are not always the same.', 'Export the JSON and keep it with your project.'] as step, i (step)}
 				<li class="flex gap-3">
 					<span class="mt-0.5 font-mono text-sm text-msg-note">{i + 1}</span>
@@ -168,12 +168,12 @@ log(JSON.stringify([
 	</TryThis>
 
 	<Section title="Where this is going">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			MIDI 2.0's Property Exchange lets a device publish this structure itself — its controllers,
 			its programs, its current state — as machine-readable data. Software could then build an
 			editor for an instrument it has never encountered.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Until then, you are the Property Exchange. The abstraction is worth building now precisely
 			because it will not need changing later: when instruments start describing themselves, the
 			profiles simply arrive pre-filled.

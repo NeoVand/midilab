@@ -18,13 +18,13 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Every message so far has been tiny, fixed in length, and understood by everything. System
 			Exclusive is the deliberate exception: an arbitrarily long block of bytes addressed to one
 			manufacturer, meaning whatever that manufacturer decided it means.
 		</p>
 		<div
-			class="flex flex-wrap items-center gap-2 rounded-xl border bg-surface-sunken p-4 font-mono text-sm"
+			class="flex flex-wrap items-center gap-2 rounded-lg border bg-surface-sunken p-4 font-mono text-sm"
 		>
 			<span class="text-msg-sysex">F0</span>
 			<span class="text-xs text-muted-foreground">start</span>
@@ -38,7 +38,7 @@
 			<span class="text-msg-sysex">F7</span>
 			<span class="text-xs text-muted-foreground">end</span>
 		</div>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Only <code class="rounded bg-muted px-1 font-mono">F0</code>, the manufacturer identifier and
 			<code class="rounded bg-muted px-1 font-mono">F7</code> are standardised. Everything between is
 			private. A Korg receiving a Roland SysEx will read the first byte, see that it is not addressed
@@ -57,12 +57,12 @@
 	</Callout>
 
 	<Section title="Who gets which number">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Manufacturer IDs are assigned by the MIDI Association. The early ones are a single byte;
 			latecomers get three, beginning with <code class="rounded bg-muted px-1 font-mono">00</code>.
 			The single-byte numbers are a fossil record of the 1980s synthesiser industry.
 		</p>
-		<div class="grid grid-cols-2 gap-x-6 gap-y-1 rounded-xl border p-4 text-sm sm:grid-cols-3">
+		<div class="grid grid-cols-2 gap-x-6 gap-y-1 rounded-lg border p-4 text-sm sm:grid-cols-3">
 			{#each makers as m (m.id)}
 				<div class="flex items-baseline gap-2">
 					<code class="w-16 shrink-0 font-mono text-xs text-msg-sysex">{m.id}</code>
@@ -78,12 +78,12 @@
 	</Section>
 
 	<Section title="Checksums">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Many manufacturers append a checksum so a corrupted patch dump is rejected rather than loaded.
 			The common Roland-style scheme is simple: sum the addressed bytes, take it modulo 128, and
 			send whatever value makes the total come out to zero.
 		</p>
-		<div class="flex flex-col gap-2 rounded-xl border bg-surface-sunken p-4 font-mono text-xs">
+		<div class="flex flex-col gap-2 rounded-lg border bg-surface-sunken p-4 font-mono text-xs">
 			<div>
 				bytes &nbsp;= {sample
 					.slice(4)
@@ -105,7 +105,7 @@
 	</Section>
 
 	<Section title="Why your browser asks twice">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			SysEx is how firmware updates are delivered to a great many instruments. A web page with
 			unrestricted SysEx access could, in principle, write bad firmware to a synthesiser and brick
 			it. So the Web MIDI API treats it as a second, separate capability: you request
@@ -138,13 +138,13 @@
 	<Section title="What SysEx is actually good for">
 		<div class="grid gap-3 sm:grid-cols-2">
 			{#each [['Patch dumps', 'Save and restore an entire sound, or a whole bank, as a file. Often the only way to back up a hardware synth.'], ['Deep editing', 'Parameters the manufacturer never exposed as CC or NRPN. Every hardware editor app works this way.'], ['Global settings', 'MIDI channel assignments, tuning tables, pad sensitivity — things no channel message can reach.'], ['Firmware', 'The reason for the permission prompt.']] as [title, body] (title)}
-				<div class="rounded-xl border p-4">
-					<p class="text-[11px] font-semibold tracking-wide uppercase">{title}</p>
+				<div class="rounded-lg border p-4">
+					<p class="text-sm font-semibold">{title}</p>
 					<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">{body}</p>
 				</div>
 			{/each}
 		</div>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			And one thing it is <em>not</em> good for: real-time performance. A long SysEx message monopolises
 			a 31,250-baud cable for as long as it takes to send — a 4 KB patch dump is over a second of solid
 			traffic, during which your notes are queued behind it. Send patch data between songs, never during

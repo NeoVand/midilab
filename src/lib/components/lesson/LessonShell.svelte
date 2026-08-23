@@ -53,7 +53,7 @@
 				<h1 class="text-3xl leading-tight font-semibold tracking-tight text-balance">
 					{lesson.title}
 				</h1>
-				<p class="mt-2 text-[15px] leading-relaxed text-pretty text-muted-foreground">
+				<p class="mt-2 text-base leading-relaxed text-pretty text-muted-foreground">
 					{lesson.blurb}
 				</p>
 			</div>
@@ -77,10 +77,8 @@
 		</div>
 	</header>
 
-	<section class="rounded-xl border bg-surface-sunken p-5">
-		<p class="mb-3 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-			By the end you can
-		</p>
+	<section class="rounded-lg border bg-surface-sunken p-5">
+		<p class="mb-3 text-sm font-medium">By the end you can</p>
 		<ul class="flex flex-col gap-2">
 			{#each lesson.objectives as o (o)}
 				<li class="flex gap-2.5 text-sm leading-relaxed">
@@ -91,7 +89,7 @@
 		</ul>
 	</section>
 
-	<div class="flex flex-col gap-10">
+	<div class="lesson-prose flex flex-col gap-10">
 		{@render children()}
 	</div>
 
@@ -102,7 +100,7 @@
 				href={lessonPath(prev)}
 				class="h-auto flex-col items-start gap-0.5 px-3 py-2"
 			>
-				<span class="flex items-center gap-1 text-[11px] text-muted-foreground">
+				<span class="flex items-center gap-1 text-xs text-muted-foreground">
 					<HugeiconsIcon icon={ArrowLeft01Icon} size={12} /> Previous
 				</span>
 				<span class="text-sm">{prev.title}</span>
@@ -116,7 +114,7 @@
 				href={lessonPath(next)}
 				class="h-auto flex-col items-end gap-0.5 px-3 py-2 text-right"
 			>
-				<span class="flex items-center gap-1 text-[11px] text-muted-foreground">
+				<span class="flex items-center gap-1 text-xs text-muted-foreground">
 					Next <HugeiconsIcon icon={ArrowRight01Icon} size={12} />
 				</span>
 				<span class="text-sm">{next.title}</span>

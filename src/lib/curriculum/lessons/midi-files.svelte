@@ -19,13 +19,13 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			A live MIDI cable has no memory. A Standard MIDI File is the same messages written down, with
 			one thing added that the cable never needed: <strong
 				>how long to wait before the next one</strong
 			>.
 		</p>
-		<div class="flex flex-col gap-3 rounded-xl border bg-surface-sunken p-5">
+		<div class="flex flex-col gap-3 rounded-lg border bg-surface-sunken p-5">
 			<div class="flex flex-wrap items-center gap-2 font-mono text-sm">
 				<span class="text-msg-sysex">MThd</span>
 				<span class="text-xs text-muted-foreground">header — format, track count, resolution</span>
@@ -41,7 +41,7 @@
 				<span class="text-xs text-muted-foreground">…as many as the header said</span>
 			</div>
 		</div>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Three formats exist. <strong>Format 0</strong> squeezes everything into a single track —
 			simple to play, awkward to edit. <strong>Format 1</strong> keeps parallel tracks that share
 			one timeline, which is what almost everything writes today. <strong>Format 2</strong> holds independent
@@ -50,18 +50,18 @@
 	</Section>
 
 	<Section title="Variable-length quantities">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Delta times need to span from zero to hundreds of thousands of ticks, but most of them are
 			small. Spending four bytes on every one would be wasteful, so MIDI files use a
 			<strong>variable-length quantity</strong>: seven bits of number per byte, with the top bit
 			meaning "another byte follows".
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			This is the same seven-bit thinking as everywhere else in the protocol, applied to a different
 			problem. Values up to 127 take one byte; up to 16,383 take two; the maximum is four bytes.
 		</p>
 
-		<div class="flex flex-col gap-4 rounded-xl border p-4">
+		<div class="flex flex-col gap-4 rounded-lg border p-4">
 			<div class="flex items-center gap-4">
 				<span class="w-16 text-xs text-muted-foreground">Value</span>
 				<div class="flex-1">
@@ -76,14 +76,14 @@
 						<p class="font-mono text-lg leading-none text-msg-sysex">
 							{b.toString(16).toUpperCase().padStart(2, '0')}
 						</p>
-						<p class="mt-1 font-mono text-[10px]">
+						<p class="mt-1 font-mono text-2xs">
 							<span class={cont ? 'font-bold text-msg-note' : 'text-muted-foreground'}>
 								{cont ? '1' : '0'}
 							</span><span class="text-muted-foreground">
 								{(b & 0x7f).toString(2).padStart(7, '0')}
 							</span>
 						</p>
-						<p class="mt-1 text-[10px] text-muted-foreground">
+						<p class="mt-1 text-2xs text-muted-foreground">
 							{cont ? 'more follows' : 'last byte'} · {b & 0x7f}
 						</p>
 					</div>
@@ -95,7 +95,7 @@
 			<div class="flex flex-wrap gap-1.5">
 				{#each [0, 127, 128, 480, 8192, 16383, 100000] as v (v)}
 					<button
-						class="rounded border px-2 py-0.5 font-mono text-[11px] hover:border-foreground/40"
+						class="rounded border px-2 py-0.5 font-mono text-xs hover:border-foreground/40"
 						onclick={() => (vlq = v)}
 					>
 						{v} → {encodeVlq(v).length}B
@@ -115,7 +115,7 @@
 	</Callout>
 
 	<Section title="Meta events">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Files also carry things that make no sense on a cable: the tempo, the time signature, track
 			names, lyrics, markers, copyright. These are <strong>meta events</strong>, always beginning
 			<code class="rounded bg-muted px-1 font-mono">FF</code>, and they exist only inside files.
@@ -140,13 +140,13 @@
 	</TryThis>
 
 	<Section title="What a file does not tell you">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			A MIDI file contains program numbers, not sounds. Open the same file on two systems and you
 			get two different pieces of music — the note data is identical and the timbre is entirely at
 			the mercy of whatever is playing it. This is the "control, not sound" lesson from Act I,
 			arriving as a practical problem rather than a principle.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			If you want a file to sound approximately right elsewhere, write General MIDI program numbers
 			and keep drums on channel 10. If you want it to sound <em>exactly</em> right, you need the audio,
 			or the instrument, or both.

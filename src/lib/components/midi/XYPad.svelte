@@ -79,7 +79,7 @@
 				100}%; background: linear-gradient(135deg, var(--msg-expr), var(--msg-cc))"
 		></div>
 	</div>
-	<div class="flex justify-between font-mono text-[10px] text-muted-foreground">
+	<div class="flex justify-between font-mono text-2xs text-muted-foreground">
 		<span><span class="text-msg-expr">{xLabel}</span> {x}</span>
 		<span><span class="text-msg-cc">{yLabel}</span> {y}</span>
 	</div>

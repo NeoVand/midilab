@@ -182,7 +182,7 @@
 	<div class="flex flex-col gap-2">
 		{#each lanes as lane, i (lane.id)}
 			{@const p = parsed[i]}
-			<div class="flex flex-col gap-1.5 rounded-xl border p-3">
+			<div class="flex flex-col gap-1.5 rounded-lg border p-3">
 				<div class="flex flex-wrap items-center gap-2">
 					<button
 						class={cn('shrink-0', lane.mute ? 'text-muted-foreground/40' : 'text-msg-note')}
@@ -230,7 +230,7 @@
 				</div>
 
 				{#if p.error}
-					<p class="font-mono text-[11px] text-destructive">{p.error}</p>
+					<p class="font-mono text-xs text-destructive">{p.error}</p>
 				{:else}
 					<div class="panel-sunken relative h-8 overflow-hidden rounded border">
 						{#each Array.from({ length: beatsPerCycle * 4 }, (_, s) => s) as s (s)}
@@ -244,7 +244,7 @@
 						{/each}
 						{#each p.haps as hap, hi (hi)}
 							<div
-								class="absolute inset-y-1 rounded-[2px] bg-msg-note"
+								class="absolute inset-y-1 rounded-xs bg-msg-note"
 								style="left: {hap.begin * 100}%; width: {Math.max(
 									1.2,
 									Math.min(hap.end - hap.begin, 0.24) * 100 * 0.8
@@ -252,7 +252,7 @@
 								title={hap.value}
 							>
 								<span
-									class="absolute inset-0 truncate px-1 font-mono text-[8px] leading-6 text-background"
+									class="absolute inset-0 truncate px-1 font-mono text-2xs leading-6 text-background"
 								>
 									{hap.value}
 								</span>

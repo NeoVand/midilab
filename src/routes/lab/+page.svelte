@@ -52,7 +52,7 @@
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-8 px-8 py-12">
 	<header class="flex flex-col gap-3">
 		<h1 class="text-3xl font-semibold tracking-tight">The Lab</h1>
-		<p class="max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
+		<p class="max-w-2xl text-base leading-relaxed text-muted-foreground">
 			The instruments the lessons are built from, standing on their own. Nothing here is a demo —
 			these are the tools you keep.
 		</p>
@@ -62,11 +62,11 @@
 		{#each tools as tool (tool.href)}
 			<a
 				href={tool.href}
-				class="group flex flex-col gap-2 rounded-xl border bg-card p-5 transition-colors hover:border-foreground/25"
+				class="group flex flex-col gap-2 rounded-lg border bg-card p-5 transition-colors hover:border-foreground/25"
 			>
 				<HugeiconsIcon icon={tool.icon} size={22} class="text-muted-foreground" />
 				<h2 class="font-medium">{tool.name}</h2>
-				<p class="text-[13px] leading-relaxed text-muted-foreground">{tool.desc}</p>
+				<p class="text-sm leading-relaxed text-muted-foreground">{tool.desc}</p>
 			</a>
 		{/each}
 	</div>

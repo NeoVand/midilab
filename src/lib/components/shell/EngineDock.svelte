@@ -85,7 +85,7 @@
 			</div>
 
 			<div class="ml-1 flex items-baseline gap-2">
-				<span class="tnum font-mono text-[13px] tracking-tight text-readout">
+				<span class="tnum font-mono text-sm tracking-tight text-readout">
 					{transport.positionLabel}
 				</span>
 				<Tooltip.Root>
@@ -93,12 +93,12 @@
 						{#snippet child({ props })}
 							<button
 								{...props}
-								class="tnum rounded px-1 font-mono text-[13px] hover:bg-accent"
+								class="tnum rounded px-1 font-mono text-sm hover:bg-accent"
 								ondblclick={() => transport.tap()}
 								onclick={() => transport.tap()}
 							>
 								{transport.bpm.toFixed(1)}
-								<span class="text-[10px] text-muted-foreground">BPM</span>
+								<span class="text-2xs text-muted-foreground">BPM</span>
 							</button>
 						{/snippet}
 					</Tooltip.Trigger>
@@ -127,7 +127,7 @@
 			</Tooltip.Root>
 
 			{#if transport.externalPresent}
-				<span class="tnum ml-1 font-mono text-[11px] text-msg-clock">
+				<span class="tnum ml-1 font-mono text-xs text-msg-clock">
 					ext {transport.externalBpm.toFixed(1)}
 					<span class="text-muted-foreground">±{transport.externalJitter.toFixed(1)}ms</span>
 				</span>
@@ -138,7 +138,7 @@
 			<!-- ports -->
 			{#if midiAccess.status === 'granted'}
 				<button
-					class="flex items-center gap-1.5 rounded px-1.5 py-1 text-[12px] hover:bg-accent"
+					class="flex items-center gap-1.5 rounded px-1.5 py-1 text-sm hover:bg-accent"
 					onclick={() => {
 						settings.dockOpen = true;
 						settings.dockTab = 'devices';
@@ -171,7 +171,7 @@
 					{#snippet child({ props })}
 						<span
 							{...props}
-							class="tnum ml-2 flex items-center gap-1 font-mono text-[11px] text-muted-foreground"
+							class="tnum ml-2 flex items-center gap-1 font-mono text-xs text-muted-foreground"
 						>
 							<HugeiconsIcon icon={AudioWaveformIcon} size={13} />
 							{engine.voiceCount}

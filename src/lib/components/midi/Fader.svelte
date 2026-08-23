@@ -76,7 +76,7 @@
 		}}
 	>
 		<div
-			class="absolute rounded-[3px] transition-none"
+			class="absolute rounded-xs transition-none"
 			style={horizontal
 				? `left:1px; top:1px; bottom:1px; width: calc(${norm * 100}% - 2px); background:${colour}`
 				: `left:1px; right:1px; bottom:1px; height: calc(${norm * 100}% - 2px); background:${colour}`}
@@ -90,8 +90,8 @@
 	</div>
 	{#if label || sub}
 		<div class="flex flex-col items-center leading-tight">
-			{#if label}<span class="text-[11px] font-medium">{label}</span>{/if}
-			<span class="tnum font-mono text-[10px] text-muted-foreground">{sub ?? value}</span>
+			{#if label}<span class="text-xs font-medium">{label}</span>{/if}
+			<span class="tnum font-mono text-2xs text-muted-foreground">{sub ?? value}</span>
 		</div>
 	{/if}
 </div>

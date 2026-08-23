@@ -15,7 +15,7 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Everything so far has been about the messages. This act is about the wire — and the wire is
 			where most real-world MIDI problems actually live. The protocol is the same over every
 			transport; what changes is the speed, the number of addresses available, and the ways it can
@@ -24,7 +24,7 @@
 	</Section>
 
 	<Section title="Five-pin DIN">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The original, from 1983, and still on the back of most hardware. 31,250 bits per second, one
 			direction per cable, and an electrical design that has aged remarkably well.
 		</p>
@@ -39,7 +39,7 @@
 	</Section>
 
 	<Section title="TRS: the failure that looks like nothing">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Modern compact gear replaced the bulky DIN socket with a 3.5 mm jack. Unfortunately two
 			incompatible wirings became common before the MIDI Association standardised one of them.
 		</p>
@@ -56,30 +56,30 @@
 				are switchable, which is worth paying for.
 			</p>
 		</Callout>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Type A is now the standard, and Korg and Teenage Engineering both use it — so an OP-XY driving
 			a Korg needs one straight Type A adapter at each end and nothing else.
 		</p>
 	</Section>
 
 	<Section title="USB: who is the host?">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			USB MIDI is much faster than DIN and carries multiple virtual ports down one cable. It
 			introduces one concept that DIN never had, and it trips people constantly: exactly one end of
 			a USB connection must be the <strong>host</strong>, and the other must be the
 			<strong>device</strong>.
 		</p>
 		<div class="grid gap-3 sm:grid-cols-2">
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Host</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Host</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					Supplies power, enumerates what is attached, and manages the connection. Computers are
 					always hosts. Some hardware — grooveboxes, samplers, some keyboards — can also be one,
 					usually through a full-size USB-A socket or a switchable USB-C port.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Device</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Device</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					Announces itself and waits. Most controllers are device-only, which is why plugging a
 					controller directly into a synth usually does nothing unless that synth is a host.
@@ -94,7 +94,7 @@
 				boxes does nothing, this is almost always why.
 			</p>
 		</Callout>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			<strong>Class-compliant</strong> is the other word worth knowing: it means the device works with
 			the operating system's built-in driver and needs nothing installed. Almost all modern MIDI hardware
 			is class-compliant, which is also why it works with a browser.
@@ -103,8 +103,8 @@
 
 	<Section title="Bluetooth LE MIDI and network MIDI">
 		<div class="grid gap-3 sm:grid-cols-2">
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Bluetooth LE MIDI</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Bluetooth LE MIDI</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					No cable, and genuinely convenient for sketching. The trade-off is latency and jitter that
 					vary with radio conditions — fine for playing notes, less good as a clock source, and
@@ -112,8 +112,8 @@
 					which the port appears like any other.
 				</p>
 			</div>
-			<div class="rounded-xl border p-4">
-				<p class="text-[11px] font-semibold tracking-wide uppercase">Network / RTP-MIDI</p>
+			<div class="rounded-lg border p-4">
+				<p class="text-sm font-semibold">Network / RTP-MIDI</p>
 				<p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
 					MIDI over IP, built into macOS and iOS and available on Windows and Linux through
 					third-party software. Excellent between computers on a wired network; dependent on the
@@ -124,7 +124,7 @@
 	</Section>
 
 	<Section title="What the browser can see">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Web MIDI does not care which transport a port uses. A DIN interface, a USB keyboard, a
 			Bluetooth device and a virtual loopback port all appear in the same list, with the same API.
 			If the operating system can see it, the browser can — with your permission.

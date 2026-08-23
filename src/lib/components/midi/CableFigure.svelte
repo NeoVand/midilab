@@ -29,7 +29,7 @@
 </script>
 
 {#if kind === 'din'}
-	<div class={cn('flex flex-wrap items-center gap-6 rounded-xl border p-5', className)}>
+	<div class={cn('flex flex-wrap items-center gap-6 rounded-lg border p-5', className)}>
 		<svg
 			viewBox="0 0 120 100"
 			class="h-32 w-36 shrink-0"
@@ -83,16 +83,11 @@
 		{#each [{ type: 'A', tip: 5, ring: 4, makers: 'Korg, Teenage Engineering, Make Noise, Boss — and the MIDI Association standard' }, { type: 'B', tip: 4, ring: 5, makers: 'Arturia, Novation, older 1010music — pre-standard' }] as v (v.type)}
 			<div
 				class={cn(
-					'flex flex-col gap-3 rounded-xl border p-4',
+					'flex flex-col gap-3 rounded-lg border p-4',
 					v.type === 'A' && 'border-msg-note/40'
 				)}
 			>
-				<p
-					class={cn(
-						'text-[11px] font-semibold tracking-wide uppercase',
-						v.type === 'A' ? 'text-msg-note' : 'text-warn'
-					)}
-				>
+				<p class={cn('text-sm font-semibold', v.type === 'A' ? 'text-msg-note' : 'text-warn')}>
 					TRS Type {v.type}
 				</p>
 				<svg viewBox="0 0 220 44" class="w-full" role="img" aria-label="TRS Type {v.type} plug">
@@ -156,8 +151,8 @@
 	</div>
 {:else}
 	<div class={cn('grid gap-4 lg:grid-cols-2', className)}>
-		<div class="flex flex-col gap-3 rounded-xl border p-4">
-			<p class="text-[11px] font-semibold tracking-wide uppercase">Daisy chain — Thru to In</p>
+		<div class="flex flex-col gap-3 rounded-lg border p-4">
+			<p class="text-sm font-semibold">Daisy chain — Thru to In</p>
 			<svg viewBox="0 0 340 70" class="w-full" role="img" aria-label="Daisy chain topology">
 				<defs>
 					<marker id="ch-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
@@ -197,8 +192,8 @@
 				diagnose.
 			</p>
 		</div>
-		<div class="flex flex-col gap-3 rounded-xl border p-4">
-			<p class="text-[11px] font-semibold tracking-wide text-msg-note uppercase">
+		<div class="flex flex-col gap-3 rounded-lg border p-4">
+			<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">
 				Star — one Thru box, everyone equal
 			</p>
 			<svg viewBox="0 0 340 70" class="w-full" role="img" aria-label="Star topology">

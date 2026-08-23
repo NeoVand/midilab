@@ -65,7 +65,7 @@
 	const events = $derived(notesToEvents(notes, bpm));
 </script>
 
-<div class={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
 	<div class="flex flex-wrap items-center gap-5">
 		<Button
 			variant={player.playing ? 'default' : 'outline'}
@@ -93,7 +93,7 @@
 	<div class="flex flex-col gap-1.5">
 		{#each LANES as lane, li (lane.note)}
 			<div class="flex items-center gap-2">
-				<span class="w-12 shrink-0 text-[11px] text-muted-foreground">{lane.name}</span>
+				<span class="w-12 shrink-0 text-xs text-muted-foreground">{lane.name}</span>
 				<div class="panel-sunken relative h-7 flex-1 overflow-hidden rounded border">
 					<!-- the grid the notes are "supposed" to sit on -->
 					{#each Array.from({ length: 16 }, (_, i) => i) as i (i)}
@@ -120,7 +120,7 @@
 				</div>
 			</div>
 		{/each}
-		<p class="pl-14 text-[11px] text-muted-foreground">
+		<p class="pl-14 text-xs text-muted-foreground">
 			Grey marks the exact grid position; green marks where the note is actually sent.
 		</p>
 	</div>

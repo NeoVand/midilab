@@ -31,20 +31,20 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Velocity captures the moment a note begins and never speaks again. <strong>Aftertouch</strong>
 			is what a keyboard sends when you lean into a key that is already down — a continuous stream of
 			pressure readings for as long as you keep pushing.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			It comes in two flavours, and the difference between them is a good deal larger than the names
 			suggest.
 		</p>
 	</Section>
 
 	<div class="grid gap-4 lg:grid-cols-2">
-		<div class="flex flex-col gap-3 rounded-xl border p-4">
-			<p class="text-[11px] font-semibold tracking-wide text-msg-expr uppercase">
+		<div class="flex flex-col gap-3 rounded-lg border p-4">
+			<p class="text-xs font-semibold tracking-wide text-msg-expr uppercase">
 				Channel aftertouch · 0xDn
 			</p>
 			<p class="text-sm leading-relaxed">
@@ -54,8 +54,8 @@
 			</p>
 			<ByteInspector bytes={[0xd0, channelPressure]} compact />
 		</div>
-		<div class="flex flex-col gap-3 rounded-xl border p-4">
-			<p class="text-[11px] font-semibold tracking-wide text-msg-expr uppercase">
+		<div class="flex flex-col gap-3 rounded-lg border p-4">
+			<p class="text-xs font-semibold tracking-wide text-msg-expr uppercase">
 				Polyphonic aftertouch · 0xAn
 			</p>
 			<p class="text-sm leading-relaxed">
@@ -114,8 +114,8 @@
 	</TryThis>
 
 	<Section title="Why poly aftertouch never caught on">
-		<p class="text-[15px] leading-relaxed">Two reasons, one physical and one about bandwidth.</p>
-		<ul class="flex flex-col gap-2.5 text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">Two reasons, one physical and one about bandwidth.</p>
+		<ul class="flex flex-col gap-2.5 text-base leading-relaxed">
 			<li class="flex gap-3">
 				<span class="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-msg-expr/60"></span>
 				<span>
@@ -144,13 +144,13 @@
 	</Section>
 
 	<Section title="Living with aftertouch">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Two practical notes. First, aftertouch is easy to send by accident — resting your hand on a
 			sensitive keybed can produce a continuous stream you never intended, which shows up as
 			mysterious wobble and eats bandwidth. Many sequencers offer an "ignore aftertouch" filter for
 			exactly this reason, and the patchbay in the Lab has one.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Second, when you release, send zero. A synth left at pressure 90 with no notes playing will
 			sound wrong the next time you play, and it is not obvious why. Reset All Controllers (CC 121)
 			clears it.

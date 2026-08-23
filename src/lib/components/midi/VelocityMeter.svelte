@@ -36,10 +36,10 @@
 						: 'hammered';
 </script>
 
-<div class={cn('flex flex-col gap-3 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-3 rounded-lg border p-4', className)}>
 	<div class="flex items-end justify-between">
 		<div>
-			<p class="text-[10px] tracking-wide text-muted-foreground uppercase">Last velocity</p>
+			<p class="label">Last velocity</p>
 			<p class="tnum font-mono text-4xl leading-none text-msg-note">{last?.velocity ?? '—'}</p>
 		</div>
 		<p class="text-right text-xs text-muted-foreground">
@@ -63,13 +63,13 @@
 	<div class="panel-sunken flex h-14 items-end gap-[2px] rounded-lg border p-1.5">
 		{#each history as v, i (i)}
 			<div
-				class="min-w-[3px] flex-1 rounded-[1px] bg-msg-note"
+				class="min-w-[3px] flex-1 rounded-xs bg-msg-note"
 				style="height: {(v / 127) * 100}%; opacity: {0.35 +
 					(i / Math.max(1, history.length)) * 0.65}"
 			></div>
 		{/each}
 		{#if history.length === 0}
-			<p class="w-full text-center text-[11px] text-muted-foreground">velocity history</p>
+			<p class="w-full text-center text-xs text-muted-foreground">velocity history</p>
 		{/if}
 	</div>
 </div>

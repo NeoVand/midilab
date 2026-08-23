@@ -70,9 +70,9 @@
 
 		<!-- Messages -->
 		<Tabs.Content value="messages">
-			<div class="overflow-hidden rounded-xl border">
+			<div class="overflow-hidden rounded-lg border">
 				<table class="w-full text-sm">
-					<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+					<thead class="label bg-muted/50">
 						<tr>
 							<th class="w-16 px-3 py-2 text-left font-medium">Status</th>
 							<th class="px-3 py-2 text-left font-medium">Message</th>
@@ -100,9 +100,9 @@
 
 		<!-- Controllers -->
 		<Tabs.Content value="cc">
-			<div class="overflow-hidden rounded-xl border">
+			<div class="overflow-hidden rounded-lg border">
 				<table class="w-full text-sm">
-					<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+					<thead class="label bg-muted/50">
 						<tr>
 							<th class="w-14 px-3 py-2 text-right font-medium">CC</th>
 							<th class="px-3 py-2 text-left font-medium">Name</th>
@@ -130,9 +130,9 @@
 
 		<!-- RPN -->
 		<Tabs.Content value="rpn">
-			<div class="overflow-hidden rounded-xl border">
+			<div class="overflow-hidden rounded-lg border">
 				<table class="w-full text-sm">
-					<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+					<thead class="label bg-muted/50">
 						<tr>
 							<th class="w-24 px-3 py-2 text-left font-medium">MSB,LSB</th>
 							<th class="px-3 py-2 text-left font-medium">Parameter</th>
@@ -165,21 +165,20 @@
 				)}
 				{#if items.length}
 					<div class="flex flex-col gap-1.5">
-						<p class="text-[10px] tracking-wide text-muted-foreground uppercase">
+						<p class="label">
 							{family}
 							<span class="ml-1 font-mono text-muted-foreground/50">{f * 8}–{f * 8 + 7}</span>
 						</p>
 						<div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
 							{#each items as p (p)}
 								<button
-									class="flex items-baseline gap-2 rounded-lg border px-2 py-1.5 text-left text-[11px] transition-colors hover:border-msg-program"
+									class="flex items-baseline gap-2 rounded-lg border px-2 py-1.5 text-left text-xs transition-colors hover:border-msg-program"
 									onclick={() => {
 										engine.wake();
 										engine.programChange(p, 0);
 									}}
 								>
-									<span class="tnum w-6 shrink-0 font-mono text-[10px] text-muted-foreground"
-										>{p}</span
+									<span class="tnum w-6 shrink-0 font-mono text-2xs text-muted-foreground">{p}</span
 									>
 									<span class="truncate">{GM_PROGRAMS[p]}</span>
 								</button>
@@ -206,7 +205,7 @@
 							setTimeout(() => engine.noteOff(n, 9), 200);
 						}}
 					>
-						<span class="tnum w-6 shrink-0 font-mono text-[10px] text-muted-foreground">{n}</span>
+						<span class="tnum w-6 shrink-0 font-mono text-2xs text-muted-foreground">{n}</span>
 						<span class="truncate">{name}</span>
 					</button>
 				{/each}
@@ -238,7 +237,7 @@
 			<div class="grid gap-1 sm:grid-cols-3 lg:grid-cols-4">
 				{#each Array.from({ length: 128 }, (_, n) => n).filter( (n) => match(n, noteName( n, { convention: settings.octaveConvention } ), GM_DRUMS[n] ?? '') ) as n (n)}
 					<button
-						class="flex items-baseline gap-2 rounded border px-2 py-1 text-left font-mono text-[11px] transition-colors hover:border-msg-note"
+						class="flex items-baseline gap-2 rounded border px-2 py-1 text-left font-mono text-xs transition-colors hover:border-msg-note"
 						onclick={() => {
 							engine.wake();
 							engine.noteOn(n, 100, 0);
@@ -260,7 +259,7 @@
 			<div class="grid gap-1 sm:grid-cols-2 lg:grid-cols-3">
 				{#each makers.filter((m) => match(m.id, m.name)) as m (m.id + m.name)}
 					<div class="flex items-baseline gap-2 rounded border px-2.5 py-1.5 text-xs">
-						<code class="w-20 shrink-0 font-mono text-[10px] text-msg-sysex">{m.id}</code>
+						<code class="w-20 shrink-0 font-mono text-2xs text-msg-sysex">{m.id}</code>
 						<span class="truncate">{m.name}</span>
 					</div>
 				{/each}
@@ -277,7 +276,7 @@
 		<Tabs.Content value="glossary">
 			<div class="flex flex-col gap-2">
 				{#each GLOSSARY.filter((g) => match(g.term, g.definition)) as g (g.term)}
-					<div class="rounded-xl border p-3.5">
+					<div class="rounded-lg border p-3.5">
 						<p class="text-sm font-medium">{g.term}</p>
 						<p class="mt-1 text-xs leading-relaxed text-muted-foreground">{g.definition}</p>
 					</div>

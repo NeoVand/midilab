@@ -167,7 +167,7 @@
 		</svg>
 		{#if dragging}
 			<span
-				class="tnum pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded border bg-popover px-1.5 py-0.5 font-mono text-[11px] text-popover-foreground shadow-sm"
+				class="tnum pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded border bg-popover px-1.5 py-0.5 font-mono text-xs text-popover-foreground shadow-sm"
 			>
 				{display}
 			</span>
@@ -176,9 +176,9 @@
 	{#if label || sub}
 		<div class="flex flex-col items-center leading-tight">
 			{#if label}
-				<span class="text-[11px] font-medium">{label}</span>
+				<span class="text-xs font-medium">{label}</span>
 			{/if}
-			<span class="tnum font-mono text-[10px] text-muted-foreground">{sub ?? display}</span>
+			<span class="tnum font-mono text-2xs text-muted-foreground">{sub ?? display}</span>
 		</div>
 	{/if}
 </div>

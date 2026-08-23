@@ -68,17 +68,12 @@
 	);
 </script>
 
-<div class={cn('flex flex-col gap-2 rounded-xl border', className)}>
+<div class={cn('flex flex-col gap-2 rounded-lg border', className)}>
 	<div class="flex items-center justify-between border-b px-3 py-2">
-		<p class="text-[11px] font-semibold tracking-wide uppercase">
+		<p class="text-sm font-semibold">
 			Controllers seen{incomingOnly ? ' from your hardware' : ''}
 		</p>
-		<Button
-			variant="ghost"
-			size="sm"
-			class="h-6 gap-1 px-1.5 text-[11px]"
-			onclick={() => (seen = [])}
-		>
+		<Button variant="ghost" size="sm" class="h-6 gap-1 px-1.5 text-xs" onclick={() => (seen = [])}>
 			<HugeiconsIcon icon={Delete02Icon} size={12} /> Reset
 		</Button>
 	</div>
@@ -93,13 +88,13 @@
 			{#each seen as s (s.key)}
 				<div class="flex items-center gap-3 border-b px-3 py-1.5 last:border-b-0">
 					<span class="tnum w-14 font-mono text-sm text-msg-cc">CC {s.cc}</span>
-					<span class="w-8 font-mono text-[11px] text-muted-foreground">ch {s.channel + 1}</span>
+					<span class="w-8 font-mono text-xs text-muted-foreground">ch {s.channel + 1}</span>
 					<span class="min-w-0 flex-1 truncate text-xs">{ccInfo(s.cc).name}</span>
 					<div class="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
 						<div class="h-full bg-msg-cc" style="width: {(s.last / 127) * 100}%"></div>
 					</div>
 					<span class="tnum w-8 text-right font-mono text-xs">{s.last}</span>
-					<span class="tnum w-16 text-right font-mono text-[10px] text-muted-foreground/70">
+					<span class="tnum w-16 text-right font-mono text-2xs text-muted-foreground/70">
 						{s.min}–{s.max}
 					</span>
 				</div>

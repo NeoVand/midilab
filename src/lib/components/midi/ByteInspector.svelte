@@ -119,9 +119,7 @@
 				class="min-w-[8.5rem] flex-1 rounded-lg border bg-card p-3"
 				class:border-[var(--fam)]={i === 0}
 			>
-				<div
-					class="mb-1 flex items-baseline justify-between text-[10px] tracking-wide text-muted-foreground uppercase"
-				>
+				<div class="label mb-1 flex items-baseline justify-between">
 					<span>{roles[i]?.title ?? `Byte ${i}`}</span>
 					<span class="tnum">{i}</span>
 				</div>
@@ -138,7 +136,7 @@
 					{#each bits.split('') as bit, b (b)}
 						<span
 							class={cn(
-								'grid h-6 w-[15px] place-items-center rounded-[3px] font-mono text-[11px] leading-none',
+								'grid h-6 w-[15px] place-items-center rounded-xs font-mono text-xs leading-none',
 								b === 0
 									? 'font-semibold text-background'
 									: bit === '1'
@@ -154,7 +152,7 @@
 					{/each}
 				</div>
 
-				<p class="mt-2 text-[11px] leading-snug text-muted-foreground">
+				<p class="mt-2 text-xs leading-snug text-muted-foreground">
 					{#if b0Caption(i, isStatus)}
 						<span class="font-medium text-foreground">{b0Caption(i, isStatus)}</span>
 					{/if}
@@ -171,9 +169,7 @@
 		<div
 			class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg border bg-surface-sunken p-3 text-sm"
 		>
-			<span class="text-[10px] tracking-wide text-muted-foreground uppercase"
-				>Status byte, split</span
-			>
+			<span class="label">Status byte, split</span>
 			<div class="flex items-center gap-2">
 				<code class="rounded border bg-background px-1.5 py-0.5 font-mono text-xs">
 					{binary(status).slice(0, 4)}
@@ -195,7 +191,7 @@
 	{/if}
 
 	{#if !compact}
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			<span
 				class="mr-2 inline-block size-2 translate-y-[-1px] rounded-full align-middle"
 				style="background: var(--fam)"

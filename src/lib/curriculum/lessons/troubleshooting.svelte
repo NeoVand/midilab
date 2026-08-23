@@ -35,12 +35,12 @@
 
 <LessonShell lesson={meta}>
 	<Section>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			MIDI problems are almost never mysterious. They are almost always one of about five things,
 			and the reason they feel mysterious is that people debug in the wrong order — starting with
 			the expensive, rare causes and working backwards to the cheap, common ones.
 		</p>
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			The discipline is simple: <strong>check the free things first</strong>, and check them
 			properly rather than assuming. "The channel is right" and "I have confirmed the channel is
 			right by looking at the monitor" are different statements, and only the second one counts.
@@ -50,7 +50,7 @@
 	<Section title="The five that account for most of it">
 		<div class="flex flex-col gap-2">
 			{#each TOP_FIVE as [title, body], i (title)}
-				<div class="flex gap-4 rounded-xl border p-4">
+				<div class="flex gap-4 rounded-lg border p-4">
 					<span class="font-mono text-sm text-muted-foreground/50">{i + 1}</span>
 					<div>
 						<p class="text-sm font-medium">{title}</p>
@@ -70,11 +70,11 @@
 	</TryThis>
 
 	<Section title="The monitor is the arbiter">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			Every question above eventually reduces to "what is actually on the wire?", and that is not a
 			matter of opinion. A monitor turns arguments into observations:
 		</p>
-		<ul class="flex flex-col gap-2.5 text-[15px] leading-relaxed">
+		<ul class="flex flex-col gap-2.5 text-base leading-relaxed">
 			<li class="flex gap-3">
 				<span class="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-msg-cc/70"></span>
 				<span>
@@ -103,7 +103,7 @@
 				</span>
 			</li>
 		</ul>
-		<div class="h-64 overflow-hidden rounded-xl border">
+		<div class="h-64 overflow-hidden rounded-lg border">
 			<MidiMonitor class="h-full" />
 		</div>
 	</Section>
@@ -123,14 +123,14 @@
 	</Callout>
 
 	<Section title="Reading an implementation chart">
-		<p class="text-[15px] leading-relaxed">
+		<p class="text-base leading-relaxed">
 			If everything checks out and the device still ignores you, the last stop is its
 			<strong>MIDI implementation chart</strong> — a table at the back of every manual with two columns:
 			what it transmits, and what it recognises. Read it as a capabilities contract.
 		</p>
-		<div class="overflow-hidden rounded-xl border">
+		<div class="overflow-hidden rounded-lg border">
 			<table class="w-full text-sm">
-				<thead class="bg-muted/50 text-[10px] tracking-wide text-muted-foreground uppercase">
+				<thead class="label bg-muted/50">
 					<tr>
 						<th class="px-3 py-2 text-left font-medium">Function</th>
 						<th class="w-24 px-3 py-2 text-center font-medium">Transmitted</th>

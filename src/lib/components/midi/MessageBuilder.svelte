@@ -108,11 +108,11 @@
 	});
 </script>
 
-<div class={cn('flex flex-col gap-5 rounded-xl border p-4', className)}>
+<div class={cn('flex flex-col gap-5 rounded-lg border p-4', className)}>
 	<div class="flex flex-wrap items-end gap-4">
 		{#if !lockType}
 			<label class="flex flex-col gap-1">
-				<span class="text-[10px] tracking-wide text-muted-foreground uppercase">Message</span>
+				<span class="label">Message</span>
 				<Select.Root type="single" bind:value={type as string}>
 					<Select.Trigger class="h-8 w-48 text-xs">
 						{TYPE_LABELS[type] ?? type}
@@ -180,7 +180,7 @@
 				colour="var(--msg-cc)"
 				size={46}
 			/>
-			<p class="max-w-40 text-[11px] leading-snug text-muted-foreground">
+			<p class="max-w-40 text-xs leading-snug text-muted-foreground">
 				{ccInfo(controller).name}
 			</p>
 		{/if}
@@ -194,7 +194,7 @@
 				colour="var(--msg-program)"
 				size={46}
 			/>
-			<p class="max-w-40 text-[11px] leading-snug text-muted-foreground">
+			<p class="max-w-40 text-xs leading-snug text-muted-foreground">
 				GM: {gmProgramName(program)}
 			</p>
 		{/if}
@@ -233,11 +233,11 @@
 
 	{#if type === 'controlChange'}
 		<div class="flex flex-wrap items-center gap-1.5">
-			<span class="mr-1 text-[10px] tracking-wide text-muted-foreground uppercase">Jump to</span>
+			<span class="label mr-1">Jump to</span>
 			{#each ESSENTIAL_CCS as n (n)}
 				<button
 					class={cn(
-						'rounded border px-1.5 py-0.5 font-mono text-[10px] transition-colors hover:border-msg-cc',
+						'rounded border px-1.5 py-0.5 font-mono text-2xs transition-colors hover:border-msg-cc',
 						controller === n && 'border-msg-cc bg-msg-cc-bg text-msg-cc'
 					)}
 					onclick={() => (controller = n)}
