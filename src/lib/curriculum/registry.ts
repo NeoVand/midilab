@@ -1,3 +1,13 @@
+import type { IconSvgElement } from '@hugeicons/svelte';
+import {
+	BinaryCodeIcon,
+	Message01Icon,
+	Clock01Icon,
+	PlugSocketIcon,
+	AudioWaveformIcon,
+	SourceCodeIcon
+} from '@hugeicons/core-free-icons';
+
 /**
  * The course: six acts, thirty lessons.
  *
@@ -39,6 +49,21 @@ function lesson(
 ): LessonMeta {
 	return { id, number: ++counter, title, blurb, minutes, objectives, hardware };
 }
+
+/**
+ * One mark per act, chosen for what the act is about rather than for
+ * decoration: bits, messages, time, the wire, expression, code. Lives here
+ * because both the course page and the home page draw them, and two copies of
+ * a mapping like this is how they drift apart.
+ */
+export const ACT_ICON: Record<string, IconSvgElement> = {
+	foundations: BinaryCodeIcon,
+	language: Message01Icon,
+	time: Clock01Icon,
+	physical: PlugSocketIcon,
+	expression: AudioWaveformIcon,
+	programming: SourceCodeIcon
+};
 
 export const CURRICULUM: Act[] = [
 	{

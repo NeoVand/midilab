@@ -4,6 +4,7 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { onDestroy } from 'svelte';
 	import { engine } from '$lib/midi/engine.svelte';
+	import { familyColor, type MessageFamily } from '$lib/midi/messages';
 	import {
 		CC_TABLE,
 		GM_DRUMS,
@@ -38,11 +39,19 @@
 		data: string;
 		note: string;
 		group: 'Channel voice' | 'System';
+		/**
+		 * Which family this status byte belongs to, matching `family()` in
+		 * messages.ts. The whole table used to be printed in the Note colour —
+		 * including Bn and F0 — on the one page that is supposed to be the
+		 * authority on what the colours mean.
+		 */
+		family: MessageFamily;
 	}
 
 	const STATUS_BYTES: StatusRow[] = [
 		{
 			status: '8n',
+			family: 'note',
 			name: 'Note Off',
 			data: 'note, velocity',
 			note: 'Stop a note. Release velocity is usually ignored.',
@@ -50,6 +59,7 @@
 		},
 		{
 			status: '9n',
+			family: 'note',
 			name: 'Note On',
 			data: 'note, velocity',
 			note: 'Start a note. Velocity 0 means Note Off.',
@@ -57,6 +67,7 @@
 		},
 		{
 			status: 'An',
+			family: 'expr',
 			name: 'Poly Aftertouch',
 			data: 'note, pressure',
 			note: 'Pressure on one note. Rare.',
@@ -64,6 +75,7 @@
 		},
 		{
 			status: 'Bn',
+			family: 'cc',
 			name: 'Control Change',
 			data: 'controller, value',
 			note: 'Move a controller — or, at 120–127, a channel mode message.',
@@ -71,6 +83,7 @@
 		},
 		{
 			status: 'Cn',
+			family: 'program',
 			name: 'Program Change',
 			data: 'program',
 			note: 'Switch sound. One data byte only.',
@@ -78,6 +91,7 @@
 		},
 		{
 			status: 'Dn',
+			family: 'expr',
 			name: 'Channel Aftertouch',
 			data: 'pressure',
 			note: 'Pressure for the whole channel.',
@@ -85,6 +99,7 @@
 		},
 		{
 			status: 'En',
+			family: 'expr',
 			name: 'Pitch Bend',
 			data: 'LSB, MSB',
 			note: '14-bit, centred at 8192. LSB first.',
@@ -92,6 +107,7 @@
 		},
 		{
 			status: 'F0',
+			family: 'sysex',
 			name: 'System Exclusive',
 			data: '…, F7',
 			note: 'Manufacturer-private data of any length.',
@@ -99,6 +115,7 @@
 		},
 		{
 			status: 'F1',
+			family: 'clock',
 			name: 'MTC Quarter Frame',
 			data: 'nibble',
 			note: 'One eighth of a timecode position.',
@@ -106,6 +123,7 @@
 		},
 		{
 			status: 'F2',
+			family: 'clock',
 			name: 'Song Position',
 			data: 'LSB, MSB',
 			note: 'Sixteenth notes from the start.',
@@ -113,6 +131,7 @@
 		},
 		{
 			status: 'F3',
+			family: 'common',
 			name: 'Song Select',
 			data: 'song',
 			note: 'Cue a song by number. Almost nothing implements it.',
@@ -120,6 +139,7 @@
 		},
 		{
 			status: 'F6',
+			family: 'common',
 			name: 'Tune Request',
 			data: '—',
 			note: 'Asks analogue oscillators to retune.',
@@ -127,6 +147,7 @@
 		},
 		{
 			status: 'F7',
+			family: 'sysex',
 			name: 'End of SysEx',
 			data: '—',
 			note: 'Closes an F0 block. Never appears on its own.',
@@ -134,28 +155,52 @@
 		},
 		{
 			status: 'F8',
+			family: 'clock',
 			name: 'Timing Clock',
 			data: '—',
 			note: '24 per quarter note.',
 			group: 'System'
 		},
-		{ status: 'FA', name: 'Start', data: '—', note: 'Play from the beginning.', group: 'System' },
+		{
+			status: 'FA',
+			family: 'clock',
+			name: 'Start',
+			data: '—',
+			note: 'Play from the beginning.',
+			group: 'System'
+		},
 		{
 			status: 'FB',
+			family: 'clock',
 			name: 'Continue',
 			data: '—',
 			note: 'Play from the song position.',
 			group: 'System'
 		},
-		{ status: 'FC', name: 'Stop', data: '—', note: 'Stop, holding position.', group: 'System' },
+		{
+			status: 'FC',
+			family: 'clock',
+			name: 'Stop',
+			data: '—',
+			note: 'Stop, holding position.',
+			group: 'System'
+		},
 		{
 			status: 'FE',
+			family: 'common',
 			name: 'Active Sensing',
 			data: '—',
 			note: 'Heartbeat. Silence notes if it stops.',
 			group: 'System'
 		},
-		{ status: 'FF', name: 'System Reset', data: '—', note: 'Power-on state.', group: 'System' }
+		{
+			status: 'FF',
+			family: 'common',
+			name: 'System Reset',
+			data: '—',
+			note: 'Power-on state.',
+			group: 'System'
+		}
 	];
 
 	const CC_KIND: Record<CcCategory, string> = {
@@ -277,7 +322,7 @@
 	</PageHeader>
 
 	<Tabs.Root bind:value={tab} class="gap-4">
-		<Tabs.List class="w-fit flex-wrap">
+		<Tabs.List variant="line" class="w-fit flex-wrap">
 			{#each TABS as t (t.value)}
 				<Tabs.Trigger value={t.value} class={cn(query && !t.count && 'opacity-40')}>
 					{t.label}
@@ -315,7 +360,9 @@
 									</tr>
 								{/if}
 								<tr class="border-t transition-colors hover:bg-muted/40">
-									<td class="px-3 py-2 font-mono text-msg-note">{row.status}</td>
+									<td class="px-3 py-2 font-mono" style="color: {familyColor(row.family)}"
+										>{row.status}</td
+									>
 									<td class="px-3 py-2">{row.name}</td>
 									<td class="px-3 py-2 font-mono text-xs text-muted-foreground">{row.data}</td>
 									<td class="hidden px-3 py-2 text-xs text-muted-foreground sm:table-cell">

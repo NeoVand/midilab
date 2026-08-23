@@ -139,26 +139,31 @@
 
 :root {
 	/* family hues — L/C tuned for a white ground */
-	--msg-note: oklch(0.50 0.16 150);
-	--msg-note-bg: oklch(0.50 0.16 150 / 12%);
-	--msg-cc: oklch(0.50 0.19 262);
-	--msg-cc-bg: oklch(0.50 0.19 262 / 12%);
-	--msg-expr: oklch(0.50 0.2 318);
-	--msg-expr-bg: oklch(0.50 0.2 318 / 12%);
-	--msg-program: oklch(0.50 0.15 75);
-	--msg-program-bg: oklch(0.50 0.15 75 / 14%);
-	--msg-clock: oklch(0.50 0.09 197);
-	--msg-clock-bg: oklch(0.50 0.09 197 / 12%);
-	--msg-sysex: oklch(0.50 0.19 20);
-	--msg-sysex-bg: oklch(0.50 0.19 20 / 12%);
-	--msg-common: oklch(0.50 0.02 220);
-	--msg-common-bg: oklch(0.50 0.02 220 / 10%);
+	--msg-note: oklch(0.5 0.16 150);
+	--msg-note-bg: oklch(0.5 0.16 150 / 12%);
+	--msg-cc: oklch(0.5 0.19 262);
+	--msg-cc-bg: oklch(0.5 0.19 262 / 12%);
+	--msg-expr: oklch(0.5 0.2 318);
+	--msg-expr-bg: oklch(0.5 0.2 318 / 12%);
+	--msg-program: oklch(0.5 0.15 75);
+	--msg-program-bg: oklch(0.5 0.15 75 / 14%);
+	--msg-clock: oklch(0.5 0.09 197);
+	--msg-clock-bg: oklch(0.5 0.09 197 / 12%);
+	--msg-sysex: oklch(0.5 0.19 20);
+	--msg-sysex-bg: oklch(0.5 0.19 20 / 12%);
+	--msg-common: oklch(0.5 0.02 220);
+	--msg-common-bg: oklch(0.5 0.02 220 / 10%);
 
 	/* structural accents */
 	--wire: oklch(0.8 0.01 220);
 	--wire-active: var(--msg-note);
 	--grid-line: oklch(0.906 0.005 220);
 	--grid-line-strong: oklch(0.842 0.006 220);
+	/*
+	 * Staff lines. Structure, not decoration — a stave you have to hunt for is
+	 * worse than none — but never darker than the noteheads sitting on it.
+	 */
+	--staff-line: oklch(0.72 0.008 220);
 	--surface-sunken: oklch(0.955 0.003 220);
 	--surface-raised: oklch(1 0 0);
 	--key-white: oklch(0.995 0.001 220);
@@ -166,8 +171,8 @@
 	--ring-on-key-white: oklch(0.42 0.09 214);
 	--ring-on-key-black: oklch(0.95 0.04 214);
 	--readout: oklch(0.45 0.02 200);
-	--ok: oklch(0.50 0.15 150);
-	--warn: oklch(0.50 0.15 75);
+	--ok: oklch(0.5 0.15 150);
+	--warn: oklch(0.5 0.15 75);
 	/* Per-channel track colour: hue varies, lightness follows the ground. */
 	--channel-l: 0.55;
 }
@@ -192,6 +197,7 @@
 	--wire-active: var(--msg-note);
 	--grid-line: oklch(1 0 0 / 7%);
 	--grid-line-strong: oklch(1 0 0 / 13%);
+	--staff-line: oklch(1 0 0 / 30%);
 	--surface-sunken: oklch(0.118 0.004 228.8);
 	--surface-raised: oklch(0.218 0.008 223.9);
 	--key-white: oklch(0.9 0.003 220);
@@ -212,8 +218,14 @@
 	   surface wants: small enough to fit a monitor row, large enough to read
 	   all day. Tailwind's default steps are redefined rather than added to, so
 	   there is exactly one ladder and no way to land between its rungs.
-	   `2xs` exists only for the uppercase labels and the text printed inside
-	   keys and step cells; nothing smaller is permitted. */
+	   `2xs` exists for the uppercase labels and the text printed inside keys
+	   and step cells. `3xs` is smaller still and is allowed in exactly one
+	   place: a dense instrument list, where a patch bank is read the way it is
+	   read on hardware — scanned as a block, not as prose. Nothing below that,
+	   and nothing running text at either size. */
+	--text-3xs: 0.5625rem; /* 9 */
+	--text-3xs--line-height: 1.35;
+	--text-3xs--letter-spacing: 0.02em;
 	--text-2xs: 0.625rem; /* 10 */
 	--text-2xs--line-height: 1.4;
 	--text-2xs--letter-spacing: 0.02em;
@@ -259,6 +271,7 @@
 	--color-wire: var(--wire);
 	--color-grid-line: var(--grid-line);
 	--color-grid-line-strong: var(--grid-line-strong);
+	--color-staff: var(--staff-line);
 	--color-surface-sunken: var(--surface-sunken);
 	--color-surface-raised: var(--surface-raised);
 	--color-key-white: var(--key-white);

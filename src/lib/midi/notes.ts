@@ -156,9 +156,31 @@ export const INTERVAL_NAMES = [
 	'octave'
 ] as const;
 
+/**
+ * Distances above an octave keep the compound names musicians actually use —
+ * a ninth is a ninth, not "a second plus an octave" — and fall back to
+ * counting octaves past the point where the compound names run out.
+ */
+const COMPOUND_INTERVALS: Record<number, string> = {
+	13: 'minor 9th',
+	14: 'major 9th',
+	15: 'minor 10th',
+	16: 'major 10th',
+	17: 'perfect 11th',
+	18: 'tritone + octave',
+	19: 'perfect 12th',
+	20: 'minor 13th',
+	21: 'major 13th',
+	22: 'minor 14th',
+	23: 'major 14th',
+	24: 'two octaves'
+};
+
 export function intervalName(semitones: number): string {
-	const a = Math.abs(semitones);
+	const a = Math.abs(Math.round(semitones));
 	if (a <= 12) return INTERVAL_NAMES[a];
+	if (COMPOUND_INTERVALS[a]) return COMPOUND_INTERVALS[a];
 	const octaves = Math.floor(a / 12);
-	return `${INTERVAL_NAMES[a % 12]} + ${octaves} octave${octaves > 1 ? 's' : ''}`;
+	const rest = a % 12;
+	return rest === 0 ? `${octaves} octaves` : `${octaves} octaves + ${INTERVAL_NAMES[rest]}`;
 }

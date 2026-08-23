@@ -12,6 +12,7 @@ import { bus, type MidiEvent } from './bus';
 import { midiAccess } from './access.svelte';
 import { encode, parse, type MidiMessage } from './messages';
 import { synth } from '$lib/audio/synth';
+import { gm } from '$lib/audio/gm.svelte';
 import { audio } from '$lib/audio/engine';
 import { transport } from './clock.svelte';
 
@@ -26,12 +27,31 @@ export const INTERNAL_OUTPUT_ID = 'internal:synth';
  * working instrument on a laptop with nothing plugged into it, which is what
  * the rest of the course promises.
  */
+/**
+ * The engine behind the internal output.
+ *
+ * Two, and only one of them at a time: the sampled General MIDI instruments,
+ * which sound like the instruments they are named after, and the built-in
+ * synth, which can be modulated while a note is sounding. Neither is a
+ * replacement for the other, and the lessons on expression say so.
+ */
+function internalVoice() {
+	return gm.enabled ? gm : synth;
+}
+
 export const VIRTUAL_INPUT_ID = 'app:controls';
 export const VIRTUAL_INPUT_NAME = 'MIDI Lab controls';
 
 export interface OutputTarget {
 	id: string;
 	name: string;
+	/**
+	 * Second line in the device list. Inputs have always shown the
+	 * manufacturer under the port name; outputs are the same three devices and
+	 * were showing one line, which put the two columns out of step by the third
+	 * row. They carry it too now.
+	 */
+	subtitle: string;
 	kind: 'internal' | 'hardware';
 	connected: boolean;
 }
@@ -58,7 +78,8 @@ export class MidiEngine {
 	get outputs(): OutputTarget[] {
 		const internal: OutputTarget = {
 			id: INTERNAL_OUTPUT_ID,
-			name: 'MIDI Lab Synth (internal)',
+			name: 'MIDI Lab Synth',
+			subtitle: 'Built into this page',
 			kind: 'internal',
 			connected: true
 		};
@@ -67,6 +88,7 @@ export class MidiEngine {
 			...midiAccess.outputs.map((p) => ({
 				id: p.id,
 				name: p.name,
+				subtitle: p.manufacturer,
 				kind: 'hardware' as const,
 				connected: p.state === 'connected'
 			}))
@@ -80,7 +102,7 @@ export class MidiEngine {
 		transport.bindOutput((bytes, at) => this.sendBytes(bytes, at));
 		transport.watchExternal();
 		this.#meterTimer = window.setInterval(() => {
-			this.voiceCount = synth.voiceCount;
+			this.voiceCount = synth.voiceCount + gm.voiceCount;
 			this.audioReady = audio.ready;
 		}, 200);
 	}
@@ -94,7 +116,7 @@ export class MidiEngine {
 
 	#onEvent(e: MidiEvent) {
 		if (e.direction !== 'in') return;
-		if (this.auditionInput) synth.handle(e.message);
+		if (this.auditionInput) internalVoice().handle(e.message);
 	}
 
 	isOutputActive(id: string): boolean {
@@ -145,7 +167,7 @@ export class MidiEngine {
 		const bytes = encode(msg);
 		for (const id of this.activeOutputs) {
 			if (id === INTERNAL_OUTPUT_ID) {
-				synth.handle(msg, audioTime);
+				internalVoice().handle(msg, audioTime);
 			} else {
 				midiAccess.sendRaw(id, bytes, at);
 			}
@@ -238,7 +260,7 @@ export class MidiEngine {
 				}
 			}
 		}
-		synth.allSoundOff();
+		gm.allOff();
 	}
 }
 

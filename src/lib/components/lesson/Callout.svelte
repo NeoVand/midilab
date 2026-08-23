@@ -21,21 +21,34 @@
 	}
 	let { variant = 'note', title, children, class: className }: Props = $props();
 
+	/*
+	 * Callouts are editorial furniture, not message families.
+	 *
+	 * They used to borrow the family palette, which produced a box labelled
+	 * "Note" painted in the Control Change colour and a box labelled "The idea"
+	 * painted in the Note colour — on pages that also show live widgets keyed to
+	 * those exact hues. The seven family colours mean one thing in this app and
+	 * they cannot moonlight.
+	 *
+	 * What is left is a hierarchy of emphasis built from neutrals and the two
+	 * real status tones: a quiet aside, a louder idea, a warning, a danger. The
+	 * icon and the label were always doing the work of telling them apart.
+	 */
 	const config: Record<Variant, { icon: IconSvgElement; tone: string; label: string }> = {
 		note: {
 			icon: InformationCircleIcon,
-			tone: 'border-msg-cc/35 bg-msg-cc-bg text-msg-cc',
+			tone: 'border-border bg-surface-sunken text-muted-foreground',
 			label: 'Note'
 		},
 		gotcha: { icon: Alert02Icon, tone: 'border-warn/40 bg-warn/8 text-warn', label: 'Gotcha' },
 		convention: {
 			icon: BookOpen01Icon,
-			tone: 'border-msg-program/35 bg-msg-program-bg text-msg-program',
+			tone: 'border-border bg-surface-sunken text-muted-foreground',
 			label: 'Convention, not law'
 		},
 		key: {
 			icon: IdeaIcon,
-			tone: 'border-msg-note/35 bg-msg-note-bg text-msg-note',
+			tone: 'border-foreground/25 bg-accent text-foreground',
 			label: 'The idea'
 		},
 		danger: {

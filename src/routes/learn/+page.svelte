@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { CURRICULUM, ALL_LESSONS, TOTAL_MINUTES, lessonPath } from '$lib/curriculum/registry';
+	import {
+		CURRICULUM,
+		ALL_LESSONS,
+		TOTAL_MINUTES,
+		ACT_ICON,
+		lessonPath
+	} from '$lib/curriculum/registry';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { Tick02Icon, PlugSocketIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
@@ -51,7 +57,7 @@
 					</span>
 					<div class="h-1.5 w-40 overflow-hidden rounded-full bg-border">
 						<div
-							class="h-full rounded-full bg-msg-note transition-[width] duration-500"
+							class="h-full rounded-full bg-ok transition-[width] duration-500"
 							style="width: {Math.max(overall * 100, overall > 0 ? 2 : 0)}%"
 						></div>
 					</div>
@@ -66,16 +72,43 @@
 
 	{#each CURRICULUM as act (act.id)}
 		{@const done = act.lessons.filter((l) => progress.isLessonComplete(l.id)).length}
+		{@const frac = done / act.lessons.length}
 		<section id={act.id} class="flex scroll-mt-8 flex-col gap-3">
-			<div class="flex flex-col gap-1">
-				<div class="flex items-baseline gap-3">
-					<span class="font-mono text-xs text-muted-foreground">ACT {act.number}</span>
-					<h2 class="text-lg font-semibold tracking-tight">{act.title}</h2>
-					<span class="tnum ml-auto shrink-0 font-mono text-xs text-muted-foreground">
-						{done}/{act.lessons.length} · {actMinutes(act.lessons)} min
-					</span>
+			<div class="flex items-center gap-3.5">
+				<!-- The mark, with the act's progress drawn round it. -->
+				<span class="relative grid size-11 shrink-0 place-items-center">
+					<svg viewBox="0 0 44 44" class="absolute inset-0 -rotate-90">
+						<circle cx="22" cy="22" r="20" fill="none" class="stroke-border" stroke-width="2" />
+						{#if frac > 0}
+							<circle
+								cx="22"
+								cy="22"
+								r="20"
+								fill="none"
+								class="stroke-ok"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-dasharray="{frac * 125.66} 125.66"
+							/>
+						{/if}
+					</svg>
+					<HugeiconsIcon
+						icon={ACT_ICON[act.id]}
+						size={19}
+						strokeWidth={1.6}
+						class={frac === 1 ? 'text-ok' : 'text-muted-foreground'}
+					/>
+				</span>
+				<div class="min-w-0 flex-1">
+					<div class="flex items-baseline gap-2.5">
+						<span class="label text-muted-foreground">Act {act.number}</span>
+						<h2 class="text-lg leading-tight font-semibold tracking-tight">{act.title}</h2>
+					</div>
+					<p class="mt-0.5 text-sm text-muted-foreground">{act.subtitle}</p>
 				</div>
-				<p class="text-sm text-muted-foreground">{act.subtitle}</p>
+				<span class="tnum shrink-0 self-center font-mono text-xs text-muted-foreground">
+					{done}/{act.lessons.length} · {actMinutes(act.lessons)} min
+				</span>
 			</div>
 
 			<!--
@@ -96,7 +129,7 @@
 							)}
 						>
 							{#if isNext && doneLessons > 0}
-								<span class="absolute inset-y-0 left-0 w-[3px] bg-msg-note"></span>
+								<span class="absolute inset-y-0 left-0 w-[3px] bg-ok"></span>
 							{/if}
 							<span
 								class={cn(

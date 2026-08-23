@@ -16,7 +16,7 @@
 	/>
 
 	<Tabs.Root value="steps" class="gap-4">
-		<Tabs.List class="w-fit">
+		<Tabs.List variant="line" class="w-fit">
 			<Tabs.Trigger value="steps">Step sequencer</Tabs.Trigger>
 			<Tabs.Trigger value="patterns">Patterns</Tabs.Trigger>
 			<Tabs.Trigger value="files">MIDI files</Tabs.Trigger>

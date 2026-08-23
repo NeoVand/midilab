@@ -12,6 +12,7 @@
 	 * learn where a thing lives by its position, and a hairline between groups
 	 * is what makes position readable at a glance.
 	 */
+	import { browser } from '$app/environment';
 	import { engine, INTERNAL_OUTPUT_ID } from '$lib/midi/engine.svelte';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { transport } from '$lib/midi/clock.svelte';
@@ -32,6 +33,7 @@
 		StopIcon,
 		BackwardIcon,
 		MetronomeIcon,
+		ConnectIcon,
 		DangerIcon,
 		ArrowUp01Icon,
 		ArrowDown01Icon,
@@ -43,6 +45,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { Slider } from '$lib/components/ui/slider';
+	import { metronome } from '$lib/audio/metronome.svelte';
 	import { capturePointer, cn } from '$lib/utils';
 
 	let selected = $state<MidiEvent | null>(null);
@@ -101,6 +104,19 @@
 	 * one of those every time.
 	 */
 	const MIN_H = 132;
+
+	/**
+	 * The stored height is a wish, not a promise.
+	 *
+	 * Clamping only while you drag meant a dock dragged tall on a large display
+	 * came back at that height on a laptop, where it swallowed the page and left
+	 * the tool underneath it unusable — with the clamp never running again to
+	 * rescue it. Clamp on the way out too, against the window as it is now.
+	 */
+	let viewportH = $state(browser ? window.innerHeight : 900);
+	const dockH = $derived(
+		Math.min(Math.max(MIN_H, settings.dockHeight), Math.max(MIN_H, viewportH - 220))
+	);
 	let resizing = $state(false);
 
 	function startResize(e: PointerEvent) {
@@ -112,7 +128,11 @@
 	function onResize(e: PointerEvent) {
 		if (!resizing) return;
 		const max = Math.max(MIN_H, window.innerHeight - 220);
-		settings.dockHeight = Math.min(max, Math.max(MIN_H, window.innerHeight - e.clientY - 48));
+		// Whole pixels: a drag hands over 522.93359375, and that is what gets
+		// written to storage and read back forever.
+		settings.dockHeight = Math.round(
+			Math.min(max, Math.max(MIN_H, window.innerHeight - e.clientY - 48))
+		);
 	}
 
 	function openDock(tab: string) {
@@ -121,12 +141,14 @@
 	}
 </script>
 
+<svelte:window bind:innerHeight={viewportH} />
+
 <section
 	class={cn(
 		'relative flex shrink-0 flex-col border-t bg-sidebar',
 		!resizing && 'transition-[height] duration-200'
 	)}
-	style="height: {settings.dockOpen ? settings.dockHeight + 48 : 48}px"
+	style="height: {settings.dockOpen ? dockH + 48 : 48}px"
 	aria-label="Engine dock"
 >
 	{#if settings.dockOpen}
@@ -151,7 +173,13 @@
 	{/if}
 	<!-- ── collapsed bar ─────────────────────────────────────────────────── -->
 	<div
-		class="flex h-12 shrink-0 items-center divide-x divide-border [&>*]:flex [&>*]:h-full [&>*]:items-center [&>*]:gap-1.5 [&>*]:px-3"
+		class={cn(
+			'flex h-12 shrink-0 items-center divide-x divide-border [&>*]:flex [&>*]:h-full [&>*]:items-center [&>*]:gap-1.5 [&>*]:px-3',
+			// Without this the tray opened straight out of the toolbar with nothing
+			// between them, so the tab row read as a stray line rather than the top
+			// of a panel.
+			settings.dockOpen && 'border-b'
+		)}
 	>
 		<Tooltip.Provider delayDuration={400}>
 			<!-- transport -->
@@ -210,8 +238,36 @@
 				<TempoField compact />
 			</div>
 
-			<!-- sync -->
+			<!--
+				Click and clock, which are two different things and used to share one
+				button and a metronome icon: pressing it sent MIDI Clock to hardware
+				and made no sound, so the transport ran silently and the icon lied
+				about what it did.
+			-->
 			<div>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<Button
+								{...props}
+								variant="ghost"
+								size="icon"
+								class={cn('size-7', metronome.enabled && 'bg-accent text-foreground')}
+								onclick={() => metronome.toggle()}
+								aria-label="Metronome click"
+								aria-pressed={metronome.enabled}
+							>
+								<HugeiconsIcon icon={MetronomeIcon} size={14} />
+							</Button>
+						{/snippet}
+					</Tooltip.Trigger>
+					<Tooltip.Content side="top" class="max-w-56">
+						{metronome.enabled
+							? 'Click is on — accented on beat one'
+							: 'Click on every beat while the transport runs'}
+					</Tooltip.Content>
+				</Tooltip.Root>
+
 				<Tooltip.Root>
 					<Tooltip.Trigger>
 						{#snippet child({ props })}
@@ -224,7 +280,7 @@
 								aria-label="Send MIDI clock"
 								aria-pressed={transport.sendClock}
 							>
-								<HugeiconsIcon icon={MetronomeIcon} size={14} />
+								<HugeiconsIcon icon={ConnectIcon} size={14} />
 							</Button>
 						{/snippet}
 					</Tooltip.Trigger>
@@ -268,10 +324,12 @@
 								>
 									<HugeiconsIcon icon={PlugSocketIcon} size={14} class="text-muted-foreground" />
 									<span class="tnum font-mono">
-										<span class={inCount ? 'text-msg-cc' : 'text-muted-foreground'}>{inCount}</span>
+										<span class={inCount ? 'text-foreground' : 'text-muted-foreground'}
+											>{inCount}</span
+										>
 										<span class="text-muted-foreground">in</span>
 										<span class="mx-0.5 text-muted-foreground">/</span>
-										<span class={outCount ? 'text-msg-note' : 'text-muted-foreground'}>
+										<span class={outCount ? 'text-foreground' : 'text-muted-foreground'}>
 											{outCount}
 										</span>
 										<span class="text-muted-foreground">out</span>
@@ -303,14 +361,22 @@
 					onclick={() => openDock('monitor')}
 					aria-label="Open the monitor"
 				>
+					<!--
+						Direction is not a hue.
+
+						These two dots used to be msg-cc and msg-note — the Control Change
+						and Note colours — sitting six pixels from the seven-bar meter
+						where those same two hues mean Control Change and Note. In an app
+						whose whole colour system is "this hue is that message family",
+						spending two of those hues on in-versus-out is a lie told next to
+						the truth. The words "in" and "out" are already right there.
+					-->
 					<span class="flex flex-col gap-[3px]">
 						{#each [['in', monitor.flow.in], ['out', monitor.flow.out]] as const as [dir, level] (dir)}
 							<span class="flex items-center gap-1">
 								<span
-									class="size-1.5 rounded-full transition-opacity duration-75"
-									style="background: {dir === 'in'
-										? 'var(--msg-cc)'
-										: 'var(--msg-note)'}; opacity: {0.18 + level * 0.82}"
+									class="size-1.5 rounded-full bg-foreground transition-opacity duration-75"
+									style="opacity: {0.18 + level * 0.82}"
 								></span>
 								<span class="label leading-none">{dir}</span>
 							</span>
@@ -341,8 +407,14 @@
 				</Tooltip.Root>
 			</div>
 
+			<!--
+				The widest zone on the bar, and it used to render nothing at all until
+				the first message arrived: an empty six-hundred-pixel button where the
+				run of dividers simply stopped. It keeps its divider like every other
+				zone, and says what it is for while it waits.
+			-->
 			<button
-				class="min-w-0 flex-1 justify-start overflow-hidden !border-l-0 text-left hover:bg-accent/50"
+				class="min-w-0 flex-1 justify-start overflow-hidden text-left hover:bg-accent/50"
 				onclick={() => openDock('monitor')}
 				aria-label="Most recent message — open the monitor"
 			>
@@ -359,6 +431,10 @@
 					</span>
 					<span class="truncate text-xs text-muted-foreground">
 						{shortLabel(latest.message, { octaveConvention: settings.octaveConvention })}
+					</span>
+				{:else}
+					<span class="truncate text-xs text-muted-foreground">
+						The last message will show here
 					</span>
 				{/if}
 			</button>
@@ -430,7 +506,13 @@
 	<!-- ── expanded ──────────────────────────────────────────────────────── -->
 	{#if settings.dockOpen}
 		<Tabs.Root bind:value={settings.dockTab} class="min-h-0 flex-1 gap-0">
-			<Tabs.List class="mx-3 mb-0 h-8 w-fit shrink-0">
+			<!--
+				Underlined text, not pills in a bordered strip inside a bordered tray.
+				The tabs sit on the rule that already separates the toolbar from the
+				tray, so the selected one is marked by the rule rather than by another
+				box drawn around it.
+			-->
+			<Tabs.List variant="line" class="mb-0 h-9 w-full shrink-0 justify-start px-3 [&>*]:flex-none">
 				<Tabs.Trigger value="devices" class="text-xs">Devices</Tabs.Trigger>
 				<Tabs.Trigger value="monitor" class="text-xs">Monitor</Tabs.Trigger>
 				<Tabs.Trigger value="state" class="text-xs">State</Tabs.Trigger>
@@ -449,16 +531,32 @@
 					onSelect={(e) => (selected = selected?.id === e.id ? null : e)}
 					selectedId={selected?.id ?? null}
 				/>
-				<div
-					class="panel-sunken hidden min-h-0 scrollbar-thin overflow-y-auto border-t border-l p-3 lg:block"
-				>
-					{#if shown}
-						<ByteInspector bytes={shown.bytes} message={shown.message} />
-					{:else}
-						<p class="p-2 text-xs text-muted-foreground">
-							Nothing on the wire yet. Whatever arrives next appears here, taken apart byte by byte.
-						</p>
-					{/if}
+				<!--
+					Built the same way as the inspector on the Monitor page, because it
+					is the same thing: a header strip, and an empty state centred with
+					a headline rather than a paragraph pinned to the top-left corner
+					beside a stream that centres its own. It also stops both columns
+					opening with the words "Nothing on the wire yet".
+				-->
+				<div class="panel-sunken hidden min-h-0 flex-col border-t border-l lg:flex">
+					<!-- 45px, matching the stream's toolbar beside it, so the two panes
+					     share one horizontal rule instead of two at different heights. -->
+					<div class="label flex h-[45px] shrink-0 items-center border-b px-3">Inspector</div>
+					<div class="flex min-h-0 flex-1 scrollbar-thin flex-col overflow-y-auto p-3">
+						{#if shown}
+							<ByteInspector bytes={shown.bytes} message={shown.message} />
+						{:else}
+							<div class="grid flex-1 place-items-center text-center">
+								<div class="measure">
+									<p class="text-sm text-foreground">Nothing to take apart yet.</p>
+									<p class="mt-1.5 text-xs text-muted-foreground">
+										Whatever arrives next appears here as hex, as bits, split into its nibbles and
+										translated into English.
+									</p>
+								</div>
+							</div>
+						{/if}
+					</div>
 				</div>
 			</Tabs.Content>
 

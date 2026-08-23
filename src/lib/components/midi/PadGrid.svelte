@@ -10,6 +10,7 @@
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { rovingGrid } from '$lib/a11y/roving';
+	import { momentary } from '$lib/a11y/momentary';
 	import { capturePointer, cn } from '$lib/utils';
 
 	interface Props {
@@ -98,6 +99,7 @@
 		{@const active = noteState.isHeld(note, channel)}
 		{@const vel = noteState.velocityOf(note, channel)}
 		<button
+			use:momentary
 			class="panel-sunken relative flex aspect-square touch-none flex-col items-start justify-end gap-0.5 overflow-hidden rounded-lg border p-2 text-left transition-[background,transform] select-none active:translate-y-px"
 			style:background={active
 				? `color-mix(in oklch, ${colour} ${25 + (vel / 127) * 55}%, transparent)`

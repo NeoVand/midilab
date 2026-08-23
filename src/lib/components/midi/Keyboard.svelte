@@ -16,6 +16,7 @@
 	import { channelColour } from '$lib/midi/channelcolour';
 	import { capturePointer, cn } from '$lib/utils';
 	import { rovingGrid } from '$lib/a11y/roving';
+	import { momentary } from '$lib/a11y/momentary';
 
 	interface Props {
 		/** Lowest note shown. Defaults to C two octaves below middle C. */
@@ -241,6 +242,7 @@
 			{@const active = noteState.isHeld(note)}
 			{@const owner = noteState.channelOf(note)}
 			<button
+				use:momentary
 				class="group focus-key-white relative flex-1 border-r border-black/12 transition-[filter] duration-75 last:border-r-0"
 				style:background={active
 					? `color-mix(in oklch, ${channelColour(owner ?? ch)} 52%, var(--key-white))`
@@ -274,10 +276,13 @@
 				{/if}
 				{#if labelFor(note) || numbered}
 					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/55"
+						class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/70"
 					>
+						<!-- Black at 55% on an ivory key is 4.4:1 at 10px — just under the
+						     line, and these labels are the only thing telling you which C
+						     you are looking at. The black keys' white labels already pass. -->
 						{#if labelFor(note)}<span>{labelFor(note)}</span>{/if}
-						{#if numbered}<span class="text-black/45">{note}</span>{/if}
+						{#if numbered}<span class="text-black/60">{note}</span>{/if}
 					</span>
 				{/if}
 			</button>
@@ -292,6 +297,7 @@
 			{@const active = noteState.isHeld(note)}
 			{@const owner = noteState.channelOf(note)}
 			<button
+				use:momentary
 				class="focus-key-black pointer-events-auto absolute top-0 rounded-b-[3px]"
 				style="left: {centre - (w * BLACK_RATIO) / 2}%; width: {w * BLACK_RATIO}%; height: 63%;
 					background: {active

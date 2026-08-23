@@ -33,7 +33,12 @@
 		<Dialog.Description>{description}</Dialog.Description>
 	</Dialog.Header>
 	<Dialog.Content
-		class={cn('top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0 p-0', className)}
+		class={cn(
+			// Wider than a plain dialog: this one lists thirty lesson titles under
+			// act headings, and at 24rem they truncate.
+			'top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0 sm:max-w-xl',
+			className
+		)}
 		{showCloseButton}
 		{portalProps}
 	>

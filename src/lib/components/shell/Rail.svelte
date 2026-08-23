@@ -39,7 +39,7 @@
 		{
 			href: '/reference',
 			icon: LibraryIcon,
-			label: 'Reference',
+			label: 'Tables',
 			hint: 'CC tables, GM maps, cheat sheets'
 		}
 	];
@@ -74,7 +74,7 @@
 							href={item.href}
 							aria-current={active ? 'page' : undefined}
 							class={cn(
-								'relative flex w-14 flex-col items-center gap-1 rounded-lg py-2 transition-colors',
+								'relative flex w-12 flex-col items-center gap-1 rounded-lg py-2 transition-colors',
 								active
 									? 'bg-sidebar-accent text-sidebar-accent-foreground'
 									: 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'
@@ -82,7 +82,7 @@
 						>
 							{#if active}
 								<span
-									class="absolute top-1/2 -left-[9px] h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-msg-note"
+									class="absolute top-1/2 -left-[9px] h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-foreground"
 								></span>
 							{/if}
 							<HugeiconsIcon icon={item.icon} size={20} strokeWidth={1.7} />

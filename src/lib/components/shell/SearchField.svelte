@@ -66,9 +66,10 @@
 		autocomplete="off"
 		{placeholder}
 		onkeydown={onKeydown}
-		class="h-8 w-full rounded-md border bg-surface-sunken pr-8 pl-8 text-sm
+		class="h-8 w-full rounded-md border bg-surface-sunken pr-8 pl-8 text-sm transition-colors
+			outline-none
 			placeholder:text-muted-foreground
-			focus-visible:border-ring
+			focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30
 			[&::-webkit-search-cancel-button]:appearance-none"
 	/>
 	{#if value}

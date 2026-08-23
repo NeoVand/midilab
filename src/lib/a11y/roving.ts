@@ -91,18 +91,37 @@ export function rovingGrid(node: HTMLElement, options: Options = {}) {
 		e.preventDefault();
 	}
 
-	function onFocusIn(e: FocusEvent) {
-		const i = list().indexOf(e.target as HTMLElement);
+	function mark(target: EventTarget | null) {
+		const el = (target as HTMLElement | null)?.closest<HTMLElement>(
+			opts.items ?? 'button:not([disabled])'
+		);
+		const i = el ? list().indexOf(el) : -1;
 		if (i >= 0 && i !== index) {
 			index = i;
 			sync();
 		}
 	}
 
+	function onFocusIn(e: FocusEvent) {
+		mark(e.target);
+	}
+
+	/*
+	 * Pressing an item with the mouse moves the grid's cursor to it even when
+	 * the press deliberately does not take focus — see `momentary`. Without
+	 * this, tabbing back into a grid you have been clicking around in returns
+	 * you to wherever you last were with the keyboard, which is not where you
+	 * are looking.
+	 */
+	function onPointerDown(e: PointerEvent) {
+		mark(e.target);
+	}
+
 	const observer = new MutationObserver(() => sync());
 	observer.observe(node, { childList: true, subtree: true });
 	node.addEventListener('keydown', onKeydown);
 	node.addEventListener('focusin', onFocusIn);
+	node.addEventListener('pointerdown', onPointerDown);
 	sync();
 
 	return {
@@ -114,6 +133,7 @@ export function rovingGrid(node: HTMLElement, options: Options = {}) {
 			observer.disconnect();
 			node.removeEventListener('keydown', onKeydown);
 			node.removeEventListener('focusin', onFocusIn);
+			node.removeEventListener('pointerdown', onPointerDown);
 		}
 	};
 }

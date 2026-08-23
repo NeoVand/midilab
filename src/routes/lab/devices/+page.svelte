@@ -15,7 +15,7 @@
 	/>
 
 	<Tabs.Root value="profile" class="gap-4">
-		<Tabs.List class="w-fit">
+		<Tabs.List variant="line" class="w-fit">
 			<Tabs.Trigger value="profile">Profiles</Tabs.Trigger>
 			<Tabs.Trigger value="learn">Watch controls</Tabs.Trigger>
 			<Tabs.Trigger value="sysex">Identify &amp; SysEx</Tabs.Trigger>

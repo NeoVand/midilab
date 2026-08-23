@@ -76,7 +76,31 @@ export class MidiAccessStore {
 	constructor() {
 		if (browser && !('requestMIDIAccess' in navigator)) {
 			this.status = 'unsupported';
+			return;
 		}
+		if (browser) void this.#resumeIfAlreadyAllowed();
+	}
+
+	/**
+	 * If the browser has already granted MIDI to this origin, take it back on
+	 * load without making you ask again.
+	 *
+	 * This is not "open everything automatically" — that is how MIDI loops are
+	 * born and the panel still refuses to do it. Nothing is *listened* to that
+	 * you had not already opened; this only stops the app forgetting a
+	 * permission the browser itself remembers, and re-showing a Connect button
+	 * for a decision you made last time.
+	 */
+	async #resumeIfAlreadyAllowed(): Promise<void> {
+		try {
+			// Not every browser knows the `midi` permission name; Firefox does not.
+			const perm = await navigator.permissions.query({ name: 'midi' as PermissionName });
+			if (perm.state !== 'granted') return;
+		} catch {
+			return;
+		}
+		if (this.status !== 'idle') return;
+		await this.request(false);
 	}
 
 	get supported(): boolean {

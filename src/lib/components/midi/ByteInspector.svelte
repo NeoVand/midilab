@@ -115,10 +115,12 @@
 		{#each bytes as byte, i (i)}
 			{@const bits = binary(byte)}
 			{@const isStatus = byte >= 0x80}
-			<div
-				class="min-w-[8.5rem] flex-1 rounded-lg border bg-card p-3"
-				class:border-[var(--fam)]={i === 0}
-			>
+			<!--
+				No coloured outline on the status byte. The card is headed "Status
+				byte", its top bit is already drawn in the family colour, and a
+				third marker saying the same thing is chrome, not information.
+			-->
+			<div class="min-w-[8.5rem] flex-1 rounded-lg border bg-card p-3">
 				<div class="label mb-1 flex items-baseline justify-between">
 					<span>{roles[i]?.title ?? `Byte ${i}`}</span>
 					<span class="tnum">{i}</span>
@@ -152,7 +154,8 @@
 					{/each}
 				</div>
 
-				<p class="mt-2 text-xs leading-snug text-muted-foreground">
+				<!-- Two lines of room, so cards in a row stay the same height. -->
+				<p class="mt-2 min-h-8 text-xs leading-snug text-muted-foreground">
 					{#if b0Caption(i, isStatus)}
 						<span class="font-medium text-foreground">{b0Caption(i, isStatus)}</span>
 					{/if}
@@ -191,7 +194,14 @@
 	{/if}
 
 	{#if !compact}
-		<p class="prose-body">
+		<!--
+			This is a status line, not prose, so it does not take the 52-character
+			measure the rest of the app reads at — and at full width the sentences
+			that alternate fastest ("Start playing C3…" and the Note Off right
+			behind it) both fit on one line, which is what stops the panel jumping.
+			Reserving a second line instead just left a hole under every short one.
+		-->
+		<p class="text-base leading-relaxed">
 			<span
 				class="mr-2 inline-block size-2 translate-y-[-1px] rounded-full align-middle"
 				style="background: var(--fam)"
