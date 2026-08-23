@@ -103,7 +103,9 @@
 			{#each steps as s, i (i)}
 				<li><span class="text-foreground">+{s}</span> {intervalName(s)}</li>
 			{/each}
-		{:else}
+		{:else if held.length === 0}
+			<!-- Only while nothing is down. One note has no intervals, and saying
+			     so under a note that is sounding reads as a broken readout. -->
 			<li>and the semitones between its notes</li>
 		{/if}
 	</ul>

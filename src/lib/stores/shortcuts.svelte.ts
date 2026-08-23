@@ -14,8 +14,11 @@
 const TYPING = /^(input|textarea|select)$/i;
 
 export function isTypingTarget(target: EventTarget | null): boolean {
-	const el = target as HTMLElement | null;
-	if (!el) return false;
+	// A keydown's target is not always an element — `document` and `window` are
+	// both legal, and a handler that assumes otherwise throws on the way into
+	// every shortcut, which takes the shortcuts down with it.
+	if (!(target instanceof HTMLElement)) return false;
+	const el = target;
 	if (TYPING.test(el.tagName)) return true;
 	if (el.isContentEditable) return true;
 	// A focused button owns space and enter; let it have them.

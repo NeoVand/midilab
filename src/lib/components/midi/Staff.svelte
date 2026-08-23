@@ -109,15 +109,16 @@
 		/*
 		 * Three weights, quietest first: the lines are structure, the clefs say
 		 * which lines those are, and the noteheads are the only thing that
-		 * changes as you play. Noteheads used to carry the sending channel's
-		 * colour, which put a bright green chord on a staff where every printed
-		 * score anyone has read is black — the keyboard and the monitor already
-		 * say which channel it is.
+		 * changes as you play — so they take the colour this app gives to notes
+		 * everywhere else, which is a deep green on a light ground and a bright
+		 * one on a dark ground. Not the sending channel's colour: that would say
+		 * something about routing on a staff, which is not what a staff is for.
 		 */
 		const cs = getComputedStyle(el);
 		const rule = cs.getPropertyValue('--staff-line').trim() || cs.color;
 		const clefInk = cs.getPropertyValue('--muted-foreground').trim() || cs.color;
 		const ink = cs.getPropertyValue('--foreground').trim() || cs.color;
+		const noteInk = cs.getPropertyValue('--msg-note').trim() || ink;
 
 		const renderer = new V.Renderer(el, V.Renderer.Backends.SVG);
 		renderer.resize(WIDTH, HEIGHT);
@@ -171,7 +172,7 @@
 			keys.forEach(([, k], i) => {
 				if (k.acc) note.addModifier(new V.Accidental(k.acc), i);
 			});
-			note.setStyle({ fillStyle: ink, strokeStyle: ink });
+			note.setStyle({ fillStyle: noteInk, strokeStyle: noteInk });
 
 			// Formatted into less than the full note area rather than justified
 			// across it: the chord then sits after the clef with room behind it,

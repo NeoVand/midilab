@@ -23,6 +23,14 @@ interface Options {
 	 * march you through every white key and then come back for the sharps.
 	 */
 	order?: 'dom' | 'visual';
+	/**
+	 * Anything that changes when the set of items changes without the DOM
+	 * gaining or losing children — a keybed that scrolls, say, where the same
+	 * buttons stay put and only which of them are in play moves. The observer
+	 * below cannot see that, and watching every attribute would fire on every
+	 * note.
+	 */
+	revision?: unknown;
 }
 
 export function rovingGrid(node: HTMLElement, options: Options = {}) {
@@ -48,11 +56,18 @@ export function rovingGrid(node: HTMLElement, options: Options = {}) {
 		return t && t !== 'none' ? t.split(' ').length : 1;
 	}
 
+	/** Items that were in the set last time, so leavers can be stood down. */
+	let previous: HTMLElement[] = [];
+
 	function sync() {
 		const items = list();
 		if (!items.length) return;
 		index = Math.max(0, Math.min(index, items.length - 1));
+		// An item that has left the set keeps whatever tabindex it was given,
+		// which is how a grid ends up with two tab stops.
+		for (const el of previous) if (!items.includes(el)) el.tabIndex = -1;
 		for (let i = 0; i < items.length; i++) items[i].tabIndex = i === index ? 0 : -1;
+		previous = items;
 	}
 
 	function move(delta: number) {

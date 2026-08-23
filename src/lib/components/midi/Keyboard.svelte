@@ -54,29 +54,53 @@
 	const ch = $derived(channel ?? engine.channel);
 
 	/*
-	 * Z and X move the whole keybed, not just the typing row.
+	 * Z and X scroll the keybed, and the letters stay where they are.
 	 *
-	 * They used to shift only which notes the A–' row sent, which meant
-	 * pressing them changed nothing you could see: the drawn keys stayed put,
-	 * and once the row had moved past the end of them the key you played did
-	 * not even light. A shortcut whose only evidence is a different pitch reads
-	 * as broken. Moving the keyboard is what every DAW does with this, and the
-	 * C labels sliding along with it are the readout.
+	 * They used to change only which notes the A–' row sent. Nothing moved, so
+	 * the sole evidence the shortcut had worked was a different pitch — and
+	 * once the row had passed the end of the drawn keys, the key you played did
+	 * not even light.
+	 *
+	 * So more keys are drawn than fit, and the strip slides. The letters are
+	 * painted on the notes the typing row currently plays, which means that as
+	 * the strip moves an octave the letters hold their place on screen while
+	 * the piano runs underneath them — which is exactly the thing that changed.
 	 */
+	const MAX_SHIFT = 2;
+	const stripLow = $derived(Math.max(0, low - MAX_SHIFT * 12));
+	const stripHigh = $derived(Math.min(127, low + octaves * 12 + MAX_SHIFT * 12));
+	/** How far Z and X can go before the strip runs out of keys either side. */
+	const shiftDown = $derived(Math.floor((low - stripLow) / 12));
+	const shiftUp = $derived(Math.floor((stripHigh - octaves * 12 - low) / 12));
+
 	let shift = $state(0);
-	const viewLow = $derived(Math.max(0, Math.min(127 - octaves * 12, low + shift * 12)));
+	const viewLow = $derived(low + shift * 12);
 	const high = $derived(viewLow + octaves * 12);
 
 	const whites = $derived.by(() => {
 		const out: number[] = [];
-		for (let n = viewLow; n <= high; n++) if (!isBlackKey(n)) out.push(n);
+		for (let n = stripLow; n <= stripHigh; n++) if (!isBlackKey(n)) out.push(n);
 		return out;
 	});
 	const blacks = $derived.by(() => {
 		const out: number[] = [];
-		for (let n = viewLow; n <= high; n++) if (isBlackKey(n)) out.push(n);
+		for (let n = stripLow; n <= stripHigh; n++) if (isBlackKey(n)) out.push(n);
 		return out;
 	});
+
+	/**
+	 * White keys in the window. Constant as the strip scrolls, because a shift
+	 * is a whole octave and an octave is seven of them.
+	 */
+	const windowWhites = $derived.by(() => {
+		let n = 0;
+		for (let x = low; x <= low + octaves * 12; x++) if (!isBlackKey(x)) n++;
+		return n;
+	});
+	/** The strip is this much wider than what you can see. */
+	const stripPct = $derived((whites.length / windowWhites) * 100);
+	/** And slid this far left, as a fraction of its own width. */
+	const offsetPct = $derived(-(whites.findIndex((n) => n >= viewLow) / whites.length) * 100);
 
 	/**
 	 * Black-key geometry, taken from the real instrument rather than guessed.
@@ -93,7 +117,7 @@
 
 	function whiteIndexBelow(note: number): number {
 		let count = 0;
-		for (let n = viewLow; n < note; n++) if (!isBlackKey(n)) count++;
+		for (let n = stripLow; n < note; n++) if (!isBlackKey(n)) count++;
 		return count;
 	}
 
@@ -167,30 +191,52 @@
 		';': 16,
 		"'": 17
 	};
-	const typed = new Set<string>();
+	/**
+	 * The reverse of the map above: which key cap to print on each note of the
+	 * typing row, so you can see where your hands go without being told.
+	 */
+	const TYPE_CAP: Record<number, string> = Object.fromEntries(
+		Object.entries(TYPE_MAP).map(([k, offset]) => [offset, k.toUpperCase()])
+	);
+	/** Below this the keys are too short to print on without crowding them. */
+	const CAP_MIN_HEIGHT = 108;
+	const showCaps = $derived(typing && height >= CAP_MIN_HEIGHT);
+
+	function capFor(note: number): string {
+		return showCaps ? (TYPE_CAP[note - (viewLow + 12)] ?? '') : '';
+	}
+
+	/*
+	 * Which note each held computer key actually started.
+	 *
+	 * Not recomputed on release: shifting the octave while a key is down would
+	 * otherwise send the Note Off to a note an octave away and leave the real
+	 * one sounding forever. A note is released by the number it was started
+	 * with, which is the same rule the pointer path follows.
+	 */
+	const typed = new Map<string, number>();
 
 	function onKeyDown(e: KeyboardEvent) {
 		if (!typing || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
 		const target = e.target as HTMLElement | null;
 		if (target && /input|textarea|select/i.test(target.tagName)) return;
-		if (e.key === 'z') return void (shift = Math.max(-4, shift - 1));
-		if (e.key === 'x') return void (shift = Math.min(4, shift + 1));
+		if (e.key === 'z') return void (shift = Math.max(-shiftDown, shift - 1));
+		if (e.key === 'x') return void (shift = Math.min(shiftUp, shift + 1));
 		const offset = TYPE_MAP[e.key.toLowerCase()];
 		if (offset === undefined) return;
 		e.preventDefault();
-		const note = viewLow + 12 + offset;
 		if (typed.has(e.key)) return;
-		typed.add(e.key);
+		const note = viewLow + 12 + offset;
+		typed.set(e.key, note);
 		engine.noteOn(note, velocity ?? 96, ch);
 		onNoteOn?.(note, velocity ?? 96);
 	}
 
 	function onKeyUp(e: KeyboardEvent) {
 		if (!typing) return;
-		const offset = TYPE_MAP[e.key.toLowerCase()];
-		if (offset === undefined) return;
+		const note = typed.get(e.key);
+		if (note === undefined) return;
 		typed.delete(e.key);
-		const note = viewLow + 12 + offset;
 		engine.noteOff(note, ch);
 		onNoteOff?.(note);
 	}
@@ -246,102 +292,147 @@
 	style="height: {height}px"
 	role="application"
 	aria-label="Musical keyboard"
-	use:rovingGrid={{ columns: 12, order: 'visual' }}
+	use:rovingGrid={{
+		columns: 12,
+		order: 'visual',
+		items: 'button[data-playable]',
+		revision: viewLow
+	}}
 >
-	<!-- white keys -->
-	<div class="absolute inset-0 flex">
-		{#each whites as note (note)}
-			{@const active = noteState.isHeld(note)}
-			{@const owner = noteState.channelOf(note)}
-			<button
-				use:momentary
-				class="group focus-key-white relative flex-1 border-r border-black/12 transition-[filter] duration-75 last:border-r-0"
-				style:background={active
-					? `color-mix(in oklch, ${channelColour(owner ?? ch)} 52%, var(--key-white))`
-					: 'linear-gradient(to bottom, color-mix(in oklch, var(--key-white) 92%, #000) 0%, var(--key-white) 8%, var(--key-white) 88%, color-mix(in oklch, var(--key-white) 88%, #000) 100%)'}
-				style:box-shadow={active
-					? 'inset 0 2px 5px rgba(0,0,0,.28), inset 0 -1px 0 rgba(0,0,0,.2)'
-					: 'inset 0 -3px 0 rgba(0,0,0,.16), inset -1px 0 2px -1px rgba(0,0,0,.18)'}
-				style:transform={active ? 'translateY(1px)' : 'none'}
-				onpointerdown={(e) => onPointerDown(note, e)}
-				onpointerenter={(e) => onPointerEnter(note, e)}
-				onkeydown={(e) => onKeyActivate(e, note)}
-				onkeyup={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') onKeyRelease(note);
-				}}
-				onblur={() => onKeyRelease(note)}
-				aria-label={noteName(note, { convention: settings.octaveConvention })}
-				aria-pressed={active}
-			>
-				<!--
+	<!--
+		The strip. Wider than the box it sits in, and slid so the window lands on
+		the octave you are playing. Transitioning the transform rather than
+		swapping the keys is what makes it read as one keyboard moving instead of
+		two keyboards trading places — and `reduce-motion` already flattens the
+		duration for anyone who has asked for that.
+	-->
+	<div
+		class="absolute inset-y-0 left-0 transition-transform duration-300 ease-out"
+		style="width: {stripPct}%; transform: translateX({offsetPct}%)"
+	>
+		<!-- white keys -->
+		<div class="absolute inset-0 flex">
+			{#each whites as note (note)}
+				{@const active = noteState.isHeld(note)}
+				{@const owner = noteState.channelOf(note)}
+				{@const cap = capFor(note)}
+				<button
+					use:momentary
+					tabindex="-1"
+					data-playable={note >= viewLow && note <= high ? '' : undefined}
+					class="group focus-key-white relative flex-1 border-r border-black/12 transition-[filter] duration-75 last:border-r-0"
+					style:background={active
+						? `color-mix(in oklch, ${channelColour(owner ?? ch)} 52%, var(--key-white))`
+						: 'linear-gradient(to bottom, color-mix(in oklch, var(--key-white) 92%, #000) 0%, var(--key-white) 8%, var(--key-white) 88%, color-mix(in oklch, var(--key-white) 88%, #000) 100%)'}
+					style:box-shadow={active
+						? 'inset 0 2px 5px rgba(0,0,0,.28), inset 0 -1px 0 rgba(0,0,0,.2)'
+						: 'inset 0 -3px 0 rgba(0,0,0,.16), inset -1px 0 2px -1px rgba(0,0,0,.18)'}
+					style:transform={active ? 'translateY(1px)' : 'none'}
+					onpointerdown={(e) => onPointerDown(note, e)}
+					onpointerenter={(e) => onPointerEnter(note, e)}
+					onkeydown={(e) => onKeyActivate(e, note)}
+					onkeyup={(e) => {
+						if (e.key === 'Enter' || e.key === ' ') onKeyRelease(note);
+					}}
+					onblur={() => onKeyRelease(note)}
+					aria-label={noteName(note, { convention: settings.octaveConvention })}
+					aria-pressed={active}
+				>
+					<!--
 					The velocity hint. Hovering a key shades it from top to bottom,
 					which is the only way the "press lower to play harder" rule can
 					teach itself — a sentence under the keybed never will.
 				-->
-				{#if velocity === null}
-					<span
-						class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-						style="background: linear-gradient(to bottom, transparent 12%, color-mix(in oklch, {channelColour(
-							ch
-						)} 26%, transparent) 100%)"
-					></span>
-				{/if}
-				{#if labelFor(note) || numbered}
-					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/70"
-					>
-						<!-- Black at 55% on an ivory key is 4.4:1 at 10px — just under the
+					{#if velocity === null}
+						<span
+							class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+							style="background: linear-gradient(to bottom, transparent 12%, color-mix(in oklch, {channelColour(
+								ch
+							)} 26%, transparent) 100%)"
+						></span>
+					{/if}
+					<!--
+					The computer key that plays this note. Quiet enough to read past
+					when you are using the mouse, present enough to find your hands
+					by when you are not.
+				-->
+					{#if cap}
+						<span
+							class="pointer-events-none absolute inset-x-0 bottom-7 text-center font-mono text-2xs leading-none text-black/30"
+						>
+							{cap}
+						</span>
+					{/if}
+					{#if labelFor(note) || numbered}
+						<span
+							class="pointer-events-none absolute inset-x-0 bottom-1.5 flex flex-col items-center gap-px font-mono text-2xs leading-none text-black/70"
+						>
+							<!-- Black at 55% on an ivory key is 4.4:1 at 10px — just under the
 						     line, and these labels are the only thing telling you which C
 						     you are looking at. The black keys' white labels already pass. -->
-						{#if labelFor(note)}<span>{labelFor(note)}</span>{/if}
-						{#if numbered}<span class="text-black/60">{note}</span>{/if}
-					</span>
-				{/if}
-			</button>
-		{/each}
-	</div>
+							{#if labelFor(note)}<span>{labelFor(note)}</span>{/if}
+							{#if numbered}<span class="text-black/60">{note}</span>{/if}
+						</span>
+					{/if}
+				</button>
+			{/each}
+		</div>
 
-	<!-- black keys -->
-	<div class="pointer-events-none absolute inset-0">
-		{#each blacks as note (note)}
-			{@const w = 100 / whites.length}
-			{@const centre = (whiteIndexBelow(note) + NUDGE[pitchClass(note)]) * w}
-			{@const active = noteState.isHeld(note)}
-			{@const owner = noteState.channelOf(note)}
-			<button
-				use:momentary
-				class="focus-key-black pointer-events-auto absolute top-0 rounded-b-[3px]"
-				style="left: {centre - (w * BLACK_RATIO) / 2}%; width: {w * BLACK_RATIO}%; height: 63%;
+		<!-- black keys -->
+		<div class="pointer-events-none absolute inset-0">
+			{#each blacks as note (note)}
+				{@const w = 100 / whites.length}
+				{@const centre = (whiteIndexBelow(note) + NUDGE[pitchClass(note)]) * w}
+				{@const active = noteState.isHeld(note)}
+				{@const owner = noteState.channelOf(note)}
+				{@const cap = capFor(note)}
+				<button
+					use:momentary
+					tabindex="-1"
+					data-playable={note >= viewLow && note <= high ? '' : undefined}
+					class="focus-key-black pointer-events-auto absolute top-0 rounded-b-[3px]"
+					style="left: {centre - (w * BLACK_RATIO) / 2}%; width: {w * BLACK_RATIO}%; height: 63%;
 					background: {active
-					? channelColour(owner ?? ch)
-					: 'linear-gradient(to bottom, color-mix(in oklch, var(--key-black) 82%, #fff) 0%, var(--key-black) 34%, var(--key-black) 100%)'};
+						? channelColour(owner ?? ch)
+						: 'linear-gradient(to bottom, color-mix(in oklch, var(--key-black) 82%, #fff) 0%, var(--key-black) 34%, var(--key-black) 100%)'};
 					box-shadow: {active
-					? 'inset 0 2px 5px rgba(0,0,0,.55)'
-					: '0 3px 5px -1px rgba(0,0,0,.55), inset 0 -2px 0 rgba(255,255,255,.07)'};
+						? 'inset 0 2px 5px rgba(0,0,0,.55)'
+						: '0 3px 5px -1px rgba(0,0,0,.55), inset 0 -2px 0 rgba(255,255,255,.07)'};
 					transform: {active ? 'translateY(1px)' : 'none'};"
-				onpointerdown={(e) => onPointerDown(note, e)}
-				onpointerenter={(e) => onPointerEnter(note, e)}
-				onkeydown={(e) => onKeyActivate(e, note)}
-				onkeyup={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') onKeyRelease(note);
-				}}
-				onblur={() => onKeyRelease(note)}
-				aria-label={noteName(note, { convention: settings.octaveConvention })}
-				aria-pressed={active}
-			>
-				{#if labels === 'all' || labels === 'numbers' || numbered}
-					<span
-						class="pointer-events-none absolute inset-x-0 bottom-1 flex flex-col items-center gap-px font-mono text-2xs leading-none text-white/70"
-					>
-						{#if labels === 'all'}
-							<span>{noteName(note, { convention: settings.octaveConvention, octave: false })}</span
-							>
-						{/if}
-						{#if numbered || labels === 'numbers'}<span class="text-white/55">{note}</span>{/if}
-					</span>
-				{/if}
-			</button>
-		{/each}
+					onpointerdown={(e) => onPointerDown(note, e)}
+					onpointerenter={(e) => onPointerEnter(note, e)}
+					onkeydown={(e) => onKeyActivate(e, note)}
+					onkeyup={(e) => {
+						if (e.key === 'Enter' || e.key === ' ') onKeyRelease(note);
+					}}
+					onblur={() => onKeyRelease(note)}
+					aria-label={noteName(note, { convention: settings.octaveConvention })}
+					aria-pressed={active}
+				>
+					{#if cap}
+						<span
+							class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center font-mono text-2xs leading-none text-white/35"
+						>
+							{cap}
+						</span>
+					{/if}
+					{#if labels === 'all' || labels === 'numbers' || numbered}
+						<span
+							class="pointer-events-none absolute inset-x-0 flex flex-col items-center gap-px font-mono text-2xs leading-none text-white/70"
+							class:bottom-1={!cap}
+							class:bottom-6={!!cap}
+						>
+							{#if labels === 'all'}
+								<span
+									>{noteName(note, { convention: settings.octaveConvention, octave: false })}</span
+								>
+							{/if}
+							{#if numbered || labels === 'numbers'}<span class="text-white/55">{note}</span>{/if}
+						</span>
+					{/if}
+				</button>
+			{/each}
+		</div>
 	</div>
 </div>
 
