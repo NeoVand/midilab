@@ -89,7 +89,9 @@
 
 	function deltaMs(i: number): string {
 		const next = rows[i + 1];
-		if (!next) return '';
+		// The oldest row has nothing to be a gap from. An em dash says that; a
+		// blank cell just looks like the column failed.
+		if (!next) return '—';
 		const d = rows[i].time - next.time;
 		return d < 1000 ? `+${d.toFixed(1)}` : `+${(d / 1000).toFixed(2)}s`;
 	}

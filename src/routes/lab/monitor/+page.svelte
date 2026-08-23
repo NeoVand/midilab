@@ -130,15 +130,23 @@
 						<span class="label text-muted-foreground">following</span>
 					{/if}
 				</div>
-				<div class="min-h-0 flex-1 scrollbar-thin overflow-y-auto p-4">
+				<div class="flex min-h-0 flex-1 scrollbar-thin flex-col overflow-y-auto p-4">
 					{#if shown}
 						<ByteInspector bytes={shown.bytes} message={shown.message} />
 					{:else}
-						<p class="measure text-sm text-muted-foreground">
-							Nothing to take apart yet. As soon as a message arrives this panel shows it as hex, as
-							bits, split into its nibbles and translated into English — and clicking a row holds
-							that one still while the rest scrolls past.
-						</p>
+						<!-- Centred and headed the same way as the stream's empty state
+						     beside it: two blank panels side by side should look like one
+						     decision, not two. -->
+						<div class="grid flex-1 place-items-center text-center">
+							<div class="measure">
+								<p class="text-sm text-foreground">Nothing to take apart yet.</p>
+								<p class="mt-1.5 text-xs text-muted-foreground">
+									As soon as a message arrives this panel shows it as hex, as bits, split into its
+									nibbles and translated into English — and clicking a row holds that one still
+									while the rest scrolls past.
+								</p>
+							</div>
+						</div>
 					{/if}
 				</div>
 			</div>
