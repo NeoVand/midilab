@@ -264,6 +264,18 @@ do once it is not, and offer the one action that fixes it. A box that only says
 concept — what a Standard MIDI File is, how a byte travels through the app —
 it gets drawn.
 
+**Contrast is measured, not judged.** Every piece of text that carries
+information clears 4.5:1 against the ground it actually sits on, in both
+themes — checked with a canvas-based checker rather than by eye, because oklch
+and alpha compositing are not things anyone should be estimating. There is no
+third, fainter text tier: a dimmer tier cannot clear AA when the second tier
+already sits near it, so faintness is reserved for _state_ whose meaning is
+also carried some other way (an unset bit that is also a different colour of
+cell, a muted track whose icon changes shape, tick marks between beat numbers).
+On a light ground all seven message hues sit at one lightness, which fixes the
+contrast and is the better palette anyway: no family shouts louder than
+another.
+
 **Keyboard.** Every custom control is a real control: pads and keys sound on
 Enter and Space, sliders take arrows, Page, Home and End, and the step grid is
 one tab stop with two-dimensional arrow movement rather than eighty. Focus is
