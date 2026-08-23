@@ -1,9 +1,16 @@
 <script lang="ts">
 	/**
-	 * One note number, seen from every angle: both octave conventions, the
-	 * frequency, the key colour, and what it means on channel 10.
+	 * One note number, seen from every angle: where it sits on a staff, both
+	 * octave conventions, the frequency, the key colour, and what it means on
+	 * channel 10.
+	 *
+	 * The staff is the one of those a musician reads first and the only one the
+	 * protocol has no opinion about — which is the point of the lesson this
+	 * sits in. Nothing here disagrees about the number; everything here
+	 * disagrees about the name.
 	 */
 	import { onDestroy } from 'svelte';
+	import Staff from './Staff.svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { isBlackKey, noteName, noteToFrequency, pitchClass } from '$lib/midi/notes';
 	import { GM_DRUMS } from '$lib/midi/constants';
@@ -34,17 +41,27 @@
 </script>
 
 <div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
-	<div class="flex items-end gap-6">
-		<div>
-			<p class="label">Note number</p>
-			<p class="tnum font-mono text-4xl leading-none text-msg-note">{note}</p>
+	<div class="flex flex-wrap items-center gap-x-6 gap-y-4">
+		<Staff notes={[note]} class="shrink-0" />
+		<div class="flex min-w-[18rem] flex-1 items-end gap-6">
+			<div>
+				<p class="label">Note number</p>
+				<p class="tnum font-mono text-4xl leading-none text-msg-note">{note}</p>
+			</div>
+			<div class="flex-1">
+				<Slider
+					type="single"
+					bind:value={note}
+					min={0}
+					max={127}
+					step={1}
+					aria-label="Note number"
+				/>
+			</div>
+			<Button variant="outline" size="sm" class="gap-1.5" onclick={play}>
+				<HugeiconsIcon icon={PlayIcon} size={13} /> Hear it
+			</Button>
 		</div>
-		<div class="flex-1">
-			<Slider type="single" bind:value={note} min={0} max={127} step={1} aria-label="Note number" />
-		</div>
-		<Button variant="outline" size="sm" class="gap-1.5" onclick={play}>
-			<HugeiconsIcon icon={PlayIcon} size={13} /> Hear it
-		</Button>
 	</div>
 
 	<div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
