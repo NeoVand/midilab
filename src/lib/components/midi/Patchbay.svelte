@@ -60,7 +60,18 @@
 	]);
 	const outputs = $derived(engine.outputs);
 
+	/*
+	 * The graph is laid out at the width it is given, one unit to one pixel,
+	 * rather than drawn at a fixed width and centred. A 600-unit drawing in a
+	 * 900-pixel panel is a diagram stranded in a field of nothing with a
+	 * hundred and fifty pixels of margin either side; the boxes should stay the
+	 * size they are and the cables between them should get longer.
+	 */
+	let boxW = $state(0);
 	const ROW = 34;
+	const PORT_W = 180;
+	const VIEW_W = $derived(Math.max(PORT_W * 2 + 140, Math.min(boxW || 600, 960)));
+	const OUT_X = $derived(VIEW_W - PORT_W - 4);
 	const height = $derived(Math.max(inputs.length, outputs.length, 1) * ROW + 24);
 
 	function inputY(id: string): number {
@@ -103,80 +114,91 @@
 </script>
 
 <div class={cn('flex flex-col gap-4', className)}>
-	<!-- ── the graph ─────────────────────────────────────────────────────── -->
-	<div class="panel-sunken overflow-hidden rounded-lg border p-3">
-		<svg
-			viewBox="0 0 600 {height}"
-			class="w-full"
-			style="height: {height}px"
-			role="img"
-			aria-label="Routing graph"
-		>
-			{#each inputs as port, i (port.id)}
-				<rect
-					x="4"
-					y={4 + i * ROW}
-					width="180"
-					height="26"
-					rx="5"
-					class="fill-card stroke-border"
-				/>
-				<text x="14" y={21 + i * ROW} font-size="10" class="fill-foreground">
-					{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
-				</text>
-				<circle
-					cx="188"
-					cy={17 + i * ROW}
-					r="3.5"
-					fill={midiAccess.isListening(port.id) ? 'var(--msg-cc)' : 'var(--grid-line-strong)'}
-				/>
-			{/each}
-
-			{#each outputs as port, i (port.id)}
-				<rect
-					x="416"
-					y={4 + i * ROW}
-					width="180"
-					height="26"
-					rx="5"
-					class="fill-card stroke-border"
-				/>
-				<text x="426" y={21 + i * ROW} font-size="10" class="fill-foreground">
-					{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
-				</text>
-				<circle
-					cx="410"
-					cy={17 + i * ROW}
-					r="3.5"
-					fill={engine.isOutputActive(port.id) ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
-				/>
-			{/each}
-
-			{#each router.routes as route (route.id)}
-				{@const y1 = inputY(route.fromPortId)}
-				{@const y2 = outputY(route.toPortId)}
-				{#if y1 > 0 && y2 > 0}
-					{@const h = heat(route.id)}
-					<path
-						d="M192,{y1 - 3} C280,{y1 - 3} 320,{y2 - 3} 406,{y2 - 3}"
-						fill="none"
-						stroke={route.enabled ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
-						stroke-width={1.5 + h * 2}
-						opacity={route.enabled ? 0.35 + h * 0.65 : 0.25}
+	<!--
+		── the graph ──────────────────────────────────────────────────────────
+		
+		Only once there is something to draw. With no routes it was two columns
+		of port names with a gap between them — the same names the Ports list
+		below and the Devices tray already carry, in a panel whose whole job is
+		the cables it did not have.
+	-->
+	{#if router.routes.length > 0}
+		<div class="panel-sunken overflow-hidden rounded-lg border p-3" bind:clientWidth={boxW}>
+			<svg
+				viewBox="0 0 {VIEW_W} {height}"
+				width={VIEW_W}
+				{height}
+				class="mx-auto block max-w-full"
+				role="img"
+				aria-label="Routing graph"
+			>
+				{#each inputs as port, i (port.id)}
+					<rect
+						x="4"
+						y={4 + i * ROW}
+						width={PORT_W}
+						height="26"
+						rx="5"
+						class="fill-card stroke-border"
 					/>
-					{#if h > 0}
-						<circle
-							r={2 + h * 1.5}
-							fill="var(--msg-note)"
-							opacity={h}
-							cx={192 + (1 - h) * 214}
-							cy={y1 - 3 + (1 - h) * (y2 - y1)}
+					<text x="14" y={21 + i * ROW} font-size="10" class="fill-foreground">
+						{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
+					</text>
+					<circle
+						cx={PORT_W + 8}
+						cy={17 + i * ROW}
+						r="3.5"
+						fill={midiAccess.isListening(port.id) ? 'var(--msg-cc)' : 'var(--grid-line-strong)'}
+					/>
+				{/each}
+
+				{#each outputs as port, i (port.id)}
+					<rect
+						x={OUT_X}
+						y={4 + i * ROW}
+						width={PORT_W}
+						height="26"
+						rx="5"
+						class="fill-card stroke-border"
+					/>
+					<text x={OUT_X + 10} y={21 + i * ROW} font-size="10" class="fill-foreground">
+						{port.name.length > 26 ? port.name.slice(0, 25) + '…' : port.name}
+					</text>
+					<circle
+						cx={OUT_X - 6}
+						cy={17 + i * ROW}
+						r="3.5"
+						fill={engine.isOutputActive(port.id) ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
+					/>
+				{/each}
+
+				{#each router.routes as route (route.id)}
+					{@const y1 = inputY(route.fromPortId)}
+					{@const y2 = outputY(route.toPortId)}
+					{#if y1 > 0 && y2 > 0}
+						{@const h = heat(route.id)}
+						<path
+							d="M{PORT_W + 12},{y1 - 3} C{PORT_W + 100},{y1 - 3} {OUT_X - 100},{y2 - 3} {OUT_X -
+								10},{y2 - 3}"
+							fill="none"
+							stroke={route.enabled ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
+							stroke-width={1.5 + h * 2}
+							opacity={route.enabled ? 0.35 + h * 0.65 : 0.25}
 						/>
+						{#if h > 0}
+							<circle
+								r={2 + h * 1.5}
+								fill="var(--msg-note)"
+								opacity={h}
+								cx={PORT_W + 12 + (1 - h) * (OUT_X - PORT_W - 22)}
+								cy={y1 - 3 + (1 - h) * (y2 - y1)}
+							/>
+						{/if}
 					{/if}
-				{/if}
-			{/each}
-		</svg>
-	</div>
+				{/each}
+			</svg>
+		</div>
+	{/if}
 
 	<div class="flex flex-col gap-2">
 		<!-- While the list is empty the empty state below carries the call to

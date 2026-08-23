@@ -29,7 +29,6 @@
 	import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { momentary } from '$lib/a11y/momentary';
-	import { cn } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	/**
@@ -82,18 +81,7 @@
 		return null;
 	});
 
-	/**
-	 * The readout before anything has been played. Same three cards as the real
-	 * thing, so the panel does not resize the moment a note arrives.
-	 */
 	const LEDS = Array.from({ length: 8 }, (_, i) => i);
-	const BITS = LEDS;
-
-	const GHOST = [
-		{ title: 'Status byte', note: 'What kind of message, and on which channel' },
-		{ title: 'Note number', note: '0–127, middle C is 60' },
-		{ title: 'Velocity', note: 'How hard it was struck' }
-	];
 </script>
 
 <!--
@@ -235,57 +223,6 @@
 
 	<!-- ── readout ──────────────────────────────────────────────────────── -->
 	<div class="panel-sunken min-h-44 border-t p-5">
-		{#if latest}
-			<ByteInspector bytes={latest.bytes} message={latest.message} />
-		{:else}
-			<!--
-				Not an apology for having no data — the readout itself, waiting. Same
-				three cards in the same places at the same size, drawn dashed and
-				empty, with the one bit the whole course turns on already marked. So
-				nothing moves when the first note lands: the blanks simply fill in.
-			-->
-			<div class="flex flex-col gap-4">
-				<div class="flex flex-wrap gap-2.5">
-					{#each GHOST as card, i (card.title)}
-						<div class="min-w-[8.5rem] flex-1 rounded-lg border border-dashed p-3">
-							<div class="label mb-1 flex items-baseline justify-between">
-								<span>{card.title}</span>
-								<span class="tnum">{i}</span>
-							</div>
-							<!-- A blank readout, in the shape the real one takes: 0x__ and a decimal. -->
-							<div class="mb-2 flex items-baseline gap-2">
-								<span class="font-mono text-2xl leading-none font-medium text-muted-foreground/45">
-									0x--
-								</span>
-								<span class="tnum font-mono text-xs text-muted-foreground/45">---</span>
-							</div>
-							<div class="flex gap-[3px]" aria-hidden="true">
-								{#each BITS as b (b)}
-									<!--
-										An empty cell has no text to make it visible, so it cannot
-										borrow `bg-muted` from the real card — on a light card that
-										leaves one green square floating in nothing.
-									-->
-									<span
-										class={cn(
-											'h-6 w-[15px] rounded-xs',
-											b !== 0
-												? 'bg-foreground/10'
-												: i === 0
-													? 'bg-msg-note/70'
-													: 'bg-muted-foreground/45'
-										)}
-									></span>
-								{/each}
-							</div>
-							<p class="mt-2 min-h-8 text-xs leading-snug text-muted-foreground">{card.note}</p>
-						</div>
-					{/each}
-				</div>
-				<p class="text-base leading-relaxed text-muted-foreground">
-					Play a key. This reads the message back to you in hex, in bits, and in English.
-				</p>
-			</div>
-		{/if}
+		<ByteInspector bytes={latest?.bytes ?? null} message={latest?.message} />
 	</div>
 </section>

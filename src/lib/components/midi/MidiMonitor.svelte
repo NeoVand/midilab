@@ -252,106 +252,109 @@
 		</div>
 	{/if}
 
+	<!--
+		The header stays whether or not anything has arrived.
+		
+		It used to live inside the populated branch, so an empty stream was a
+		black rectangle with a sentence in the middle of it and no sign of what
+		the columns would be. A table with its headings and no rows is a table
+		waiting; a rectangle is a rectangle.
+	-->
 	<div class="min-h-0 flex-1 scrollbar-thin overflow-y-auto">
-		{#if rows.length === 0}
-			<div
-				class="grid h-full min-h-24 place-items-center p-6 text-center text-sm text-muted-foreground"
-			>
-				<div class="measure">
-					<p class="text-foreground">Nothing on the wire yet.</p>
-					<p class="mt-1.5 text-xs">
-						Play a note, or connect a device and send something. Each row will show the gap since
-						the previous message, its direction, its family colour, the channel, the raw bytes and
-						what they mean.
-					</p>
-				</div>
-			</div>
-		{:else}
-			<table class="w-full border-collapse font-mono text-xs">
-				<thead class="sticky top-0 z-10 bg-background/95 backdrop-blur">
-					<tr class="border-b">
-						<th class="label w-14 py-1 pr-1 pl-2 text-right font-medium">Δt</th>
-						<th class="label w-5 py-1 font-medium" title="Direction"
-							><span class="sr-only">Direction</span></th
-						>
-						<th class="label w-2 py-1 font-medium"><span class="sr-only">Family</span></th>
-						<th class="label w-7 py-1 pl-1.5 text-right font-medium">ch</th>
-						<th class="label w-[8.5rem] py-1 pl-3 text-left font-medium">bytes</th>
-						<th class="label py-1 pr-2 pl-2 text-left font-medium">message</th>
-						<th class="label hidden w-40 py-1 pr-3 text-left font-medium xl:table-cell">value</th>
-						{#if showPort}
-							<th class="label hidden w-32 py-1 pr-3 text-right font-medium lg:table-cell">port</th>
-						{/if}
+		<table class="w-full border-collapse font-mono text-xs">
+			<thead class="sticky top-0 z-10 bg-background/95 backdrop-blur">
+				<tr class="border-b">
+					<th class="label w-14 py-1 pr-1 pl-2 text-right font-medium">Δt</th>
+					<th class="label w-5 py-1 font-medium" title="Direction"
+						><span class="sr-only">Direction</span></th
+					>
+					<th class="label w-2 py-1 font-medium"><span class="sr-only">Family</span></th>
+					<th class="label w-7 py-1 pl-1.5 text-right font-medium">ch</th>
+					<th class="label w-[8.5rem] py-1 pl-3 text-left font-medium">bytes</th>
+					<th class="label py-1 pr-2 pl-2 text-left font-medium">message</th>
+					<th class="label hidden w-40 py-1 pr-3 text-left font-medium xl:table-cell">value</th>
+					{#if showPort}
+						<th class="label hidden w-32 py-1 pr-3 text-right font-medium lg:table-cell">port</th>
+					{/if}
+				</tr>
+			</thead>
+			<tbody>
+				{#if rows.length === 0}
+					<tr>
+						<td colspan="8" class="p-8 text-center align-top">
+							<p class="font-sans text-sm text-foreground">Nothing on the wire yet.</p>
+							<p class="measure mx-auto mt-1.5 font-sans text-xs text-muted-foreground">
+								Play a note, or connect a device and send something. Every message will land here in
+								the order the wire carried it.
+							</p>
+						</td>
 					</tr>
-				</thead>
-				<tbody>
-					{#each rows as e, i (e.id)}
-						{@const fam = family(e.message)}
-						{@const channel = ch1(e.message)}
-						<tr
-							class={cn(
-								'cursor-default border-b border-border/50 transition-colors hover:bg-accent/40',
-								selectedId === e.id && 'bg-accent'
-							)}
-							onclick={() => onSelect?.(e)}
+				{/if}
+				{#each rows as e, i (e.id)}
+					{@const fam = family(e.message)}
+					{@const channel = ch1(e.message)}
+					<tr
+						class={cn(
+							'cursor-default border-b border-border/50 transition-colors hover:bg-accent/40',
+							selectedId === e.id && 'bg-accent'
+						)}
+						onclick={() => onSelect?.(e)}
+					>
+						<td class="w-14 py-[3px] pr-1 pl-2 text-right text-muted-foreground tabular-nums">
+							{deltaMs(i)}
+						</td>
+						<td class="w-5 py-[3px]">
+							<HugeiconsIcon
+								icon={e.direction === 'in' ? ArrowDown01Icon : ArrowUp01Icon}
+								size={12}
+								class={e.direction === 'in' ? 'text-msg-cc' : 'text-muted-foreground'}
+							/>
+						</td>
+						<td class="w-2 py-[3px]">
+							<span class="block size-2 rounded-full" style="background: {familyColor(fam)}"></span>
+						</td>
+						<td
+							class="w-7 py-[3px] pl-1.5 text-right tabular-nums"
+							style="color: {familyColor(fam)}"
 						>
-							<td class="w-14 py-[3px] pr-1 pl-2 text-right text-muted-foreground tabular-nums">
-								{deltaMs(i)}
-							</td>
-							<td class="w-5 py-[3px]">
-								<HugeiconsIcon
-									icon={e.direction === 'in' ? ArrowDown01Icon : ArrowUp01Icon}
-									size={12}
-									class={e.direction === 'in' ? 'text-msg-cc' : 'text-muted-foreground'}
-								/>
-							</td>
-							<td class="w-2 py-[3px]">
-								<span class="block size-2 rounded-full" style="background: {familyColor(fam)}"
-								></span>
-							</td>
-							<td
-								class="w-7 py-[3px] pl-1.5 text-right tabular-nums"
-								style="color: {familyColor(fam)}"
-							>
-								{channel ?? '—'}
-							</td>
-							<td class="w-[8.5rem] py-[3px] pl-3 whitespace-nowrap text-muted-foreground">
-								{hexBytes(e.bytes.slice(0, 6))}{e.bytes.length > 6 ? '…' : ''}
-							</td>
-							<td class="truncate py-[3px] pr-2 pl-2">
-								{shortLabel(e.message, { octaveConvention: settings.octaveConvention })}
-							</td>
-							<!--
+							{channel ?? '—'}
+						</td>
+						<td class="w-[8.5rem] py-[3px] pl-3 whitespace-nowrap text-muted-foreground">
+							{hexBytes(e.bytes.slice(0, 6))}{e.bytes.length > 6 ? '…' : ''}
+						</td>
+						<td class="truncate py-[3px] pr-2 pl-2">
+							{shortLabel(e.message, { octaveConvention: settings.octaveConvention })}
+						</td>
+						<!--
 								The same message drawn as a quantity. Scroll a CC sweep and it
 								is a staircase; a bend is a ramp out from the middle; a
 								crescendo looks like one. The column only appears where there
 								is room for it.
 							-->
-							<td class="hidden w-40 py-[3px] pr-3 align-middle xl:table-cell">
-								{#if bar(e)}
-									{@const b = bar(e)!}
-									<span class="relative block h-1 rounded-full bg-muted">
-										{#if b.centre}
-											<span class="absolute inset-y-0 left-1/2 w-px bg-border"></span>
-										{/if}
-										<span
-											class="absolute inset-y-0 rounded-full"
-											style="left: {b.left}%; right: {b.right}%; background: {familyColor(fam)}"
-										></span>
-									</span>
-								{/if}
-							</td>
-							{#if showPort}
-								<td
-									class="hidden w-32 truncate py-[3px] pr-3 text-right text-muted-foreground lg:table-cell"
-								>
-									{rows[i + 1]?.portId === e.portId ? '' : e.portName}
-								</td>
+						<td class="hidden w-40 py-[3px] pr-3 align-middle xl:table-cell">
+							{#if bar(e)}
+								{@const b = bar(e)!}
+								<span class="relative block h-1 rounded-full bg-muted">
+									{#if b.centre}
+										<span class="absolute inset-y-0 left-1/2 w-px bg-border"></span>
+									{/if}
+									<span
+										class="absolute inset-y-0 rounded-full"
+										style="left: {b.left}%; right: {b.right}%; background: {familyColor(fam)}"
+									></span>
+								</span>
 							{/if}
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		{/if}
+						</td>
+						{#if showPort}
+							<td
+								class="hidden w-32 truncate py-[3px] pr-3 text-right text-muted-foreground lg:table-cell"
+							>
+								{rows[i + 1]?.portId === e.portId ? '' : e.portName}
+							</td>
+						{/if}
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
 </div>
