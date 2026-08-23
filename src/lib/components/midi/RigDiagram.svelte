@@ -15,6 +15,7 @@
 	 */
 	import { onMount } from 'svelte';
 	import { bus } from '$lib/midi/bus';
+	import { family, familyColor } from '$lib/midi/messages';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { engine, INTERNAL_OUTPUT_ID } from '$lib/midi/engine.svelte';
 	import { cn } from '$lib/utils';
@@ -89,20 +90,58 @@
 	const internalOn = $derived(engine.activeOutputs.includes(INTERNAL_OUTPUT_ID));
 
 	/*
-	 * Traffic, as a decaying glow per port. A rAF-driven clock rather than a
-	 * per-message timer: one loop for the whole diagram, and it stops when the
-	 * component goes away.
+	 * Traffic. Two things at once: the cable brightens for half a second, and
+	 * the message itself runs down it as a dot in its family's colour — so the
+	 * long run between a keyboard and this machine is not empty space, it is
+	 * the wire, and you watch green notes and blue control changes travel it.
+	 *
+	 * One rAF clock for the whole diagram rather than a timer per message, and
+	 * it stops when the component goes away.
 	 */
+	interface Packet {
+		id: number;
+		portId: string;
+		/** Their OUT → us, or us → their IN. Decides which way the dot runs. */
+		inbound: boolean;
+		t0: number;
+		colour: string;
+	}
+	/** How long a dot takes to cross, in ms. Chosen to be readable, not real. */
+	const FLIGHT = 520;
+	/** A wire that is busy should not become a solid bar of dots. */
+	const MAX_PACKETS = 60;
+
 	let lit = $state<Record<string, number>>({});
+	let packets = $state<Packet[]>([]);
 	let now = $state(0);
+	let nextPacket = 0;
 
 	onMount(() => {
 		const off = bus.subscribe((e) => {
-			if (e.portId) lit[e.portId] = e.time;
+			if (!e.portId) return;
+			lit[e.portId] = e.time;
+			// Clock ticks arrive 24 times a beat; drawing each one as a dot buries
+			// everything else and says nothing a lit cable does not already say.
+			const f = family(e.message);
+			if (f === 'clock') return;
+			if (packets.length >= MAX_PACKETS) packets = packets.slice(-MAX_PACKETS + 1);
+			packets.push({
+				id: nextPacket++,
+				portId: e.portId,
+				inbound: e.direction === 'in',
+				t0: e.time,
+				colour: familyColor(f)
+			});
 		});
 		let frame = 0;
 		const step = () => {
 			now = performance.now();
+			// Only rebuild the list when something has actually expired — a filter
+			// every frame would churn the reactive array sixty times a second for
+			// no change at all.
+			if (packets.length && now - packets[0].t0 >= FLIGHT) {
+				packets = packets.filter((p) => now - p.t0 < FLIGHT);
+			}
 			frame = requestAnimationFrame(step);
 		};
 		frame = requestAnimationFrame(step);
@@ -121,14 +160,26 @@
 	}
 
 	// ── geometry ────────────────────────────────────────────────────────
+	/*
+	 * The drawing is laid out at the width it is given, one SVG unit to one
+	 * CSS pixel, rather than drawn at a fixed width and scaled to fit. Scaling
+	 * an SVG scales its type with it, so a fixed viewBox in a wide panel gave
+	 * either a diagram stranded in the middle of a field of graph paper or one
+	 * blown up to twice the size of everything around it. Boxes stay the size
+	 * they should be; the cables between them get longer.
+	 */
+	let boxW = $state(0);
 	const ROW = 54;
 	const GAP = 9;
 	const PAD = 10;
 	const DEV_W = 214;
 	const DEV_X = 6;
-	const APP_X = 402;
 	const APP_W = 212;
-	const VIEW_W = 620;
+	const MIN_RUN = 120;
+	const VIEW_W = $derived(
+		Math.max(DEV_X + DEV_W + MIN_RUN + APP_W + DEV_X, Math.min(boxW || 620, 1080))
+	);
+	const APP_X = $derived(VIEW_W - APP_W - DEV_X);
 
 	const stackH = $derived(
 		Math.max(1, devices.length) * ROW + Math.max(0, devices.length - 1) * GAP
@@ -144,17 +195,55 @@
 	const appInY = $derived(appY + 24);
 	const appOutY = $derived(appY + 39);
 
+	/** The one place the cable's shape is defined; everything else asks here. */
+	function control(x1: number, x2: number): number {
+		return Math.max(40, (x2 - x1) * 0.55);
+	}
+
 	function cable(x1: number, y1: number, x2: number, y2: number): string {
-		const dx = Math.max(40, (x2 - x1) * 0.55);
+		const dx = control(x1, x2);
 		return `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
 	}
+
+	/** Where a dot is, at fraction t along the same cubic the cable draws. */
+	function along(x1: number, y1: number, x2: number, y2: number, t: number) {
+		const dx = control(x1, x2);
+		const u = 1 - t;
+		const a = u * u * u;
+		const b = 3 * u * u * t;
+		const c = 3 * u * t * t;
+		const d = t * t * t;
+		return {
+			x: a * x1 + b * (x1 + dx) + c * (x2 - dx) + d * x2,
+			y: a * y1 + b * y1 + c * y2 + d * y2
+		};
+	}
+
+	/** Every dot currently in flight, already placed. */
+	const flying = $derived.by(() => {
+		if (!packets.length) return [];
+		const out: { id: number; x: number; y: number; colour: string; fade: number }[] = [];
+		for (const p of packets) {
+			const t = (now - p.t0) / FLIGHT;
+			if (t < 0 || t > 1) continue;
+			const i = devices.findIndex((d) => (p.inbound ? d.outPortId : d.inPortId) === p.portId);
+			if (i < 0) continue;
+			const point = p.inbound
+				? along(DEV_X + DEV_W, outSocketY(i), APP_X, appInY, t)
+				: along(APP_X, appOutY, DEV_X + DEV_W, inSocketY(i), t);
+			// Fade in and out at the sockets so dots appear to enter and leave
+			// the boxes rather than blink into existence on top of them.
+			out.push({ ...point, id: p.id, colour: p.colour, fade: Math.sin(t * Math.PI) ** 0.5 });
+		}
+		return out;
+	});
 
 	function clip(s: string, n = 22): string {
 		return s.length > n ? s.slice(0, n - 1) + '…' : s;
 	}
 </script>
 
-<div class={cn('w-full', className)}>
+<div class={cn('w-full', className)} bind:clientWidth={boxW}>
 	{#if devices.length === 0}
 		<p class="px-1 py-6 text-center text-xs text-muted-foreground">
 			{midiAccess.status === 'granted'
@@ -164,7 +253,9 @@
 	{:else}
 		<svg
 			viewBox="0 0 {VIEW_W} {viewH}"
-			class="mx-auto block w-full max-w-[640px]"
+			width={VIEW_W}
+			height={viewH}
+			class="mx-auto block max-w-full"
 			role="img"
 			aria-label="Your MIDI rig: {devices.map((d) => d.name).join(', ')} connected to MIDI Lab"
 		>
@@ -196,6 +287,11 @@
 						stroke-linecap="round"
 					/>
 				{/if}
+			{/each}
+
+			<!-- messages in flight, over the cables but under the boxes -->
+			{#each flying as dot (dot.id)}
+				<circle cx={dot.x} cy={dot.y} r="3.1" fill={dot.colour} opacity={dot.fade} />
 			{/each}
 
 			<!-- devices -->

@@ -1,15 +1,10 @@
 <script lang="ts">
 	import InstrumentPanel from '$lib/components/midi/InstrumentPanel.svelte';
 	import RigDiagram from '$lib/components/midi/RigDiagram.svelte';
+	import CourseMap from '$lib/components/shell/CourseMap.svelte';
+	import ToolFigure from '$lib/components/shell/ToolFigure.svelte';
 	import { progress } from '$lib/curriculum/progress.svelte';
-	import {
-		CURRICULUM,
-		ALL_LESSONS,
-		TOTAL_MINUTES,
-		ACT_ICON,
-		lessonPath
-	} from '$lib/curriculum/registry';
-	import { cn } from '$lib/utils';
+	import { ALL_LESSONS, TOTAL_MINUTES, lessonPath } from '$lib/curriculum/registry';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
@@ -17,11 +12,7 @@
 		ArrowRight01Icon,
 		PlugSocketIcon,
 		FlaskConicalIcon,
-		LibraryIcon,
-		Route02Icon,
-		Activity03Icon,
-		Grid3X3Icon,
-		Chip02Icon
+		LibraryIcon
 	} from '@hugeicons/core-free-icons';
 
 	const overall = $derived(progress.fractionOf(ALL_LESSONS.map((l) => l.id)));
@@ -32,19 +23,29 @@
 	const tools = [
 		{
 			href: '/lab/monitor',
-			icon: Activity03Icon,
+			figure: 'monitor',
 			name: 'Monitor',
 			desc: 'Every byte, colour-coded'
 		},
-		{ href: '/lab/patchbay', icon: Route02Icon, name: 'Patchbay', desc: 'Route, remap, transpose' },
+		{
+			href: '/lab/patchbay',
+			figure: 'patchbay',
+			name: 'Patchbay',
+			desc: 'Route, remap, transpose'
+		},
 		{
 			href: '/lab/programmer',
-			icon: Grid3X3Icon,
+			figure: 'programmer',
 			name: 'Programmer',
 			desc: 'Sequence and export .mid'
 		},
-		{ href: '/lab/devices', icon: Chip02Icon, name: 'Device Lab', desc: 'Learn an unknown synth' }
-	];
+		{
+			href: '/lab/devices',
+			figure: 'devices',
+			name: 'Device Lab',
+			desc: 'Learn an unknown synth'
+		}
+	] as const;
 </script>
 
 <div class="mx-auto flex w-full max-w-6xl flex-col gap-12 px-8 pt-8 pb-12">
@@ -120,47 +121,11 @@
 	<section class="flex flex-col gap-5">
 		<div class="flex items-baseline justify-between">
 			<h2 class="text-xl font-semibold tracking-tight">The course</h2>
-			<a href="/learn" class="text-sm text-muted-foreground hover:text-foreground">
-				All {ALL_LESSONS.length} lessons →
-			</a>
+			<span class="tnum text-sm text-muted-foreground">
+				{Math.round(overall * 100)}% complete
+			</span>
 		</div>
-		<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-			{#each CURRICULUM as act (act.id)}
-				{@const frac = progress.fractionOf(act.lessons.map((l) => l.id))}
-				<a
-					href="/learn#{act.id}"
-					class="group flex flex-col gap-2 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
-				>
-					<div class="flex items-center gap-2.5">
-						<span
-							class="grid size-8 shrink-0 place-items-center rounded-lg border bg-surface-sunken transition-colors group-hover:border-foreground/25 group-hover:bg-accent"
-						>
-							<HugeiconsIcon
-								icon={ACT_ICON[act.id]}
-								size={16}
-								strokeWidth={1.6}
-								class={cn(
-									'transition-colors',
-									frac === 1 ? 'text-ok' : 'text-muted-foreground group-hover:text-foreground'
-								)}
-							/>
-						</span>
-						<span class="label text-muted-foreground">Act {act.number}</span>
-						<span class="ml-auto font-mono text-xs text-muted-foreground">
-							{act.lessons.length} lessons
-						</span>
-					</div>
-					<h3 class="leading-snug font-medium">{act.title}</h3>
-					<p class="text-sm leading-relaxed text-muted-foreground">{act.subtitle}</p>
-					<div class="mt-2 h-1 overflow-hidden rounded-full bg-muted">
-						<div
-							class="h-full rounded-full bg-ok transition-[width]"
-							style="width: {frac * 100}%"
-						></div>
-					</div>
-				</a>
-			{/each}
-		</div>
+		<CourseMap />
 	</section>
 
 	<!-- ── the lab ───────────────────────────────────────────────────────── -->
@@ -169,7 +134,7 @@
 			<h2 class="text-xl font-semibold tracking-tight">The Lab</h2>
 			<a href="/lab" class="text-sm text-muted-foreground hover:text-foreground">Open the lab →</a>
 		</div>
-		<p class="-mt-3 max-w-2xl text-sm text-muted-foreground">
+		<p class="measure -mt-3 text-sm text-muted-foreground">
 			The tools the lessons are built on, standing alone. These are the parts you keep using after
 			the course is over.
 		</p>
@@ -177,9 +142,11 @@
 			{#each tools as tool (tool.href)}
 				<a
 					href={tool.href}
-					class="group flex items-start gap-3 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
+					class="group flex flex-col gap-3 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
 				>
-					<HugeiconsIcon icon={tool.icon} size={20} class="mt-0.5 shrink-0 text-muted-foreground" />
+					<span class="panel-sunken block rounded-md border px-3.5 py-3">
+						<ToolFigure tool={tool.figure} />
+					</span>
 					<span>
 						<span class="block text-sm font-medium">{tool.name}</span>
 						<span class="block text-sm text-muted-foreground">{tool.desc}</span>
