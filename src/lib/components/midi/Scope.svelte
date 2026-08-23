@@ -173,12 +173,29 @@
 		</div>
 	{/if}
 	<div
-		bind:this={host}
 		class={cn('relative min-h-0 w-full flex-1', !bare && 'panel-sunken')}
 		style={bare ? undefined : `height: ${height}px`}
-		role="img"
-		aria-label="Live spectrum analyser, one bar per semitone"
-	></div>
+	>
+		<!--
+			The octave grid the bars are read against, and the floor they stand
+			on. It is the same set of lines the axis below is labelled with, so a
+			bar can be placed by eye without counting — and it means the panel is
+			an instrument screen with nothing on it rather than an empty box,
+			which is what it looked like before a note had been played.
+		-->
+		<div class="pointer-events-none absolute inset-0" aria-hidden="true">
+			{#each OCTAVES as tick (tick.label)}
+				<span class="absolute inset-y-0 w-px bg-grid-line" style="left: {tick.left}%"></span>
+			{/each}
+			<span class="absolute inset-x-0 bottom-0 h-px bg-grid-line-strong"></span>
+		</div>
+		<div
+			bind:this={host}
+			class="absolute inset-0"
+			role="img"
+			aria-label="Live spectrum analyser, one bar per semitone"
+		></div>
+	</div>
 	{#if scale}
 		<div class="relative h-4 shrink-0 select-none" aria-hidden="true">
 			{#each OCTAVES as tick (tick.label)}

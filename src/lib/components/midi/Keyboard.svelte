@@ -16,6 +16,7 @@
 	import { channelColour } from '$lib/midi/channelcolour';
 	import { capturePointer, cn } from '$lib/utils';
 	import { rovingGrid } from '$lib/a11y/roving';
+	import { momentary } from '$lib/a11y/momentary';
 
 	interface Props {
 		/** Lowest note shown. Defaults to C two octaves below middle C. */
@@ -241,6 +242,7 @@
 			{@const active = noteState.isHeld(note)}
 			{@const owner = noteState.channelOf(note)}
 			<button
+				use:momentary
 				class="group focus-key-white relative flex-1 border-r border-black/12 transition-[filter] duration-75 last:border-r-0"
 				style:background={active
 					? `color-mix(in oklch, ${channelColour(owner ?? ch)} 52%, var(--key-white))`
@@ -295,6 +297,7 @@
 			{@const active = noteState.isHeld(note)}
 			{@const owner = noteState.channelOf(note)}
 			<button
+				use:momentary
 				class="focus-key-black pointer-events-auto absolute top-0 rounded-b-[3px]"
 				style="left: {centre - (w * BLACK_RATIO) / 2}%; width: {w * BLACK_RATIO}%; height: 63%;
 					background: {active

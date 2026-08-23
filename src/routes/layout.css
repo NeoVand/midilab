@@ -218,8 +218,14 @@
 	   surface wants: small enough to fit a monitor row, large enough to read
 	   all day. Tailwind's default steps are redefined rather than added to, so
 	   there is exactly one ladder and no way to land between its rungs.
-	   `2xs` exists only for the uppercase labels and the text printed inside
-	   keys and step cells; nothing smaller is permitted. */
+	   `2xs` exists for the uppercase labels and the text printed inside keys
+	   and step cells. `3xs` is smaller still and is allowed in exactly one
+	   place: a dense instrument list, where a patch bank is read the way it is
+	   read on hardware — scanned as a block, not as prose. Nothing below that,
+	   and nothing running text at either size. */
+	--text-3xs: 0.5625rem; /* 9 */
+	--text-3xs--line-height: 1.35;
+	--text-3xs--letter-spacing: 0.02em;
 	--text-2xs: 0.625rem; /* 10 */
 	--text-2xs--line-height: 1.4;
 	--text-2xs--letter-spacing: 0.02em;

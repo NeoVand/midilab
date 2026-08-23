@@ -41,63 +41,93 @@
 	/** Every note measured from the lowest — the way you hear a chord. */
 	const steps = $derived(held.length > 1 ? held.slice(1).map((n) => n - held[0]) : []);
 
-	/** More than this and the list is longer than the panel; the staff still has them all. */
-	const listed = $derived(held.slice(0, 6));
+	/**
+	 * Four rows is what the column has room for under the notation and the
+	 * chord; past that the list says how many it is not showing. The staff
+	 * above has all of them either way.
+	 */
+	const listed = $derived(held.length > 6 ? held.slice(0, 5) : held);
+
+	/**
+	 * Two lines of intervals covers a five-note chord, which is as many as ten
+	 * fingers put on a three-octave keyboard in practice.
+	 */
+	const INTERVAL_LINES = 2;
 </script>
 
-<div class={cn('flex h-full flex-col gap-2', className)}>
+<!--
+	Fixed slots, always the same height.
+	
+	Everything here appears and disappears as you play: a chord gets a name or
+	does not, the intervals run to one line or two, the note list is empty or
+	four rows deep. Letting the column size itself made the panel — and the
+	whole page under it — jump every time a key went down. So each part has a
+	place of a fixed size that it either fills or does not, the way a readout on
+	a piece of hardware does.
+-->
+<div class={cn('flex h-full flex-col gap-1.5', className)}>
 	<Staff {flats} class="shrink-0" />
 
-	{#if held.length === 0}
-		<p class="text-xs leading-relaxed text-muted-foreground">
-			Play, and this names it — the notes, the chord, and the distances between them.
-		</p>
-	{:else if held.length === 1}
-		<div class="flex items-baseline gap-2">
-			<span class="text-xl leading-none font-medium">{names[0]}</span>
-			<span class="tnum text-xs text-muted-foreground">
-				{held[0]} · {noteToFrequency(held[0]).toFixed(0)} Hz
+	<!-- the chord, or what would go there -->
+	<div class="flex h-9 shrink-0 flex-col justify-center gap-0.5">
+		{#if held.length === 0}
+			<span class="text-lg leading-none font-medium text-muted-foreground/35">—</span>
+			<span class="text-2xs text-muted-foreground">the chord you are holding</span>
+		{:else if held.length === 1}
+			<span class="text-lg leading-none font-medium">{names[0]}</span>
+			<span class="tnum text-2xs text-muted-foreground">
+				one note · {held[0]} · {noteToFrequency(held[0]).toFixed(0)} Hz
 			</span>
-		</div>
-	{:else}
-		<div class="flex flex-col gap-1">
-			<div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-				<span class="text-xl leading-none font-medium">
-					{chord ? chord.name : `${held.length} notes`}
-				</span>
-				<span class="text-xs text-muted-foreground">
-					{chord
-						? chord.spoken + (chord.inversion > 0 ? ` · ${chord.inversion}. inversion` : '')
-						: 'no name for this one, which is allowed'}
-				</span>
-			</div>
-			<!--
-				Semitones, not scale degrees: the interval a musician hears and the
-				number MIDI subtracts are the same thing, and saying both together
-				is the point of the panel.
-			-->
-			<ul class="tnum flex flex-wrap gap-x-3 gap-y-0.5 text-2xs text-muted-foreground">
-				{#each steps as s, i (i)}
-					<li><span class="text-foreground">+{s}</span> {intervalName(s)}</li>
-				{/each}
-			</ul>
-		</div>
-	{/if}
+		{:else}
+			<span class="text-lg leading-none font-medium">
+				{chord ? chord.name : `${held.length} notes`}
+			</span>
+			<span class="truncate text-2xs text-muted-foreground">
+				{chord
+					? chord.spoken + (chord.inversion > 0 ? ` · ${chord.inversion}. inversion` : '')
+					: 'no name for this one, which is allowed'}
+			</span>
+		{/if}
+	</div>
 
 	<!--
-		The same notes as numbers. This is the line that makes the panel a MIDI
-		tool rather than a music one: every row is exactly what went on the wire,
-		beside the notation of the same thing.
+		Semitones, not scale degrees: the interval a musician hears and the
+		number MIDI subtracts are the same thing, and saying both together is
+		the point of the panel.
 	-->
-	{#if held.length > 1}
-		<dl class="tnum mt-auto grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 pt-2 text-2xs">
-			{#each listed as n, i (n)}
-				<dt class="text-foreground">{names[i]}</dt>
-				<dd class="text-muted-foreground">{n} · {noteToFrequency(n).toFixed(0)} Hz</dd>
+	<ul
+		class="tnum flex shrink-0 flex-wrap content-start gap-x-3 gap-y-0.5 overflow-hidden text-2xs text-muted-foreground"
+		style="height: calc({INTERVAL_LINES} * 1.4em)"
+	>
+		{#if steps.length}
+			{#each steps as s, i (i)}
+				<li><span class="text-foreground">+{s}</span> {intervalName(s)}</li>
 			{/each}
-			{#if held.length > listed.length}
-				<dt class="col-span-2 text-muted-foreground">+{held.length - listed.length} more</dt>
-			{/if}
-		</dl>
-	{/if}
+		{:else}
+			<li>and the semitones between its notes</li>
+		{/if}
+	</ul>
+
+	<!--
+		The same notes as numbers, on one line rather than in a table. This is
+		the part that makes the panel a MIDI tool rather than a music one —
+		every pair is exactly what went on the wire — and a line of them costs a
+		quarter of the height a column of them did.
+	-->
+	<p
+		class="tnum mt-auto shrink-0 overflow-hidden text-2xs leading-[1.4] text-muted-foreground"
+		style="height: 2.8em"
+	>
+		{#if held.length === 0}
+			<span class="label">note · number</span>
+		{:else}
+			{#each listed as n, i (n)}
+				<span class="mr-2.5 inline-block whitespace-nowrap">
+					<span class="text-foreground">{names[i]}</span>
+					{n}
+				</span>
+			{/each}
+			{#if held.length > listed.length}+{held.length - listed.length} more{/if}
+		{/if}
+	</p>
 </div>

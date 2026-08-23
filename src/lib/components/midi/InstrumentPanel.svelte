@@ -28,6 +28,7 @@
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 	import { rovingGrid } from '$lib/a11y/roving';
+	import { momentary } from '$lib/a11y/momentary';
 	import { cn } from '$lib/utils';
 	import { onMount } from 'svelte';
 
@@ -126,9 +127,19 @@
 	</div>
 
 	<!-- ── screen: what you played, what it sounds like, what voice ─────── -->
-	<div class="panel-sunken grid border-b lg:grid-cols-[13rem_1fr_20rem]">
+	<!--
+		A fixed height, so the panel never resizes.
+		
+		Everything in this row changes as you play, and every one of those
+		changes used to move the keybed and the readout under it. The row is now
+		as tall as its fullest state and stays there; what varies is what is
+		inside, not how much room it takes.
+	-->
+	<div class="panel-sunken grid border-b lg:h-[13.5rem] lg:grid-cols-[17rem_1fr_20rem]">
 		<!-- Notation first: it is the thing you can read back to someone else. -->
-		<div class="flex flex-col border-b px-3 pt-2.5 pb-3 lg:border-r lg:border-b-0">
+		<div
+			class="flex min-h-0 flex-col overflow-hidden border-b px-3 pt-2.5 pb-3 lg:border-r lg:border-b-0"
+		>
 			<span class="label mb-1.5">Notation</span>
 			<NowPlaying />
 		</div>
@@ -148,6 +159,7 @@
 				<button
 					type="button"
 					onclick={() => (gm.enabled = !gm.enabled)}
+					use:momentary
 					title="Sampled instruments sound like the instrument. The synth can be bent and filtered while a note is sounding."
 					class="label rounded px-1 transition-colors hover:bg-accent hover:text-foreground"
 				>
@@ -155,7 +167,7 @@
 				</button>
 			</div>
 			<div
-				class="grid flex-1 grid-cols-2 content-between gap-x-1 gap-y-px px-2 pt-1"
+				class="grid flex-1 grid-cols-2 content-start gap-x-1 px-2 pt-0.5"
 				use:rovingGrid={{ columns: 2 }}
 			>
 				{#each GM_FAMILIES as name, i (name)}
@@ -163,7 +175,8 @@
 						type="button"
 						onclick={() => pick(familyProgram(i))}
 						aria-pressed={family === i}
-						class="flex items-center gap-1.5 rounded px-1.5 py-1 text-left text-2xs transition-colors
+						use:momentary
+						class="flex items-center gap-1.5 rounded px-1.5 py-[3px] text-left text-3xs transition-colors
 							hover:bg-accent
 							aria-pressed:bg-foreground aria-pressed:text-background"
 					>
@@ -179,19 +192,20 @@
 				programs live, and where you find out that a family is not one
 				sound but eight related ones.
 			-->
-			<div class="mt-2 flex items-center gap-1 border-t px-2 py-1.5">
+			<div class="mt-1.5 flex items-center gap-1 border-t px-2 py-1">
 				<button
 					type="button"
 					onclick={() => pick(program - 1)}
+					use:momentary
 					aria-label="Previous program"
 					class="grid size-5 shrink-0 place-items-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
 				>
 					<HugeiconsIcon icon={ArrowLeft01Icon} size={13} strokeWidth={2} />
 				</button>
-				<span class="tnum shrink-0 text-2xs text-muted-foreground">
+				<span class="tnum shrink-0 text-3xs text-muted-foreground">
 					{String(program).padStart(3, '0')}
 				</span>
-				<span class="min-w-0 flex-1 truncate text-2xs" title={GM_PROGRAMS[program]}>
+				<span class="min-w-0 flex-1 truncate text-3xs" title={GM_PROGRAMS[program]}>
 					{GM_PROGRAMS[program]}
 				</span>
 				{#if loading}
@@ -204,6 +218,7 @@
 				<button
 					type="button"
 					onclick={() => pick(program + 1)}
+					use:momentary
 					aria-label="Next program"
 					class="grid size-5 shrink-0 place-items-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
 				>
