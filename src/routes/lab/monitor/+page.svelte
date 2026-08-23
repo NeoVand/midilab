@@ -4,6 +4,7 @@
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import ActivityStrip from '$lib/components/midi/ActivityStrip.svelte';
 	import ChannelState from '$lib/components/midi/ChannelState.svelte';
+	import WireView from '$lib/components/midi/WireView.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import type { MidiEvent } from '$lib/midi/bus';
@@ -23,14 +24,16 @@
 	let pinned = $state<MidiEvent | null>(null);
 
 	/**
-	 * Two ways of looking at the same stream.
+	 * Three ways of looking at the same stream.
 	 *
 	 * The log answers "did that message arrive". It is much worse at answering
 	 * "what is the mod wheel sitting at", because the answer scrolled away four
-	 * hundred messages ago. State answers the second question, and only shows
-	 * the channels that are actually in play.
+	 * hundred messages ago — State answers that, and only for the channels
+	 * actually in play. Neither answers "what shape is this": a filter sweep is
+	 * forty rows of Control Change read one at a time, and the Wire view is the
+	 * same forty rows as a curve.
 	 */
-	let view = $state<'stream' | 'state'>('stream');
+	let view = $state<'stream' | 'wire' | 'state'>('stream');
 
 	const latest = $derived.by(() => {
 		void monitor.version;
@@ -57,12 +60,12 @@
 <div class="workbench mx-auto flex h-full min-h-0 w-full flex-col gap-5 px-8 py-6">
 	<PageHeader
 		title="Monitor"
-		lead="Two views of the same stream: every byte in the order the wire carried it, or the standing state of every channel in play."
+		lead="Three views of the same stream: every byte in the order the wire carried it, the shape of it over the last few seconds, or the standing state of every channel in play."
 		back={{ href: '/lab', label: 'Lab' }}
 	>
 		{#snippet actions()}
 			<div class="flex rounded-md border p-0.5">
-				{#each [['stream', 'Stream'], ['state', 'State']] as [value, label] (value)}
+				{#each [['stream', 'Stream'], ['wire', 'Wire'], ['state', 'State']] as [value, label] (value)}
 					<button
 						class={cn(
 							'rounded-sm px-2.5 py-1 text-xs transition-colors',
@@ -76,7 +79,7 @@
 					</button>
 				{/each}
 			</div>
-			{#if view === 'stream'}
+			{#if view !== 'state'}
 				<Button variant="outline" size="sm" class="gap-1.5" onclick={exportTsv}>
 					<HugeiconsIcon icon={CloudDownloadIcon} size={14} /> Export
 				</Button>
@@ -89,12 +92,13 @@
 	</PageHeader>
 
 	<!--
-		The family legend is a colour key for the log. In the state view nothing
-		is coloured by family, so it would be dead chrome — that row says what is
-		actually in front of you instead.
+		The family legend is a colour key for the log and for the wire view, which
+		is nothing but family colours. In the state view nothing is coloured by
+		family, so it would be dead chrome — that row says what is actually in
+		front of you instead.
 	-->
 	<div class="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg border px-4 py-2.5">
-		{#if view === 'stream'}
+		{#if view !== 'state'}
 			<ActivityStrip layout="legend" />
 		{:else}
 			{@const n = noteState.usedChannels.length}
@@ -134,6 +138,10 @@
 					<ByteInspector bytes={shown?.bytes ?? null} message={shown?.message} />
 				</div>
 			</div>
+		</div>
+	{:else if view === 'wire'}
+		<div class="min-h-0 flex-1 overflow-hidden rounded-lg border">
+			<WireView class="h-full" />
 		</div>
 	{:else}
 		<div class="min-h-0 flex-1 scrollbar-thin overflow-y-auto">
