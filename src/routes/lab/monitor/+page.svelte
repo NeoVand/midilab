@@ -58,7 +58,18 @@
 	}
 </script>
 
-<div class="workbench mx-auto flex h-full min-h-0 w-full flex-col gap-5 px-4 py-6 sm:px-8">
+<!--
+	Fills the window on a desk; scrolls on a phone.
+	
+	Three panes sharing one viewport height is a desk layout. On a phone the
+	header and the legend take half of it before the log starts, which left the
+	stream and the inspector about a hundred and ninety pixels each — enough to
+	clip their own empty-state sentences. Below `md` the page is a document: the
+	log takes a generous share and the inspector follows it down.
+-->
+<div
+	class="workbench mx-auto flex w-full flex-col gap-4 px-4 py-4 sm:gap-5 sm:py-6 md:h-full md:min-h-0 md:px-8"
+>
 	<PageHeader
 		title="Monitor"
 		lead="Three views of the same stream: every byte in the order the wire carried it, the shape of it over the last few seconds, or the standing state of every channel in play."
@@ -123,11 +134,11 @@
 	</div>
 
 	{#if view === 'stream'}
-		<div class="grid min-h-0 flex-1 gap-4 lg:grid-cols-[1fr_26rem]">
-			<div class="min-h-0 overflow-hidden rounded-lg border">
+		<div class="grid gap-4 md:min-h-0 md:flex-1 lg:grid-cols-[1fr_26rem]">
+			<div class="h-[46vh] overflow-hidden rounded-lg border md:h-auto md:min-h-0">
 				<MidiMonitor class="h-full" onSelect={select} selectedId={pinned?.id ?? null} />
 			</div>
-			<div class="flex min-h-0 flex-col overflow-hidden rounded-lg border">
+			<div class="flex flex-col overflow-hidden rounded-lg border md:min-h-0">
 				<div class="flex items-center justify-between gap-2 border-b px-4 py-1.5">
 					<p class="label">Inspector</p>
 					{#if pinned}
@@ -147,11 +158,11 @@
 			</div>
 		</div>
 	{:else if view === 'wire'}
-		<div class="min-h-0 flex-1 overflow-hidden rounded-lg border">
+		<div class="h-[52vh] overflow-hidden rounded-lg border md:h-auto md:min-h-0 md:flex-1">
 			<WireView class="h-full" />
 		</div>
 	{:else}
-		<div class="min-h-0 flex-1 scrollbar-thin overflow-y-auto">
+		<div class="scrollbar-thin md:min-h-0 md:flex-1 md:overflow-y-auto">
 			<ChannelState />
 		</div>
 	{/if}

@@ -16,6 +16,7 @@
 	import { engine } from '$lib/midi/engine.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { gm, sampledCannot } from '$lib/audio/gm.svelte';
+	import { device } from '$lib/stores/device.svelte';
 	import { ccInfo } from '$lib/midi/constants';
 	import { cn } from '$lib/utils';
 
@@ -72,11 +73,16 @@
 </script>
 
 <div class={cn('flex flex-col gap-3', className)}>
-	<div class="flex flex-wrap gap-x-2 gap-y-3">
+	<!--
+		A grid on a phone so the bank lines up in columns; a wrapping row on a
+		desk, where the knobs pack in as they fit and the count varies per page.
+	-->
+	<div class="grid grid-cols-3 gap-x-2 gap-y-3 sm:flex sm:flex-wrap">
 		{#each controllers as cc (cc)}
 			{@const why = reasons[cc]}
-			<div class={cn('transition-opacity', why && 'opacity-45')} title={why ?? undefined}>
+			<div class={cn('min-w-0 transition-opacity', why && 'opacity-45')} title={why ?? undefined}>
 				<Knob
+					fill={device.narrow}
 					value={values[cc] ?? DEFAULTS[cc] ?? 0}
 					min={0}
 					max={127}

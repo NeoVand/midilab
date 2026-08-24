@@ -28,6 +28,15 @@
 		 * site when the caption is genuinely long.
 		 */
 		width?: number;
+		/**
+		 * Let the container decide the width instead of the knob.
+		 *
+		 * The fixed cell exists so a caption cannot shove its neighbours around
+		 * mid-drag. Inside a grid that is the grid's job already, and a fixed cell
+		 * narrower than the column leaves a bank of knobs adrift in the middle of
+		 * the row with all the air pooled at one end.
+		 */
+		fill?: boolean;
 		colour?: string;
 		/** Show the raw integer instead of a formatted unit. */
 		format?: (v: number) => string;
@@ -52,6 +61,7 @@
 		sub,
 		size = 52,
 		width,
+		fill = false,
 		colour = 'var(--msg-cc)',
 		format,
 		bipolar = false,
@@ -142,12 +152,15 @@
 		return `M ${a.x} ${a.y} A ${radius} ${radius} 0 ${large} ${sweep} ${b.x} ${b.y}`;
 	}
 
-	const cell = $derived(width ?? Math.max(size, 76));
+	const cell = $derived(fill ? null : (width ?? Math.max(size, 76)));
 	const fillFrom = $derived(bipolar ? START + ARC / 2 : START);
 	const display = $derived(format ? format(value) : String(value));
 </script>
 
-<div class={cn('flex shrink-0 flex-col items-center gap-1', className)} style="width: {cell}px">
+<div
+	class={cn('flex flex-col items-center gap-1', fill ? 'w-full min-w-0' : 'shrink-0', className)}
+	style={cell === null ? undefined : `width: ${cell}px`}
+>
 	<div
 		role="slider"
 		tabindex={disabled ? -1 : 0}

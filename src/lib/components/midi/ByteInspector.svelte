@@ -6,6 +6,7 @@
 </script>
 
 <script lang="ts">
+	import { device } from '$lib/stores/device.svelte';
 	/**
 	 * The byte inspector: one MIDI message, taken apart.
 	 *
@@ -137,45 +138,79 @@
 		when the first message lands: the blanks simply fill in.
 	-->
 	<div class={cn('flex flex-col gap-4', className)}>
-		<div class="flex flex-wrap gap-2.5">
+		<div class={cn('flex gap-2.5', device.narrow ? 'flex-col gap-1.5' : 'flex-wrap')}>
 			{#each WAITING as card, i (card.title)}
-				<div class="min-w-[8.5rem] flex-1 rounded-lg border border-dashed p-3">
-					<div class="label mb-1 flex items-baseline justify-between">
-						<span>{card.title}</span>
-						<span class="tnum">{i}</span>
-					</div>
-					<!-- A blank readout, in the shape the real one takes: 0x__ and a decimal. -->
-					<div class="mb-2 flex items-baseline gap-2">
-						<span class="font-mono text-2xl leading-none font-medium text-muted-foreground/45">
+				{#if device.narrow}
+					<!--
+						A row, not a card. Three cards stacked down a phone are five
+						hundred pixels of mostly padding; the same three facts fit in
+						a hundred as the readout on a piece of hardware would print
+						them — name, value, bits, in one line each.
+					-->
+					<div
+						class="flex items-center gap-2 rounded-md border border-dashed px-2 py-1.5"
+						aria-hidden="true"
+					>
+						<span class="label w-[5.5rem] shrink-0 truncate">{card.title}</span>
+						<span class="font-mono text-sm leading-none font-medium text-muted-foreground/45">
 							0x--
 						</span>
-						<span class="tnum font-mono text-xs text-muted-foreground/45">---</span>
+						<span class="ml-auto flex shrink-0 gap-[2px]">
+							{#each BITS as b (b)}
+								<span
+									class={cn(
+										'h-5 w-[13px] rounded-xs',
+										b !== 0
+											? 'bg-foreground/10'
+											: i === 0
+												? 'bg-msg-note/70'
+												: 'bg-muted-foreground/45'
+									)}
+								></span>
+							{/each}
+						</span>
 					</div>
-					<div class="flex gap-[3px]" aria-hidden="true">
-						{#each BITS as b (b)}
-							<!--
+				{:else}
+					<div class="min-w-[8.5rem] flex-1 rounded-lg border border-dashed p-3">
+						<div class="label mb-1 flex items-baseline justify-between">
+							<span>{card.title}</span>
+							<span class="tnum">{i}</span>
+						</div>
+						<!-- A blank readout, in the shape the real one takes: 0x__ and a decimal. -->
+						<div class="mb-2 flex items-baseline gap-2">
+							<span class="font-mono text-2xl leading-none font-medium text-muted-foreground/45">
+								0x--
+							</span>
+							<span class="tnum font-mono text-xs text-muted-foreground/45">---</span>
+						</div>
+						<div class="flex gap-[3px]" aria-hidden="true">
+							{#each BITS as b (b)}
+								<!--
 								An empty cell has no text to make it visible, so it cannot
 								borrow `bg-muted` from the real card — on a light card that
 								leaves one green square floating in nothing.
 							-->
-							<span
-								class={cn(
-									'h-6 w-[15px] rounded-xs',
-									b !== 0
-										? 'bg-foreground/10'
-										: i === 0
-											? 'bg-msg-note/70'
-											: 'bg-muted-foreground/45'
-								)}
-							></span>
-						{/each}
+								<span
+									class={cn(
+										'h-6 w-[15px] rounded-xs',
+										b !== 0
+											? 'bg-foreground/10'
+											: i === 0
+												? 'bg-msg-note/70'
+												: 'bg-muted-foreground/45'
+									)}
+								></span>
+							{/each}
+						</div>
+						<p class="mt-2 min-h-8 text-xs leading-snug text-muted-foreground">{card.note}</p>
 					</div>
-					<p class="mt-2 min-h-8 text-xs leading-snug text-muted-foreground">{card.note}</p>
-				</div>
+				{/if}
 			{/each}
 		</div>
 		{#if !compact}
-			<p class="text-base leading-relaxed text-muted-foreground">
+			<p
+				class={cn('leading-relaxed text-muted-foreground', device.narrow ? 'text-sm' : 'text-base')}
+			>
 				Play a key, or send something from a device. This reads the message back to you in hex, in
 				bits, and in English.
 			</p>
@@ -183,61 +218,92 @@
 	</div>
 {:else}
 	<div class={cn('flex flex-col gap-4', className)} style="--fam: {colour}">
-		<div class="flex flex-wrap gap-2.5">
+		<div class={cn('flex gap-2.5', device.narrow ? 'flex-col gap-1.5' : 'flex-wrap')}>
 			{#each data as byte, i (i)}
 				{@const bits = binary(byte)}
 				{@const isStatus = byte >= 0x80}
-				<!--
+				{#if device.narrow}
+					<div class="flex items-center gap-2 rounded-md border bg-card px-2 py-1.5">
+						<span class="label w-[5.5rem] shrink-0 truncate">
+							{roles[i]?.title ?? `Byte ${i}`}
+						</span>
+						<span class="font-mono text-sm leading-none font-medium" style="color: var(--fam)"
+							>{hex(byte)}</span
+						>
+						<span class="tnum font-mono text-2xs text-muted-foreground">{byte}</span>
+						<span class="ml-auto flex shrink-0 gap-[2px]" aria-label="binary {bits}">
+							{#each bits.split('') as bit, b (b)}
+								<span
+									class={cn(
+										'grid h-5 w-[13px] place-items-center rounded-xs font-mono text-3xs leading-none',
+										b === 0
+											? 'font-semibold text-background'
+											: bit === '1'
+												? 'bg-foreground/12 text-foreground'
+												: 'bg-muted text-muted-foreground'
+									)}
+									style={b === 0
+										? `background:${isStatus ? 'var(--fam)' : 'var(--muted-foreground)'}`
+										: ''}
+								>
+									{bit}
+								</span>
+							{/each}
+						</span>
+					</div>
+				{:else}
+					<!--
 				No coloured outline on the status byte. The card is headed "Status
 				byte", its top bit is already drawn in the family colour, and a
 				third marker saying the same thing is chrome, not information.
 			-->
-				<div class="min-w-[8.5rem] flex-1 rounded-lg border bg-card p-3">
-					<div class="label mb-1 flex items-baseline justify-between">
-						<span>{roles[i]?.title ?? `Byte ${i}`}</span>
-						<span class="tnum">{i}</span>
-					</div>
+					<div class="min-w-[8.5rem] flex-1 rounded-lg border bg-card p-3">
+						<div class="label mb-1 flex items-baseline justify-between">
+							<span>{roles[i]?.title ?? `Byte ${i}`}</span>
+							<span class="tnum">{i}</span>
+						</div>
 
-					<div class="mb-2 flex items-baseline gap-2">
-						<span class="font-mono text-2xl leading-none font-medium" style="color: var(--fam)">
-							{hex(byte)}
-						</span>
-						<span class="tnum font-mono text-xs text-muted-foreground">{byte}</span>
-					</div>
-
-					<!-- The bits. The leftmost one is the entire trick. -->
-					<div class="flex gap-[3px]" aria-label="binary {bits}">
-						{#each bits.split('') as bit, b (b)}
-							<span
-								class={cn(
-									'grid h-6 w-[15px] place-items-center rounded-xs font-mono text-xs leading-none',
-									b === 0
-										? 'font-semibold text-background'
-										: bit === '1'
-											? 'bg-foreground/12 text-foreground'
-											: 'bg-muted text-muted-foreground'
-								)}
-								style={b === 0
-									? `background:${isStatus ? 'var(--fam)' : 'var(--muted-foreground)'}`
-									: ''}
-							>
-								{bit}
+						<div class="mb-2 flex items-baseline gap-2">
+							<span class="font-mono text-2xl leading-none font-medium" style="color: var(--fam)">
+								{hex(byte)}
 							</span>
-						{/each}
-					</div>
+							<span class="tnum font-mono text-xs text-muted-foreground">{byte}</span>
+						</div>
 
-					<!-- Two lines of room, so cards in a row stay the same height. -->
-					<p class="mt-2 min-h-8 text-xs leading-snug text-muted-foreground">
-						{#if b0Caption(i, isStatus)}
-							<span class="font-medium text-foreground">{b0Caption(i, isStatus)}</span>
-						{/if}
-						{roles[i]?.note ?? ''}
-					</p>
-				</div>
+						<!-- The bits. The leftmost one is the entire trick. -->
+						<div class="flex gap-[3px]" aria-label="binary {bits}">
+							{#each bits.split('') as bit, b (b)}
+								<span
+									class={cn(
+										'grid h-6 w-[15px] place-items-center rounded-xs font-mono text-xs leading-none',
+										b === 0
+											? 'font-semibold text-background'
+											: bit === '1'
+												? 'bg-foreground/12 text-foreground'
+												: 'bg-muted text-muted-foreground'
+									)}
+									style={b === 0
+										? `background:${isStatus ? 'var(--fam)' : 'var(--muted-foreground)'}`
+										: ''}
+								>
+									{bit}
+								</span>
+							{/each}
+						</div>
+
+						<!-- Two lines of room, so cards in a row stay the same height. -->
+						<p class="mt-2 min-h-8 text-xs leading-snug text-muted-foreground">
+							{#if b0Caption(i, isStatus)}
+								<span class="font-medium text-foreground">{b0Caption(i, isStatus)}</span>
+							{/if}
+							{roles[i]?.note ?? ''}
+						</p>
+					</div>
+				{/if}
 			{/each}
 		</div>
 
-		{#if !compact && isChannelMsg}
+		{#if !compact && !device.narrow && isChannelMsg}
 			{@const status = data[0]}
 			{@const hi = (status >> 4) & 0xf}
 			{@const lo = status & 0xf}
@@ -273,7 +339,7 @@
 			behind it) both fit on one line, which is what stops the panel jumping.
 			Reserving a second line instead just left a hole under every short one.
 		-->
-			<p class="text-base leading-relaxed">
+			<p class={cn('leading-relaxed', device.narrow ? 'text-sm' : 'text-base')}>
 				<span
 					class="mr-2 inline-block size-2 translate-y-[-1px] rounded-full align-middle"
 					style="background: var(--fam)"

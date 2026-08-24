@@ -208,10 +208,16 @@
 	--channel-l: 0.76;
 }
 
-@theme inline {
-	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
-
-	/* ------------------------------------------------------------------ */
+/*
+ * The type ladder, in a `@theme` of its own rather than the `inline` one.
+ *
+ * `inline` bakes a token's value straight into the utility, which is what the
+ * colours need — they point at variables that change with the theme. The type
+ * scale wants the opposite: `text-2xl` should say `var(--text-2xl)` so that the
+ * whole ladder can be retuned at once, which is exactly what a narrow screen
+ * needs. Nothing else changes; the rungs are the same rungs.
+ */
+@theme {
 	/* Type scale                                                          */
 	/* ------------------------------------------------------------------ */
 	/* A single ~1.18 scale anchored on 13px, which is the density a control
@@ -249,6 +255,32 @@
 	--text-4xl: 2.5rem; /* 40 */
 	--text-4xl--line-height: 1.1;
 	--text-4xl--letter-spacing: -0.024em;
+}
+
+/*
+ * The same ladder, compressed at the top, for a screen the width of a hand.
+ *
+ * The small end is untouched: 9 to 13 px is the density a control surface
+ * wants and a phone wants it just as much — a monitor row is a monitor row.
+ * It is the display sizes that do not travel. A 40 px number and a 32 px
+ * headline are proportioned against a thousand pixels of width; against three
+ * hundred and seventy-five they are shouting, and they push everything worth
+ * reading below the fold. The steps above `lg` therefore shrink by roughly a
+ * fifth, which keeps the intervals of the scale — each rung still clearly
+ * above the last — while giving the screen back to the content.
+ */
+@media (max-width: 767px) {
+	:root {
+		--text-lg: 1rem; /* 17 → 16 */
+		--text-xl: 1.125rem; /* 21 → 18 */
+		--text-2xl: 1.3125rem; /* 26 → 21 */
+		--text-3xl: 1.5rem; /* 32 → 24 */
+		--text-4xl: 1.75rem; /* 40 → 28 */
+	}
+}
+
+@theme inline {
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
 
 	/* Small enough for a step cell without becoming a dot. */
 	--radius-xs: 2px;
