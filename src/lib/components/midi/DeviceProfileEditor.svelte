@@ -200,11 +200,16 @@
 		</label>
 		<label class="flex flex-col gap-1">
 			<span class="label">Channel</span>
-			<div class="grid w-fit grid-cols-8 gap-1">
+			<!--
+				Sixteen 24 px squares is a mouse target, not a finger one. On a
+				phone the row spends the width it has: eight columns across, which
+				puts each button near forty pixels instead of twenty-four.
+			-->
+			<div class="grid grid-cols-8 gap-1 sm:w-fit">
 				{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
 					<button
 						class={cn(
-							'tnum size-6 rounded-sm border font-mono text-2xs transition-colors',
+							'tnum h-9 w-full rounded-sm border font-mono text-2xs transition-colors sm:size-6',
 							profile.channel === c
 								? 'border-msg-note bg-msg-note-bg text-msg-note'
 								: 'text-muted-foreground hover:border-foreground/40 hover:text-foreground'

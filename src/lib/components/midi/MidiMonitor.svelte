@@ -99,7 +99,13 @@
 
 <div class={cn('flex min-h-0 flex-col', className)}>
 	{#if showToolbar}
-		<div class="flex shrink-0 items-center gap-1.5 border-b px-2 py-1.5">
+		<!--
+			The search field is a fixed 10 rem, so on a phone the row it shares
+			with three buttons is a hundred pixels too long and the field is the
+			part that runs off the edge. Wrapping puts it on its own line, full
+			width, which is the shape a search field wants anyway.
+		-->
+		<div class="flex shrink-0 flex-wrap items-center gap-1.5 border-b px-2 py-1.5">
 			<Button
 				variant="ghost"
 				size="sm"
@@ -245,7 +251,11 @@
 			</Popover.Root>
 
 			<div class="flex-1"></div>
-			<SearchField bind:value={monitor.search} placeholder="Port or type…" class="w-40 shrink-0" />
+			<SearchField
+				bind:value={monitor.search}
+				placeholder="Port or type…"
+				class="w-full shrink-0 sm:w-40"
+			/>
 			<span class="tnum shrink-0 font-mono text-xs text-muted-foreground">
 				{monitor.rate}/s · {monitor.total}
 			</span>

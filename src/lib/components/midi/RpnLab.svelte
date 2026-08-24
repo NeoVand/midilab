@@ -62,8 +62,17 @@
 </script>
 
 <div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
-	<div class="flex flex-wrap items-end gap-5">
-		<div class="flex flex-col gap-1">
+	<!--
+		A row on a desk, a grid on a phone.
+		
+		Four controls of three different widths in a `flex-wrap` row is fine at
+		nine hundred pixels and ragged at three hundred: the kind selector took
+		one line, one knob squeezed in beside it, and the other two dropped to a
+		second row left-aligned under nothing in particular. The grid gives them
+		a column each, which is what a panel of four controls looks like.
+	-->
+	<div class="grid grid-cols-3 items-end gap-x-2 gap-y-4 sm:flex sm:flex-wrap sm:gap-5">
+		<div class="col-span-3 flex flex-col gap-1 sm:col-span-1">
 			<span class="label">Kind</span>
 			<div class="flex gap-1">
 				<Button
@@ -84,8 +93,8 @@
 				</Button>
 			</div>
 		</div>
-		<Knob bind:value={msb} min={0} max={127} default={0} label="Param MSB" size={46} />
-		<Knob bind:value={lsb} min={0} max={127} default={0} label="Param LSB" size={46} />
+		<Knob bind:value={msb} min={0} max={127} default={0} label="Param MSB" size={46} fill />
+		<Knob bind:value={lsb} min={0} max={127} default={0} label="Param LSB" size={46} fill />
 		<Knob
 			bind:value
 			min={0}
@@ -94,9 +103,10 @@
 			label="Value"
 			sub={fine ? `${value} of 16383` : `${value} of 127`}
 			size={46}
+			fill
 			colour="var(--msg-note)"
 		/>
-		<div class="flex flex-col gap-2 pb-1">
+		<div class="col-span-3 flex flex-col gap-2 pb-1 sm:col-span-1">
 			<div class="flex items-center gap-2">
 				<Switch id="fine" bind:checked={fine} />
 				<Label for="fine" class="text-xs font-normal">14-bit</Label>
@@ -106,8 +116,13 @@
 				<Label for="nullafter" class="text-xs font-normal">Null after</Label>
 			</div>
 		</div>
-		<div class="flex-1"></div>
-		<Button class="gap-1.5" onclick={() => engine.sendAll(sequence)}>
+		<!--
+			The spacer is what pushes the send button to the far end of a wide row.
+			In a three-column grid it is a grid item, so it took a cell and shoved
+			the button into the next one at a third of the width it needed.
+		-->
+		<div class="hidden flex-1 sm:block"></div>
+		<Button class="col-span-3 gap-1.5 sm:col-span-1" onclick={() => engine.sendAll(sequence)}>
 			<HugeiconsIcon icon={SentIcon} size={14} />
 			Send {sequence.length} messages
 		</Button>
