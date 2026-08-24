@@ -11,7 +11,7 @@
 ![Lessons](https://img.shields.io/badge/lessons-31-1f6feb?style=flat-square)
 ![No backend](https://img.shields.io/badge/backend-none-6e7781?style=flat-square)
 
-<img src="static/screenshot.png" alt="The MIDI Lab instrument panel: notation, a live spectrum analyser, the General MIDI voice bank, a keyboard with notes held, and the bytes of the Note On decoded underneath — with the monitor streaming the same messages below." width="100%">
+<img src="midilab.gif" alt="MIDI Lab in use: a key goes down, the staff and the chord name fill in, the spectrum analyser moves, and the same Note On appears decoded into hex and bits below — with the monitor streaming every message underneath." width="100%">
 
 </div>
 

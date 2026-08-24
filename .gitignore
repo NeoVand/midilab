@@ -28,5 +28,3 @@ test-results
 # The frame that ships is static/screenshot.png.
 /Screenshot.png
 
-# A screen recording, kept locally until it has a home in the README.
-/midilab.gif
