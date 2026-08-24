@@ -258,24 +258,39 @@
 					<p class="label">{group}</p>
 					<span class="h-px flex-1 bg-border"></span>
 				</div>
-				<div class="flex flex-wrap gap-x-4 gap-y-4">
+				<!--
+					A grid, so the row is filled rather than left with the air pooled
+					at one end. Three across on a phone puts a 44 px knob in a 100 px
+					cell; wider screens keep packing them in as they fit.
+				-->
+				<div class="grid grid-cols-3 gap-x-2 gap-y-3 sm:flex sm:flex-wrap sm:gap-x-4 sm:gap-y-4">
 					{#each items as { p, i } (p.id)}
-						<div class="group relative flex flex-col items-center gap-1 text-center">
+						<div class="group relative flex min-w-0 flex-col items-center gap-1 text-center">
 							<Knob
 								value={values[p.id] ?? p.default ?? Math.round((p.min + p.max) / 2)}
 								min={p.min}
 								max={p.max}
 								default={p.default}
 								size={44}
+								fill
 								colour="var(--msg-cc)"
 								onChange={(v) => send(p, v)}
 							/>
-							<Input
-								value={p.name}
-								class="h-4 border-0 bg-transparent p-0 text-center text-xs shadow-none focus-visible:ring-0"
-								disabled={!editable}
-								oninput={(e) => updateParameter(i, { name: e.currentTarget.value })}
-							/>
+							<!--
+								A text field nobody can type into is a lie told in the shape
+								of an input: on a read-only profile every name was drawn as a
+								filled grey pill wider than the knob above it. It is a label
+								until the profile is yours to edit.
+							-->
+							{#if editable}
+								<Input
+									value={p.name}
+									class="h-4 w-full border-0 bg-transparent p-0 text-center text-xs shadow-none focus-visible:ring-0"
+									oninput={(e) => updateParameter(i, { name: e.currentTarget.value })}
+								/>
+							{:else}
+								<span class="w-full truncate text-xs" title={p.name}>{p.name}</span>
+							{/if}
 							<span class="font-mono text-2xs text-msg-cc">{device.explain(p.id)}</span>
 							{#if p.unverified}
 								<span

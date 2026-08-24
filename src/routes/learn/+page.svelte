@@ -70,9 +70,9 @@
 		{@const done = act.lessons.filter((l) => progress.isLessonComplete(l.id)).length}
 		{@const frac = done / act.lessons.length}
 		<section id={act.id} class="flex scroll-mt-8 flex-col gap-3">
-			<div class="flex items-center gap-3.5">
+			<div class="flex items-start gap-3 sm:items-center sm:gap-3.5">
 				<!-- The mark, with the act's progress drawn round it. -->
-				<span class="relative grid size-11 shrink-0 place-items-center">
+				<span class="relative grid size-9 shrink-0 place-items-center sm:size-11">
 					<svg viewBox="0 0 44 44" class="absolute inset-0 -rotate-90">
 						<circle cx="22" cy="22" r="20" fill="none" class="stroke-border" stroke-width="2" />
 						{#if frac > 0}
@@ -96,17 +96,30 @@
 					/>
 				</span>
 				<div class="min-w-0 flex-1">
-					<div class="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
-						<span class="label text-muted-foreground">Act {act.number}</span>
-						<h2 class="text-lg leading-tight font-semibold tracking-tight">{act.title}</h2>
-						<!--
-							On a phone the count rides with the title instead of holding a
-							column of its own: at this width a third column squeezed the
-							title into two lines to save a number eight characters long.
-						-->
-						<span class="tnum ml-auto shrink-0 font-mono text-xs text-muted-foreground sm:hidden">
-							{done}/{act.lessons.length} · {actMinutes(act.lessons)} min
+					<!--
+						An eyebrow, then the title, then the subtitle.
+						
+						Act number, title and count all wanted to share one line. At this
+						width they do not fit, and asking them to wrap produced the worst
+						of both: the count dropped to a line of its own and sat
+						right-aligned under a title that had also broken in two. Putting
+						the two short facts together on the line above leaves the title a
+						whole line to itself, which is all it ever needed.
+					-->
+					<p class="label mb-0.5 flex items-baseline gap-1.5 sm:hidden">
+						<span>Act {act.number}</span>
+						<span class="text-border" aria-hidden="true">·</span>
+						<span class="tnum font-mono normal-case">
+							{done}/{act.lessons.length} done
 						</span>
+						<span class="text-border" aria-hidden="true">·</span>
+						<span class="tnum font-mono normal-case">{actMinutes(act.lessons)} min</span>
+					</p>
+					<div class="flex items-baseline gap-2.5">
+						<span class="label hidden text-muted-foreground sm:inline">Act {act.number}</span>
+						<h2 class="text-lg leading-tight font-semibold tracking-tight text-balance">
+							{act.title}
+						</h2>
 					</div>
 					<p class="mt-0.5 text-sm text-muted-foreground">{act.subtitle}</p>
 				</div>
