@@ -172,13 +172,20 @@
 
 	<div class="overflow-hidden rounded-lg border">
 		<div class="flex">
-			<!-- The keybed down the side, which is the only reason it is called a piano roll. -->
-			<div class="w-11 shrink-0 border-r bg-surface-sunken" style="height: {height}px">
+			<!--
+				The keybed down the side, which is the only reason it is called a
+				piano roll — so it is drawn in the keybed's own colours rather than
+				in a tint of the page. Those two tokens deliberately do not follow
+				the theme: ivory stays ivory when the page goes dark, which is what
+				makes this read instantly as a keyboard instead of as a column of
+				grey bars.
+			-->
+			<div class="w-11 shrink-0 border-r bg-key-white" style="height: {height}px">
 				{#each Array.from({ length: rows }, (_, i) => highest - i) as note (note)}
 					<div
 						class={cn(
 							'flex items-center justify-end pr-1.5 text-2xs',
-							isBlackKey(note) ? 'bg-key-black/25 text-muted-foreground' : 'text-muted-foreground'
+							isBlackKey(note) ? 'bg-key-black text-white/55' : 'text-black/45'
 						)}
 						style="height: {rowHeight}px; line-height: {rowHeight}px"
 					>
