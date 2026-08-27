@@ -103,7 +103,7 @@
 							onclick={() => midiAccess.request(false)}
 							disabled={midiAccess.status === 'requesting'}
 						>
-							<HugeiconsIcon icon={PlugSocketIcon} size={15} />
+							<HugeiconsIcon icon={PlugSocketIcon} size={14} />
 							{midiAccess.status === 'requesting' ? 'Asking…' : 'Connect MIDI'}
 						</Button>
 						{#if midiAccess.error}
@@ -124,7 +124,7 @@
 						>
 							<HugeiconsIcon
 								icon={transportIcon(port.name)}
-								size={15}
+								size={14}
 								class={midiAccess.isListening(port.id)
 									? 'text-foreground'
 									: 'text-muted-foreground'}
@@ -169,7 +169,7 @@
 					>
 						<HugeiconsIcon
 							icon={out.kind === 'internal' ? AudioWaveformIcon : transportIcon(out.name)}
-							size={15}
+							size={14}
 							class={engine.isOutputActive(out.id) ? 'text-foreground' : 'text-muted-foreground'}
 						/>
 						<span class="min-w-0 flex-1">
@@ -209,7 +209,7 @@
 				class="h-7 gap-1.5 text-xs"
 				onclick={() => midiAccess.refresh()}
 			>
-				<HugeiconsIcon icon={Refresh01Icon} size={13} />
+				<HugeiconsIcon icon={Refresh01Icon} size={14} />
 				Rescan ports
 			</Button>
 			<span class="h-4 w-px bg-border"></span>

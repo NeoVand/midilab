@@ -91,7 +91,7 @@
 			<Slider type="single" bind:value={note} min={24} max={72} step={1} aria-label="Fundamental" />
 		</div>
 		<Button variant="outline" size="sm" class="gap-1.5" onclick={play}>
-			<HugeiconsIcon icon={PlayIcon} size={13} /> Hear it
+			<HugeiconsIcon icon={PlayIcon} size={14} /> Hear it
 		</Button>
 	</div>
 

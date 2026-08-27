@@ -196,7 +196,7 @@
 	<div class="flex min-w-0 flex-1 flex-col gap-3">
 		<div class="flex items-center gap-2">
 			<Button variant={playing ? 'default' : 'outline'} size="sm" class="gap-1.5" onclick={toggle}>
-				<HugeiconsIcon icon={playing ? StopIcon : PlayIcon} size={13} />
+				<HugeiconsIcon icon={playing ? StopIcon : PlayIcon} size={14} />
 				{playing ? 'Stop' : 'Play'}
 			</Button>
 			<code class="tnum truncate font-mono text-sm text-msg-note">{asText}</code>

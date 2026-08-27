@@ -45,7 +45,7 @@
 				>
 					<HugeiconsIcon
 						icon={i === answer ? Tick02Icon : Cancel01Icon}
-						size={10}
+						size={11}
 						strokeWidth={3}
 					/>
 				</span>

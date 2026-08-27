@@ -151,7 +151,7 @@
 							: 'hover:border-foreground/30'
 					)}
 				>
-					<HugeiconsIcon icon={playing === r.id ? StopIcon : PlayIcon} size={13} />
+					<HugeiconsIcon icon={playing === r.id ? StopIcon : PlayIcon} size={14} />
 				</span>
 				<span class="flex min-w-0 flex-col sm:w-36">
 					<span class="truncate text-xs font-medium">{r.name}</span>

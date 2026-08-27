@@ -111,7 +111,7 @@
 			class="gap-1.5"
 			onclick={() => (mode === 'equal' ? stop() : play('equal'))}
 		>
-			<HugeiconsIcon icon={mode === 'equal' ? StopIcon : PlayIcon} size={13} />
+			<HugeiconsIcon icon={mode === 'equal' ? StopIcon : PlayIcon} size={14} />
 			Equal temperament
 		</Button>
 		<Button
@@ -120,7 +120,7 @@
 			class="gap-1.5"
 			onclick={() => (mode === 'just' ? stop() : play('just'))}
 		>
-			<HugeiconsIcon icon={mode === 'just' ? StopIcon : PlayIcon} size={13} />
+			<HugeiconsIcon icon={mode === 'just' ? StopIcon : PlayIcon} size={14} />
 			Pure ratios
 		</Button>
 		<div class="flex-1"></div>

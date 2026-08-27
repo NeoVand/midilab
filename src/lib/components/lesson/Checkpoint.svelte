@@ -104,7 +104,7 @@
 		aria-label="Mark done: {label}"
 		title={done ? 'Completed' : 'Tick manually if your hardware will not cooperate'}
 	>
-		<HugeiconsIcon icon={done ? Tick02Icon : Target02Icon} size={12} strokeWidth={2.4} />
+		<HugeiconsIcon icon={done ? Tick02Icon : Target02Icon} size={11} strokeWidth={2.4} />
 	</button>
 	<div class="min-w-0 flex-1">
 		<p class={cn('text-sm leading-snug', done && 'text-muted-foreground')}>

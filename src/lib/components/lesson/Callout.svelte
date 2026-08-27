@@ -61,7 +61,7 @@
 </script>
 
 <aside class={cn('reading flex gap-3 rounded-lg border p-3.5', c.tone, className)}>
-	<HugeiconsIcon icon={c.icon} size={17} class="mt-0.5 shrink-0" />
+	<HugeiconsIcon icon={c.icon} size={18} class="mt-0.5 shrink-0" />
 	<div class="min-w-0 flex-1">
 		<p class="mb-1 text-sm font-semibold">{title ?? c.label}</p>
 		<div

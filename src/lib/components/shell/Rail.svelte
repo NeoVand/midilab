@@ -94,7 +94,7 @@
 								     joining the page rather than as a badge stuck to it. -->
 								<span class="absolute inset-y-0 -right-px w-px bg-foreground"></span>
 							{/if}
-							<HugeiconsIcon icon={item.icon} size={19} strokeWidth={active ? 2 : 1.6} />
+							<HugeiconsIcon icon={item.icon} size={22} strokeWidth={active ? 2 : 1.6} />
 							<span class="text-2xs leading-none font-medium">{item.label}</span>
 						</a>
 					{/snippet}
@@ -118,7 +118,7 @@
 						class="grid size-9 place-items-center text-muted-foreground transition-colors hover:text-foreground"
 						aria-label="Open command palette"
 					>
-						<HugeiconsIcon icon={CommandIcon} size={19} strokeWidth={1.7} />
+						<HugeiconsIcon icon={CommandIcon} size={22} strokeWidth={1.7} />
 					</button>
 				{/snippet}
 			</Tooltip.Trigger>
@@ -136,7 +136,7 @@
 						class="grid size-9 place-items-center text-muted-foreground transition-colors hover:text-foreground"
 						aria-label={isDark ? 'Switch to the light theme' : 'Switch to the dark theme'}
 					>
-						<HugeiconsIcon icon={isDark ? Sun03Icon : Moon02Icon} size={19} strokeWidth={1.7} />
+						<HugeiconsIcon icon={isDark ? Sun03Icon : Moon02Icon} size={22} strokeWidth={1.7} />
 					</button>
 				{/snippet}
 			</Tooltip.Trigger>

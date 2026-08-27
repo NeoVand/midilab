@@ -316,7 +316,7 @@
 						<td class="w-5 py-[3px]">
 							<HugeiconsIcon
 								icon={e.direction === 'in' ? ArrowDown01Icon : ArrowUp01Icon}
-								size={12}
+								size={14}
 								class={e.direction === 'in' ? 'text-msg-cc' : 'text-muted-foreground'}
 							/>
 						</td>

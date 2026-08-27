@@ -49,7 +49,7 @@
 	</div>
 	{#if wrong && because}
 		<p class="flex items-center gap-1.5 text-warn">
-			<HugeiconsIcon icon={Alert02Icon} size={13} strokeWidth={2} />
+			<HugeiconsIcon icon={Alert02Icon} size={14} strokeWidth={2} />
 			{because}
 		</p>
 	{/if}

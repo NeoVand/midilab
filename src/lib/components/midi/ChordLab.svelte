@@ -156,7 +156,7 @@
 			<div class="flex items-center gap-1.5">
 				<VoicePicker bind:value={program} />
 				<Button variant="outline" size="sm" class="gap-1.5" onclick={play}>
-					<HugeiconsIcon icon={PlayIcon} size={13} />
+					<HugeiconsIcon icon={PlayIcon} size={14} />
 					Hear it
 				</Button>
 			</div>

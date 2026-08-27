@@ -75,7 +75,7 @@
 			Controllers seen{incomingOnly ? ' from your hardware' : ''}
 		</p>
 		<Button variant="ghost" size="sm" class="h-6 gap-1 px-1.5 text-xs" onclick={() => (seen = [])}>
-			<HugeiconsIcon icon={Delete02Icon} size={12} /> Reset
+			<HugeiconsIcon icon={Delete02Icon} size={14} /> Reset
 		</Button>
 	</div>
 

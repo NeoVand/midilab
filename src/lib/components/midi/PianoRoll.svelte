@@ -154,7 +154,7 @@
 	<div class="flex flex-wrap items-center justify-between gap-2">
 		{#if controls}
 			<Button variant="outline" size="sm" class="gap-1.5" onclick={toggle}>
-				<HugeiconsIcon icon={player.playing ? StopIcon : PlayIcon} size={13} />
+				<HugeiconsIcon icon={player.playing ? StopIcon : PlayIcon} size={14} />
 				{player.playing ? 'Stop' : 'Play'}
 			</Button>
 		{:else}

@@ -126,7 +126,7 @@
 			<div class="flex items-center justify-between">
 				<span class="label">{MELODIES.length} pieces</span>
 				<Button variant="ghost" size="sm" class="h-7 gap-1.5 text-xs" onclick={surprise}>
-					<HugeiconsIcon icon={ShuffleIcon} size={13} />
+					<HugeiconsIcon icon={ShuffleIcon} size={14} />
 					Surprise me
 				</Button>
 			</div>
@@ -170,7 +170,7 @@
 							aria-pressed={loop}
 							onclick={() => (loop = !loop)}
 						>
-							<HugeiconsIcon icon={RepeatIcon} size={13} />
+							<HugeiconsIcon icon={RepeatIcon} size={14} />
 							Loop
 						</Button>
 						<Button variant="default" size="sm" class="gap-1.5" onclick={toggle}>

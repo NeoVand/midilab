@@ -62,7 +62,7 @@
 				{/if}
 				<HugeiconsIcon
 					icon={item.icon}
-					size={21}
+					size={22}
 					strokeWidth={on ? 2 : 1.6}
 					class={item.href === '/' && on ? 'text-msg-note' : undefined}
 				/>
@@ -75,7 +75,7 @@
 			class="flex w-14 flex-col items-center justify-center gap-1 text-muted-foreground transition-colors"
 			aria-label="Search everything"
 		>
-			<HugeiconsIcon icon={SearchIcon} size={21} strokeWidth={1.6} />
+			<HugeiconsIcon icon={SearchIcon} size={22} strokeWidth={1.6} />
 			<span class="text-3xs leading-none font-medium">Find</span>
 		</button>
 	</div>

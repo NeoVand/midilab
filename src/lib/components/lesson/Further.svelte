@@ -78,7 +78,7 @@
 				>
 					<HugeiconsIcon
 						icon={KIND_ICON[r.kind]}
-						size={16}
+						size={14}
 						class="mt-0.5 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"
 					/>
 					<span class="flex min-w-0 flex-1 flex-col gap-1">

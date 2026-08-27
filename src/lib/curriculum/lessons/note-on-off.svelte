@@ -95,7 +95,7 @@
 					class="gap-1.5"
 					onclick={() => engine.panic()}
 				>
-					<HugeiconsIcon icon={DangerIcon} size={15} />
+					<HugeiconsIcon icon={DangerIcon} size={14} />
 					Panic
 				</Button>
 			</div>

@@ -357,10 +357,10 @@
 
 		<div class="flex-1"></div>
 		<Button variant="ghost" size="sm" class="gap-1.5 text-xs" onclick={addTrack}>
-			<HugeiconsIcon icon={Add01Icon} size={13} /> Track
+			<HugeiconsIcon icon={Add01Icon} size={14} /> Track
 		</Button>
 		<Button variant="ghost" size="sm" class="gap-1.5 text-xs" onclick={clearAll}>
-			<HugeiconsIcon icon={Delete02Icon} size={13} /> Clear
+			<HugeiconsIcon icon={Delete02Icon} size={14} /> Clear
 		</Button>
 		<Button
 			variant="outline"
@@ -369,7 +369,7 @@
 			onclick={exportMid}
 			title="Writes what you are hearing — muted parts are left out, because a MIDI file has no mute."
 		>
-			<HugeiconsIcon icon={CloudDownloadIcon} size={13} /> Export .mid
+			<HugeiconsIcon icon={CloudDownloadIcon} size={14} /> Export .mid
 		</Button>
 	</div>
 
@@ -410,7 +410,7 @@
 							onclick={() => (track.mute = !track.mute)}
 							aria-label={track.mute ? `Unmute ${track.name}` : `Mute ${track.name}`}
 						>
-							<HugeiconsIcon icon={track.mute ? VolumeOffIcon : VolumeHighIcon} size={13} />
+							<HugeiconsIcon icon={track.mute ? VolumeOffIcon : VolumeHighIcon} size={14} />
 						</button>
 
 						<!--
@@ -470,7 +470,7 @@
 									class="flex items-center gap-1.5 self-start text-xs text-destructive hover:underline"
 									onclick={() => removeTrack(track.id)}
 								>
-									<HugeiconsIcon icon={Delete01Icon} size={12} /> Remove track
+									<HugeiconsIcon icon={Delete01Icon} size={14} /> Remove track
 								</Popover.Close>
 							</Popover.Content>
 						</Popover.Root>

@@ -67,7 +67,7 @@
 <div class={cn('flex flex-col gap-4', className)}>
 	{#if !midiAccess.sysexEnabled && midiAccess.status === 'granted'}
 		<div class="flex items-start gap-3 rounded-lg border border-msg-sysex/40 bg-msg-sysex-bg p-3">
-			<HugeiconsIcon icon={LockIcon} size={17} class="mt-0.5 shrink-0 text-msg-sysex" />
+			<HugeiconsIcon icon={LockIcon} size={18} class="mt-0.5 shrink-0 text-msg-sysex" />
 			<div class="flex-1 text-sm">
 				<p class="font-medium">SysEx is not enabled for this page.</p>
 				<p class="mt-1 text-xs leading-relaxed text-muted-foreground">
@@ -109,11 +109,11 @@
 				</Button>
 				{#if check.ok}
 					<span class="flex items-center gap-1 text-xs text-ok">
-						<HugeiconsIcon icon={Tick02Icon} size={13} /> well-formed
+						<HugeiconsIcon icon={Tick02Icon} size={14} /> well-formed
 					</span>
 				{:else}
 					<span class="flex items-center gap-1.5 text-xs text-destructive">
-						<HugeiconsIcon icon={AlertCircleIcon} size={13} />
+						<HugeiconsIcon icon={AlertCircleIcon} size={14} />
 						{check.problem}
 					</span>
 				{/if}

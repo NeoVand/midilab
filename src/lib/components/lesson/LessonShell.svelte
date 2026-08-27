@@ -63,18 +63,18 @@
 
 		<div class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
 			<span class="flex items-center gap-1.5">
-				<HugeiconsIcon icon={Clock01Icon} size={13} />
+				<HugeiconsIcon icon={Clock01Icon} size={14} />
 				{lesson.minutes} min
 			</span>
 			<span class="flex items-center gap-1.5">
-				<HugeiconsIcon icon={PlugSocketIcon} size={13} />
+				<HugeiconsIcon icon={PlugSocketIcon} size={14} />
 				{hardwareLabel[lesson.hardware ?? 'none']}
 			</span>
 			{#if total > 0}
 				<!-- Finishing a lesson should read as finished. "3 of 3" in the same
 				     grey as "0 of 3" makes the last checkpoint feel like nothing. -->
 				<span class={cn('flex items-center gap-1.5', done === total && 'text-ok')}>
-					<HugeiconsIcon icon={done === total ? Tick02Icon : Target02Icon} size={13} />
+					<HugeiconsIcon icon={done === total ? Tick02Icon : Target02Icon} size={14} />
 					{#if done === total}
 						All {total} checkpoints done
 					{:else}
@@ -113,7 +113,7 @@
 				class="flex flex-col gap-1 rounded-lg border bg-card px-4 py-3 transition-colors hover:border-foreground/25"
 			>
 				<span class="flex items-center gap-1 text-xs text-muted-foreground">
-					<HugeiconsIcon icon={ArrowLeft01Icon} size={12} /> Previous
+					<HugeiconsIcon icon={ArrowLeft01Icon} size={14} /> Previous
 				</span>
 				<span class="text-sm font-medium">{prev.title}</span>
 			</a>
@@ -126,7 +126,7 @@
 				class="flex flex-col items-end gap-1 rounded-lg border bg-card px-4 py-3 text-right transition-colors hover:border-foreground/25 sm:col-start-2"
 			>
 				<span class="flex items-center gap-1 text-xs text-muted-foreground">
-					Next <HugeiconsIcon icon={ArrowRight01Icon} size={12} />
+					Next <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
 				</span>
 				<span class="text-sm font-medium">{next.title}</span>
 			</a>
@@ -136,7 +136,7 @@
 				class="flex flex-col items-end gap-1 rounded-lg border bg-card px-4 py-3 text-right transition-colors hover:border-foreground/25 sm:col-start-2"
 			>
 				<span class="flex items-center gap-1 text-xs text-muted-foreground">
-					That was the last one <HugeiconsIcon icon={ArrowRight01Icon} size={12} />
+					That was the last one <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
 				</span>
 				<span class="text-sm font-medium">Back to the course</span>
 			</a>

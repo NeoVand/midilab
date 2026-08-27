@@ -19,7 +19,7 @@
 
 <div class={cn('flex flex-col gap-3', className)}>
 	<div class="flex items-baseline gap-2.5">
-		<HugeiconsIcon icon={Target02Icon} size={17} class="translate-y-0.5 text-muted-foreground" />
+		<HugeiconsIcon icon={Target02Icon} size={18} class="translate-y-0.5 text-muted-foreground" />
 		<h2 class="text-xl font-semibold tracking-tight">{title}</h2>
 		{#if total > 0}
 			<span class="tnum font-mono text-xs text-muted-foreground">{done}/{total}</span>

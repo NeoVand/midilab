@@ -225,7 +225,7 @@
 					aria-label="Previous program"
 					class="grid size-5 shrink-0 place-items-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
 				>
-					<HugeiconsIcon icon={ArrowLeft01Icon} size={13} strokeWidth={2} />
+					<HugeiconsIcon icon={ArrowLeft01Icon} size={14} strokeWidth={2} />
 				</button>
 				<span class="tnum shrink-0 text-3xs text-muted-foreground">
 					{String(program).padStart(3, '0')}
@@ -247,7 +247,7 @@
 					aria-label="Next program"
 					class="grid size-5 shrink-0 place-items-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
 				>
-					<HugeiconsIcon icon={ArrowRight01Icon} size={13} strokeWidth={2} />
+					<HugeiconsIcon icon={ArrowRight01Icon} size={14} strokeWidth={2} />
 				</button>
 			</div>
 		</div>

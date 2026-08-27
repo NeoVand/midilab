@@ -157,7 +157,7 @@
 				<Popover.Trigger
 					class="ml-auto flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
 				>
-					<HugeiconsIcon icon={HelpCircleIcon} size={13} /> What's in scope
+					<HugeiconsIcon icon={HelpCircleIcon} size={14} /> What's in scope
 				</Popover.Trigger>
 				<Popover.Content
 					class="flex max-h-[28rem] w-[30rem] scrollbar-thin flex-col gap-3 overflow-y-auto"

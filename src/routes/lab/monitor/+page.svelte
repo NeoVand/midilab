@@ -146,7 +146,7 @@
 							class="flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-2xs text-foreground transition-colors hover:bg-muted"
 							onclick={() => (pinned = null)}
 						>
-							Pinned <HugeiconsIcon icon={Cancel01Icon} size={10} strokeWidth={2.5} />
+							Pinned <HugeiconsIcon icon={Cancel01Icon} size={11} strokeWidth={2.5} />
 						</button>
 					{:else if shown}
 						<span class="label text-muted-foreground">following</span>

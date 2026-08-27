@@ -157,7 +157,7 @@
 				<span
 					class="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors hover:bg-accent"
 				>
-					<HugeiconsIcon icon={FileUploadIcon} size={13} />
+					<HugeiconsIcon icon={FileUploadIcon} size={14} />
 					Open another
 				</span>
 			</label>

@@ -521,7 +521,7 @@
 						aria-label={settings.dockOpen ? 'Collapse dock' : 'Expand dock'}
 						aria-expanded={settings.dockOpen}
 					>
-						<HugeiconsIcon icon={settings.dockOpen ? ArrowDown01Icon : ArrowUp01Icon} size={15} />
+						<HugeiconsIcon icon={settings.dockOpen ? ArrowDown01Icon : ArrowUp01Icon} size={14} />
 					</Button>
 				</div>
 			</Tooltip.Provider>

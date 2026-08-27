@@ -97,7 +97,7 @@
 				</div>
 				<Button href={lessonHref(nextLesson)} size="lg">
 					{doneLessons > 0 ? 'Continue' : 'Begin'}
-					<HugeiconsIcon icon={ArrowRight01Icon} size={15} />
+					<HugeiconsIcon icon={ArrowRight01Icon} size={14} />
 				</Button>
 			</div>
 		</div>
@@ -116,7 +116,7 @@
 								class="mt-auto flex items-center gap-1 pt-1.5 text-xs font-medium decoration-foreground/30 underline-offset-[3px] group-hover:underline"
 							>
 								{lesson.number}. {lesson.title}
-								<HugeiconsIcon icon={ArrowRight01Icon} size={12} />
+								<HugeiconsIcon icon={ArrowRight01Icon} size={14} />
 							</span>
 						</a>
 					{/if}
@@ -149,7 +149,7 @@
 					</svg>
 					<HugeiconsIcon
 						icon={ACT_ICON[act.id]}
-						size={19}
+						size={18}
 						strokeWidth={1.6}
 						class={frac === 1 ? 'text-ok' : 'text-muted-foreground'}
 					/>
@@ -241,7 +241,7 @@
 								{#if lesson.hardware && lesson.hardware !== 'none'}
 									<HugeiconsIcon
 										icon={PlugSocketIcon}
-										size={12}
+										size={14}
 										aria-label={HARDWARE_TITLE[lesson.hardware]}
 									/>
 								{/if}

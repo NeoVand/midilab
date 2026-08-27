@@ -45,7 +45,7 @@
 	<div class="flex flex-wrap items-center gap-4">
 		<div class="flex items-center gap-1">
 			<Button variant="ghost" size="icon" class="size-8" onclick={() => transport.rewind()}>
-				<HugeiconsIcon icon={BackwardIcon} size={15} />
+				<HugeiconsIcon icon={BackwardIcon} size={14} />
 			</Button>
 			<Button
 				variant={transport.playing ? 'default' : 'outline'}
@@ -53,7 +53,7 @@
 				class="size-8"
 				onclick={() => transport.toggle()}
 			>
-				<HugeiconsIcon icon={transport.playing ? StopIcon : PlayIcon} size={15} />
+				<HugeiconsIcon icon={transport.playing ? StopIcon : PlayIcon} size={14} />
 			</Button>
 		</div>
 

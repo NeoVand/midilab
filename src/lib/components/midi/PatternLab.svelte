@@ -214,7 +214,7 @@
 			<Popover.Trigger
 				class="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
 			>
-				<HugeiconsIcon icon={HelpCircleIcon} size={13} /> Notation
+				<HugeiconsIcon icon={HelpCircleIcon} size={14} /> Notation
 			</Popover.Trigger>
 			<Popover.Content class="flex w-[26rem] flex-col gap-3" align="end">
 				<div class="flex flex-col gap-1">
@@ -258,7 +258,7 @@
 		</Popover.Root>
 
 		<Button variant="ghost" size="sm" class="gap-1.5 text-xs" onclick={() => addLane()}>
-			<HugeiconsIcon icon={Add01Icon} size={13} /> Lane
+			<HugeiconsIcon icon={Add01Icon} size={14} /> Lane
 		</Button>
 	</div>
 
@@ -329,7 +329,7 @@
 						onclick={() => (lanes = lanes.filter((l) => l.id !== lane.id))}
 						aria-label="Remove lane"
 					>
-						<HugeiconsIcon icon={Delete02Icon} size={13} />
+						<HugeiconsIcon icon={Delete02Icon} size={14} />
 					</Button>
 				</div>
 

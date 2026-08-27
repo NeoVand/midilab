@@ -94,7 +94,7 @@
 				</span>
 				<span class="tnum shrink-0 text-xs text-muted-foreground">{Math.round(overall * 100)}%</span
 				>
-				<HugeiconsIcon icon={ArrowRight01Icon} size={15} class="shrink-0 text-muted-foreground" />
+				<HugeiconsIcon icon={ArrowRight01Icon} size={14} class="shrink-0 text-muted-foreground" />
 			</a>
 
 			{#if midiAccess.status === 'granted'}
@@ -108,7 +108,7 @@
 							{midiAccess.inputs.length} in · {midiAccess.outputs.length} out
 						</span>
 					</span>
-					<HugeiconsIcon icon={ArrowRight01Icon} size={15} class="shrink-0 text-muted-foreground" />
+					<HugeiconsIcon icon={ArrowRight01Icon} size={14} class="shrink-0 text-muted-foreground" />
 				</a>
 			{:else if midiAccess.status !== 'unsupported'}
 				<button
@@ -116,7 +116,7 @@
 					onclick={() => midiAccess.request(false)}
 					class="flex items-center gap-3 rounded-lg border bg-card px-3 py-2.5 text-left transition-colors active:bg-accent"
 				>
-					<HugeiconsIcon icon={PlugSocketIcon} size={16} class="shrink-0 text-muted-foreground" />
+					<HugeiconsIcon icon={PlugSocketIcon} size={14} class="shrink-0 text-muted-foreground" />
 					<span class="flex min-w-0 flex-1 flex-col">
 						<span class="truncate text-sm font-medium">Connect your hardware</span>
 						<span class="truncate text-xs text-muted-foreground">Nothing leaves this page</span>
@@ -140,7 +140,7 @@
 			<div class="flex shrink-0 flex-col items-start gap-2 sm:items-end">
 				<Button href={lessonHref(nextLesson)} size="xl">
 					{overall > 0 ? 'Continue' : 'Start the course'}
-					<HugeiconsIcon icon={ArrowRight01Icon} size={16} />
+					<HugeiconsIcon icon={ArrowRight01Icon} size={14} />
 				</Button>
 				<span class="text-xs text-muted-foreground">
 					{ALL_LESSONS.length} lessons · about {Math.round(TOTAL_MINUTES / 60)} hours
@@ -177,7 +177,7 @@
 				{:else}
 					<div class="flex flex-wrap items-center gap-3">
 						<Button variant="outline" onclick={() => midiAccess.request(false)}>
-							<HugeiconsIcon icon={PlugSocketIcon} size={16} />
+							<HugeiconsIcon icon={PlugSocketIcon} size={14} />
 							Connect your hardware
 						</Button>
 						<span class="text-xs text-muted-foreground">
@@ -246,10 +246,10 @@
 
 		<footer class="flex flex-wrap gap-x-6 gap-y-2 border-t pt-6 text-xs text-muted-foreground">
 			<a href={path('/reference')} class="flex items-center gap-1.5 hover:text-foreground">
-				<HugeiconsIcon icon={LibraryIcon} size={13} /> Reference tables
+				<HugeiconsIcon icon={LibraryIcon} size={14} /> Reference tables
 			</a>
 			<a href={path('/lab')} class="flex items-center gap-1.5 hover:text-foreground">
-				<HugeiconsIcon icon={FlaskConicalIcon} size={13} /> Lab tools
+				<HugeiconsIcon icon={FlaskConicalIcon} size={14} /> Lab tools
 			</a>
 			<span>Web MIDI needs Chrome, Edge or Firefox — Safari has none.</span>
 		</footer>

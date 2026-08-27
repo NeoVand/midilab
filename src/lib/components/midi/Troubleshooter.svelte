@@ -206,7 +206,7 @@
 	>
 		<HugeiconsIcon
 			icon={ActivityCircleIcon}
-			size={16}
+			size={14}
 			class={receiving ? 'text-ok' : 'text-muted-foreground'}
 		/>
 		{#if midiAccess.status !== 'granted'}
@@ -238,7 +238,7 @@
 			<div class="mt-4 flex gap-2">
 				<Button variant="outline" size="sm" onclick={back}>Back one step</Button>
 				<Button variant="ghost" size="sm" class="gap-1.5" onclick={restart}>
-					<HugeiconsIcon icon={Refresh01Icon} size={13} /> Start again
+					<HugeiconsIcon icon={Refresh01Icon} size={14} /> Start again
 				</Button>
 			</div>
 		{:else}
@@ -251,10 +251,10 @@
 				<!-- Equal weight on purpose: a primary "Yes" nudges the answer, and a
 				     diagnostic that nudges you is worse than no diagnostic. -->
 				<Button variant="outline" size="sm" class="gap-1.5" onclick={() => answer(node.yes)}>
-					<HugeiconsIcon icon={Tick02Icon} size={13} /> Yes
+					<HugeiconsIcon icon={Tick02Icon} size={14} /> Yes
 				</Button>
 				<Button variant="outline" size="sm" class="gap-1.5" onclick={() => answer(node.no)}>
-					<HugeiconsIcon icon={Cancel01Icon} size={13} /> No
+					<HugeiconsIcon icon={Cancel01Icon} size={14} /> No
 				</Button>
 				{#if path.length > 1}
 					<Button variant="ghost" size="sm" onclick={back}>Back</Button>
@@ -275,7 +275,7 @@
 						>
 							<HugeiconsIcon
 								icon={step.yes ? Tick02Icon : Cancel01Icon}
-								size={13}
+								size={14}
 								class={cn('mt-px shrink-0', step.yes ? 'text-ok' : 'text-muted-foreground')}
 							/>
 							<span class="flex-1 text-muted-foreground">{step.question}</span>

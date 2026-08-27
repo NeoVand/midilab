@@ -82,7 +82,7 @@
 			aria-label="Clear search"
 			class="absolute top-1/2 right-1.5 grid size-5 -translate-y-1/2 place-items-center rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
 		>
-			<HugeiconsIcon icon={Cancel01Icon} size={12} strokeWidth={2} />
+			<HugeiconsIcon icon={Cancel01Icon} size={14} strokeWidth={2} />
 		</button>
 	{:else if shortcut}
 		<kbd

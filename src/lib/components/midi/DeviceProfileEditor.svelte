@@ -146,7 +146,7 @@
 			</Select.Content>
 		</Select.Root>
 		<Button variant="outline" size="sm" class="gap-1.5 text-xs" onclick={() => devices.add()}>
-			<HugeiconsIcon icon={Add01Icon} size={13} /> New
+			<HugeiconsIcon icon={Add01Icon} size={14} /> New
 		</Button>
 		<Button
 			variant="outline"
@@ -154,10 +154,10 @@
 			class="gap-1.5 text-xs"
 			onclick={() => devices.duplicate(profile.id)}
 		>
-			<HugeiconsIcon icon={Copy01Icon} size={13} /> Duplicate
+			<HugeiconsIcon icon={Copy01Icon} size={14} /> Duplicate
 		</Button>
 		<Button variant="outline" size="sm" class="gap-1.5 text-xs" onclick={download}>
-			<HugeiconsIcon icon={CloudDownloadIcon} size={13} /> Export
+			<HugeiconsIcon icon={CloudDownloadIcon} size={14} /> Export
 		</Button>
 		{#if editable}
 			<Button
@@ -166,14 +166,14 @@
 				class="gap-1.5 text-xs text-destructive"
 				onclick={() => devices.remove(profile.id)}
 			>
-				<HugeiconsIcon icon={Delete02Icon} size={13} /> Delete
+				<HugeiconsIcon icon={Delete02Icon} size={14} /> Delete
 			</Button>
 		{/if}
 	</div>
 
 	{#if profile.notes}
 		<div class="flex gap-2.5 rounded-lg border border-warn/40 bg-warn/5 p-3">
-			<HugeiconsIcon icon={AlertCircleIcon} size={15} class="mt-0.5 shrink-0 text-warn" />
+			<HugeiconsIcon icon={AlertCircleIcon} size={14} class="mt-0.5 shrink-0 text-warn" />
 			<p class="text-xs leading-relaxed">{profile.notes}</p>
 		</div>
 	{/if}
