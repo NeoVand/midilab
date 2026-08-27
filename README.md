@@ -8,7 +8,7 @@
 
 [![Live](https://img.shields.io/badge/live-neovand.github.io%2Fmidilab-0f766e?style=flat-square)](https://neovand.github.io/midilab/)
 [![Deploy](https://img.shields.io/github/actions/workflow/status/NeoVand/midilab/deploy.yml?branch=main&style=flat-square&label=deploy)](https://github.com/NeoVand/midilab/actions/workflows/deploy.yml)
-![Lessons](https://img.shields.io/badge/lessons-31-1f6feb?style=flat-square)
+![Lessons](https://img.shields.io/badge/lessons-38-1f6feb?style=flat-square)
 ![No backend](https://img.shields.io/badge/backend-none-6e7781?style=flat-square)
 
 <img src="midilab.gif" alt="MIDI Lab in use: a key goes down, the staff and the chord name fill in, the spectrum analyser moves, and the same Note On appears decoded into hex and bits below — with the monitor streaming every message underneath." width="100%">
@@ -21,10 +21,15 @@ An interactive course and toolkit that takes you from "MIDI is the thing that
 makes those cheap piano sounds" to running a multi-instrument rig from one
 clock — or from your own code.
 
-Thirty-one lessons across six acts, wired to a live MIDI engine. Nothing here is
-a diagram: press a key and the actual bytes appear, decoded, in the same panel.
-Lessons end in **checkpoints** the engine verifies by watching the MIDI stream,
-so you advance by making MIDI happen rather than by clicking Next.
+Thirty-eight lessons across seven acts, wired to a live MIDI engine. Nothing
+here is a diagram: press a key and the actual bytes appear, decoded, in the same
+panel. Lessons end in **checkpoints** the engine verifies by watching the MIDI
+stream, so you advance by making MIDI happen rather than by clicking Next.
+
+It assumes nothing. A programmer who has never counted a bar and a producer who
+has never seen a hex byte are each missing half of this subject, and the course
+supplies both halves: unfamiliar words carry their definition inline, and every
+lesson ends with the primary sources it was compressed from.
 
 Everything works with no hardware attached — a full sixteen-channel synthesiser
 is built in and receives exactly the messages an external instrument would — and
@@ -82,14 +87,15 @@ sampled General MIDI instruments come from **smplr**.
 
 ### The course — `/learn`
 
-|     | Act                       | Covers                                                                                                                   |
-| --- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| I   | What MIDI actually is     | Control not sound, note numbers, velocity, the status/data bit, Note On and Off, and the envelope in between             |
-| II  | The message language      | Channels, Control Change, pitch bend, aftertouch, programs and banks, RPN/NRPN, Channel Mode and panic, System Exclusive |
-| III | Time                      | MIDI Clock, resolution and swing, MTC and Link, latency and jitter, Standard MIDI Files                                  |
-| IV  | The physical world        | DIN, TRS Type A/B, USB host and device, In/Out/Thru, studio routing, troubleshooting                                     |
-| V   | Expression and the future | MPE, MIDI 2.0 and the Universal MIDI Packet                                                                              |
-| VI  | Programming MIDI          | Web MIDI, Web Audio, building a sequencer, device profiles, algorithmic patterns, and a capstone                         |
+|     | Act                       | Covers                                                                                                                                                                    |
+| --- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| I   | What MIDI actually is     | Control not sound, just enough music theory, note numbers, velocity, the status/data bit, Note On and Off, envelopes, what a synthesiser does, and how MIDI came to exist |
+| II  | The message language      | Channels, Control Change, pitch bend, aftertouch, programs and banks, RPN/NRPN, Channel Mode and panic, System Exclusive                                                  |
+| III | Time                      | MIDI Clock, resolution and swing, MTC and Link, latency and jitter, Standard MIDI Files                                                                                   |
+| IV  | Making music with it      | The piano roll and what it hides, programming drums, and what MIDI cannot write down                                                                                      |
+| V   | The physical world        | DIN, TRS Type A/B, USB host and device, In/Out/Thru, studio routing, troubleshooting                                                                                      |
+| VI  | Expression and the future | MPE, tuning and microtonality, MIDI 2.0 and the Universal MIDI Packet                                                                                                     |
+| VII | Programming MIDI          | Web MIDI, Web Audio, building a sequencer, device profiles, algorithmic patterns, and a capstone                                                                          |
 
 ### The Lab — `/lab`
 
@@ -102,11 +108,15 @@ The tools the lessons are built from, standing alone.
 - **Device Lab** — profiles for your own hardware, with CC Learn
 - **Diagnostics** — latency, jitter, and a troubleshooting tree
 - **Console** — JavaScript against your actual rig
+- **Jukebox** — thirteen public-domain melodies through any instrument you like,
+  transposed, re-tempoed, or played against themselves as a round
 
 ### Reference — `/reference`
 
 Status bytes, the full CC table, RPN, GM programs and drums, a note/frequency
-table, SysEx manufacturer IDs, and a glossary.
+table, SysEx manufacturer IDs, a glossary of roughly a hundred terms filterable
+by whether you are missing the protocol half or the music half, and a
+bibliography of every source the course was written from.
 
 ## Running it
 
@@ -134,8 +144,9 @@ src/lib/
   audio/       the built-in synthesiser and the sampled General MIDI engine
   patterns/    the mini-notation language and Euclidean rhythms
   sandbox/     the API exposed to code you write in the Console
+  music/       a small notation for writing melodies, and the public-domain library
   components/  the widget kit and lesson chrome
-  curriculum/  lesson metadata, progress, and the lessons themselves
+  curriculum/  lesson metadata, progress, the glossary, the bibliography, and the lessons
   nav.ts       internal links, so they survive being served under a base path
 ```
 
