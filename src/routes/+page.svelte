@@ -211,7 +211,16 @@
 				The tools the lessons are built on, standing alone. These are the parts you keep using after
 				the course is over.
 			</p>
-			<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+			<!--
+				Five columns at full width, so the five tools sit in one row. Four
+				columns left the fifth hanging underneath on its own, which reads as a
+				layout that broke rather than as a set of five things.
+
+				No narrower state than three: this whole branch only renders above
+				`md`, so a one- or two-column rule here would be a breakpoint nobody
+				can reach.
+			-->
+			<div class="grid grid-cols-3 gap-3 lg:grid-cols-5">
 				{#each tools as tool (tool.href)}
 					<a
 						href={path(tool.href)}
