@@ -8,6 +8,8 @@
 	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
+	import Figure from '$lib/components/lesson/Figure.svelte';
+	import type { FigureImage } from '$lib/components/lesson/Figure.svelte';
 	import MpeLab from '$lib/components/midi/MpeLab.svelte';
 	import ZoneMap from '$lib/components/midi/ZoneMap.svelte';
 	import Drone from '$lib/components/midi/Drone.svelte';
@@ -17,6 +19,43 @@
 	import { noteState } from '$lib/midi/notestate.svelte';
 
 	const meta = lessonById('mpe')!;
+
+	/**
+	 * The instruments the standard was written for.
+	 *
+	 * The lesson argued for MPE from the protocol end — one bend value per
+	 * channel, therefore one channel per note — and never showed what is sitting
+	 * under the player's hands. That leaves a reader picturing a piano keyboard,
+	 * where per-note bend sounds like a luxury. It is not a luxury on either of
+	 * these: neither surface has a discrete key to be on or off, so a note's
+	 * pitch is wherever the finger currently is, and there is no version of that
+	 * which fits inside one channel-wide value.
+	 */
+	const SURFACES: FigureImage[] = [
+		{
+			src: '/img/seaboard-rise.jpg',
+			alt: 'A ROLI Seaboard RISE seen from above: a matt black slab whose playing surface is continuous soft rubber, moulded into gentle wave shapes where a piano would have separate keys, with no gaps or edges between them.',
+			label: 'ROLI Seaboard RISE',
+			width: 1280,
+			height: 668,
+			credit: 'JTs',
+			license: 'CC BY-SA 4.0',
+			licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+			source: 'https://commons.wikimedia.org/wiki/File:Selector_Pro_Kyiv_Seaboard_RISE_25.jpg'
+		},
+		{
+			src: '/img/continuum-fingerboard.jpg',
+			alt: 'A Haken Continuum Fingerboard: a long narrow instrument whose entire playing area is one unbroken red fabric strip, with no keys marked on it at all.',
+			label: 'Haken Continuum Fingerboard',
+			width: 1280,
+			height: 474,
+			credit: 'Lippold Haken and Edmund Eagan',
+			license: 'CC BY-SA 3.0',
+			licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0',
+			source: 'https://commons.wikimedia.org/wiki/File:Continuum-Side-view.jpg'
+		}
+	];
+
 	let bend = $state(8192);
 
 	const DIMENSIONS = [
@@ -74,6 +113,13 @@
 			per-note bend, for free, with no new message types and no changes to any existing device's
 			parser.
 		</p>
+		<Figure images={SURFACES}>
+			Neither of these has a key that is simply down or up. Slide a finger along the Seaboard and
+			the pitch slides with it; the Continuum has no keys drawn on it at all, only a continuous
+			strip. Play three notes and move one of them, and the instrument needs to say something about
+			that note alone — which is the requirement MPE exists to meet, and the thing a single
+			channel-wide bend value cannot express.
+		</Figure>
 	</Section>
 
 	<Section title="Zones, masters and members">

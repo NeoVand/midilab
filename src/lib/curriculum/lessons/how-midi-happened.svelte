@@ -27,6 +27,30 @@
 	 * are two vintage synthesisers, and side by side they are the first two
 	 * machines that ever spoke this language to each other.
 	 */
+	/**
+	 * The instrument that turned an agreement into an assumption.
+	 *
+	 * The Prophet and the Jupiter prove MIDI worked. They do not explain why it
+	 * spread, and a reader could reasonably assume the answer is that the
+	 * specification was good. It is not: the answer is that within a year one of
+	 * the five signatories put those three sockets on the back of the
+	 * best-selling synthesiser anybody had made, and a standard on two hundred
+	 * thousand instruments stops being a standard and becomes the way things are.
+	 */
+	const DX7: FigureImage[] = [
+		{
+			src: '/img/dx7.jpg',
+			alt: 'A Yamaha DX7: a dark brown five-octave synthesiser with a flat panel of blue membrane buttons, a small red numeric display, and diagrams of its FM operator algorithms printed across the top right.',
+			label: 'Yamaha DX7, 1983 — MIDI In, Out and Thru on the back',
+			width: 1280,
+			height: 434,
+			credit: 'Finnianhughes101',
+			license: 'Public domain',
+			licenseUrl: 'https://commons.wikimedia.org/wiki/Commons:Public_domain',
+			source: 'https://commons.wikimedia.org/wiki/File:YAMAHA_DX7.jpg'
+		}
+	];
+
 	const NAMM_1983: FigureImage[] = [
 		{
 			src: '/img/prophet-600.jpg',
@@ -84,6 +108,12 @@
 			detail: 'The specification is released, and costs nothing to implement. It still does.'
 		},
 		{
+			when: '1983',
+			what: 'The DX7 puts the sockets on 200,000 stages',
+			detail:
+				'Yamaha’s DX7 ships with MIDI In, Out and Thru on the back and sells two hundred thousand in three years — the first synthesiser past a hundred thousand of anything. An agreement between five companies becomes a socket that is simply on the instrument you already own.'
+		},
+		{
 			when: '1984–85',
 			what: 'The MIDI Manufacturers Association forms',
 			detail:
@@ -124,6 +154,12 @@
 			adapter, not through emulation, but because they are speaking the same language.
 		</p>
 		<Timeline entries={HISTORY} />
+		<Figure images={DX7}>
+			A specification is an agreement; this is what made it an assumption. The DX7 was the first
+			synthesiser to sell past a hundred thousand, and every one of them left the factory with the
+			three sockets on the back — so within a couple of years the question stopped being whether
+			your instruments had MIDI and became what you were going to plug them into.
+		</Figure>
 	</Section>
 
 	<Section title="The demonstration">
