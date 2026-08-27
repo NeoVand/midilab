@@ -9,6 +9,7 @@
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import MpeLab from '$lib/components/midi/MpeLab.svelte';
+	import ZoneMap from '$lib/components/midi/ZoneMap.svelte';
 	import Drone from '$lib/components/midi/Drone.svelte';
 	import Wheel from '$lib/components/midi/Wheel.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
@@ -81,22 +82,14 @@
 			meant for the whole zone — sustain pedal, program changes, a global bend. Each member channel hosts
 			one sounding note at a time and carries that note's expression.
 		</p>
-		<div class="grid gap-4 lg:grid-cols-2">
-			<div class="flex flex-col gap-2 rounded-lg border border-msg-expr/40 p-4">
-				<p class="text-xs font-semibold tracking-wide text-msg-expr uppercase">Lower zone</p>
-				<p class="text-sm leading-relaxed">
-					Master is <strong>channel 1</strong>; members count upward from channel 2. The common
-					case, and what almost every MPE controller uses by default.
-				</p>
-			</div>
-			<div class="flex flex-col gap-2 rounded-lg border p-4">
-				<p class="text-sm font-semibold">Upper zone</p>
-				<p class="text-sm leading-relaxed">
-					Master is <strong>channel 16</strong>; members count downward. Exists so one instrument
-					can host two independent MPE zones — a split, in effect.
-				</p>
-			</div>
-		</div>
+		<ZoneMap />
+		<p class="prose-body">
+			Almost every MPE controller powers up as a <strong>lower zone</strong>: master on channel 1,
+			members counting upward. The <strong>upper zone</strong> is the mirror image — master on channel
+			16, members counting downward — and it exists so that one instrument can host two independent zones
+			at once, which is a keyboard split where each half has its own per-note expression. Switch the map
+			above and watch the run change direction.
+		</p>
 		<Callout variant="key" title="Round-robin, not lowest-free">
 			<p>
 				Voices are allocated round-robin rather than always reusing the lowest free channel. The
