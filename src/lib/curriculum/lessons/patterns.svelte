@@ -9,6 +9,7 @@
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import PatternLab from '$lib/components/midi/PatternLab.svelte';
+	import EuclidCircle from '$lib/components/midi/EuclidCircle.svelte';
 	import CodeSandbox from '$lib/components/midi/CodeSandbox.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { euclidString } from '$lib/patterns';
@@ -195,6 +196,7 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 				</button>
 			{/each}
 		</div>
+		<EuclidCircle bind:pulses bind:steps bind:rotation controls={false} />
 		<Callout variant="key" title="Why they sound good">
 			<p>
 				Maximal evenness. A rhythm where the hits are as far apart as they can be, given that they
