@@ -49,7 +49,8 @@ test('every lab tool loads', async ({ page }) => {
 		['/lab/programmer', 'Programmer'],
 		['/lab/devices', 'Device Lab'],
 		['/lab/diagnostics', 'Diagnostics'],
-		['/lab/console', 'Console']
+		['/lab/console', 'Console'],
+		['/lab/jukebox', 'Jukebox']
 	] as const) {
 		await page.goto(path);
 		await expect(page.getByRole('heading', { name: heading, level: 1 })).toBeVisible();
