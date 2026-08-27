@@ -16,6 +16,16 @@
 		channel?: number;
 		velocity?: number;
 		label?: string;
+		/**
+		 * General MIDI program to hold the drone on, sent when it starts.
+		 * `null` leaves whatever is selected alone.
+		 *
+		 * A drone exists so that something is still sounding while you turn a
+		 * controller, which makes the instrument load-bearing rather than
+		 * decorative: on a voice that decays away, the note has gone before you
+		 * reach the knob and there is nothing left to hear the change in.
+		 */
+		program?: number | null;
 		class?: string;
 	}
 	let {
@@ -23,6 +33,7 @@
 		channel = 0,
 		velocity = 90,
 		label = 'Hold a drone',
+		program = null,
 		class: className
 	}: Props = $props();
 
@@ -31,6 +42,7 @@
 	async function toggle() {
 		if (sounding) return stop();
 		await engine.wake();
+		if (program !== null) engine.programChange(program, channel);
 		for (const n of notes) engine.noteOn(n, velocity, channel);
 		sounding = true;
 	}

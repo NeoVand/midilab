@@ -271,6 +271,7 @@
 				{bpm}
 				height={190}
 				controls={false}
+				program={null}
 				progress={player.playing && player.duration ? player.position / player.duration : null}
 			/>
 

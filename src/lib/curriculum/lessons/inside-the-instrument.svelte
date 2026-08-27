@@ -95,8 +95,11 @@
 	</Section>
 
 	<TryThis title="Hold a note and take it apart">
-		<EngineToggle />
-		<Drone notes={[45, 52, 57]} label="Hold a chord" />
+		<EngineToggle
+			needs="synth"
+			because="Everything below reshapes a sound while it is already sounding, and a recording cannot be reshaped — the sampled instruments will follow CC 74 and simply ignore CC 71."
+		/>
+		<Drone notes={[45, 52, 57]} label="Hold a chord" program={81} />
 		<CcPanel controllers={[74, 71, 73, 72, 1, 91]} />
 		<Scope label="What is actually coming out" height={110} />
 		<p class="text-sm leading-relaxed">

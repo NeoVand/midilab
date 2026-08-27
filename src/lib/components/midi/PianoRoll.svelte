@@ -13,7 +13,9 @@
 	 * Selecting a note is the whole interaction, because the point is the
 	 * correspondence rather than the editing.
 	 */
+	import { untrack } from 'svelte';
 	import { SequencePlayer, notesToEvents, type NoteSpec } from '$lib/midi/player.svelte';
+	import VoicePicker from './VoicePicker.svelte';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { encode } from '$lib/midi/messages';
 	import { noteName, isBlackKey } from '$lib/midi/notes';
@@ -43,6 +45,14 @@
 		 * Ignored while the roll's own player is running.
 		 */
 		progress?: number | null;
+		/**
+		 * General MIDI program to play and audition through, sent every time.
+		 * Without it the roll inherits whatever the previous widget on the page
+		 * left on the channel, which for a lesson about what a rectangle *is*
+		 * can mean the Minuet arriving on a woodblock. `null` leaves the
+		 * instrument alone, for a caller that has already chosen one.
+		 */
+		program?: number | null;
 		class?: string;
 	}
 	let {
@@ -54,8 +64,13 @@
 		velocityLane = true,
 		controls = true,
 		progress = null,
+		program = 0,
 		class: className
 	}: Props = $props();
+
+	// Seeded from the prop, then owned by the picker.
+	let voice = $state(untrack(() => program ?? 0));
+	const fixedVoice = $derived(program === null);
 
 	let selected = $state<number | null>(null);
 
@@ -106,6 +121,7 @@
 	async function toggle() {
 		if (player.playing) return player.stop();
 		await engine.wake();
+		if (!fixedVoice) engine.programChange(voice, 0);
 		player.play(events);
 	}
 
@@ -113,6 +129,7 @@
 		selected = i;
 		const n = notes[i];
 		await engine.wake();
+		if (!fixedVoice) engine.programChange(voice, n.channel ?? 0);
 		engine.noteOn(n.note, n.velocity ?? 96, n.channel ?? 0);
 		setTimeout(() => engine.noteOff(n.note, n.channel ?? 0), 350);
 	}
@@ -143,8 +160,13 @@
 		{:else}
 			<span></span>
 		{/if}
-		<span class="tnum text-xs text-muted-foreground">
-			{notes.length} notes · {totalBeats / beatsPerBar} bars · {bpm} BPM
+		<span class="flex items-center gap-2">
+			<span class="tnum text-xs text-muted-foreground">
+				{notes.length} notes · {totalBeats / beatsPerBar} bars · {bpm} BPM
+			</span>
+			{#if !fixedVoice}
+				<VoicePicker bind:value={voice} audition={false} />
+			{/if}
 		</span>
 	</div>
 
