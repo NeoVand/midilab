@@ -4,10 +4,12 @@
 	import Callout from '$lib/components/lesson/Callout.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Term from '$lib/components/lesson/Term.svelte';
 	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import CableFigure from '$lib/components/midi/CableFigure.svelte';
+	import CurrentLoop from '$lib/components/midi/CurrentLoop.svelte';
 	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { midiAccess } from '$lib/midi/access.svelte';
@@ -31,6 +33,28 @@
 			direction per cable, and an electrical design that has aged remarkably well.
 		</p>
 		<CableFigure kind="din" />
+
+		<p class="prose-body">
+			"Aged remarkably well" is doing a lot of work in that sentence, so here is the circuit. MIDI
+			does not put a voltage on the wire and hope both ends agree what it means. It pushes a
+			<strong>current</strong> — about 5 mA — out of pin 4, through the cable, through a light-emitting
+			diode at the far end, and back along pin 5. A closed loop, and the only thing that crosses into
+			the receiving device is light.
+		</p>
+		<CurrentLoop />
+		<Callout variant="key" title="Why nothing you own can hurt anything else you own">
+			<p>
+				Look at the dashed line. The two devices share no conductor — no signal wire, no ground, no
+				return path. That is an <Term>opto-isolator</Term>: an LED pointed at a phototransistor
+				inside one package, with a few thousand volts of insulation between them.
+			</p>
+			<p class="mt-2">
+				It is why MIDI cannot create a ground loop and cannot hum, why plugging in a badly earthed
+				amplifier cannot push anything back down the cable, and why a MIDI socket is the one
+				connector on the back of your gear you can be careless with. Audio cables share a ground and
+				buy you a lifetime of buzzing for it.
+			</p>
+		</Callout>
 		<Callout variant="note" title="One cable, one direction, one port">
 			<p>
 				A DIN cable carries data one way only. Two-way communication needs two cables. And a single
