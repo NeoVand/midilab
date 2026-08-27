@@ -50,6 +50,35 @@ export function notesToEvents(notes: NoteSpec[], bpm = 110): ScheduledEvent[] {
 const LOOKAHEAD = 0.15;
 const INTERVAL = 25;
 
+/**
+ * The one demonstration that is currently sounding.
+ *
+ * A lesson page holds several of these, and they all send to the same engine
+ * on the same channel — including the Program Change each of them sends before
+ * it starts. So a reader who plays the scale on a piano and then, a second
+ * later, the interval demonstration on strings used to hear the scale finish
+ * on strings, having changed instrument halfway through a phrase that was
+ * making a point about pitch.
+ *
+ * Demonstrations are short and mutually exclusive by nature: starting one is
+ * a decision to listen to it. Starting any player therefore stops whichever
+ * one was already going.
+ */
+let sounding: SequencePlayer | null = null;
+
+/** Silence whichever demonstration was already going, if it is not this one. */
+function stopOthers(mine: SequencePlayer): void {
+	if (sounding && sounding !== mine) sounding.stop();
+}
+
+function claim(mine: SequencePlayer): void {
+	sounding = mine;
+}
+
+function release(mine: SequencePlayer): void {
+	if (sounding === mine) sounding = null;
+}
+
 export class SequencePlayer {
 	playing = $state(false);
 	/** Seconds elapsed, for progress bars. */
@@ -78,8 +107,11 @@ export class SequencePlayer {
 		opts: { loop?: boolean; onEnd?: () => void } = {}
 	): Promise<void> {
 		await engine.wake();
+		stopOthers(this);
+		// `stop()` clears the registry, so the claim has to come after it.
 		this.stop();
 		if (events.length === 0) return;
+		claim(this);
 		this.#events = [...events].sort((a, b) => a.time - b.time);
 		this.duration = this.#events[this.#events.length - 1].time + 0.4;
 		this.#loop = opts.loop ?? false;
@@ -92,6 +124,7 @@ export class SequencePlayer {
 	}
 
 	stop(): void {
+		release(this);
 		if (this.#timer) clearInterval(this.#timer);
 		this.#timer = 0;
 		if (this.playing) {
