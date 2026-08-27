@@ -269,6 +269,7 @@
 			<PianoRoll
 				{notes}
 				{bpm}
+				beatsPerBar={current.beatsPerBar ?? 4}
 				height={190}
 				controls={false}
 				program={null}

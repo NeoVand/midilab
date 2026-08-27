@@ -47,6 +47,14 @@ export interface Melody {
 	note: string;
 	/** Tempo the phrase is written for. */
 	bpm: number;
+	/**
+	 * Quarter-note beats in a bar — 4 for common time, 3 for a minuet, 1.5 for
+	 * a piece in 3/8. Carried with the music because anything that draws a grid
+	 * behind it needs to put the bar lines in the right places, and a piano roll
+	 * ruling four-beat bars across a minuet is wrong in a way musicians see
+	 * instantly.
+	 */
+	beatsPerBar?: number;
 	/** General MIDI program that suits it. */
 	program: number;
 	notes: NoteSpec[];
@@ -213,6 +221,7 @@ export const MELODIES: Melody[] = [
 		year: '1810',
 		note: 'Never published in his lifetime; found in a drawer forty years after he died. Nobody is sure who Elise was.',
 		bpm: 76,
+		beatsPerBar: 1.5, // 3/8
 		program: 0,
 		notes: FUR_ELISE,
 		tags: ['melody', 'fast']
@@ -235,6 +244,7 @@ export const MELODIES: Melody[] = [
 		year: 'c. 1725',
 		note: 'Catalogued as Bach’s for two hundred years and printed in every beginner’s piano book. It is Petzold’s.',
 		bpm: 120,
+		beatsPerBar: 3, // 3/4
 		program: 6,
 		notes: MINUET,
 		verified: 'Mutopia Project, from the Notebook for Anna Magdalena Bach',
@@ -292,6 +302,7 @@ export const MELODIES: Melody[] = [
 		year: '1808',
 		note: 'Four notes, and it starts on a rest. Almost everybody hums it beginning on the wrong beat.',
 		bpm: 108,
+		beatsPerBar: 2, // 2/4
 		program: 48,
 		notes: FATE,
 		tags: ['melody']
@@ -315,6 +326,7 @@ export const MELODIES: Melody[] = [
 		year: '1902',
 		note: 'A rag: a march with the melody deliberately pushed off the beat. The introduction says its figure once high, then the same figure twelve semitones lower.',
 		bpm: 96,
+		beatsPerBar: 2, // 2/4
 		program: 0,
 		notes: ENTERTAINER,
 		verified: 'Mutopia Project, from the 1902 John Stark & Son edition',
@@ -339,6 +351,7 @@ export const MELODIES: Melody[] = [
 		year: '1723',
 		note: 'The running line, not the hymn underneath it. Threes against a chorale in fours — the reason it feels like it is floating.',
 		bpm: 72,
+		beatsPerBar: 4.5, // 9/8
 		program: 73,
 		notes: JESU,
 		tags: ['melody', 'slow']

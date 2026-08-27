@@ -178,3 +178,21 @@ describe('melody transforms', () => {
 		expect(() => melodyNotes('not-a-melody')).toThrow();
 	});
 });
+
+describe('metre', () => {
+	for (const m of MELODIES.filter((x) => x.beatsPerBar)) {
+		it(`${m.title} fills whole bars`, () => {
+			// A phrase that stops three-quarters of the way through a bar is
+			// usually a transcription that lost a note, and it draws a grid with a
+			// ragged right edge. Anacruses are allowed to start before beat zero,
+			// so only the total length is checked.
+			const beats = phraseBeats(m.notes);
+			const bars = beats / m.beatsPerBar!;
+			expect(Math.abs(bars - Math.round(bars))).toBeLessThan(0.34);
+		});
+	}
+
+	it('never claims a metre of zero or less', () => {
+		expect(MELODIES.filter((m) => m.beatsPerBar !== undefined && m.beatsPerBar <= 0)).toEqual([]);
+	});
+});

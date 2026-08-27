@@ -144,7 +144,13 @@
 			wrong with the software. It is being asked to write down the literal truth, and the literal
 			truth of human playing is not made of clean note values.
 		</p>
-		<PianoRoll notes={PLAYED} bpm={MINUET.bpm} height={170} />
+		<PianoRoll
+			notes={PLAYED}
+			bpm={MINUET.bpm}
+			beatsPerBar={MINUET.beatsPerBar ?? 4}
+			division={2}
+			height={170}
+		/>
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			The Minuet again, this time as somebody actually played it. Every start time is a few
 			milliseconds off the grid and every length is different. As a performance it is better than

@@ -90,7 +90,13 @@
 	</Section>
 
 	<TryThis title="Click a rectangle. Watch it turn into bytes.">
-		<PianoRoll notes={MINUET.notes} bpm={MINUET.bpm} height={200} />
+		<PianoRoll
+			notes={MINUET.notes}
+			bpm={MINUET.bpm}
+			beatsPerBar={MINUET.beatsPerBar ?? 4}
+			division={2}
+			height={200}
+		/>
 		<p class="text-sm leading-relaxed">
 			Petzold's Minuet in G, 1725, drawn the way your DAW would draw it. Every rectangle you click
 			shows the two messages it becomes — and notice that the <em>length</em> of a note is nowhere
