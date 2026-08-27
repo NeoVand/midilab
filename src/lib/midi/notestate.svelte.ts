@@ -138,6 +138,22 @@ export class NoteState {
 		return this.#channels.reduce((a, c) => a + c.notes.size, 0);
 	}
 
+	/**
+	 * Every note sounding anywhere, sorted, each one once.
+	 *
+	 * `heldCount` answers "how many", which is enough for "hold three notes".
+	 * A checkpoint about an *interval* — a fifth, a major triad — needs to know
+	 * which ones, and doing that from `isHeld` means guessing candidates. The
+	 * union across channels rather than per channel is deliberate: a chord is a
+	 * chord to the ear whether or not the player split it across two zones.
+	 */
+	get held(): number[] {
+		void this.version;
+		const all = new Set<number>();
+		for (const c of this.#channels) for (const n of c.notes.keys()) all.add(n);
+		return [...all].sort((a, b) => a - b);
+	}
+
 	clear(): void {
 		for (const c of this.#channels) {
 			c.notes.clear();
