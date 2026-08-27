@@ -1,0 +1,180 @@
+import { describe, it, expect } from 'vitest';
+import { MELODIES, melodyNotes, round } from './melodies';
+import { phrase, phraseBeats } from './notation';
+
+/**
+ * A wrong note in a tune everybody knows is worse than a wrong note in an
+ * abstract phrase: the reader hears it, does not know whether the app or their
+ * ear is broken, and stops trusting the rest.
+ *
+ * The transcriptions themselves can only be checked against a score, and were.
+ * What can be checked here is everything that would corrupt a correct
+ * transcription on the way to the wire — a duration typo that overlaps two
+ * notes into a chord, an octave that walks off the end of the range, a start
+ * time that runs backwards.
+ */
+describe('the melody library', () => {
+	it('has melodies in it', () => {
+		expect(MELODIES.length).toBeGreaterThan(8);
+	});
+
+	it('uses each id exactly once', () => {
+		const ids = MELODIES.map((m) => m.id);
+		expect(new Set(ids).size).toBe(ids.length);
+	});
+
+	for (const m of MELODIES) {
+		describe(m.title, () => {
+			it('parses to notes', () => {
+				expect(m.notes.length).toBeGreaterThan(3);
+			});
+
+			it('stays inside the MIDI note range', () => {
+				const outside = m.notes.filter((n) => n.note < 0 || n.note > 127);
+				expect(outside).toEqual([]);
+			});
+
+			it('stays inside the velocity range', () => {
+				const outside = m.notes.filter((n) => (n.velocity ?? 0) < 1 || (n.velocity ?? 0) > 127);
+				expect(outside).toEqual([]);
+			});
+
+			it('never starts a note before the one before it', () => {
+				const starts = m.notes.map((n) => n.start);
+				expect([...starts].sort((a, b) => a - b)).toEqual(starts);
+			});
+
+			it('gives every note a positive length', () => {
+				expect(m.notes.filter((n) => n.duration <= 0)).toEqual([]);
+			});
+
+			it('never sounds the same pitch twice at once', () => {
+				// Two Note Ons for one pitch with no Note Off between them is the
+				// exact shape of a stuck note, and a melody is the last place it
+				// should come from.
+				const overlaps = m.notes.filter((a) =>
+					m.notes.some(
+						(b) =>
+							b !== a &&
+							b.note === a.note &&
+							b.start > a.start &&
+							b.start < a.start + a.duration - 1e-9
+					)
+				);
+				expect(overlaps).toEqual([]);
+			});
+
+			it('is long enough to recognise', () => {
+				expect(phraseBeats(m.notes)).toBeGreaterThan(3);
+			});
+
+			it('names a plausible General MIDI program', () => {
+				expect(m.program).toBeGreaterThanOrEqual(0);
+				expect(m.program).toBeLessThanOrEqual(127);
+			});
+
+			it('carries the attribution a public-domain claim needs', () => {
+				expect(m.composer).not.toBe('');
+				expect(m.year).not.toBe('');
+			});
+		});
+	}
+});
+
+describe('the notation parser', () => {
+	it('advances by the written duration, not the sounding one', () => {
+		// Gate shortens what you hear without moving what comes next; if these
+		// two were confused every phrase would slowly drift.
+		const n = phrase('C4 D4 E4', { gate: 0.5 });
+		expect(n.map((x) => x.start)).toEqual([0, 1, 2]);
+		expect(n.map((x) => x.duration)).toEqual([0.5, 0.5, 0.5]);
+	});
+
+	it('keeps a duration until it is changed', () => {
+		const n = phrase('C4/0.25 D4 E4 F4/1 G4');
+		expect(n.map((x) => x.start)).toEqual([0, 0.25, 0.5, 0.75, 1.75]);
+	});
+
+	it('leaves a gap for a rest', () => {
+		const n = phrase('C4/1 _/2 D4/1');
+		expect(n.map((x) => x.start)).toEqual([0, 3]);
+	});
+
+	it('gives every note of a chord the same start', () => {
+		const n = phrase('C4+E4+G4/2');
+		expect(n.map((x) => x.note)).toEqual([60, 64, 67]);
+		expect(n.every((x) => x.start === 0)).toBe(true);
+	});
+
+	it('ignores bar lines', () => {
+		expect(phrase('C4 | D4').map((x) => x.start)).toEqual([0, 1]);
+	});
+
+	it('reads accidentals both ways round', () => {
+		expect(phrase('F#4 Gb4').map((x) => x.note)).toEqual([66, 66]);
+	});
+
+	it('puts middle C at 60', () => {
+		expect(phrase('C4')[0].note).toBe(60);
+	});
+
+	it('makes an accent louder and a ghost quieter than a plain note', () => {
+		const [plain, loud, quiet] = phrase('C4 D4> E4-');
+		expect(loud.velocity!).toBeGreaterThan(plain.velocity!);
+		expect(quiet.velocity!).toBeLessThan(plain.velocity!);
+	});
+
+	it('shortens a staccato note without moving the next one', () => {
+		const n = phrase('C4. D4');
+		expect(n[0].duration).toBeLessThan(0.5);
+		expect(n[1].start).toBe(1);
+	});
+
+	it('refuses a pitch it cannot read rather than guessing', () => {
+		expect(() => phrase('H4')).toThrow();
+	});
+
+	it('refuses a duration it cannot read', () => {
+		expect(() => phrase('C4/wat')).toThrow();
+	});
+
+	it('refuses a transposition that leaves the range', () => {
+		expect(() => phrase('C8', { transpose: 60 })).toThrow();
+	});
+});
+
+describe('melody transforms', () => {
+	it('transposes by adding a constant to every note', () => {
+		const plain = melodyNotes('twinkle');
+		const up = melodyNotes('twinkle', { transpose: 7 });
+		expect(up.map((n) => n.note)).toEqual(plain.map((n) => n.note + 7));
+	});
+
+	it('puts a whole melody on one channel', () => {
+		expect(melodyNotes('twinkle', { channel: 9 }).every((n) => n.channel === 9)).toBe(true);
+	});
+
+	it('builds a round whose voices enter when asked and overlap', () => {
+		const voices = round('frere-jacques', [
+			{ channel: 0, delay: 0 },
+			{ channel: 1, delay: 8 }
+		]);
+		const second = voices.filter((n) => n.channel === 1);
+		expect(Math.min(...second.map((n) => n.start))).toBe(8);
+		// The point of a round is that the voices sound together at some stage.
+		const firstEnd = Math.max(
+			...voices.filter((n) => n.channel === 0).map((n) => n.start + n.duration)
+		);
+		expect(firstEnd).toBeGreaterThan(8);
+	});
+
+	it('leaves the original untouched when transforming', () => {
+		const before = MELODIES.find((m) => m.id === 'twinkle')!.notes[0].note;
+		melodyNotes('twinkle', { transpose: 12 });
+		expect(MELODIES.find((m) => m.id === 'twinkle')!.notes[0].note).toBe(before);
+	});
+
+	it('throws on an unknown melody rather than returning nothing', () => {
+		expect(() => melodyNotes('not-a-melody')).toThrow();
+	});
+});
