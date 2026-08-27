@@ -10,12 +10,47 @@
 	import Term from '$lib/components/lesson/Term.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Timeline from '$lib/components/lesson/Timeline.svelte';
+	import Figure from '$lib/components/lesson/Figure.svelte';
+	import type { FigureImage } from '$lib/components/lesson/Figure.svelte';
 	import type { TimelineEntry } from '$lib/components/lesson/Timeline.svelte';
 	import MelodyPlayer from '$lib/components/midi/MelodyPlayer.svelte';
 	import WireLoad from '$lib/components/midi/WireLoad.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 
 	const meta = lessonById('how-midi-happened')!;
+
+	/**
+	 * The two instruments from the January 1983 demonstration.
+	 *
+	 * Left is the one that had MIDI first; right is the one nobody had tested it
+	 * against. Shown together because that is the entire point — separately they
+	 * are two vintage synthesisers, and side by side they are the first two
+	 * machines that ever spoke this language to each other.
+	 */
+	const NAMM_1983: FigureImage[] = [
+		{
+			src: '/img/prophet-600.jpg',
+			alt: 'A Sequential Circuits Prophet-600: a black five-octave analogue synthesiser in a wooden end-cheek case, its upper panel covered in small knobs and a numeric keypad.',
+			label: 'Sequential Circuits Prophet-600, 1982',
+			width: 1280,
+			height: 414,
+			credit: 'M Maeghan Donovan (derivative by Clusternote)',
+			license: 'CC BY 2.0',
+			licenseUrl: 'https://creativecommons.org/licenses/by/2.0',
+			source: 'https://commons.wikimedia.org/wiki/File:SCI_Prophet_600_(angled).jpg'
+		},
+		{
+			src: '/img/jupiter-6.jpg',
+			alt: 'A Roland Jupiter-6: a black five-octave analogue synthesiser with rows of sliders and blue and red illuminated buttons, the name JUPITER-6 printed at the right of the panel.',
+			label: 'Roland Jupiter-6, 1983',
+			width: 1280,
+			height: 351,
+			credit: 'Svuntutheysari',
+			license: 'CC BY-SA 3.0',
+			licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0',
+			source: 'https://commons.wikimedia.org/wiki/File:Roland_Jupiter-6.jpg'
+		}
+	];
 
 	const HISTORY: TimelineEntry[] = [
 		{
@@ -97,6 +132,11 @@
 			Roland Jupiter-6 and played one from the other. Sequential had tested a Prophet-600 against
 			another Prophet-600. Nobody had tried it against a Roland.
 		</p>
+		<Figure images={NAMM_1983}>
+			Both are five-octave analogue polysynths from rival companies, built months apart, and neither
+			was designed with the other in mind. The only thing they had in common was a five-pin socket
+			on the back and eighteen months of arguing about what should come out of it.
+		</Figure>
 		<blockquote class="border-l-2 border-msg-note py-1 pl-4 text-base leading-relaxed">
 			<p>
 				"They really had no idea if it would work when they connected it to the Roland Jupiter 6.
