@@ -393,6 +393,29 @@
 		outline-color: var(--ring-on-key-black);
 		outline-offset: -3px;
 	}
+	/*
+	 * For focusable shapes that are not rectangles — the wedges of the circle of
+	 * fifths, and any other SVG path you can click.
+	 *
+	 * Two things go wrong without this. An outline is drawn around the bounding
+	 * box, and the bounding box of an annular wedge is a large rectangle that
+	 * touches the shape at three points and hangs over half the drawing: it
+	 * reads as a selection of everything nearby rather than of the wedge. And
+	 * Chrome paints its default ring on SVG elements for plain :focus, not only
+	 * :focus-visible, so a mouse click leaves one sitting there afterwards.
+	 *
+	 * So: no outline at all, and the shape's own stroke carries the focus. That
+	 * follows any outline, which is the only indicator a non-rectangular
+	 * control can honestly have. It relies on the stroke being set by a
+	 * presentation attribute, which any real rule outranks.
+	 */
+	.focus-shape {
+		outline: none;
+	}
+	.focus-shape:focus-visible {
+		stroke: var(--ring);
+		stroke-width: 2.5;
+	}
 }
 
 /*

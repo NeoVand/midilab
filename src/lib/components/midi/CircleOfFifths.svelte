@@ -122,7 +122,7 @@
 					fill={on ? 'var(--msg-note-bg)' : 'var(--surface-sunken)'}
 					stroke="var(--border)"
 					stroke-width="1"
-					class="cursor-pointer transition-[fill]"
+					class="focus-shape cursor-pointer transition-[fill]"
 					role="button"
 					tabindex="0"
 					aria-label="{k.major} major, {k.sig}"
@@ -161,7 +161,7 @@
 						fill={on ? 'var(--msg-expr-bg)' : 'var(--muted)'}
 						stroke="var(--border)"
 						stroke-width="1"
-						class="cursor-pointer transition-[fill]"
+						class="focus-shape cursor-pointer transition-[fill]"
 						role="button"
 						tabindex="0"
 						aria-label="{k.minor} minor"
