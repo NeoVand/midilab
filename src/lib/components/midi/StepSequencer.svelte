@@ -3,7 +3,7 @@
 	 * A step sequencer driven by the app's transport.
 	 *
 	 * Every step is placed with the tick's own timestamps rather than fired when
-	 * the callback happens to run, so this is a working example of Lesson 17
+	 * the callback happens to run, so this is a working example of Latency, jitter, and the lookahead scheduler
 	 * rather than a demonstration of the problem. Note Offs are scheduled at the
 	 * same moment as their Note Ons, which is why stopping mid-pattern never
 	 * leaves anything hanging.
@@ -76,7 +76,7 @@
 	/*
 	 * Cloned per instance. DEFAULT is a module-level array, so handing the same
 	 * one to every sequencer meant editing the pattern in the Programmer
-	 * silently rewrote the demo pattern in Lesson 26.
+	 * silently rewrote the demo pattern in Programming drums.
 	 */
 	let {
 		steps = 16,

@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Patchbay from '$lib/components/midi/Patchbay.svelte';
 	import ChannelGrid from '$lib/components/midi/ChannelGrid.svelte';
@@ -27,6 +28,13 @@
 			You now know what every message does and what every socket is for. The remaining skill is
 			organisational: deciding, once, who talks to whom on which address, and writing it down so
 			that future-you can check reality against intention.
+		</p>
+		<p class="prose-body">
+			Three earlier decisions come due here at once: which
+			<Xref to="channels" label="channel" /> each voice listens on, which device is the
+			<Xref to="sync-options" label="clock leader" />, and where a
+			<Xref to="in-out-thru" label="Thru chain" /> stops being a good idea. A routing plan is those three
+			answers, written down.
 		</p>
 		<p class="prose-body">
 			The real address in a studio is not the channel. It is <strong>port plus channel</strong>. A

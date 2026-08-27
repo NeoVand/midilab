@@ -4,7 +4,7 @@
  * This is the app's fallback device: with no hardware plugged in at all, every
  * lesson still makes sound, because the synth receives exactly the same messages
  * an external instrument would. It is also a live demonstration of the
- * *receiver decides* principle — the whole point of Lesson 7. It honours CC 74
+ * *receiver decides* principle — the whole point of Control, not sound. It honours CC 74
  * as cutoff and CC 71 as resonance because it chooses to, not because the
  * protocol makes it.
  *

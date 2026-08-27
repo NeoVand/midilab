@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
@@ -141,7 +142,8 @@
 	<Section title="Just enough theory">
 		<p class="prose-body">
 			You do not need music theory to work with MIDI, but three ideas will save you a lot of
-			counting.
+			counting. If any of the words below are new, <Xref to="just-enough-music" /> defines them properly
+			and lets you hear each one.
 		</p>
 		<div class="grid gap-3 sm:grid-cols-3">
 			<div class="rounded-lg border p-4">

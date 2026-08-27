@@ -4,7 +4,7 @@
  * This is not a sample-based GM module and does not pretend to be. It is a
  * small subtractive synth whose sixteen presets are recognisably in the right
  * neighbourhood, so that a Program Change audibly *does something* — which is
- * the entire pedagogical point of Lesson 10. A real device's mapping will
+ * the entire pedagogical point of Control Change. A real device's mapping will
  * differ, and the lesson says so.
  */
 

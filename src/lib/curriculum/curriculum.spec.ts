@@ -60,3 +60,42 @@ describe('every cross-reference points at a lesson that exists', () => {
 		expect(refs.filter((r) => `${r.to}.svelte` === r.from)).toEqual([]);
 	});
 });
+
+/**
+ * Nothing may refer to a lesson by its number.
+ *
+ * Inserting seven lessons into Act I moved every number after them, and
+ * twenty places across the codebase — lesson prose, component comments, a
+ * string rendered in the MIDI 2.0 lesson — were still naming the old ones.
+ * None of it failed a type check or a render; it was simply, quietly wrong,
+ * and it had been wrong from the moment the running order changed.
+ *
+ * `Xref` exists precisely so prose does not have to know the running order.
+ * This is the rule that keeps anyone from working around it: in markup use
+ * `<Xref to="id" />`, and in a comment name the lesson rather than counting to
+ * it.
+ */
+describe('no source file refers to a lesson by number', () => {
+	const SOURCE = join(process.cwd(), 'src');
+
+	function walk(dir: string): string[] {
+		return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+			const full = join(dir, e.name);
+			if (e.isDirectory()) return walk(full);
+			return /\.(svelte|ts)$/.test(e.name) ? [full] : [];
+		});
+	}
+
+	it('finds none', () => {
+		const offenders = walk(SOURCE)
+			.filter((f) => !f.endsWith('curriculum.spec.ts'))
+			.flatMap((f) => {
+				const lines = readFileSync(f, 'utf8').split('\n');
+				return lines
+					.map((line, i) => ({ file: `${f.replace(process.cwd() + '/', '')}:${i + 1}`, line }))
+					.filter(({ line }) => /\blessons? \d+/i.test(line));
+			})
+			.map((o) => o.file);
+		expect(offenders).toEqual([]);
+	});
+});

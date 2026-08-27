@@ -104,7 +104,10 @@
 			group: 'Time',
 			entries: [
 				['midi.now() / midi.perf()', 'Audio clock and page clock, in seconds and milliseconds.'],
-				['midi.toPerf(audioTime)', 'Convert one to the other — Lesson 17 in a function.'],
+				[
+					'midi.toPerf(audioTime)',
+					'Convert one to the other — the two-clocks lesson in a function.'
+				],
 				['midi.transport.start() / .stop()', 'The same transport as the dock.'],
 				['midi.transport.bpm', 'Read or set it.'],
 				['midi.transport.onTick(fn)', 'Every 24th of a quarter note, with timestamps.'],

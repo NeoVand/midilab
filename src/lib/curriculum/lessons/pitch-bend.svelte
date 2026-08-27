@@ -113,8 +113,9 @@
 			{/each}
 		</div>
 		<p class="prose-body">
-			Six Control Changes to set one number. That is RPN, and Lesson 11 covers it properly — for now
-			just note that <em>bend range is a negotiated setting, not a property of the message</em>.
+			Six Control Changes to set one number. That is RPN, and <Xref to="rpn-nrpn" /> covers it properly
+			— for now just note that
+			<em>bend range is a negotiated setting, not a property of the message</em>.
 		</p>
 
 		<div class="flex flex-wrap items-center gap-2">

@@ -324,7 +324,7 @@ export function dataByteCount(status: number): number {
 /**
  * A streaming parser that understands running status — where a sender omits a
  * repeated status byte to save bandwidth on a 31,250 baud wire. Web MIDI never
- * needs this, but MIDI files and real DIN streams do, and Lesson 5 makes you
+ * needs this, but MIDI files and real DIN streams do, and Note On, Note Off, and running status makes you
  * watch it happen.
  */
 export class RunningStatusParser {

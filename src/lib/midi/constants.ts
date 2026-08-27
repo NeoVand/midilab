@@ -276,7 +276,7 @@ export function ccName(n: number): string {
 	return ccInfo(n).short;
 }
 
-/** The handful you actually need in your head. Referenced by Lesson 7. */
+/** The handful you actually need in your head. Referenced by Control Change. */
 export const ESSENTIAL_CCS = [1, 7, 10, 11, 64, 71, 74, 91, 93] as const;
 
 /* -------------------------------------------------------------------------- */

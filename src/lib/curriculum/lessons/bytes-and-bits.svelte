@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import MessageBuilder from '$lib/components/midi/MessageBuilder.svelte';
@@ -167,7 +168,10 @@
 				The byte contains 0 for channel 1 and 15 for channel 16. Every display, manual and menu
 				shows 1–16. When you write code, keep the two lexically distinct — this app calls the raw
 				value <code>channel</code> and the display value <code>channel + 1</code>, and never mixes
-				them. Off-by-one channel bugs are the single most common MIDI programming error.
+				them. Off-by-one channel bugs are the single most common MIDI programming error. <Xref
+					to="channels"
+					label="Sixteen channels"
+				/> is about what that nibble is for.
 			</p>
 		</Callout>
 

@@ -141,7 +141,7 @@ export class MidiEngine {
 	 * `at` is a `performance.now()`-domain timestamp. Passing one lets the
 	 * browser's MIDI implementation deliver the bytes at that instant rather than
 	 * whenever the JavaScript thread next gets a turn — the difference between
-	 * a tight sequencer and a sloppy one. See Lesson 17.
+	 * a tight sequencer and a sloppy one. See Latency, jitter, and the lookahead scheduler.
 	 */
 	/**
 	 * Called once per locally originated message, whatever it is sent to.

@@ -112,9 +112,9 @@
 	<Section title="Local Control, one more time">
 		<p class="prose-body">
 			The special case of a loop that involves only one device is the Local Control problem from
-			Lesson 12. A keyboard plays its own engine <em>and</em> sends to the computer, which echoes back
-			to the same engine. Turning Local Control off breaks the internal path and leaves the computer in
-			charge.
+			<Xref to="panic" />. A keyboard plays its own engine <em>and</em> sends to the computer, which echoes
+			back to the same engine. Turning Local Control off breaks the internal path and leaves the computer
+			in charge.
 		</p>
 		<div class="flex flex-wrap gap-2">
 			<Button variant="outline" size="sm" onclick={() => engine.cc(122, 0, 0)}>

@@ -192,7 +192,7 @@ log('waiting for external clock — start your hardware');`
 			lesson={meta.id}
 			id="export"
 			label="Export it as a .mid file"
-			hint="The Export button writes it with the codec from Lesson 18."
+			hint="The Export button writes it with the Standard MIDI File codec."
 		/>
 		<Checkpoint
 			lesson={meta.id}

@@ -6,7 +6,7 @@
  * CC automation can push that into the hundreds. So the buffer is a plain array
  * and reactivity is coalesced to one bump per animation frame; naively making
  * every incoming message a reactive array push will melt the UI, which is
- * exactly the "dense automation has a cost" point from Lesson 17.
+ * exactly the "dense automation has a cost" point from Latency, jitter, and the lookahead scheduler.
  */
 
 import { browser } from '$app/environment';

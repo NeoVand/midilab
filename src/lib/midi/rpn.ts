@@ -108,7 +108,7 @@ export function setBendRange(channel: number, semitones: number, cents = 0): Mid
 /**
  * Reassembles parameter edits from a stream of Control Changes.
  *
- * Used by the monitor and by Lesson 11 to show "those five CCs were actually
+ * Used by the monitor and by RPN and NRPN to show "those five CCs were actually
  * one thing" — which is the insight that makes NRPNs stop looking like noise.
  */
 export class RpnParser {

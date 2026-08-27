@@ -13,7 +13,7 @@
  *   timestamp. The audio hardware and the MIDI subsystem then deliver them
  *   exactly on time, because they run on their own clocks.
  *
- * Lesson 17 makes you build this, then measures the difference.
+ * Latency, jitter, and the lookahead scheduler makes you build this, then measures the difference.
  *
  * ## Two clocks, one map
  * `AudioContext.currentTime` (seconds, audio hardware) and `performance.now()`

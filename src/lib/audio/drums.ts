@@ -3,7 +3,7 @@
  *
  * No samples: every sound is built from oscillators and filtered noise. That is
  * partly so the app stays a single static bundle with nothing to download, and
- * partly because Lesson 6 wants you to hear that channel 10 is a *convention* —
+ * partly because Sixteen channels wants you to hear that channel 10 is a *convention* —
  * the same note numbers that play pitches everywhere else land on percussion
  * here purely because General MIDI says so.
  */

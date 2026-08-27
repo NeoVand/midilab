@@ -33,7 +33,7 @@
 		labels?: 'none' | 'c' | 'all' | 'numbers';
 		/** Type on the computer keyboard to play, Ableton-style. */
 		typing?: boolean;
-		/** Remap velocity before sending — the response curve in Lesson 3. */
+		/** Remap velocity before sending — the response curve in Velocity and dynamics. */
 		curve?: (v: number) => number;
 		onNoteOn?: (note: number, velocity: number) => void;
 		onNoteOff?: (note: number) => void;

@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ClockLab from '$lib/components/midi/ClockLab.svelte';
@@ -45,9 +46,10 @@
 
 	<Callout variant="key" title="Twenty-four is not a resolution">
 		<p>
-			24 ticks per quarter note is a <em>transmission</em> rate, not a sequencing resolution. Your OP-XY
-			sequences at 1920 PPQN internally; a DAW might use 960. They all still send and receive clock at
-			24. The follower interpolates between ticks to place events more finely than the clock itself.
+			24 ticks per quarter note is a <em>transmission</em> rate, not a sequencing resolution. Your
+			OP-XY sequences at 1920 PPQN internally; a DAW might use 960. They all still send and receive
+			clock at 24. The follower interpolates between ticks to place events more finely than the
+			clock itself — which is the distinction <Xref to="ppqn-and-groove" /> is entirely about.
 		</p>
 		<p class="mt-2">
 			At 120 BPM, 24 ticks per quarter is 48 messages per second — before a single note is played.

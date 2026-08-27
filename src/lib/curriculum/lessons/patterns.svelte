@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import PatternLab from '$lib/components/midi/PatternLab.svelte';
@@ -201,6 +202,10 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 				almost always asymmetrical, which is what stops it sounding mechanical. That one property
 				produces the tresillo, the bossa nova clave and a large fraction of West African bell
 				patterns.
+			</p>
+			<p class="mt-2">
+				Which makes this the fastest way there is to write a drum part that does not sound typed —
+				<Xref to="programming-drums" /> is the same job done by hand, one hit at a time.
 			</p>
 		</Callout>
 	</Section>

@@ -4,7 +4,7 @@
  * It uses the same lookahead discipline as the main transport — plan ahead,
  * hand events to the audio and MIDI layers with timestamps, never fire them
  * from a timer — so the phrases in Act I are already an example of the thing
- * Lesson 17 explains.
+ * Latency, jitter, and the lookahead scheduler explains.
  */
 
 import { onDestroy } from 'svelte';

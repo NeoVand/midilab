@@ -44,7 +44,7 @@
 		<p class="prose-body">
 			Pitch bend, <Xref to="aftertouch" label="channel pressure" /> and CC 74 are all channel-wide. That
 			is a fact of MIDI 1.0 and cannot be changed. Play a chord on one channel and bend it, and every
-			note bends together — you have already felt this in Lesson 8.
+			note bends together — you have already felt this in <Xref to="pitch-bend" />.
 		</p>
 		<TryThis title="Feel the limitation once more">
 			<div class="flex flex-wrap items-end gap-6">
@@ -139,9 +139,10 @@
 
 	<Section title="Declaring a zone">
 		<p class="prose-body">
-			A controller announces its zone with the <strong>MPE Configuration Message</strong> — RPN 0,6 on
-			the master channel, with the number of member channels as the value. Sending zero tears the zone
-			down. It is exactly the RPN mechanism from Lesson 11, used for one more thing.
+			A controller announces its zone with the <strong>MPE Configuration Message</strong> — RPN 0,6
+			on the master channel, with the number of member channels as the value. Sending zero tears the
+			zone down. It is exactly the RPN mechanism from <Xref to="rpn-nrpn" />, used for one more
+			thing.
 		</p>
 		<div class="flex flex-col gap-2 rounded-lg border bg-surface-sunken p-4 font-mono text-xs">
 			{#each [['CC 101 = 0', 'select RPN, coarse'], ['CC 100 = 6', 'RPN 0,6 — MPE configuration'], ['CC 6 = 8', 'reserve 8 member channels'], ['CC 101 = 127 / CC 100 = 127', 'deselect']] as [msg, why] (msg)}
@@ -180,7 +181,7 @@
 		<p class="prose-body">
 			That cost is real. An MPE controller using fifteen member channels leaves you nothing else on
 			that port. In a rig with several instruments, MPE controllers want their own port — which is
-			the port-plus-channel thinking from Lesson 21 arriving with a concrete consequence.
+			the port-plus-channel thinking from <Xref to="studio-routing" /> arriving with a concrete consequence.
 		</p>
 	</Section>
 

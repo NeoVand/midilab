@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ProgramBrowser from '$lib/components/midi/ProgramBrowser.svelte';
@@ -81,8 +82,9 @@
 	<Section title="Bank Select: 128 becomes 2,097,152">
 		<p class="prose-body">
 			MIDI never widened the Program Change message. Instead it added a <em>prefix</em>: two
-			ordinary Control Changes that say which bank of 128 you mean. CC 0 is the coarse half, CC 32
-			the fine half. Together they select one of 16,384 banks, each holding 128 programs.
+			ordinary <Xref to="control-change" label="Control Changes" /> that say which bank of 128 you mean.
+			CC 0 is the coarse half, CC 32 the fine half. Together they select one of 16,384 banks, each holding
+			128 programs.
 		</p>
 		<Callout variant="key" title="Order matters, and so does the pairing">
 			<p>
@@ -193,8 +195,8 @@
 				In your instrument's documentation, look for a section called <em>Bank Map</em>,
 				<em>Voice List</em>, <em>Program List</em> or <em>Data List</em> — often a separate PDF from
 				the main manual. It will be a table of MSB, LSB and program numbers against preset names.
-				That table <em>is</em> the API of the instrument. Lesson 22 covers reading implementation charts
-				properly.
+				That table <em>is</em> the API of the instrument. <Xref to="troubleshooting" /> covers reading
+				implementation charts properly.
 			</p>
 		</Callout>
 	</Section>

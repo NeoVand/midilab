@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import GrooveLab from '$lib/components/midi/GrooveLab.svelte';
@@ -40,8 +41,8 @@
 					Transmission resolution — {CLOCK_PPQ} PPQN
 				</p>
 				<p class="text-sm leading-relaxed">
-					How often the clock byte goes down the wire. Fixed at 24 by the MIDI specification.
-					Nothing you own changes it, and nothing needs to.
+					How often the <Xref to="midi-clock" label="clock byte" /> goes down the wire. Fixed at 24 by
+					the MIDI specification. Nothing you own changes it, and nothing needs to.
 				</p>
 			</div>
 			<div class="flex flex-col gap-2 rounded-lg border border-msg-note/40 p-4">
@@ -142,7 +143,7 @@
 		<p class="prose-body">
 			So sequencer resolution stops mattering fairly quickly, and something else takes over as the
 			limiting factor: how reliably the events actually leave the machine at the time they were
-			scheduled for. That is jitter, and it is Lesson 17.
+			scheduled for. That is jitter, and it is <Xref to="latency-and-jitter" />.
 		</p>
 	</Section>
 

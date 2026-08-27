@@ -138,7 +138,7 @@ export function toUmpMidi2(msg: MidiMessage, group = 0): UmpPacket | null {
 				label: 'MIDI 2.0 Program Change',
 				notes: [
 					'Program and Bank Select travel in ONE message, with a flag saying whether the bank is valid.',
-					'The three-message ordering problem from Lesson 10 simply does not exist here.'
+					'The three-message ordering problem from Programs and banks simply does not exist here.'
 				]
 			};
 		}

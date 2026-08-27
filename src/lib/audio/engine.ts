@@ -1,7 +1,7 @@
 /**
  * The audio context and master bus.
  *
- * Two rules that matter here and are repeated in Lesson 26:
+ * Two rules that matter here and are repeated in Web Audio for MIDI people:
  *
  * 1. **An AudioContext cannot start without a user gesture.** So the context is
  *    created lazily, on the first note you actually trigger, and `ready` tells

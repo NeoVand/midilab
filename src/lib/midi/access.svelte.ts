@@ -239,7 +239,7 @@ export class MidiAccessStore {
 	/**
 	 * Send raw bytes to a hardware port.
 	 * `at` is a `performance.now()`-domain timestamp; omitting it means "now",
-	 * which is exactly the sloppy behaviour Lesson 17 teaches you to avoid.
+	 * which is exactly the sloppy behaviour Latency, jitter, and the lookahead scheduler teaches you to avoid.
 	 */
 	sendRaw(portId: string, bytes: number[], at?: number): boolean {
 		const port = this.#access?.outputs.get(portId);
