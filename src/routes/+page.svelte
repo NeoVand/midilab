@@ -222,15 +222,21 @@
 			-->
 			<div class="grid grid-cols-3 gap-3 lg:grid-cols-5">
 				{#each tools as tool (tool.href)}
-					<a
-						href={path(tool.href)}
-						class="group flex flex-col gap-3 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
-					>
-						<span class="panel-sunken block rounded-md px-3.5 py-3">
+					<!--
+						No card. The border belongs to the drawing, which is a thing with
+						edges; the name under it is just a caption, and boxing a caption
+						adds a second rectangle that says nothing the first did not.
+					-->
+					<a href={path(tool.href)} class="group flex flex-col gap-2.5">
+						<span
+							class="panel-sunken block rounded-lg border p-3 transition-colors group-hover:border-foreground/30"
+						>
 							<ToolFigure tool={tool.figure} />
 						</span>
-						<span>
-							<span class="block text-sm font-medium">{tool.name}</span>
+						<span class="px-0.5">
+							<span class="block text-sm font-medium transition-colors group-hover:text-foreground">
+								{tool.name}
+							</span>
 							<span class="block text-sm text-muted-foreground">{tool.desc}</span>
 						</span>
 					</a>
