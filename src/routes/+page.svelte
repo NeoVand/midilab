@@ -48,6 +48,12 @@
 			figure: 'devices',
 			name: 'Device Lab',
 			desc: 'Learn an unknown synth'
+		},
+		{
+			href: '/lab/jukebox',
+			figure: 'jukebox',
+			name: 'Jukebox',
+			desc: 'Bach, on anything you like'
 		}
 	] as const;
 </script>

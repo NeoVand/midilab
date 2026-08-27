@@ -8,11 +8,13 @@
 		Chip02Icon,
 		StopWatchIcon,
 		SquareTerminalIcon,
-		PlugSocketIcon
+		PlugSocketIcon,
+		MusicNote01Icon
 	} from '@hugeicons/core-free-icons';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { router } from '$lib/midi/router.svelte';
 	import { devices } from '$lib/midi/devices/store.svelte';
+	import { MELODIES } from '$lib/music/melodies';
 	import { Button } from '$lib/components/ui/button';
 	import SignalPath from '$lib/components/shell/SignalPath.svelte';
 	import { cn } from '$lib/utils';
@@ -72,6 +74,14 @@
 			name: 'Console',
 			desc: 'Write JavaScript that drives your real hardware, right now.',
 			contents: 'engine · notes · patterns · transport',
+			badge: null
+		},
+		{
+			href: '/lab/jukebox',
+			icon: MusicNote01Icon,
+			name: 'Jukebox',
+			desc: 'Music out of copyright, played by describing it rather than recording it.',
+			contents: `${MELODIES.length} pieces · Any instrument · Transpose · Rounds`,
 			badge: null
 		}
 	]);
@@ -149,9 +159,9 @@
 	</div>
 
 	<!--
-		The six tools above are not six separate programs. This is the one
-		sentence of architecture that makes the rest of the app make sense, so it
-		gets drawn rather than written.
+		The tools above are not separate programs. This is the one sentence of
+		architecture that makes the rest of the app make sense, so it gets drawn
+		rather than written.
 	-->
 	<section class="flex flex-col gap-4 rounded-lg border bg-card px-6 py-5">
 		<div class="flex flex-col gap-1">

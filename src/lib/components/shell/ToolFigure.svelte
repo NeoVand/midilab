@@ -9,9 +9,17 @@
 	 * the tool's own screen in miniature rather than a decoration bolted on.
 	 */
 	interface Props {
-		tool: 'monitor' | 'patchbay' | 'programmer' | 'devices';
+		tool: 'monitor' | 'patchbay' | 'programmer' | 'devices' | 'jukebox';
 	}
 	let { tool }: Props = $props();
+
+	/**
+	 * The Jukebox figure is a real tune rather than a plausible-looking squiggle:
+	 * the first phrase of the Ode to Joy, as scale degrees, drawn the way a
+	 * piano roll would draw it. Anybody who recognises the shape gets a small
+	 * private joke, and everybody else gets an accurate picture of the tool.
+	 */
+	const ODE = [2, 2, 3, 4, 4, 3, 2, 1, 0, 0, 1, 2, 2, 1];
 
 	/** Deterministic, so the figure is stable across renders and reloads. */
 	const STREAM = [
@@ -85,6 +93,19 @@
 				rx="2"
 				fill={on ? 'var(--msg-note)' : 'var(--muted)'}
 				opacity={on ? 0.9 : 1}
+			/>
+		{/each}
+	{:else if tool === 'jukebox'}
+		<!-- A melody as a piano roll draws it: one block per note, height is pitch. -->
+		{#each ODE as degree, i (i)}
+			<rect
+				x={i * 14.2}
+				y={34 - degree * 7}
+				width="12"
+				height="6"
+				rx="1.6"
+				fill="var(--msg-note)"
+				opacity={0.55 + degree * 0.1}
 			/>
 		{/each}
 	{:else}
