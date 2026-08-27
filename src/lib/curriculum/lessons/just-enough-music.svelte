@@ -12,6 +12,7 @@
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import NoteValues from '$lib/components/midi/NoteValues.svelte';
 	import ChordLab from '$lib/components/midi/ChordLab.svelte';
+	import CircleOfFifths from '$lib/components/midi/CircleOfFifths.svelte';
 	import MelodyPlayer from '$lib/components/midi/MelodyPlayer.svelte';
 	import PhrasePlayer from '$lib/components/midi/PhrasePlayer.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
@@ -138,6 +139,13 @@
 			was designed around it.
 		</p>
 		<PhrasePlayer notes={SCALE} bpm={132} label="Play a C major scale" program={0} />
+		<p class="prose-body">
+			Start on any note and take twelve steps of a perfect fifth — seven semitones each time — and
+			you arrive back where you began. That closed loop is the circle of fifths, and it is worth
+			more than any other single diagram in music: neighbours on it share almost all their notes,
+			which is why chord progressions and key changes overwhelmingly move between neighbours.
+		</p>
+		<CircleOfFifths />
 		<Callout variant="convention" title="MIDI has no idea what key you are in">
 			<p>
 				There is no key message, no scale message and no chord message on the wire. A Standard MIDI

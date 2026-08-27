@@ -10,6 +10,7 @@
 	import Term from '$lib/components/lesson/Term.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import TuningLab from '$lib/components/midi/TuningLab.svelte';
+	import CircleOfFifths from '$lib/components/midi/CircleOfFifths.svelte';
 	import RpnLab from '$lib/components/midi/RpnLab.svelte';
 	import Harmonics from '$lib/components/midi/Harmonics.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
@@ -67,6 +68,13 @@
 			Stack twelve pure fifths and you should arrive back where you started, twelve octaves up. You
 			do not. Twelve fifths of 3:2 land about a quarter of a semitone above seven octaves — a gap
 			known as the Pythagorean comma, and it does not close no matter how you rearrange it.
+		</p>
+		<CircleOfFifths minors={false} />
+		<p class="prose-body">
+			That circle only closes because we made it. Twelve pure fifths overshoot seven octaves by the
+			comma above, so the drawing is a small lie told twelve times — each fifth shaved by about two
+			cents until the ends meet. Every key on the circle is equally usable and not one of them is
+			quite in tune.
 		</p>
 		<p class="prose-body">
 			So a fixed keyboard has to choose. Tune it purely for one key and it is glorious in that key
