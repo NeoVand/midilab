@@ -37,6 +37,50 @@
 	 * best-selling synthesiser anybody had made, and a standard on two hundred
 	 * thousand instruments stops being a standard and becomes the way things are.
 	 */
+	/**
+	 * The two people the decision belonged to.
+	 *
+	 * A history lesson that names Dave Smith eleven times and never shows him is
+	 * a lesson about a protocol; this one is about a choice two people made, and
+	 * choices have faces. Shown here rather than beside the timeline because
+	 * this is the section where what they decided actually appears.
+	 *
+	 * Kakehashi is a pair of hands because Commons has no free portrait of him,
+	 * and a bronze cast on Hollywood Boulevard is a better answer than leaving
+	 * out the man who argued for a shared standard while running the company
+	 * best placed to impose its own. Both are square, because two people of
+	 * equal weight in a story should not be two different sizes on the page.
+	 */
+	const PIONEERS: FigureImage[] = [
+		{
+			src: '/img/dave-smith.jpg',
+			alt: 'Dave Smith seated at a Sequential booth at a trade show, in a blue checked shirt with a SEQUENTIAL lanyard, one hand resting on the panel of a synthesiser.',
+			label: 'Dave Smith, at a Sequential booth in 2015',
+			width: 960,
+			height: 1432,
+			aspect: '1 / 1',
+			focus: 'center 22%',
+			credit: 'Pete Brown',
+			license: 'CC BY 2.0',
+			licenseUrl: 'https://creativecommons.org/licenses/by/2.0',
+			source:
+				'https://commons.wikimedia.org/wiki/File:Dave_Smith_at_Sequential_booth_-_2_-_2015_NAMM_Show_(cropped).jpg'
+		},
+		{
+			src: '/img/kakehashi-handprint.jpg',
+			alt: 'A bronze cast of two open hands set into paving, with a plaque above reading IKUTARO KAKEHASHI, FEBRUARY 7, 2000, and his signature cast into the stone below.',
+			label: 'Ikutaro Kakehashi, cast at Hollywood’s RockWalk',
+			width: 960,
+			height: 719,
+			aspect: '1 / 1',
+			focus: 'center center',
+			credit: 'Ariga',
+			license: 'CC BY-SA 4.0',
+			licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+			source: 'https://commons.wikimedia.org/wiki/File:Kakehashi_Ikutaro_hand.jpg'
+		}
+	];
+
 	const DX7: FigureImage[] = [
 		{
 			src: '/img/dx7.jpg',
@@ -267,6 +311,13 @@
 			ones that charged are gone. The one that did not is in the phone in your pocket, which speaks
 			MIDI over Bluetooth to a keyboard designed forty years after the specification was written.
 		</p>
+		<Figure images={PIONEERS}>
+			They shared the 2013 Technical Grammy for it, thirty years after the handshake on the NAMM
+			floor. Kakehashi was born on the seventh of February 1930, and the date cast beside his hands
+			is the seventh of February 2000 — his seventieth birthday. He died in 2017 and Smith in 2022,
+			and between them they are the reason the socket on the back of your instrument costs nothing
+			to speak to.
+		</Figure>
 		<Callout variant="note" title="Kakehashi's other contribution">
 			<p>
 				Roland's founder is usually credited for the standard. He should also be credited for the

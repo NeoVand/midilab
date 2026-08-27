@@ -46,6 +46,23 @@
 		licenseUrl: string;
 		/** The Wikimedia Commons file page, so the claim can be checked. */
 		source: string;
+		/**
+		 * Force a shape, e.g. `'1 / 1'`.
+		 *
+		 * For a pair that has to read as a pair. Two portraits of two people at
+		 * two different shapes look like two different kinds of thing — one
+		 * important, one incidental — and when the people are equally important
+		 * that is the wrong sentence for a layout to be saying. Cropping is done
+		 * in CSS, so the file on disk is untouched and the licence unaffected.
+		 */
+		aspect?: string;
+		/**
+		 * Where to hold the crop. Anything `object-position` takes.
+		 *
+		 * A centre crop of a standing portrait cuts the head off, because faces
+		 * are in the upper third of photographs and the middle of nothing.
+		 */
+		focus?: string;
 	}
 </script>
 
@@ -98,7 +115,10 @@
 					Bottom-aligned, so two instruments of different proportions stand on
 					the same line rather than floating at different heights.
 				-->
-				<div class="self-end overflow-hidden rounded-lg border bg-surface-sunken">
+				<div
+					class="self-end overflow-hidden rounded-lg border bg-surface-sunken"
+					style={img.aspect ? `aspect-ratio: ${img.aspect}` : undefined}
+				>
 					<img
 						src={path(img.src)}
 						alt={img.alt}
@@ -106,7 +126,8 @@
 						height={img.height}
 						loading="lazy"
 						decoding="async"
-						class="h-auto w-full"
+						class={img.aspect ? 'h-full w-full object-cover' : 'h-auto w-full'}
+						style={img.focus ? `object-position: ${img.focus}` : undefined}
 					/>
 				</div>
 				{#if img.label}
