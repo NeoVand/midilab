@@ -24,8 +24,8 @@
  * its source. Where a reading was uncertain it was checked against the
  * LilyPond sources published by the Mutopia Project, which re-engraves
  * public-domain music from scratch and dedicates the engraving to the public
- * domain as well — the two melodies carrying `verified` below are the ones
- * where memory was not good enough and the source settled it.
+ * domain as well. Every melody carrying `verified` below is one where memory
+ * was not good enough on its own and a published edition settled it.
  *
  * Nothing here is later than 1902.
  */
@@ -102,10 +102,17 @@ const PRELUDE_IN_C = phrase(
 /**
  * Petzold, Minuet in G major, BWV Anh. 114, c. 1725 — catalogued as Bach's
  * for two centuries, and printed in every beginner's piano book since.
+ *
+ * Eight bars, which is the first full phrase. Written from memory this had
+ * F#4 and G4 in the third bar's rising run, dropping an octave in the middle
+ * of the most recognisable gesture in the piece; the Anna Magdalena notebook
+ * has it climbing to F#5 and G5, and that is what a listener expects.
  */
 const MINUET = phrase(
-	`D5/1 | G4/0.5 A4 B4 C5 | D5/1 G4 G4 |
-	 E5/1 | C5/0.5 D5 E5 F#4 | G4/1 G4 G4`
+	`D5/1 G4/0.5 A4 B4 C5 | D5/1 G4 G4 |
+	 E5/1 C5/0.5 D5 E5 F#5 | G5/1 G4 G4 |
+	 C5/1 D5/0.5 C5 B4 A4 | B4/1 C5/0.5 B4 A4 G4 |
+	 F#4/1 G4/0.5 A4 B4 G4 | A4/3`
 );
 
 /** Traditional, first printed in Paris in 1761 as "Ah! vous dirai-je, maman". */
@@ -131,11 +138,11 @@ const FRERE_JACQUES = phrase(
  */
 const CANON_BASS = phrase(`D3/2 A2 B2 F#2 | G2 D2 G2 A2`, { velocity: 92 });
 
-/** The upper line Pachelbel writes over that bass the first time round. */
-const CANON_LINE = phrase(
-	`F#5/1 E5 D5 C#5 | B4 A4 B4 C#5 |
-	 D5/1 C#5 B4 A4 | G4 F#4 G4 E4`
-);
+/**
+ * The descant over that bass: one note per half note, eight of them, landing
+ * exactly with the eight notes of the ground.
+ */
+const CANON_LINE = phrase(`D5/2 C#5 B4 A4 | G4 F#4 G4 B4`);
 
 /**
  * Beethoven, Symphony No. 5, 1808. Four notes, and an eighth rest that most
@@ -230,6 +237,7 @@ export const MELODIES: Melody[] = [
 		bpm: 120,
 		program: 6,
 		notes: MINUET,
+		verified: 'Mutopia Project, from the Notebook for Anna Magdalena Bach',
 		tags: ['melody']
 	},
 	{
@@ -267,13 +275,14 @@ export const MELODIES: Melody[] = [
 	},
 	{
 		id: 'canon-line',
-		title: 'Canon in D — the first violin',
+		title: 'Canon in D — the line above it',
 		composer: 'Johann Pachelbel',
 		year: 'c. 1680',
-		note: 'What Pachelbel puts over that bass the first time round. Play them on two channels and you have the whole idea of the piece.',
+		note: 'Eight notes over the eight of the ground, one each. Play them on two channels and you have the whole idea of the piece in four bars.',
 		bpm: 64,
 		program: 40,
 		notes: CANON_LINE,
+		verified: 'Mutopia Project, from Jim Paterson’s edition',
 		tags: ['melody', 'slow']
 	},
 	{
@@ -320,6 +329,7 @@ export const MELODIES: Melody[] = [
 		bpm: 84,
 		program: 19,
 		notes: TOCCATA,
+		verified: 'Mutopia Project, from the Bach-Gesellschaft edition',
 		tags: ['melody']
 	},
 	{
