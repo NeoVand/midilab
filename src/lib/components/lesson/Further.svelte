@@ -57,7 +57,9 @@
 	};
 </script>
 
-<section class={cn('flex flex-col gap-3 rounded-lg border bg-surface-sunken p-5', className)}>
+<section
+	class={cn('reading flex flex-col gap-3 rounded-lg border bg-surface-sunken p-5', className)}
+>
 	<div class="flex flex-col gap-1">
 		<h2 class="text-sm font-semibold">{title}</h2>
 		{#if lead}

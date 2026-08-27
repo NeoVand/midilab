@@ -541,18 +541,66 @@
 	 * Prose measure.
 	 *
 	 * A lesson column is 54rem because the instruments in it want that room.
-	 * Running body text to the same width gives ~95 characters a line, which
-	 * is far past the point where the eye reliably finds the next line. So
-	 * paragraphs and lists are capped at 52ch — measured, not guessed: Inter's
-	 * `0` is 9.46px at 15px while its average character is 7px, so 52ch lands
-	 * at ~70 real characters — while widgets, tables and
-	 * callouts keep the full column — and the resulting rhythm of narrow text
-	 * against wide instruments is doing real work, not decoration.
+	 * Running body text to the same width gives ~95 characters a line, which is
+	 * far past the point where the eye reliably finds the next line. So text is
+	 * capped, widgets and tables keep the full column, and the rhythm of narrow
+	 * text against wide instruments is doing real work.
+	 *
+	 * ## Why a length and not a `ch`
+	 *
+	 * Because boxes have to line up with paragraphs, and they cannot if the two
+	 * are measured differently. A callout capped at 52ch is 52 characters plus
+	 * its own padding, so it overhangs the paragraph above it by the padding;
+	 * cap the text inside it instead and the box overhangs by even more. One
+	 * length applied to both puts every right edge on the same line, and a
+	 * boxed aside ends up marginally narrower inside than a bare paragraph,
+	 * which is what an indented aside should be.
+	 *
+	 * 33rem is ~70 real characters of Inter at this size — the same target the
+	 * old 52ch was aiming at, expressed in something a border can share.
 	 */
+	:root {
+		--measure: 33rem;
+	}
 	.measure,
 	.lesson-prose section > :where(p, ul, ol),
 	.lesson-prose > :where(p, ul, ol) {
-		max-width: 52ch;
+		max-width: var(--measure);
+	}
+	/*
+	 * Everything else that is read rather than operated.
+	 *
+	 * The rule above only reaches paragraphs written directly in a lesson. Every
+	 * component that renders prose of its own — a callout, a quiz, a figure's
+	 * caption, the objectives at the top — escaped it, and ran to the full 54rem.
+	 * One page could therefore hold running text at five different widths, none
+	 * of them chosen. This is the opt-in for the rest.
+	 */
+	.reading {
+		max-width: var(--measure);
+	}
+	/*
+	 * And the default, for prose nobody remembered to mark.
+	 *
+	 * Opting in one component at a time loses: a lesson has instruction lines
+	 * inside its instruments, footnotes under its panels and leads above its
+	 * checkpoints, all of them authored as plain paragraphs in thirty-eight
+	 * different files. Every one that got missed ran to ninety characters a
+	 * line next to a paragraph running seventy, which is the mismatch you see
+	 * before you can name it.
+	 *
+	 * Narrow by default is safe in a way that wide by default is not: a
+	 * max-width only ever shrinks, and every one of these already sits in a
+	 * column narrower than the cap or wants to be. `:where` keeps the
+	 * specificity at zero so a single utility class overrides it, and
+	 * `.full-measure` is there for the case that genuinely needs the column.
+	 */
+	.lesson-prose :where(p, li) {
+		max-width: var(--measure);
+	}
+	.lesson-prose .full-measure,
+	.lesson-prose :where(p, li).full-measure {
+		max-width: none;
 	}
 
 	/*
@@ -580,7 +628,7 @@
 	}
 
 	.prose-body {
-		max-width: 52ch;
+		max-width: var(--measure);
 		font-size: var(--text-base);
 		line-height: 1.65;
 	}

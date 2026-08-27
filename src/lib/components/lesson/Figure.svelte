@@ -142,7 +142,7 @@
 	</div>
 
 	{#if children}
-		<figcaption class="text-sm leading-relaxed text-muted-foreground">
+		<figcaption class="reading text-sm leading-relaxed text-muted-foreground">
 			{@render children()}
 		</figcaption>
 	{/if}

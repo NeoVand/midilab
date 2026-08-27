@@ -85,7 +85,7 @@
 		</div>
 	</header>
 
-	<section class="rounded-lg border bg-surface-sunken p-5">
+	<section class="reading rounded-lg border bg-surface-sunken p-5">
 		<p class="mb-3 text-sm font-medium">By the end you can</p>
 		<ul class="flex flex-col gap-2">
 			{#each lesson.objectives as o (o)}

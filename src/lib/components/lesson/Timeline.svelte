@@ -28,7 +28,7 @@
 	let { entries, class: className }: Props = $props();
 </script>
 
-<ol class={cn('relative flex flex-col gap-5 pl-6', className)}>
+<ol class={cn('reading relative flex flex-col gap-5 pl-6', className)}>
 	<!--
 		The rail stops at the last marker rather than running to the bottom of
 		the list, so it does not trail off past the final entry like an

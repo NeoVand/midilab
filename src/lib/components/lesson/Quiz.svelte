@@ -19,7 +19,7 @@
 	const correct = $derived(picked === answer);
 </script>
 
-<div class={cn('flex flex-col gap-3 rounded-lg border p-4', className)}>
+<div class={cn('reading flex flex-col gap-3 rounded-lg border p-4', className)}>
 	<p class="text-base font-medium">{question}</p>
 	{#if children}
 		<div>{@render children()}</div>
