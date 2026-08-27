@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import StepSequencer from '$lib/components/midi/StepSequencer.svelte';
 	import CodeSandbox from '$lib/components/midi/CodeSandbox.svelte';
@@ -128,7 +130,10 @@ log('waiting for external clock — start your hardware');`
 		<p class="prose-body">
 			Everything above assumes you are the clock leader. To follow instead, you stop generating time
 			and start counting it: 24 incoming clock ticks make a quarter note, so every sixth tick is a
-			sixteenth. Start resets your position to zero, Continue does not, and Song Position Pointer
+			sixteenth. Start resets your position to zero, Continue does not, and <Xref
+				to="midi-clock"
+				label="Song Position Pointer"
+			/>
 			relocates you before either.
 		</p>
 		<Callout variant="gotcha" title="Following costs you the lookahead">
@@ -169,6 +174,11 @@ log('waiting for external clock — start your hardware');`
 		]}
 		answer={1}
 		explanation="Setting nextTime = now() + interval bakes in the scheduling error of every single step, and the errors accumulate in one direction. Advancing nextTime += interval keeps the grid exact no matter how late any individual wake-up was."
+	/>
+
+	<Further
+		refs={['two-clocks', 'mdn-webaudio', 'spec-smf']}
+		lead="Scheduling, the API that makes it possible, and the file format to export what you built."
 	/>
 
 	<Checkpoints lesson={meta.id}>

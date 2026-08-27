@@ -6,6 +6,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import CcPanel from '$lib/components/midi/CcPanel.svelte';
 	import CcLearn from '$lib/components/midi/CcLearn.svelte';
@@ -181,9 +183,11 @@
 		<Callout variant="gotcha" title="Almost nobody does this">
 			<p>
 				14-bit CC is rare in practice: it doubles the message rate on a slow wire, and most devices
-				ignore the LSB entirely. The places you <em>will</em> meet 14 bits are pitch bend, which is always
-				14-bit, and NRPNs, which are the proper mechanism for deep parameter editing. Both are coming
-				up next.
+				ignore the LSB entirely. The places you <em>will</em> meet 14 bits are <Xref
+					to="pitch-bend"
+					label="pitch bend"
+				/>, which is always 14-bit, and NRPNs, which are the proper mechanism for deep parameter
+				editing. Both are coming up next.
 			</p>
 			<p class="mt-2">
 				The practical mitigation for zipper noise is at the receiving end: a well-built instrument
@@ -216,6 +220,11 @@
 		]}
 		answer={1}
 		explanation="CC 74 as cutoff is a General MIDI recommendation. Hardware synths in their native modes very often use their own numbering, or expose deep parameters only through NRPN or SysEx. The fix is the implementation chart — or the learn tool above."
+	/>
+
+	<Further
+		refs={['spec-cc', 'somascape-spec', 'spec-gm2']}
+		lead="The authoritative controller list, and the GM 2 document that pins down several controllers MIDI 1.0 left as suggestions."
 	/>
 
 	<Checkpoints lesson={meta.id}>

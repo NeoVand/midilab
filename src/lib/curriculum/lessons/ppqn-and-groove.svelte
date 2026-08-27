@@ -5,8 +5,10 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import GrooveLab from '$lib/components/midi/GrooveLab.svelte';
+	import MelodyPlayer from '$lib/components/midi/MelodyPlayer.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { PPQ, CLOCK_PPQ } from '$lib/midi/clock.svelte';
 
@@ -110,6 +112,16 @@
 				much cruder tool. Most of the time you want swing.
 			</p>
 		</TryThis>
+		<p class="prose-body">
+			None of this is new. Ragtime is built on exactly the arithmetic above — a steady left hand in
+			straight time with the melody deliberately pushed off the beat against it — and the word
+			"swing" arrives from the same idea thirty years later.
+		</p>
+		<MelodyPlayer id="entertainer" credit={false} />
+		<p class="text-sm leading-relaxed text-muted-foreground">
+			Joplin's introduction, from 1902. Every accent in it lands somewhere the underlying pulse is
+			not, which is what your ear hears as the tune leaning forward.
+		</p>
 	</Section>
 
 	<Callout variant="gotcha" title="Swing on the leader does not swing the followers">
@@ -139,6 +151,11 @@
 		options={['960 PPQN', '480 PPQN', '24 PPQN', 'Whatever the follower requests']}
 		answer={2}
 		explanation="Always 24. The clock rate is fixed by the specification and has nothing to do with the sequencer's internal grid. A follower receives 24 ticks per quarter note and interpolates its own events between them."
+	/>
+
+	<Further
+		refs={['spec-smf', 'somascape-mfile', 'wikipedia-euclid']}
+		lead="Sequencer resolution lives in the file format rather than in the protocol, which is why both of the first two are about files."
 	/>
 
 	<Checkpoints lesson={meta.id}>

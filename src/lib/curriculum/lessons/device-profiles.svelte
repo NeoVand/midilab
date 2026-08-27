@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import DeviceProfileEditor from '$lib/components/midi/DeviceProfileEditor.svelte';
 	import CodeSandbox from '$lib/components/midi/CodeSandbox.svelte';
@@ -80,8 +82,10 @@ log(JSON.stringify([
 						>{`{ param: 'filter.cutoff', value: 0.75 }`}</code
 					></pre>
 				<p class="text-xs leading-relaxed text-muted-foreground">
-					Portable. A profile per instrument decides how it is delivered — CC, NRPN or SysEx — and
-					the part survives changing the hardware.
+					Portable. A profile per instrument decides how it is delivered — CC, <Xref
+						to="rpn-nrpn"
+						label="NRPN"
+					/> or <Xref to="sysex" label="SysEx" /> — and the part survives changing the hardware.
 				</p>
 			</div>
 		</div>
@@ -190,6 +194,11 @@ log(JSON.stringify([
 		]}
 		answer={1}
 		explanation="CC numbers are per-device conventions. Storing intent and translating at the edge means one profile swap re-targets an entire piece — and it is the only form that still means something in five years when the hardware has changed."
+	/>
+
+	<Further
+		refs={['spec-cc', 'spec-midi-ci', 'spec-midi2']}
+		lead="Writing a profile by hand is a workaround. MIDI-CI and Property Exchange are the attempt to make devices describe themselves."
 	/>
 
 	<Checkpoints lesson={meta.id}>

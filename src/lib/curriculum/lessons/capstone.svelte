@@ -4,6 +4,8 @@
 	import Callout from '$lib/components/lesson/Callout.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import StepSequencer from '$lib/components/midi/StepSequencer.svelte';
 	import Patchbay from '$lib/components/midi/Patchbay.svelte';
 	import ChannelGrid from '$lib/components/midi/ChannelGrid.svelte';
@@ -97,9 +99,9 @@
 		<p>
 			You can read raw MIDI bytes at a glance and say what they mean. You can route several
 			instruments deliberately, choose a clock master, recall patches by bank and program, automate
-			parameters, and recover from a stuck note without guessing. You can measure your own rig's
-			latency and jitter instead of arguing about it. You can read an implementation chart as an API
-			specification, and map an instrument that has none.
+			parameters, and recover from a <Xref to="note-on-off" label="stuck note" /> without guessing. You
+			can measure your own rig's latency and jitter instead of arguing about it. You can read an implementation
+			chart as an API specification, and map an instrument that has none.
 		</p>
 		<p class="mt-2">
 			And you can write code that drives all of it — with a scheduler that stays in time, note
@@ -111,6 +113,11 @@
 			now that they are over.
 		</p>
 	</Callout>
+
+	<Further
+		refs={['spec-index', 'spec-summary', 'somascape-spec', 'history-midi']}
+		lead="Everything the course compressed, in the form the people who define it publish it. The last one is the story of how it came to exist at all."
+	/>
 
 	<Checkpoints lesson={meta.id} title="The capstone">
 		<Checkpoint

@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import MidiFileLab from '$lib/components/midi/MidiFileLab.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
@@ -114,10 +116,10 @@
 
 	<Callout variant="note" title="Two things carry over from the cable">
 		<p>
-			MIDI files use <strong>running status</strong> exactly as a live stream does — a repeated status
-			byte is simply omitted. And a track's events are stored in time order with no timestamps, only deltas,
-			so a corrupted byte early in a track shifts everything after it. Both facts mean a file parser has
-			to be a proper streaming parser, not a series of fixed offsets.
+			MIDI files use <strong><Xref to="note-on-off" label="running status" /></strong> exactly as a live
+			stream does — a repeated status byte is simply omitted. And a track's events are stored in time
+			order with no timestamps, only deltas, so a corrupted byte early in a track shifts everything after
+			it. Both facts mean a file parser has to be a proper streaming parser, not a series of fixed offsets.
 		</p>
 	</Callout>
 
@@ -154,9 +156,11 @@
 			arriving as a practical problem rather than a principle.
 		</p>
 		<p class="prose-body">
-			If you want a file to sound approximately right elsewhere, write General MIDI program numbers
-			and keep drums on channel 10. If you want it to sound <em>exactly</em> right, you need the audio,
-			or the instrument, or both.
+			If you want a file to sound approximately right elsewhere, write <Xref
+				to="programs-and-banks"
+				label="General MIDI"
+			/> program numbers and keep drums on channel 10. If you want it to sound <em>exactly</em> right,
+			you need the audio, or the instrument, or both.
 		</p>
 	</Section>
 
@@ -165,6 +169,11 @@
 		options={['120 BPM', '150 BPM', '500,000 BPM', '96 BPM']}
 		answer={0}
 		explanation="0x07A120 is 500,000 — microseconds per quarter note, not BPM. 60,000,000 ÷ 500,000 = 120. The inversion is the trap: a bigger number in the file means a slower tempo."
+	/>
+
+	<Further
+		refs={['spec-smf', 'somascape-mfile', 'wikipedia-smf', 'tonejs-midi']}
+		lead="The format from three angles, and a well-tested parser to disagree with once you have written your own."
 	/>
 
 	<Checkpoints lesson={meta.id}>

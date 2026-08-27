@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
@@ -99,9 +100,9 @@
 				</Button>
 			</div>
 			<p class="text-xs leading-relaxed text-muted-foreground">
-				Panic sends All Notes Off and All Sound Off on all sixteen channels — the same thing the red
-				button in the dock does. Every MIDI application you have ever used has one of these, and now
-				you know exactly why.
+				Panic sends <Xref to="panic" label="All Notes Off" /> and All Sound Off on all sixteen channels
+				— the same thing the red button in the dock does. Every MIDI application you have ever used has
+				one of these, and now you know exactly why.
 			</p>
 		</TryThis>
 
@@ -188,9 +189,10 @@
 
 		<Callout variant="note" title="You will not meet it in the browser">
 			<p>
-				The Web MIDI API always hands you complete messages with their status byte restored, so you
-				never have to implement running status to receive. You <em>do</em> need it to parse a Standard
-				MIDI File, which uses the same trick — that is Lesson 18.
+				The <Xref to="web-midi" label="Web MIDI" /> API always hands you complete messages with their
+				status byte restored, so you never have to implement running status to receive. You
+				<em>do</em> need it to parse a Standard MIDI File, which uses the same trick — that is Lesson
+				18.
 			</p>
 		</Callout>
 	</Section>
@@ -212,6 +214,11 @@
 		]}
 		answer={1}
 		explanation="The instrument has no concept of a sequencer, a transport or a stop button. It received an instruction to start a note and has not received one to stop it. This is why well-behaved sequencers send All Notes Off when you press stop — and why the ones that forget give you a drone until you hit panic."
+	/>
+
+	<Further
+		refs={['spec-summary', 'somascape-spec', 'spec-midi1']}
+		lead="Running status and the velocity-zero convention are both stated outright in the specification, and explained rather better in the second one."
 	/>
 
 	<Checkpoints lesson={meta.id}>

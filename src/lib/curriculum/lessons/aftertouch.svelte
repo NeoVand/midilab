@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Fader from '$lib/components/midi/Fader.svelte';
 	import Drone from '$lib/components/midi/Drone.svelte';
@@ -135,8 +137,9 @@
 		<Callout variant="key" title="But the idea did not die">
 			<p>
 				Per-note expression turned out to matter enormously — it is what makes a controller feel
-				like an instrument rather than a switch panel. MPE achieves it a different way, by giving
-				each note its own channel so that ordinary <em>channel</em> pressure and bend become
+				like an instrument rather than a switch panel. <Xref to="mpe" label="MPE" /> achieves it a different
+				way, by giving each note its own channel so that ordinary <em>channel</em> pressure and bend
+				become
 				<em>per-note</em> pressure and bend. Same goal, reached by exploiting what MIDI already had. MIDI
 				2.0 goes further and makes per-note controllers a first-class part of the protocol.
 			</p>
@@ -183,6 +186,11 @@
 		]}
 		answer={1}
 		explanation="Only polyphonic aftertouch carries a note number, so only it can address one note within a chord. Channel aftertouch, the mod wheel and pitch bend are all channel-wide by definition — which is exactly the limitation MPE was invented to route around."
+	/>
+
+	<Further
+		refs={['spec-summary', 'wikipedia-mpe', 'spec-mpe']}
+		lead="Pressure as specified, and the history of what happened to the idea once controllers could finally do it per note."
 	/>
 
 	<Checkpoints lesson={meta.id}>

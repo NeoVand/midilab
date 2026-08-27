@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import NoteExplorer from '$lib/components/midi/NoteExplorer.svelte';
@@ -129,7 +130,7 @@
 	</Section>
 
 	<TryThis title="Octaves are just +12">
-		<PhrasePlayer notes={OCTAVES} bpm={110} label="Play seven C's" />
+		<PhrasePlayer notes={OCTAVES} bpm={110} label="Play seven C's" program={0} />
 		<p class="text-sm leading-relaxed">
 			Notes 24, 36, 48, 60, 72, 84 and 96 — every one of them a C, each twice the frequency of the
 			last. Doubling the frequency and adding 12 to the note number are the same operation, which is
@@ -165,7 +166,9 @@
 				</p>
 			</div>
 		</div>
-		<PhrasePlayer notes={CHORD} bpm={100} label="Hear C major, then C minor" />
+		<!-- Strings, because the difference between major and minor is in two
+		     notes sounding *together* for long enough to colour each other. -->
+		<PhrasePlayer notes={CHORD} bpm={100} label="Hear C major, then C minor" program={48} />
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			60-64-67, then 60-63-67. The middle note moved down by one. That is the entire difference
 			between happy and sad, expressed as arithmetic.
@@ -226,6 +229,11 @@
 		]}
 		answer={1}
 		explanation="Names are labels applied by each device's convention; only the number is transmitted. The synth is probably labelling with middle C = C3 and the sequencer with middle C = C4, which shifts every name by one octave. Look at the number the two agree on."
+	/>
+
+	<Further
+		refs={['spec-summary', 'somascape-spec', 'scala']}
+		lead="Note numbers are the easy part of pitch. The last of these is where the argument about what a note *is* has been going on for four hundred years."
 	/>
 
 	<Checkpoints lesson={meta.id}>

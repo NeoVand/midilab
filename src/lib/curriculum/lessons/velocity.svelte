@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import VelocityMeter from '$lib/components/midi/VelocityMeter.svelte';
 	import VelocityTimbre from '$lib/components/midi/VelocityTimbre.svelte';
@@ -87,7 +88,12 @@
 	</Section>
 
 	<TryThis title="The same note, five ways">
-		<PhrasePlayer notes={DYNAMICS} bpm={100} label="Play note 60 at velocity 20, 45, 70, 95, 120" />
+		<PhrasePlayer
+			notes={DYNAMICS}
+			bpm={100}
+			label="Play note 60 at velocity 20, 45, 70, 95, 120"
+			program={0}
+		/>
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			One pitch, five velocities. Listen for the tone change, not just the level.
 		</p>
@@ -110,7 +116,7 @@
 					Per note. Set once, at the instant the note starts, and never changes again for that note.
 					It describes <em>how it was played</em>.
 				</p>
-				<PhrasePlayer notes={PHRASE} bpm={112} label="Phrase, played dynamically" />
+				<PhrasePlayer notes={PHRASE} bpm={112} label="Phrase, played dynamically" program={0} />
 			</div>
 			<div class="flex flex-col gap-3 rounded-lg border p-4">
 				<p class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
@@ -120,7 +126,7 @@
 					Every note at velocity 96. Identical pitches, identical rhythm. This is what people mean
 					when they say a MIDI part sounds "programmed".
 				</p>
-				<PhrasePlayer notes={FLAT} bpm={112} label="Phrase, all at 96" />
+				<PhrasePlayer notes={FLAT} bpm={112} label="Phrase, all at 96" program={0} />
 			</div>
 		</div>
 		<Callout variant="key" title="Volume is a different message">
@@ -206,6 +212,11 @@
 			becomes a mechanism.
 		</p>
 	</Section>
+
+	<Further
+		refs={['spec-summary', 'somascape-spec']}
+		lead="Velocity is one byte with no defined meaning beyond &quot;how hard&quot;. Both of these say so, at different lengths."
+	/>
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint

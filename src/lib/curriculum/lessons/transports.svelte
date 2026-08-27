@@ -4,6 +4,8 @@
 	import Callout from '$lib/components/lesson/Callout.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import CableFigure from '$lib/components/midi/CableFigure.svelte';
 	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
@@ -126,9 +128,9 @@
 
 	<Section title="What the browser can see">
 		<p class="prose-body">
-			Web MIDI does not care which transport a port uses. A DIN interface, a USB keyboard, a
-			Bluetooth device and a virtual loopback port all appear in the same list, with the same API.
-			If the operating system can see it, the browser can — with your permission.
+			<Xref to="web-midi" label="Web MIDI" /> does not care which transport a port uses. A DIN interface,
+			a USB keyboard, a Bluetooth device and a virtual loopback port all appear in the same list, with
+			the same API. If the operating system can see it, the browser can — with your permission.
 		</p>
 		<DevicePanel />
 		<p class="text-sm leading-relaxed text-muted-foreground">
@@ -148,6 +150,11 @@
 		]}
 		answer={1}
 		explanation="Both those manufacturers use Type A, so a Type B adapter produces exactly this symptom: complete silence with no other clue. Channel mismatch is the other classic cause, but it is worth eliminating the physical layer first because it fails so completely and so invisibly."
+	/>
+
+	<Further
+		refs={['spec-midi1', 'wikipedia-midi', 'caniuse-midi']}
+		lead="The electrical specification is in the first; the third tells you which browsers can see any of it."
 	/>
 
 	<Checkpoints lesson={meta.id}>

@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import Xref from '$lib/components/lesson/Xref.svelte';
@@ -36,9 +37,10 @@
 <LessonShell lesson={meta}>
 	<Section>
 		<p class="prose-body">
-			MIDI Clock answers "what tempo are we at?" It does not answer "what time is it?" — and for
-			anything involving tape, video or a fixed timeline, that second question is the one that
-			matters. There are three common answers to synchronisation, and they solve different problems.
+			<Xref to="midi-clock" label="MIDI Clock" /> answers "what tempo are we at?" It does not answer "what
+			time is it?" — and for anything involving tape, video or a fixed timeline, that second question
+			is the one that matters. There are three common answers to synchronisation, and they solve different
+			problems.
 		</p>
 	</Section>
 
@@ -105,8 +107,8 @@
 		</div>
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			Eight messages, four bits of payload each: 32 bits to say what time it is. There is also a
-			Full Time Code message, sent as SysEx, used for locating while stopped — quarter frames only
-			flow while running.
+			Full Time Code message, sent as <Xref to="sysex" label="SysEx" />, used for locating while
+			stopped — quarter frames only flow while running.
 		</p>
 		<div class="flex flex-wrap gap-2">
 			<Button variant="outline" size="sm" onclick={() => engine.sendBytes([0xf1, 0x00])}>
@@ -146,8 +148,8 @@
 			<Textarea bind:value={policy} rows={8} class="font-mono text-xs" spellcheck={false} />
 			<p class="text-xs leading-relaxed text-muted-foreground">
 				Three things worth stating explicitly for every session: who sends clock, who follows, and
-				which devices have Local Control off. Almost every "MIDI is being weird" problem is one of
-				those three being different from what you assumed.
+				which devices have <Xref to="panic" label="Local Control" /> off. Almost every "MIDI is being
+				weird" problem is one of those three being different from what you assumed.
 			</p>
 		</TryThis>
 	</Section>
@@ -170,6 +172,11 @@
 		options={['MIDI Clock', 'MIDI Time Code', 'Song Position Pointer', 'Ableton Link']}
 		answer={1}
 		explanation="MIDI Clock and Song Position Pointer both measure musical time — beats and sixteenths — which moves when the tempo does. MTC carries hours, minutes, seconds and frames, which do not. Link syncs tempo and phase between peers but is also musical, not absolute."
+	/>
+
+	<Further
+		refs={['wikipedia-mtc', 'ableton-link', 'spec-universal-sysex']}
+		lead="Time code, the peer-to-peer alternative, and the full-frame SysEx message that carries a location in one go."
 	/>
 
 	<Checkpoints lesson={meta.id}>

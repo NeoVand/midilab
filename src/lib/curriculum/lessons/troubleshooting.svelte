@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Troubleshooter from '$lib/components/midi/Troubleshooter.svelte';
 	import MidiMonitor from '$lib/components/midi/MidiMonitor.svelte';
@@ -150,8 +152,9 @@
 		</div>
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			An illustrative chart, not a real device. Read across: this one <em>recognises</em> channel
-			aftertouch but never <em>sends</em> it, follows clock but never generates it, and only reads the
-			MSB half of Bank Select — so sending Bank LSB to it does nothing at all, correctly.
+			aftertouch but never <em>sends</em> it, follows clock but never generates it, and only reads
+			the MSB half of <Xref to="programs-and-banks" label="Bank Select" /> — so sending Bank LSB to it
+			does nothing at all, correctly.
 		</p>
 		<Callout variant="convention" title="The chart is the API documentation">
 			<p>
@@ -172,6 +175,11 @@
 		]}
 		answer={1}
 		explanation="Intermittent hanging notes come either from a loop swallowing Note Offs in a message storm, or from a long Thru chain dropping bytes. Counting the messages from a single key press distinguishes the two immediately. Panic clears the symptom without telling you anything."
+	/>
+
+	<Further
+		refs={['spec-summary', 'spec-index', 'somascape-spec']}
+		lead="When the monitor says a message arrived and the instrument disagrees, the implementation chart and these documents are the arbiters."
 	/>
 
 	<Checkpoints lesson={meta.id}>

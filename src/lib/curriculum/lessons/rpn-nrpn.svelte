@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import RpnLab from '$lib/components/midi/RpnLab.svelte';
 	import Drone from '$lib/components/midi/Drone.svelte';
@@ -72,7 +74,7 @@
 		</div>
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			That is the complete list. RPN 0,0 — bend sensitivity — is the one you will use; RPN 0,6 is
-			how an MPE zone is declared, which is Act V.
+			how an <Xref to="mpe" label="MPE" /> zone is declared, which is Act V.
 		</p>
 	</Section>
 
@@ -155,6 +157,11 @@
 		]}
 		answer={1}
 		explanation="A range beyond 127 rules out a plain 7-bit CC. NRPN with both Data Entry halves gives 14 bits — 16,384 steps — which comfortably covers 1024 positions. This is exactly why deep editing on hardware synths uses NRPN rather than CC."
+	/>
+
+	<Further
+		refs={['spec-cc', 'spec-gm2', 'somascape-spec']}
+		lead="The registered parameters are assigned centrally; GM 2 adds several more. Non-registered ones are in your instrument’s manual and nowhere else."
 	/>
 
 	<Checkpoints lesson={meta.id}>

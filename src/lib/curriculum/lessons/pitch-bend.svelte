@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Wheel from '$lib/components/midi/Wheel.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
@@ -168,6 +169,11 @@
 		]}
 		answer={1}
 		explanation="LSB first: 0x00 = 0. Then MSB: 0x40 = 64. Combined, (64 << 7) | 0 = 8192 — dead centre. This is the message a controller sends when the wheel returns to rest, and you will see a great many of them."
+	/>
+
+	<Further
+		refs={['spec-summary', 'spec-mpe', 'somascape-spec']}
+		lead="Bend is one message and one RPN. The MPE document is here because it is what happens when you decide channel-wide bend is not enough."
 	/>
 
 	<Checkpoints lesson={meta.id}>

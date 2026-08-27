@@ -4,6 +4,7 @@
 	import Callout from '$lib/components/lesson/Callout.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import CableFigure from '$lib/components/midi/CableFigure.svelte';
 	import Xref from '$lib/components/lesson/Xref.svelte';
@@ -65,8 +66,9 @@
 			The chain works, and for two or three devices it is completely fine. What accumulates is not
 			an error but a smearing: each opto-isolator adds a small delay and rounds the edges of the
 			signal slightly, and eventually a device at the end of a long chain starts missing bytes. A
-			missed byte in the middle of a Note Off is a stuck note, which is why the symptom of an
-			over-long chain is intermittent hanging notes rather than clean failure.
+			missed byte in the middle of a Note Off is a <Xref to="note-on-off" label="stuck note" />,
+			which is why the symptom of an over-long chain is intermittent hanging notes rather than clean
+			failure.
 		</p>
 	</Section>
 
@@ -100,8 +102,9 @@
 			<p>
 				<strong>MIDI Thru left enabled</strong> on a device in a chain that also has a return path.
 				<strong>Soft Thru / MIDI echo</strong> switched on in a DAW while the hardware also has
-				Local Control on. And <strong>a Thru box wired into a ring</strong> rather than a star. All three
-				are configuration, not hardware — nothing needs replacing.
+				<Xref to="panic" label="Local Control" /> on. And
+				<strong>a Thru box wired into a ring</strong> rather than a star. All three are configuration,
+				not hardware — nothing needs replacing.
 			</p>
 		</Callout>
 	</Section>
@@ -151,6 +154,11 @@
 		]}
 		answer={1}
 		explanation="Two paths are reaching the keyboard's sound engine: the internal one and the echo from the computer. Break either. Local Control off is usually the right choice, because it leaves the software in charge of what is actually heard."
+	/>
+
+	<Further
+		refs={['spec-midi1', 'somascape-spec', 'wikipedia-midi']}
+		lead="What Thru is required to do, and the hardware description that explains why a chain of them degrades."
 	/>
 
 	<Checkpoints lesson={meta.id}>

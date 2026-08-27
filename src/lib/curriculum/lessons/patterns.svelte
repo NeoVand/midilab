@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import PatternLab from '$lib/components/midi/PatternLab.svelte';
 	import CodeSandbox from '$lib/components/midi/CodeSandbox.svelte';
@@ -266,6 +267,11 @@ log('3-over-8, 7-over-16 and 5-over-12 — they realign every 48 bars');`
 		]}
 		answer={1}
 		explanation="A grid is a stored list, so every cycle is identical by construction. A pattern is a function of the cycle number, so <bd sd> can give you one thing this bar and another the next — and the same mechanism gives you probability, evolution and infinitely long sequences."
+	/>
+
+	<Further
+		refs={['toussaint-euclid', 'wikipedia-euclid', 'mutopia']}
+		lead="The paper that noticed a neutron-timing algorithm and the world’s folk rhythms are the same object. Twelve pages, and it changes how you hear a bar."
 	/>
 
 	<Checkpoints lesson={meta.id}>

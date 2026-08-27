@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import Xref from '$lib/components/lesson/Xref.svelte';
@@ -275,8 +276,9 @@
 			CC 124–127 set Omni and Mono/Poly modes, and are largely historical. Omni On means "ignore
 			channel addresses and play everything" — occasionally useful for a quick test, always a
 			liability in a multi-device rig. Mono Mode restricts a channel to one note at a time and is
-			the ancestor of how MPE allocates voices. You will rarely send any of them deliberately, but
-			you should recognise them when a device behaves strangely after receiving one.
+			the ancestor of how <Xref to="mpe" label="MPE" /> allocates voices. You will rarely send any of
+			them deliberately, but you should recognise them when a device behaves strangely after receiving
+			one.
 		</p>
 		<Keyboard low={48} octaves={3} height={110} />
 	</Section>
@@ -291,6 +293,11 @@
 		]}
 		answer={1}
 		explanation="All Notes Off releases the keys; it does not lift the pedal. A held CC 64 will keep everything sounding, exactly as a real piano would. Lift the pedal first, then send All Notes Off — which is why a correct panic routine does them in that order."
+	/>
+
+	<Further
+		refs={['spec-cc', 'spec-summary', 'somascape-spec']}
+		lead="Controllers 120 to 127 are the Channel Mode messages, and the difference between two of them is the whole of this lesson."
 	/>
 
 	<Checkpoints lesson={meta.id}>

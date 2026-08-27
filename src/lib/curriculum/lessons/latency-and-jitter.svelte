@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import SchedulerLab from '$lib/components/midi/SchedulerLab.svelte';
 	import LatencyTest from '$lib/components/midi/LatencyTest.svelte';
@@ -157,6 +158,11 @@ setInterval(() => {
 		]}
 		answer={1}
 		explanation="Consistent means correctable. A fixed offset is latency, and every DAW has a track delay control for exactly this. Only inconsistency — jitter — is genuinely unfixable, which is why measuring the spread matters more than measuring the average."
+	/>
+
+	<Further
+		refs={['two-clocks', 'mdn-webaudio', 'w3c-webmidi']}
+		lead="The first of these is the article that taught the web how to sequence music. Read it even if you never write a line of JavaScript."
 	/>
 
 	<Checkpoints lesson={meta.id}>

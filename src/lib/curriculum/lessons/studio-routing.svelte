@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Patchbay from '$lib/components/midi/Patchbay.svelte';
 	import ChannelGrid from '$lib/components/midi/ChannelGrid.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
@@ -103,6 +104,11 @@
 			plan against reality by playing something.
 		</p>
 	</Section>
+
+	<Further
+		refs={['spec-summary', 'ableton-link', 'wikipedia-midi']}
+		lead="A routing plan is mostly a channel map and a decision about clock. These are the reference tables for both."
+	/>
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint

@@ -5,8 +5,10 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ProgramBrowser from '$lib/components/midi/ProgramBrowser.svelte';
+	import MelodyPlayer from '$lib/components/midi/MelodyPlayer.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import Knob from '$lib/components/midi/Knob.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
@@ -48,6 +50,20 @@
 			hear a chord.
 		</p>
 		<ProgramBrowser class="max-h-[26rem] scrollbar-thin overflow-y-auto pr-1" />
+	</TryThis>
+
+	<TryThis title="The same tune through the whole list">
+		<p class="text-sm leading-relaxed">
+			A chord tells you the colour of a program. A melody you already know tells you what it is
+			<em>for</em> — and makes the point the whole course rests on impossible to miss, because you can
+			hum along while the instrument changes underneath you.
+		</p>
+		<MelodyPlayer id="minuet-in-g" voices={[6, 0, 24, 40, 56, 73, 12, 105]} credit={false} />
+		<p class="text-xs leading-relaxed text-muted-foreground">
+			Harpsichord, piano, nylon guitar, violin, trumpet, flute, marimba, banjo. Petzold wrote this
+			for the first of those in about 1725. Every other reading is one Program Change away, and the
+			note data never moves.
+		</p>
 	</TryThis>
 
 	<Callout variant="gotcha" title="The off-by-one that will get you">
@@ -207,6 +223,11 @@
 		]}
 		answer={0}
 		explanation="Program 40 is a violin only under General MIDI. A synth playing its own preset banks will have something entirely different at slot 40 — and that is correct behaviour. Check GM mode first, then the bank, then the off-by-one."
+	/>
+
+	<Further
+		refs={['spec-gm', 'spec-gm2', 'wikipedia-gm']}
+		lead="The sound sets themselves. The third has the whole 128-program list in a form you can copy out of."
 	/>
 
 	<Checkpoints lesson={meta.id}>

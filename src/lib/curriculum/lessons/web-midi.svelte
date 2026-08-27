@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import CodeSandbox from '$lib/components/midi/CodeSandbox.svelte';
 	import DevicePanel from '$lib/components/midi/DevicePanel.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
@@ -101,9 +103,11 @@ access.onstatechange = (e) => console.log(e.port.name, e.port.state);`}</code
 		<Callout variant="key" title="Web MIDI gives you complete messages">
 			<p>
 				Unlike a raw serial stream, <code class="rounded-sm bg-muted px-1">onmidimessage</code>
-				hands you one whole message per event, with the status byte restored even if running status was
-				used on the wire. You never have to implement a streaming parser to <em>receive</em> — only to
-				read MIDI files.
+				hands you one whole message per event, with the status byte restored even if <Xref
+					to="note-on-off"
+					label="running status"
+				/> was used on the wire. You never have to implement a streaming parser to <em>receive</em> —
+				only to read MIDI files.
 			</p>
 			<p class="mt-2">
 				The same applies going out: <code class="rounded-sm bg-muted px-1">send()</code> wants a complete
@@ -143,6 +147,11 @@ access.onstatechange = (e) => console.log(e.port.name, e.port.state);`}</code
 	<Section title="Your ports">
 		<DevicePanel />
 	</Section>
+
+	<Further
+		refs={['w3c-webmidi', 'mdn-webmidi', 'caniuse-midi', 'webmidi-repo']}
+		lead="The normative specification, the usable version of it, the support table, and the issue tracker where every ambiguity has already been argued about."
+	/>
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint

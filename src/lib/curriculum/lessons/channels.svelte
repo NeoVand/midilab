@@ -5,11 +5,14 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import ChannelGrid from '$lib/components/midi/ChannelGrid.svelte';
 	import PadGrid from '$lib/components/midi/PadGrid.svelte';
 	import PhrasePlayer from '$lib/components/midi/PhrasePlayer.svelte';
+	import MelodyPlayer from '$lib/components/midi/MelodyPlayer.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
 	import { synth } from '$lib/audio/synth';
@@ -108,10 +111,11 @@
 
 	<Callout variant="key" title="Every channel keeps its own state">
 		<p>
-			Program, volume, pan, pitch bend, mod wheel, sustain pedal, every controller — all of it is
-			per channel. Bend channel 1 and channel 2 does not move. This is why a single synth can play
-			bass and strings simultaneously without them interfering, and it is also the constraint that
-			MPE later exploits.
+			Program, volume, pan, <Xref to="pitch-bend" label="pitch bend" />, mod wheel, sustain pedal,
+			every controller — all of it is per channel. Bend channel 1 and channel 2 does not move. This
+			is why a single synth can play bass and strings simultaneously without them interfering, and
+			it is also the constraint that
+			<Xref to="mpe" label="MPE" /> later exploits.
 		</p>
 	</Callout>
 
@@ -135,7 +139,17 @@
 				</Button>
 			{/each}
 		</div>
-		<PhrasePlayer notes={audible} bpm={104} label="Play the arrangement" loop variant="default" />
+		<!-- `program={null}`: this arrangement has already given each of its four
+		     channels its own instrument, and one Program Change here would quietly
+		     overwrite the bass with whatever this widget preferred. -->
+		<PhrasePlayer
+			notes={audible}
+			bpm={104}
+			label="Play the arrangement"
+			loop
+			variant="default"
+			program={null}
+		/>
 		<ChannelGrid />
 		<p class="text-xs leading-relaxed text-muted-foreground">
 			The grid above is live. Click a cell to change which channel the keyboard and pads transmit on
@@ -143,12 +157,36 @@
 		</p>
 	</TryThis>
 
+	<TryThis title="One phrase, four addresses">
+		<p class="text-sm leading-relaxed">
+			The arrangement above is four different parts. This is something stranger and cheaper: the
+			<em>same</em> eight bars, sent four times to four different channels, each entry two bars later
+			than the last. That is all a round is — and it is the shortest possible proof that a channel is
+			an address rather than a track.
+		</p>
+		<MelodyPlayer
+			id="frere-jacques"
+			credit={false}
+			voicesInRound={[
+				{ channel: 0, delay: 0, program: 73 },
+				{ channel: 1, delay: 8, program: 11 },
+				{ channel: 2, delay: 16, program: 42 },
+				{ channel: 3, delay: 24, program: 33 }
+			]}
+		/>
+		<p class="text-xs leading-relaxed text-muted-foreground">
+			Flute, vibraphone, cello and bass. Watch the monitor in the dock: the note numbers repeat
+			exactly, four times over, and the only thing that differs is the low nibble of the status
+			byte. One cable, one melody, four voices.
+		</p>
+	</TryThis>
+
 	<Section title="Multitimbral is the word for this">
 		<p class="prose-body">
 			An instrument that can play different sounds on different channels at the same time is called
 			<strong>multitimbral</strong>. Most modern synths are, to some degree — your OP-XY, an MPC, a
-			software instrument rack, a General MIDI module. Some vintage synths are not, and will simply
-			play everything they receive with one sound regardless of channel.
+			software instrument rack, a <Xref to="programs-and-banks" label="General MIDI" /> module. Some vintage
+			synths are not, and will simply play everything they receive with one sound regardless of channel.
 		</p>
 		<p class="prose-body">
 			Two settings govern what a receiver does with channels, and both live in its menus rather than
@@ -218,6 +256,11 @@
 		]}
 		answer={1}
 		explanation="Mismatched channels are the single most common cause of 'MIDI is not working'. Note that turning Omni ON would also make it play — but that is a sticking plaster that will bite you when you add a second instrument. Match the channels deliberately."
+	/>
+
+	<Further
+		refs={['spec-gm', 'wikipedia-gm', 'spec-summary']}
+		lead="Channel 10 is a General MIDI convention rather than a rule of MIDI, which is why the first two of these are where it is written down."
 	/>
 
 	<Checkpoints lesson={meta.id}>

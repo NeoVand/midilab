@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import CodeSandbox from '$lib/components/midi/CodeSandbox.svelte';
 	import Scope from '$lib/components/midi/Scope.svelte';
@@ -152,7 +154,8 @@ log('four second sweep — resonance is doing the work');`
 			<code class="rounded-sm bg-muted px-1">AudioContext.currentTime</code> is a monotonic clock in
 			<em>seconds</em>, driven by the audio hardware. It is the only clock that matters for
 			scheduling sound. <code class="rounded-sm bg-muted px-1">performance.now()</code> is a
-			<em>millisecond</em> clock on the page, and it is what Web MIDI timestamps use.
+			<em>millisecond</em> clock on the page, and it is what <Xref to="web-midi" label="Web MIDI" /> timestamps
+			use.
 		</p>
 		<p class="mt-2">
 			They tick at nearly the same rate but from different zeros, and they drift apart over time.
@@ -233,6 +236,11 @@ gain.setTargetAtTime(0.0001, off, release / 4);    // release`}</code
 		]}
 		answer={1}
 		explanation="Sixty updates a second is a coarse grid for an envelope, and animation frames stop or bunch up whenever the main thread is busy — exactly when you least want the sound to change. AudioParam scheduling runs on the audio thread at sample rate and does not care what the page is doing."
+	/>
+
+	<Further
+		refs={['mdn-webaudio', 'two-clocks']}
+		lead="The node reference, and the article about the second clock that makes any of it musical."
 	/>
 
 	<Checkpoints lesson={meta.id}>

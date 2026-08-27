@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import EnvelopeLab from '$lib/components/midi/EnvelopeLab.svelte';
 	import CcPanel from '$lib/components/midi/CcPanel.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
@@ -164,17 +166,17 @@
 			entering the release stage of the envelope — which takes as long as the patch says it takes.
 			On a pad that is two seconds. This is not a bug and there is no message that means "stop
 			immediately and honestly", which is exactly why All Sound Off exists as a separate, blunter
-			instruction from All Notes Off.
+			instruction from <Xref to="panic" label="All Notes Off" />.
 		</p>
 	</Callout>
 
 	<Section title="Where MIDI does reach in">
 		<p class="prose-body">
 			The envelope is the instrument's, but the protocol has three controllers that lean on it. They
-			are General MIDI Level 2 Sound Controllers, and they are <em>relative</em>: 64 means "whatever
-			the patch already says", lower is shorter, higher is longer. A device that ignores them still
-			behaves correctly, which is both the reason they are safe to send and the reason you cannot
-			rely on them.
+			are <Xref to="programs-and-banks" label="General MIDI" /> Level 2 Sound Controllers, and they are
+			<em>relative</em>: 64 means "whatever the patch already says", lower is shorter, higher is
+			longer. A device that ignores them still behaves correctly, which is both the reason they are
+			safe to send and the reason you cannot rely on them.
 		</p>
 		<div class="overflow-x-auto rounded-lg border">
 			<table class="w-full text-sm">
@@ -280,6 +282,11 @@
 			have known the difference since long before anyone gave it a name.
 		</p>
 	</Section>
+
+	<Further
+		refs={['spec-cc', 'mdn-webaudio']}
+		lead="The Sound Controllers as defined, and the API the instrument on this page shapes its envelopes with."
+	/>
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint

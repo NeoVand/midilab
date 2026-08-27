@@ -5,41 +5,32 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
-	import PhrasePlayer from '$lib/components/midi/PhrasePlayer.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
+	import MelodyPlayer from '$lib/components/midi/MelodyPlayer.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Term from '$lib/components/lesson/Term.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
-	import { engine } from '$lib/midi/engine.svelte';
-	import { notesToEvents, type NoteSpec } from '$lib/midi/player.svelte';
+	import { notesToEvents } from '$lib/midi/player.svelte';
+	import { melody } from '$lib/music/melodies';
 	import { encode } from '$lib/midi/messages';
-	import { gmProgramName } from '$lib/midi/constants';
-	import { cn } from '$lib/utils';
 
 	const meta = lessonById('control-not-sound')!;
 
-	const PHRASE: NoteSpec[] = [
-		{ note: 60, start: 0, duration: 0.45, velocity: 88 },
-		{ note: 64, start: 0.5, duration: 0.45, velocity: 74 },
-		{ note: 67, start: 1, duration: 0.45, velocity: 80 },
-		{ note: 71, start: 1.5, duration: 0.45, velocity: 70 },
-		{ note: 72, start: 2, duration: 0.9, velocity: 104 },
-		{ note: 69, start: 3, duration: 0.45, velocity: 78 },
-		{ note: 65, start: 3.5, duration: 0.45, velocity: 72 },
-		{ note: 64, start: 4, duration: 1.6, velocity: 90 }
-	];
-
+	/*
+	 * The demonstration used to run on an invented eight-note figure, which made
+	 * the point and was forgotten by the next paragraph. Beethoven makes exactly
+	 * the same point and is still in your head an hour later — and "the notes did
+	 * not change, the instrument did" is a far harder claim to wave away when you
+	 * can hum along with the notes that did not change.
+	 */
 	const VOICES = [0, 11, 19, 40, 48, 56, 73, 81, 89];
-	let program = $state(0);
-
-	function choose(p: number) {
-		program = p;
-		engine.wake();
-		engine.programChange(p, 0);
-	}
 
 	// Concrete sizes, computed rather than asserted.
-	const events = notesToEvents(PHRASE, 108);
+	const ODE = melody('ode-to-joy');
+	const events = notesToEvents(ODE.notes, ODE.bpm);
 	const midiBytes = events.reduce((n, e) => n + encode(e.message).length, 0);
-	const seconds = events[events.length - 1].time + 1.6;
+	const seconds = events[events.length - 1].time;
 	const audioBytes = Math.round(seconds * 44100 * 2 * 2);
 </script>
 
@@ -62,34 +53,19 @@
 
 	<TryThis title="Same notes, different instrument">
 		<p class="text-sm leading-relaxed">
-			The eight notes below never change. Only the instruction "use sound number <em>n</em>" does.
-			Play it, switch voices, play it again.
+			You have known these {ODE.notes.length} notes since you were a child. Play them, switch the instrument,
+			play them again. The notes never change — the only thing that does is the instruction "use sound
+			number <em>n</em>".
 		</p>
 
-		<div class="flex flex-wrap gap-1.5">
-			{#each VOICES as p (p)}
-				<button
-					class={cn(
-						'rounded-lg border px-2.5 py-1.5 text-xs transition-colors',
-						program === p
-							? 'border-msg-program bg-msg-program-bg text-msg-program'
-							: 'hover:border-foreground/30'
-					)}
-					onclick={() => choose(p)}
-				>
-					{gmProgramName(p)}
-				</button>
-			{/each}
-		</div>
-
-		<PhrasePlayer notes={PHRASE} bpm={108} label="Play the phrase" variant="default" />
+		<MelodyPlayer id="ode-to-joy" voices={VOICES} credit={false} />
 
 		<p class="text-xs leading-relaxed text-muted-foreground">
-			What you just sent was 8 notes, and what changed between takes was one three-byte message:
-			<code class="rounded-sm bg-muted px-1 font-mono"
-				>C0 {program.toString(16).toUpperCase().padStart(2, '0')}</code
-			>
-			— "channel 1, use program {program}". Not one sample of audio moved.
+			What changed between takes was one two-byte message —
+			<code class="rounded-sm bg-muted px-1 font-mono">C0 nn</code> — meaning "channel 1, use
+			program
+			<em>nn</em>". Not one sample of audio moved. You will meet that message properly in
+			<Xref to="programs-and-banks" />.
 		</p>
 	</TryThis>
 
@@ -119,6 +95,15 @@
 			>, which is why a protocol designed in 1983 for a 31,250-bit-per-second cable is still how
 			every instrument in your studio talks to every other one. It was never trying to move sound.
 		</p>
+		<Callout variant="note" title="The comparison is not quite fair, and it does not need to be">
+			<p>
+				Those {(audioBytes / 1_000_000).toFixed(1)} MB are uncompressed. Encode the same audio as a good
+				MP3 and it drops to well under a megabyte — call it a hundredfold advantage rather than a thousandfold.
+				The argument does not depend on the exact ratio. It depends on the fact that one side is a
+				<em>description</em>
+				and the other is a <em>result</em>, and only descriptions can be edited.
+			</p>
+		</Callout>
 	</Section>
 
 	<Callout variant="key" title="The receiver decides">
@@ -138,9 +123,9 @@
 			<li class="flex gap-3">
 				<span class="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-current text-destructive"></span>
 				<span>
-					<strong>It cannot carry a sound.</strong> There is no way to send "this exact snare sample"
-					over ordinary MIDI. (SysEx can transfer a sample as data, but that is a file transfer, not a
-					performance.)
+					<strong>It cannot carry a sound.</strong> There is no way to send "this exact snare
+					sample" over ordinary MIDI. (<Xref to="sysex" label="SysEx" /> can transfer a sample as data,
+					but that is a file transfer, not a performance.)
 				</span>
 			</li>
 			<li class="flex gap-3">
@@ -153,14 +138,21 @@
 			<li class="flex gap-3">
 				<span class="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-current text-destructive"></span>
 				<span>
-					<strong>It cannot describe music theory.</strong> There is no "C minor" message. MIDI knows
-					note number 60, not that you meant the tonic.
+					<strong>It cannot describe music theory.</strong> There is no "C minor" message, and no
+					<Term>chord</Term>. MIDI knows note number 60, not that you meant the
+					<Term>root</Term> of anything.
 				</span>
 			</li>
 		</ul>
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			None of these are flaws. They are the reason a 1983 protocol still works with instruments
 			built in 2026: it deliberately refused to have an opinion about sound.
+		</p>
+		<p class="prose-body">
+			There was an attempt to close the second gap. <em>Downloadable Sounds</em> let a file carry the
+			instruments as well as the notes, so that it would sound the same in two places. It shipped, it
+			works, and almost nobody used it — which tells you something about how much the industry actually
+			wanted MIDI to have an opinion about sound.
 		</p>
 	</Section>
 
@@ -172,6 +164,11 @@
 		</p>
 		<Keyboard low={48} octaves={3} height={120} />
 	</Section>
+
+	<Further
+		refs={['spec-index', 'wikipedia-midi', 'somascape-spec', 'spec-dls']}
+		lead="This course compresses documents that are free to read. Where a lesson makes a claim, this is where the claim came from."
+	/>
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint

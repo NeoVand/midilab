@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ClockLab from '$lib/components/midi/ClockLab.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
@@ -186,6 +187,11 @@
 		]}
 		answer={0}
 		explanation="Clock is not channel-addressed, so channels are irrelevant here, and every MIDI cable carries it. The near-universal cause is a device still set to its own internal clock — it is receiving the ticks and ignoring them. Look for a Sync or Clock Source setting."
+	/>
+
+	<Further
+		refs={['spec-summary', 'somascape-spec', 'ableton-link']}
+		lead="Clock as specified, and the modern alternative that answers &quot;who is in charge of time&quot; with &quot;nobody&quot;."
 	/>
 
 	<Checkpoints lesson={meta.id}>

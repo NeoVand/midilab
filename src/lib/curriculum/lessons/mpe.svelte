@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import MpeLab from '$lib/components/midi/MpeLab.svelte';
 	import Drone from '$lib/components/midi/Drone.svelte';
@@ -40,9 +42,9 @@
 <LessonShell lesson={meta}>
 	<Section>
 		<p class="prose-body">
-			Pitch bend, channel pressure and CC 74 are all channel-wide. That is a fact of MIDI 1.0 and
-			cannot be changed. Play a chord on one channel and bend it, and every note bends together —
-			you have already felt this in Lesson 8.
+			Pitch bend, <Xref to="aftertouch" label="channel pressure" /> and CC 74 are all channel-wide. That
+			is a fact of MIDI 1.0 and cannot be changed. Play a chord on one channel and bend it, and every
+			note bends together — you have already felt this in Lesson 8.
 		</p>
 		<TryThis title="Feel the limitation once more">
 			<div class="flex flex-wrap items-end gap-6">
@@ -192,6 +194,11 @@
 		]}
 		answer={2}
 		explanation="The master channel does not host notes. The five notes take five member channels — 2 to 6 — each with its own bend, pressure and CC 74. Channel 1 carries things meant for the whole zone, such as the sustain pedal."
+	/>
+
+	<Further
+		refs={['spec-mpe', 'wikipedia-mpe', 'spec-midi2']}
+		lead="MPE as a recommended practice, how it came out of practice before it was written down, and what MIDI 2.0 does with the same problem."
 	/>
 
 	<Checkpoints lesson={meta.id}>

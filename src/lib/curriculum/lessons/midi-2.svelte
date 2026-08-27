@@ -5,6 +5,7 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import ByteInspector from '$lib/components/midi/ByteInspector.svelte';
 	import Knob from '$lib/components/midi/Knob.svelte';
@@ -91,8 +92,9 @@
 		<Callout variant="key" title="Groups multiply the address space">
 			<p>
 				Sixteen groups, each with sixteen channels, is 256 addresses on a single connection — and
-				MPE zones can live inside a group without consuming everyone else's channels. The
-				port-plus-channel thinking from Act IV becomes group-plus-channel, with far more room.
+				<Xref to="mpe" label="MPE" /> zones can live inside a group without consuming everyone else's
+				channels. The port-plus-channel thinking from Act IV becomes group-plus-channel, with far more
+				room.
 			</p>
 		</Callout>
 	</Section>
@@ -227,9 +229,9 @@
 		</p>
 		<p class="prose-body">
 			What has not: the instruments in most studios still speak MIDI 1.0, and no browser exposes
-			MIDI 2.0 through the Web MIDI API. Which means the packets on this page are UMP that this app
-			encoded itself, not UMP off a cable — the encoding is real and matches the specification, but
-			nothing here has ever seen a MIDI 2.0 device.
+			MIDI 2.0 through the <Xref to="web-midi" label="Web MIDI" /> API. Which means the packets on this
+			page are UMP that this app encoded itself, not UMP off a cable — the encoding is real and matches
+			the specification, but nothing here has ever seen a MIDI 2.0 device.
 		</p>
 		<p class="prose-body">
 			The right posture is: understand the shape of it, recognise the terminology, and keep building
@@ -248,6 +250,11 @@
 		]}
 		answer={1}
 		explanation="Resolution, groups and per-note controllers are all real improvements, but they are refinements of a broadcast protocol. Bidirectionality is the change in kind: for the first time a sender can find out what is at the other end, which is what makes Profiles and Property Exchange possible at all."
+	/>
+
+	<Further
+		refs={['spec-midi2', 'spec-midi-ci', 'wikipedia-midi', 'spec-index']}
+		lead="The specifications themselves. Worth reading the MIDI-CI one even if you never touch MIDI 2.0 — it runs over ordinary MIDI 1.0 SysEx."
 	/>
 
 	<Checkpoints lesson={meta.id}>

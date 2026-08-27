@@ -5,6 +5,8 @@
 	import TryThis from '$lib/components/lesson/TryThis.svelte';
 	import Checkpoints from '$lib/components/lesson/Checkpoints.svelte';
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
+	import Xref from '$lib/components/lesson/Xref.svelte';
+	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import SysExLab from '$lib/components/midi/SysExLab.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
@@ -109,7 +111,8 @@
 		<p class="prose-body">
 			SysEx is how firmware updates are delivered to a great many instruments. A web page with
 			unrestricted SysEx access could, in principle, write bad firmware to a synthesiser and brick
-			it. So the Web MIDI API treats it as a second, separate capability: you request
+			it. So the <Xref to="web-midi" label="Web MIDI" /> API treats it as a second, separate capability:
+			you request
 			<code class="rounded-sm bg-muted px-1 font-mono">{'{ sysex: true }'}</code> and the browser asks
 			the user again.
 		</p>
@@ -163,6 +166,11 @@
 		]}
 		answer={1}
 		explanation="Everything between F0 and F7 must be 0x00–0x7F. Arbitrary binary data contains bytes above 0x7F, so it has to be re-packed — commonly seven 8-bit bytes into eight 7-bit ones. This is why a 1 MB firmware file becomes roughly 1.15 MB of SysEx."
+	/>
+
+	<Further
+		refs={['spec-universal-sysex', 'somascape-spec', 'w3c-webmidi']}
+		lead="The manufacturer-neutral SysEx blocks, and the browser specification that explains why this one capability is gated separately."
 	/>
 
 	<Checkpoints lesson={meta.id}>
