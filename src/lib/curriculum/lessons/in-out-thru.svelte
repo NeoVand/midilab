@@ -7,6 +7,7 @@
 	import Further from '$lib/components/lesson/Further.svelte';
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import CableFigure from '$lib/components/midi/CableFigure.svelte';
+	import PortRouting from '$lib/components/midi/PortRouting.svelte';
 	import Xref from '$lib/components/lesson/Xref.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { engine } from '$lib/midi/engine.svelte';
@@ -51,6 +52,7 @@
 				</div>
 			{/each}
 		</div>
+		<PortRouting />
 		<Callout variant="key" title="Out is yours; Thru is theirs">
 			<p>
 				MIDI Out carries what <em>this</em> device played. MIDI Thru carries what
