@@ -49,11 +49,15 @@
 	 */
 	const SPACING = 10;
 	/**
-	 * How much of natural size the whole drawing is rendered at. A staff space
-	 * lands just under eight pixels, which is about as small as Bravura's
-	 * clefs stay legible.
+	 * How much of natural size the whole drawing is rendered at.
+	 *
+	 * Was 0.78, which put a staff space just under eight pixels — as small as
+	 * Bravura's clefs stay legible, and it looked it: a 240-pixel drawing
+	 * stranded in a column three times its width, with the noteheads crammed
+	 * into the left third of each stave. At natural size it is a staff you read
+	 * rather than one you squint at, and the column has something in it.
 	 */
-	const SCALE = 0.78;
+	const SCALE = 1;
 
 	const STAVE_U = 142;
 	const GAP_U = 24;
