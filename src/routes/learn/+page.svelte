@@ -22,15 +22,52 @@
 	function actMinutes(lessons: { minutes: number }[]) {
 		return lessons.reduce((t, l) => t + l.minutes, 0);
 	}
+
+	const ACT_WORDS: Record<number, string> = {
+		5: 'Five',
+		6: 'Six',
+		7: 'Seven',
+		8: 'Eight'
+	};
+
+	/*
+	 * Where to come in, for somebody who has not started.
+	 *
+	 * Thirty-eight lessons is a lot to land on, and the two audiences this
+	 * course serves arrive missing opposite halves of it: a producer knows what
+	 * a bar is and has never seen a hex byte, a programmer the reverse. Both are
+	 * well served by the running order and neither can tell that from the index.
+	 *
+	 * Shown only before anything is done. Once there is progress the resume row
+	 * above answers the same question better, and this becomes furniture.
+	 */
+	const DOORS = [
+		{
+			who: 'New to all of it',
+			then: 'Straight through, in order. Nothing is assumed.',
+			id: 'control-not-sound'
+		},
+		{
+			who: 'You make music',
+			then: 'You already have the musical half. Start here, then skip to the DAW.',
+			id: 'in-the-daw'
+		},
+		{
+			who: 'You write code',
+			then: 'Bars and fifths first — the rest of the course leans on them constantly.',
+			id: 'just-enough-music'
+		}
+	];
 </script>
 
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-10 px-4 py-12 sm:px-8">
 	<header class="flex flex-col gap-3">
 		<h1 class="text-3xl font-semibold tracking-tight">The course</h1>
 		<p class="prose-body text-muted-foreground">
-			Six acts. You do not advance by clicking Next — each lesson ends in checkpoints that the
-			engine verifies by watching the MIDI stream. Everything works with no hardware attached; most
-			of it works better with some.
+			{ACT_WORDS[CURRICULUM.length] ?? CURRICULUM.length} acts. You do not advance by clicking Next —
+			each lesson ends in checkpoints that the engine verifies by watching the MIDI stream. Everything
+			works with no hardware attached; most of it works better with some. It assumes no music theory and
+			no programming, and supplies whichever half you are missing.
 		</p>
 
 		<!--
@@ -64,6 +101,28 @@
 				</Button>
 			</div>
 		</div>
+		{#if doneLessons === 0}
+			<div class="mt-1 grid gap-2 sm:grid-cols-3">
+				{#each DOORS as d (d.id)}
+					{@const lesson = ALL_LESSONS.find((l) => l.id === d.id)}
+					{#if lesson}
+						<a
+							href={lessonHref(lesson)}
+							class="group flex flex-col gap-1 rounded-lg border bg-card px-3.5 py-3 transition-colors hover:border-foreground/25"
+						>
+							<span class="label">{d.who}</span>
+							<span class="text-sm leading-snug text-muted-foreground">{d.then}</span>
+							<span
+								class="mt-auto flex items-center gap-1 pt-1.5 text-xs font-medium decoration-foreground/30 underline-offset-[3px] group-hover:underline"
+							>
+								{lesson.number}. {lesson.title}
+								<HugeiconsIcon icon={ArrowRight01Icon} size={12} />
+							</span>
+						</a>
+					{/if}
+				{/each}
+			</div>
+		{/if}
 	</header>
 
 	{#each CURRICULUM as act (act.id)}
