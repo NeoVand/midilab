@@ -16,6 +16,7 @@
 	 */
 	import { engine } from '$lib/midi/engine.svelte';
 	import { unitToBend } from '$lib/midi/messages';
+	import { setBendRange } from '$lib/midi/rpn';
 	import { noteName } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
 	import VoicePicker from './VoicePicker.svelte';
@@ -51,8 +52,19 @@
 		cents: 1200 * Math.log2(v.ratio[0] / v.ratio[1]) - v.semitones * 100
 	}));
 
-	/** ±2 semitones is the default bend range, so one bend unit is 200 cents. */
-	const BEND_RANGE_CENTS = 200;
+	/**
+	 * The bend range this demonstration assumes, declared rather than hoped for.
+	 *
+	 * Detuning by bend only works if both ends agree how far a full bend goes:
+	 * every offset below is a fraction of ±2 semitones, so on a receiver set to
+	 * ±12 the whole chord comes out six times as far out of tune as intended.
+	 * Two semitones happens to be the default here — but this lesson also hands
+	 * the reader an RPN lab pointed at the same channels, so "happens to be" is
+	 * not good enough. It is sent every time, which is exactly what a real
+	 * microtonal rig has to do, and it shows up in the monitor while it does.
+	 */
+	const BEND_SEMITONES = 2;
+	const BEND_RANGE_CENTS = BEND_SEMITONES * 100;
 
 	/*
 	 * A reed organ: a flat, sustained tone with strong harmonics and no decay.
@@ -81,6 +93,7 @@
 			// One note per channel is the whole point: bend is channel-wide, so
 			// three notes on one channel could only ever share one detune.
 			engine.programChange(program, i);
+			engine.sendAll(setBendRange(i, BEND_SEMITONES));
 			engine.pitchBend(which === 'just' ? unitToBend(v.cents / BEND_RANGE_CENTS) : 8192, i);
 			engine.noteOn(root + v.semitones, 88, i);
 		});
