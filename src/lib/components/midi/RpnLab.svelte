@@ -63,69 +63,94 @@
 
 <div class={cn('flex flex-col gap-4 rounded-lg border p-4', className)}>
 	<!--
-		A row on a desk, a grid on a phone.
-		
-		Four controls of three different widths in a `flex-wrap` row is fine at
-		nine hundred pixels and ragged at three hundred: the kind selector took
-		one line, one knob squeezed in beside it, and the other two dropped to a
-		second row left-aligned under nothing in particular. The grid gives them
-		a column each, which is what a panel of four controls looks like.
+		A panel, grouped the way the message is grouped.
+
+		Four controls in an undifferentiated row is a row of dials you have to
+		read the captions of. But these are not four peers: two of them are the
+		halves of one address, one is a value, and two are options about how the
+		address gets sent. Ruled into groups with the pair sharing a caption and a
+		comma between them, the layout says what the lesson says — that an RPN is
+		a two-byte address followed by a value — before any of the labels do.
 	-->
-	<div class="grid grid-cols-3 items-end gap-x-2 gap-y-4 sm:flex sm:flex-wrap sm:gap-5">
-		<div class="col-span-3 flex flex-col gap-1 sm:col-span-1">
-			<span class="label">Kind</span>
+	<div class="flex flex-wrap items-stretch gap-x-4 gap-y-4">
+		{#snippet group(title: string, body: import('svelte').Snippet)}
+			<div class="flex flex-col gap-1.5">
+				<span class="label">{title}</span>
+				<div class="flex flex-1 items-center gap-2">{@render body()}</div>
+			</div>
+		{/snippet}
+		{#snippet rule()}
+			<div class="hidden w-px self-stretch bg-border sm:block" aria-hidden="true"></div>
+		{/snippet}
+
+		{#snippet kindBody()}
 			<div class="flex gap-1">
-				<Button
-					variant={kind === 'rpn' ? 'default' : 'outline'}
-					size="sm"
-					class="h-7 text-xs"
-					onclick={() => (kind = 'rpn')}
-				>
-					RPN
-				</Button>
-				<Button
-					variant={kind === 'nrpn' ? 'default' : 'outline'}
-					size="sm"
-					class="h-7 text-xs"
-					onclick={() => (kind = 'nrpn')}
-				>
-					NRPN
-				</Button>
+				{#each [{ v: 'rpn', l: 'RPN' }, { v: 'nrpn', l: 'NRPN' }] as k (k.v)}
+					<Button
+						variant={kind === k.v ? 'default' : 'outline'}
+						size="sm"
+						class="h-7 text-xs"
+						onclick={() => (kind = k.v as typeof kind)}
+					>
+						{k.l}
+					</Button>
+				{/each}
 			</div>
+		{/snippet}
+		{@render group('Kind', kindBody)}
+
+		{@render rule()}
+
+		{#snippet paramBody()}
+			<Knob bind:value={msb} min={0} max={127} default={0} label="MSB" size={42} width={48} />
+			<span class="-mt-2 font-mono text-lg text-muted-foreground" aria-hidden="true">,</span>
+			<Knob bind:value={lsb} min={0} max={127} default={0} label="LSB" size={42} width={48} />
+		{/snippet}
+		{@render group(kind === 'rpn' ? 'Parameter · RPN' : 'Parameter · NRPN', paramBody)}
+
+		{@render rule()}
+
+		{#snippet valueBody()}
+			<!--
+				No label: the group above is already called Value, and the caption
+				line carries the thing a label cannot — where this value sits in its
+				range, which is the whole difference between 7-bit and 14-bit.
+			-->
+			<Knob
+				bind:value
+				min={0}
+				max={fine ? 16383 : 127}
+				default={0}
+				sub={fine ? `${value} of 16383` : `${value} of 127`}
+				size={42}
+				width={72}
+				colour="var(--msg-note)"
+			/>
+		{/snippet}
+		{@render group('Value', valueBody)}
+
+		{@render rule()}
+
+		{#snippet optionBody()}
+			<div class="flex flex-col gap-2">
+				<div class="flex items-center gap-2">
+					<Switch id="fine" bind:checked={fine} />
+					<Label for="fine" class="text-xs font-normal">14-bit</Label>
+				</div>
+				<div class="flex items-center gap-2">
+					<Switch id="nullafter" bind:checked={nullAfter} />
+					<Label for="nullafter" class="text-xs font-normal">Null after</Label>
+				</div>
+			</div>
+		{/snippet}
+		{@render group('Options', optionBody)}
+
+		<div class="flex flex-1 items-end justify-end">
+			<Button class="gap-1.5" onclick={() => engine.sendAll(sequence)}>
+				<HugeiconsIcon icon={SentIcon} size={14} />
+				Send {sequence.length} messages
+			</Button>
 		</div>
-		<Knob bind:value={msb} min={0} max={127} default={0} label="Param MSB" size={46} fill />
-		<Knob bind:value={lsb} min={0} max={127} default={0} label="Param LSB" size={46} fill />
-		<Knob
-			bind:value
-			min={0}
-			max={fine ? 16383 : 127}
-			default={0}
-			label="Value"
-			sub={fine ? `${value} of 16383` : `${value} of 127`}
-			size={46}
-			fill
-			colour="var(--msg-note)"
-		/>
-		<div class="col-span-3 flex flex-col gap-2 pb-1 sm:col-span-1">
-			<div class="flex items-center gap-2">
-				<Switch id="fine" bind:checked={fine} />
-				<Label for="fine" class="text-xs font-normal">14-bit</Label>
-			</div>
-			<div class="flex items-center gap-2">
-				<Switch id="nullafter" bind:checked={nullAfter} />
-				<Label for="nullafter" class="text-xs font-normal">Null after</Label>
-			</div>
-		</div>
-		<!--
-			The spacer is what pushes the send button to the far end of a wide row.
-			In a three-column grid it is a grid item, so it took a cell and shoved
-			the button into the next one at a third of the width it needed.
-		-->
-		<div class="hidden flex-1 sm:block"></div>
-		<Button class="col-span-3 gap-1.5 sm:col-span-1" onclick={() => engine.sendAll(sequence)}>
-			<HugeiconsIcon icon={SentIcon} size={14} />
-			Send {sequence.length} messages
-		</Button>
 	</div>
 
 	{#if known}

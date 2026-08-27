@@ -35,6 +35,13 @@
 		 * mid-drag. Inside a grid that is the grid's job already, and a fixed cell
 		 * narrower than the column leaves a bank of knobs adrift in the middle of
 		 * the row with all the air pooled at one end.
+		 *
+		 * This used to say `w-full`, which is correct in a grid cell and a
+		 * disaster in a flex row: 100% of the container is the whole row, so
+		 * every knob claimed the full width and wrapped, and a bank of four
+		 * controls silently became four centred knobs stacked down the page with
+		 * a screenful of air around them. `flex-1` shares a flex row and is inert
+		 * in a grid, where the cell stretches its child anyway.
 		 */
 		fill?: boolean;
 		colour?: string;
@@ -158,7 +165,7 @@
 </script>
 
 <div
-	class={cn('flex flex-col items-center gap-1', fill ? 'w-full min-w-0' : 'shrink-0', className)}
+	class={cn('flex flex-col items-center gap-1', fill ? 'min-w-0 flex-1' : 'shrink-0', className)}
 	style={cell === null ? undefined : `width: ${cell}px`}
 >
 	<div
