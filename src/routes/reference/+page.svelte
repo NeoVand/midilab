@@ -16,7 +16,8 @@
 	import { knownManufacturers } from '$lib/midi/sysex';
 	import { isBlackKey, noteName, noteOctave, noteToFrequency } from '$lib/midi/notes';
 	import { settings } from '$lib/stores/settings.svelte';
-	import { GLOSSARY } from '$lib/curriculum/glossary';
+	import { GLOSSARY, GLOSSARY_CATEGORIES, type GlossaryCategory } from '$lib/curriculum/glossary';
+	import { REFERENCES, KIND_LABEL, refHost } from '$lib/curriculum/references';
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { cn } from '$lib/utils';
 
@@ -252,7 +253,24 @@
 		return rows;
 	});
 	const makerHits = $derived(makers.filter((m) => match(m.id, m.name)));
-	const glossaryHits = $derived(glossary.filter((g) => match(g.term, g.definition)));
+
+	/*
+	 * A producer and a programmer arrive missing opposite halves of this list,
+	 * and neither wants to scroll past the other's half to find their own. The
+	 * filter defaults to everything, so nobody has to know it is there.
+	 */
+	let glossaryCategory = $state<GlossaryCategory | 'all'>('all');
+	const glossaryHits = $derived(
+		glossary.filter(
+			(g) =>
+				match(g.term, g.definition) &&
+				(glossaryCategory === 'all' || g.category === glossaryCategory)
+		)
+	);
+
+	const sourceHits = $derived(
+		REFERENCES.filter((r) => match(r.title, r.publisher, r.note, KIND_LABEL[r.kind]))
+	);
 
 	const TABS = $derived([
 		{ value: 'messages', label: 'Messages', count: messages.length },
@@ -262,7 +280,8 @@
 		{ value: 'drums', label: 'GM drums', count: drumHits.length },
 		{ value: 'notes', label: 'Notes', count: noteHits.length },
 		{ value: 'makers', label: 'Manufacturers', count: makerHits.length },
-		{ value: 'glossary', label: 'Glossary', count: glossaryHits.length }
+		{ value: 'glossary', label: 'Glossary', count: glossaryHits.length },
+		{ value: 'sources', label: 'Sources', count: sourceHits.length }
 	]);
 	const elsewhere = $derived(TABS.filter((t) => t.value !== tab && t.count > 0));
 
@@ -657,6 +676,23 @@
 
 		<!-- Glossary -->
 		<Tabs.Content value="glossary">
+			<div class="mb-3 flex flex-wrap gap-1.5">
+				{#each [{ id: 'all', label: 'Everything', blurb: '' }, ...GLOSSARY_CATEGORIES] as c (c.id)}
+					<button
+						class={cn(
+							'rounded-lg border px-2.5 py-1 text-xs transition-colors',
+							glossaryCategory === c.id
+								? 'border-msg-note bg-msg-note-bg text-msg-note'
+								: 'hover:border-foreground/30 hover:bg-accent/40'
+						)}
+						aria-pressed={glossaryCategory === c.id}
+						title={c.blurb}
+						onclick={() => (glossaryCategory = c.id as GlossaryCategory | 'all')}
+					>
+						{c.label}
+					</button>
+				{/each}
+			</div>
 			{#if glossaryHits.length}
 				<dl class="overflow-hidden rounded-lg border">
 					{#each glossaryHits as g, i (g.term)}
@@ -675,6 +711,46 @@
 				</dl>
 			{:else}
 				{@render noMatches('terms')}
+			{/if}
+		</Tabs.Content>
+		<!--
+			Sources.
+
+			The rest of this page is what MIDI *is*; this tab is where that came
+			from. It exists because a course with no bibliography is asking to be
+			taken on faith, and every one of these documents is free.
+		-->
+		<Tabs.Content value="sources">
+			{#if sourceHits.length}
+				<ul class="overflow-hidden rounded-lg border">
+					{#each sourceHits as r, i (r.id)}
+						<li class={cn(i > 0 && 'border-t')}>
+							<a
+								href={r.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="group flex flex-col gap-1 px-4 py-3 transition-colors hover:bg-accent/40"
+							>
+								<span class="flex flex-wrap items-baseline gap-x-2">
+									<span class="text-sm font-medium group-hover:underline">{r.title}</span>
+									<span class="text-xs text-muted-foreground">
+										{r.publisher}{#if r.year}, {r.year}{/if}
+									</span>
+								</span>
+								<span class="max-w-[70ch] text-sm leading-relaxed text-muted-foreground">
+									{r.note}
+								</span>
+								<span class="label flex flex-wrap gap-x-2">
+									<span>{KIND_LABEL[r.kind]}</span>
+									<span aria-hidden="true">·</span>
+									<span class="normal-case">{refHost(r)}</span>
+								</span>
+							</a>
+						</li>
+					{/each}
+				</ul>
+			{:else}
+				{@render noMatches('sources')}
 			{/if}
 		</Tabs.Content>
 	</Tabs.Root>
