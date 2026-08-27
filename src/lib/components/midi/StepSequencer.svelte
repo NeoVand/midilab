@@ -1,3 +1,23 @@
+<script module lang="ts">
+	/**
+	 * Which sequencer the shared transport belongs to.
+	 *
+	 * There is one transport for the whole app, and every sequencer used to
+	 * play on every tick of it. That is right when there is one on the page and
+	 * badly wrong when there are three: the drums lesson puts a flat pattern
+	 * next to the same pattern with dynamics so you can hear the difference,
+	 * and pressing play on either started both at once, superimposed, which is
+	 * the one thing that makes the comparison impossible.
+	 *
+	 * So the transport has an owner. The first sequencer to mount takes it — so
+	 * a page with one behaves exactly as before, including when the transport
+	 * is started from the dock rather than from the widget — and pressing play
+	 * on any other hands it over.
+	 */
+	let owner = $state<symbol | null>(null);
+	const mounted = new Set<symbol>();
+</script>
+
 <script lang="ts">
 	/**
 	 * A step sequencer driven by the app's transport.
@@ -118,8 +138,14 @@
 	const ticksPerStep = $derived(PPQ / 4);
 	const stepSeconds = $derived(60 / transport.bpm / 4);
 
-	onMount(() =>
-		transport.onTick((t) => {
+	const id = Symbol('sequencer');
+	const owns = $derived(owner === id);
+
+	onMount(() => {
+		mounted.add(id);
+		if (owner === null) owner = id;
+		return transport.onTick((t) => {
+			if (owner !== id) return;
 			if (t.tick % ticksPerStep !== 0) return;
 			const step = Math.floor(t.tick / ticksPerStep) % stepCount;
 			current = step;
@@ -139,12 +165,41 @@
 					off
 				);
 			}
-		})
-	);
+		});
+	});
 
-	onDestroy(() => {
+	/** Everything this instance might be holding down. */
+	function silence() {
 		for (const t of tracks)
 			engine.send({ type: 'noteOff', channel: t.channel, note: t.note, velocity: 0 });
+	}
+
+	/**
+	 * Take the transport. If somebody else had it they are mid-pattern, so they
+	 * are silenced first — otherwise whatever they had sounding at the moment of
+	 * the handover stays down for good.
+	 */
+	async function claim() {
+		await engine.wake();
+		if (owner !== id) {
+			owner = id;
+			if (!transport.playing) transport.start();
+			return;
+		}
+		transport.toggle();
+		if (!transport.playing) silence();
+	}
+
+	onDestroy(() => {
+		silence();
+		mounted.delete(id);
+		if (owner === id) {
+			owner = null;
+			for (const other of mounted) {
+				owner = other;
+				break;
+			}
+		}
 	});
 
 	function toggle(track: SeqTrack, i: number) {
@@ -250,17 +305,19 @@
 <div class={cn('flex flex-col overflow-hidden rounded-lg border bg-card', className)}>
 	<!-- transport and pattern controls -->
 	<div class="flex flex-wrap items-center gap-x-3 gap-y-2 border-b px-3 py-2">
+		<!--
+			Playing means *this* sequencer is playing, not that the transport is
+			running. With three on a page, a button reading Stop on the two that
+			are silent is a lie about which one you are hearing.
+		-->
 		<Button
-			variant={transport.playing ? 'default' : 'outline'}
+			variant={owns && transport.playing ? 'default' : 'outline'}
 			size="sm"
 			class="gap-1.5"
-			onclick={async () => {
-				await engine.wake();
-				transport.toggle();
-			}}
+			onclick={claim}
 		>
-			<HugeiconsIcon icon={transport.playing ? StopIcon : PlayIcon} size={14} />
-			{transport.playing ? 'Stop' : 'Play'}
+			<HugeiconsIcon icon={owns && transport.playing ? StopIcon : PlayIcon} size={14} />
+			{owns && transport.playing ? 'Stop' : 'Play'}
 		</Button>
 		<span class="tnum font-mono text-sm text-readout">{transport.bpm.toFixed(1)} BPM</span>
 
@@ -330,7 +387,7 @@
 						class={cn(
 							'tnum flex-1 text-center font-mono text-2xs',
 							i % 4 === 0 && i > 0 && 'ml-2',
-							current === i && transport.playing
+							current === i && owns && transport.playing
 								? 'text-msg-note'
 								: i % 4 === 0
 									? 'text-muted-foreground'
@@ -427,7 +484,7 @@
 							class={cn(
 								'h-7 flex-1 rounded-xs border transition-colors',
 								i % 4 === 0 && i > 0 && 'ml-2',
-								current === i && transport.playing && 'ring-1 ring-msg-note/60'
+								current === i && owns && transport.playing && 'ring-1 ring-msg-note/60'
 							)}
 							style:background={v
 								? `color-mix(in oklch, var(--msg-note) ${25 + (v / 127) * 60}%, transparent)`
