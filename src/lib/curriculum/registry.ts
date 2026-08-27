@@ -5,11 +5,12 @@ import {
 	Clock01Icon,
 	PlugSocketIcon,
 	AudioWaveformIcon,
-	SourceCodeIcon
+	SourceCodeIcon,
+	MusicNote01Icon
 } from '@hugeicons/core-free-icons';
 
 /**
- * The course: six acts, thirty-one lessons.
+ * The course: seven acts, thirty-eight lessons.
  *
  * Metadata lives here; the lessons themselves are Svelte components under
  * `lessons/`, because almost every one of them needs a live instrument, a
@@ -60,6 +61,7 @@ export const ACT_ICON: Record<string, IconSvgElement> = {
 	foundations: BinaryCodeIcon,
 	language: Message01Icon,
 	time: Clock01Icon,
+	making: MusicNote01Icon,
 	physical: PlugSocketIcon,
 	expression: AudioWaveformIcon,
 	programming: SourceCodeIcon
@@ -81,6 +83,17 @@ export const CURRICULUM: Act[] = [
 					'Explain what a MIDI message does and does not carry',
 					'Predict what happens when you change the instrument but not the notes',
 					'Say why a MIDI file cannot be "played" without an instrument'
+				]
+			),
+			lesson(
+				'just-enough-music',
+				'Just enough music',
+				'Beats, bars, semitones and chords — the vocabulary the rest of this course assumes you have, in one place, with a keyboard attached.',
+				14,
+				[
+					'Count a bar and name the note lengths inside it',
+					'Build a major and a minor chord from semitone distances alone',
+					'Read "sixteenth note" and "perfect fifth" without flinching'
 				]
 			),
 			lesson(
@@ -136,6 +149,28 @@ export const CURRICULUM: Act[] = [
 					'Read an ADSR envelope and say which stage you are hearing',
 					'Explain why sustain is a level while the other three are times',
 					'Reshape an instrument from the wire with CC 73, 75 and 72'
+				]
+			),
+			lesson(
+				'inside-the-instrument',
+				'What the receiver is doing',
+				'MIDI is half the story and the other half is a synthesiser. Oscillator, filter, envelope, LFO — enough to know what a controller is actually reaching for.',
+				16,
+				[
+					'Name the four blocks almost every synthesiser is built from',
+					'Predict what CC 74 and CC 71 will do to a sound before you send them',
+					'Say why a sampler ignores half of what a synthesiser accepts'
+				]
+			),
+			lesson(
+				'how-midi-happened',
+				'How MIDI happened',
+				'Five competitors agreed a standard, gave it away, and got it right enough that it outlived almost every instrument it was designed for.',
+				12,
+				[
+					'Explain why MIDI is 31,250 bits per second and seven bits wide',
+					'Say what the 1983 decision to charge nothing for it bought the industry',
+					'Recognise which of MIDI’s "flaws" are 1983 constraints and which are choices'
 				]
 			)
 		]
@@ -303,8 +338,49 @@ export const CURRICULUM: Act[] = [
 		]
 	},
 	{
-		id: 'physical',
+		id: 'making',
 		number: 4,
+		title: 'Making music with it',
+		subtitle: 'The piano roll, the drum grid, and what MIDI cannot write down',
+		lessons: [
+			lesson(
+				'in-the-daw',
+				'MIDI in the DAW',
+				'The piano roll is four of the fields of a Note On, drawn as a rectangle. Once you see which four, every editing tool in every DAW stops being magic.',
+				18,
+				[
+					'Map every part of a piano roll onto the messages underneath it',
+					'Use quantise, velocity editing and CC lanes knowing what each one writes',
+					'Diagnose a controller that "does not work" in your DAW'
+				]
+			),
+			lesson(
+				'programming-drums',
+				'Programming drums',
+				'Channel 10, a map of note numbers to instruments, and the velocity discipline that separates a groove from a typed-in grid.',
+				18,
+				[
+					'Find any drum sound by note number on a General MIDI kit',
+					'Build a beat with ghost notes and accents rather than one velocity',
+					'Explain why hi-hats need a choke and how MIDI expresses one'
+				]
+			),
+			lesson(
+				'notation-and-midi',
+				'MIDI and notation',
+				'A performance and a score are different documents. Converting either one into the other loses something, and it is worth knowing exactly what.',
+				14,
+				[
+					'Say what a score records that MIDI does not, and the reverse',
+					'Explain why a straight MIDI-to-notation conversion looks unreadable',
+					'Choose between MIDI and MusicXML for a given job'
+				]
+			)
+		]
+	},
+	{
+		id: 'physical',
+		number: 5,
 		title: 'The physical world',
 		subtitle: 'Cables, ports, topologies, and what to check when nothing happens',
 		lessons: [
@@ -357,7 +433,7 @@ export const CURRICULUM: Act[] = [
 	},
 	{
 		id: 'expression',
-		number: 5,
+		number: 6,
 		title: 'Expression and the future',
 		subtitle: 'MPE, and what MIDI 2.0 actually changes',
 		lessons: [
@@ -374,6 +450,17 @@ export const CURRICULUM: Act[] = [
 				'better'
 			),
 			lesson(
+				'tuning',
+				'Tuning, cents and the notes between the keys',
+				'Twelve equal steps is a compromise, not a law. MIDI has three separate ways to disagree with it, and one of them is properly good.',
+				16,
+				[
+					'Explain what equal temperament costs and why it won anyway',
+					'Retune an instrument with RPN 1 and 2, and hear cents as a unit',
+					'Say when the MIDI Tuning Standard is the right answer and when pitch bend is'
+				]
+			),
+			lesson(
 				'midi-2',
 				'MIDI 2.0 and the Universal MIDI Packet',
 				'Thirty-two bits, bidirectional negotiation, per-note controllers — and an honest look at where it actually is.',
@@ -388,7 +475,7 @@ export const CURRICULUM: Act[] = [
 	},
 	{
 		id: 'programming',
-		number: 6,
+		number: 7,
 		title: 'Programming MIDI',
 		subtitle: 'From requestMIDIAccess to a rig you drive with code',
 		lessons: [
