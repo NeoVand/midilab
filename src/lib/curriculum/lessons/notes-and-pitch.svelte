@@ -12,6 +12,7 @@
 	import NoteExplorer from '$lib/components/midi/NoteExplorer.svelte';
 	import PhrasePlayer from '$lib/components/midi/PhrasePlayer.svelte';
 	import Harmonics from '$lib/components/midi/Harmonics.svelte';
+	import TheoryCard from '$lib/components/midi/TheoryCard.svelte';
 	import Scope from '$lib/components/midi/Scope.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { noteState } from '$lib/midi/notestate.svelte';
@@ -30,15 +31,6 @@
 		duration: 0.5,
 		velocity: 96
 	}));
-
-	const CHORD: NoteSpec[] = [
-		{ note: 60, start: 0, duration: 1.4 },
-		{ note: 64, start: 0, duration: 1.4 },
-		{ note: 67, start: 0, duration: 1.4 },
-		{ note: 60, start: 1.6, duration: 1.4 },
-		{ note: 63, start: 1.6, duration: 1.4 },
-		{ note: 67, start: 1.6, duration: 1.4 }
-	];
 </script>
 
 <LessonShell lesson={meta}>
@@ -145,32 +137,52 @@
 			counting. If any of the words below are new, <Xref to="just-enough-music" /> defines them properly
 			and lets you hear each one.
 		</p>
-		<div class="grid gap-3 sm:grid-cols-3">
-			<div class="rounded-lg border p-4">
-				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">Semitone</p>
-				<p class="mt-1.5 text-sm leading-relaxed">
-					+1. The gap between adjacent keys. Twelve of them make an octave.
-				</p>
-			</div>
-			<div class="rounded-lg border p-4">
-				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">Interval</p>
-				<p class="mt-1.5 text-sm leading-relaxed">
-					The distance between two notes. +7 is a {intervalName(7)}, +4 a {intervalName(4)}, +3 a {intervalName(
-						3
-					)}.
-				</p>
-			</div>
-			<div class="rounded-lg border p-4">
-				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">Triad</p>
-				<p class="mt-1.5 text-sm leading-relaxed">
-					Three notes at once. Root, +4, +7 sounds major; root, +3, +7 sounds minor. One semitone
-					apart, entirely different mood.
-				</p>
-			</div>
+		<!--
+			Each definition carries the sound of the thing it defines. Reading "+7
+			is a perfect fifth" and having no way to find out what a perfect fifth
+			is was the section asking a reader to take three words on trust in a
+			course whose whole argument is that you should not have to.
+		-->
+		<div class="grid items-stretch gap-3 sm:grid-cols-3">
+			<TheoryCard
+				title="Semitone"
+				low={60}
+				plays={[
+					{ label: '60 → 61', notes: [60, 61] },
+					{ label: 'twelve of them', notes: [60, 72] }
+				]}
+			>
+				+1. The gap between adjacent keys. Twelve of them make an octave.
+			</TheoryCard>
+			<TheoryCard
+				title="Interval"
+				low={60}
+				plays={[
+					{ label: `+3 ${intervalName(3)}`, notes: [60, 63] },
+					{ label: `+4 ${intervalName(4)}`, notes: [60, 64] },
+					{ label: `+7 ${intervalName(7)}`, notes: [60, 67] }
+				]}
+			>
+				The distance between two notes. +7 is a {intervalName(7)}, +4 a {intervalName(4)}, +3 a
+				{intervalName(3)}.
+			</TheoryCard>
+			<TheoryCard
+				title="Triad"
+				low={60}
+				plays={[
+					{ label: 'major 60·64·67', notes: [60, 64, 67], mode: 'chord' },
+					{ label: 'minor 60·63·67', notes: [60, 63, 67], mode: 'chord' }
+				]}
+			>
+				Three notes at once. Root, +4, +7 sounds major; root, +3, +7 sounds minor. One semitone
+				apart, entirely different mood.
+			</TheoryCard>
 		</div>
-		<!-- Strings, because the difference between major and minor is in two
-		     notes sounding *together* for long enough to colour each other. -->
-		<PhrasePlayer notes={CHORD} bpm={100} label="Hear C major, then C minor" program={48} />
+		<!--
+			The "hear C major, then C minor" player that used to sit here played
+			exactly what the triad card now plays, four inches further from the
+			sentence defining it. One demonstration, next to its definition.
+		-->
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			60-64-67, then 60-63-67. The middle note moved down by one. That is the entire difference
 			between happy and sad, expressed as arithmetic.
