@@ -76,7 +76,16 @@
 	/** Positions a real panel would be found in — none of them at zero. */
 	const KNOBS = [-58, 24, 112, -20, 76, 8, 140, -104, 46];
 
-	// ── Shared geometry, so the five figures share a margin ─────────────────
+	/*
+	 * ── Shared geometry, so the five figures share a margin ─────────────────
+	 *
+	 * A note on fills: these sit on `panel-sunken`, and in the light theme
+	 * `--muted` and `--surface-sunken` are the same colour. Anything drawn in
+	 * `--muted` on this panel is therefore invisible on a light ground and fine
+	 * on a dark one — which is exactly how the step grid lost its empty cells
+	 * and read as a scatter of green specks. Grid furniture uses
+	 * `--grid-line-strong`; objects that sit *on* the panel use `--card`.
+	 */
 	const PAD = 6;
 	const SPAN = 100 - PAD * 2;
 
@@ -133,8 +142,8 @@
 			two sockets reads as a wiring diagram rather than a patchbay.
 		-->
 		{#each PORT_Y as y (y)}
-			<circle cx="12" cy={y} r="5.5" class="fill-muted stroke-border" stroke-width="1.3" />
-			<circle cx="88" cy={y} r="5.5" class="fill-muted stroke-border" stroke-width="1.3" />
+			<circle cx="12" cy={y} r="5.5" class="fill-card stroke-border" stroke-width="1.3" />
+			<circle cx="88" cy={y} r="5.5" class="fill-card stroke-border" stroke-width="1.3" />
 		{/each}
 		<path
 			d="M 17.5 20 C 40 52, 62 68, 82.5 80"
@@ -169,8 +178,8 @@
 					width={CELL_W}
 					height={CELL_H}
 					rx="2"
-					fill={on ? 'var(--msg-note)' : 'var(--muted)'}
-					opacity={on ? 0.9 : i % 4 === 0 ? 1 : 0.55}
+					fill={on ? 'var(--msg-note)' : 'var(--grid-line-strong)'}
+					opacity={on ? 0.9 : i % 4 === 0 ? 0.85 : 0.45}
 				/>
 			{/each}
 		{/each}
@@ -206,7 +215,7 @@
 		{#each KNOBS as a, i (i)}
 			{@const cx = PAD + 8 + (i % 3) * ((SPAN - 16) / 2)}
 			{@const cy = PAD + 8 + Math.floor(i / 3) * ((SPAN - 16) / 2)}
-			<circle {cx} {cy} r="11.5" class="fill-surface-sunken stroke-border" stroke-width="1.2" />
+			<circle {cx} {cy} r="11.5" class="fill-card stroke-border" stroke-width="1.2" />
 			<line
 				x1={cx}
 				y1={cy}
