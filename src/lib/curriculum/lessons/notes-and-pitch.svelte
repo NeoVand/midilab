@@ -184,7 +184,17 @@
 			of them, at whole-number multiples of the fundamental, and the balance between those is most
 			of what makes a trumpet sound like a trumpet and not like a flute playing the same note.
 		</p>
-		<Scope label="Whatever is sounding" height={120} />
+		<!--
+			The instruction is "play a low note and watch the analyser", and until
+			now there was nothing on this part of the page to play. The keyboard at
+			the foot of the lesson is four screens away and owns the typing row, so
+			this one is for pressing: two octaves from the bottom of the range,
+			where the partials are far enough apart to count.
+		-->
+		<div class="flex flex-col gap-2">
+			<Keyboard low={36} octaves={2} height={96} typing={false} />
+			<Scope label="Whatever is sounding" height={120} />
+		</div>
 		<p class="prose-body">
 			The series is also where the intervals in the last section came from. The second harmonic is
 			an octave. The third is a fifth above that. The fifth is a major third. Every interval a
@@ -192,6 +202,11 @@
 			all rather than like arbitrary distances.
 		</p>
 		<Harmonics />
+		<p class="prose-body">
+			Press one of those numbers and look back at the analyser: a single line. Press a key on the
+			keyboard above and it is a stack of them, in exactly those places. That is the whole claim of
+			this section, and it is the same panel showing you both halves of it.
+		</p>
 		<Callout
 			variant="gotcha"
 			title="The keyboard is a compromise, and this is where you can see it"
