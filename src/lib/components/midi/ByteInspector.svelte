@@ -38,10 +38,23 @@
 		message?: MidiMessage;
 		/** Hide the nibble breakdown and the sentence, for compact contexts. */
 		compact?: boolean;
+		/**
+		 * Lay the bytes out as rows rather than as a wrapping line of cards.
+		 *
+		 * For a tall narrow panel. Three cards need about six hundred pixels to
+		 * sit side by side, so in the monitor's four-hundred-pixel inspector two
+		 * fitted and the third dropped underneath — a ragged 2 + 1 that reads as
+		 * a layout accident rather than as three bytes in order. Rows keep the
+		 * order and fit the column, and the phone already had exactly this shape.
+		 */
+		stack?: boolean;
 		class?: string;
 	}
 
-	let { bytes, message, compact = false, class: className }: Props = $props();
+	let { bytes, message, compact = false, stack = false, class: className }: Props = $props();
+
+	/** Rows rather than wrapping cards: a phone, or a panel that asked for it. */
+	const rows = $derived(device.narrow || stack);
 
 	/**
 	 * The bytes to reason about. Null means the readout is waiting for a
@@ -138,9 +151,9 @@
 		when the first message lands: the blanks simply fill in.
 	-->
 	<div class={cn('flex flex-col gap-4', className)}>
-		<div class={cn('flex gap-2.5', device.narrow ? 'flex-col gap-1.5' : 'flex-wrap')}>
+		<div class={cn('flex gap-2.5', rows ? 'flex-col gap-1.5' : 'flex-wrap')}>
 			{#each WAITING as card, i (card.title)}
-				{#if device.narrow}
+				{#if rows}
 					<!--
 						A row, not a card. Three cards stacked down a phone are five
 						hundred pixels of mostly padding; the same three facts fit in
@@ -218,11 +231,11 @@
 	</div>
 {:else}
 	<div class={cn('flex flex-col gap-4', className)} style="--fam: {colour}">
-		<div class={cn('flex gap-2.5', device.narrow ? 'flex-col gap-1.5' : 'flex-wrap')}>
+		<div class={cn('flex gap-2.5', rows ? 'flex-col gap-1.5' : 'flex-wrap')}>
 			{#each data as byte, i (i)}
 				{@const bits = binary(byte)}
 				{@const isStatus = byte >= 0x80}
-				{#if device.narrow}
+				{#if rows}
 					<div class="flex items-center gap-2 rounded-md border bg-card px-2 py-1.5">
 						<span class="label w-[5.5rem] shrink-0 truncate">
 							{roles[i]?.title ?? `Byte ${i}`}

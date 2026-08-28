@@ -153,7 +153,7 @@
 					{/if}
 				</div>
 				<div class="flex min-h-0 flex-1 scrollbar-thin flex-col overflow-y-auto p-4">
-					<ByteInspector bytes={shown?.bytes ?? null} message={shown?.message} />
+					<ByteInspector bytes={shown?.bytes ?? null} message={shown?.message} stack />
 				</div>
 			</div>
 		</div>
