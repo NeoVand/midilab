@@ -10,7 +10,7 @@
 	import Quiz from '$lib/components/lesson/Quiz.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import NoteExplorer from '$lib/components/midi/NoteExplorer.svelte';
-	import PhrasePlayer from '$lib/components/midi/PhrasePlayer.svelte';
+	import OctaveRuler from '$lib/components/midi/OctaveRuler.svelte';
 	import Harmonics from '$lib/components/midi/Harmonics.svelte';
 	import TheoryCard from '$lib/components/midi/TheoryCard.svelte';
 	import Scope from '$lib/components/midi/Scope.svelte';
@@ -123,11 +123,18 @@
 	</Section>
 
 	<TryThis title="Octaves are just +12">
-		<PhrasePlayer notes={OCTAVES} bpm={110} label="Play seven C's" program={0} />
+		<!--
+			"Doubling the frequency and adding twelve to the note number are the
+			same operation" is the one genuinely surprising sentence in this
+			section, and it used to sit beside a button that played seven C's. You
+			could hear that they were all C's; nothing showed you why the
+			arithmetic works. Two rulers do.
+		-->
+		<OctaveRuler notes={OCTAVES.map((n) => n.note)} />
 		<p class="text-sm leading-relaxed">
-			Notes 24, 36, 48, 60, 72, 84 and 96 — every one of them a C, each twice the frequency of the
-			last. Doubling the frequency and adding 12 to the note number are the same operation, which is
-			why octaves feel like "the same note again".
+			Every one of them is a C, and each is twice the frequency of the last. Doubling the frequency
+			and adding 12 to the note number are the same operation, which is why octaves feel like "the
+			same note again" — and why the cable carries the number rather than the hertz.
 		</p>
 	</TryThis>
 
