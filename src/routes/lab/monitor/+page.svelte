@@ -128,8 +128,13 @@
 			protocol still carries the scars of.
 		-->
 		<WireLoad class="w-56 shrink-0" />
+		<!--
+			"msg/s", not "/s". It sits immediately after the wire load's "B/s", and
+			two bare rates a middot apart, one of them unlabelled, is a reader
+			guessing which of them is bytes.
+		-->
 		<span class="tnum font-mono text-xs text-muted-foreground">
-			{monitor.rate}/s · {monitor.total} buffered
+			{monitor.rate} msg/s · {monitor.total} buffered
 		</span>
 	</div>
 
