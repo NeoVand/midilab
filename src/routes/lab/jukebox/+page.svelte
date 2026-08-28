@@ -21,6 +21,7 @@
 	import { phraseBeats } from '$lib/music/notation';
 	import { SequencePlayer, notesToEvents } from '$lib/midi/player.svelte';
 	import { engine } from '$lib/midi/engine.svelte';
+	import { noteState } from '$lib/midi/notestate.svelte';
 	import { GM_FAMILIES, GM_PROGRAMS } from '$lib/midi/constants';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -276,8 +277,26 @@
 				progress={player.playing && player.duration ? player.position / player.duration : null}
 			/>
 
+			<!--
+				Two readouts of the same instant, so they are built the same way.
+				The staff used to sit bare in its half of the grid — a 308-pixel
+				drawing left-aligned in a 530-pixel cell, beside a framed panel with
+				a header and a status line — which read as one finished thing next
+				to one unfinished one. Same frame, same header, same height, and
+				they become a pair: what the notes are, and what the sound is doing.
+			-->
 			<div class="grid gap-3 sm:grid-cols-2">
-				<Staff />
+				<div class="flex flex-col overflow-hidden rounded-lg border bg-card">
+					<div class="flex items-baseline justify-between border-b px-3 py-1.5">
+						<span class="label">What is being held</span>
+						<span class="label"
+							>{noteState.heldCount ? `${noteState.heldCount} sounding` : 'silent'}</span
+						>
+					</div>
+					<div class="panel-sunken grid shrink-0 place-items-center" style="height: 120px">
+						<Staff />
+					</div>
+				</div>
 				<Scope label="What is coming out" height={120} />
 			</div>
 
