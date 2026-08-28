@@ -20,6 +20,7 @@
 	import { settings } from '$lib/stores/settings.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import EmptyState from '$lib/components/shell/EmptyState.svelte';
+	import Chain from '$lib/components/lesson/Chain.svelte';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Slider } from '$lib/components/ui/slider';
 	import * as Select from '$lib/components/ui/select';
@@ -428,12 +429,33 @@
 		{/each}
 
 		{#if router.routes.length === 0 && inputs.length > 0}
+			<!--
+				EmptyState has always taken a figure — "a diagram of what this tool
+				does once it has something to work with" — and this, the emptiest
+				page in the app, never passed one. A first visit was a dashed box
+				saying nothing was there. The shape of a route is three boxes, and
+				showing it costs a line: you can see what you are about to make
+				before you press the button that makes it.
+			-->
 			<EmptyState
 				icon={Route02Icon}
 				title="No routes yet"
-				body="Add one to send an input somewhere — with channel remapping, transposition, a velocity
-					curve, a note-range split and message filtering on the way."
+				body="A route is one input, one output, and whatever you want to happen in between."
 			>
+				{#snippet figure()}
+					<Chain
+						class="justify-center"
+						steps={[
+							{ label: 'Any input', note: 'a port, or this app’s own keys' },
+							{
+								label: 'On the way',
+								note: 'channel · transpose · velocity · range · filter',
+								accent: true
+							},
+							{ label: 'Any output', note: 'a port, or the built-in synth' }
+						]}
+					/>
+				{/snippet}
 				{#snippet action()}
 					<Button size="sm" onclick={addRoute}>
 						<HugeiconsIcon icon={Add01Icon} size={14} /> Add a route

@@ -184,7 +184,8 @@
 			class={cn('transition-colors', dragging && 'border-msg-note bg-msg-note-bg')}
 		>
 			{#snippet figure()}
-				<SmfDiagram />
+				<!-- Its own cap, now that EmptyState no longer imposes one. -->
+				<div class="mx-auto max-w-md"><SmfDiagram /></div>
 			{/snippet}
 			{#snippet action()}
 				<label>

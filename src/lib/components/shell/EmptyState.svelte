@@ -17,7 +17,15 @@
 		body?: string;
 		/** Buttons or links. Kept to one primary action wherever possible. */
 		action?: Snippet;
-		/** A diagram of what this tool does once it has something to work with. */
+		/**
+		 * A diagram of what this tool does once it has something to work with.
+		 *
+		 * Sized by the figure, not by this component. It used to be capped at
+		 * `max-w-md`, which is right for the one drawing that was using it and
+		 * wrong for a chain of three boxes: the arrow wrapped and the sentence
+		 * "input, then this, then output" came out as two lines that read like
+		 * two separate claims.
+		 */
 		figure?: Snippet;
 		class?: string;
 	}
@@ -41,7 +49,7 @@
 		<p class="max-w-[46ch] text-xs text-muted-foreground">{body}</p>
 	{/if}
 	{#if figure}
-		<div class="mt-1 w-full max-w-md opacity-90">{@render figure()}</div>
+		<div class="mt-1 w-full opacity-90">{@render figure()}</div>
 	{/if}
 	{#if action}
 		<div class="mt-1 flex flex-wrap items-center justify-center gap-2">{@render action()}</div>

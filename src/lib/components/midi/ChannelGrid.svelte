@@ -11,7 +11,7 @@
 	import { engine } from '$lib/midi/engine.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { synth } from '$lib/audio/synth';
-	import { gmProgramName } from '$lib/midi/constants';
+	import { gmFamily, gmProgramName } from '$lib/midi/constants';
 	import { channelColour } from '$lib/midi/channelcolour';
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { cn } from '$lib/utils';
@@ -35,7 +35,11 @@
 	across.
 -->
 <div
-	class={cn('grid gap-1', compact ? 'grid-cols-8' : 'grid-cols-2 sm:grid-cols-4', className)}
+	class={cn(
+		'grid gap-1',
+		compact ? 'grid-cols-8' : 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-8',
+		className
+	)}
 	use:rovingGrid
 >
 	{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
@@ -56,15 +60,22 @@
 			aria-pressed={selectable ? selected : undefined}
 			title={`Channel ${c + 1} · ${c === 9 ? 'General MIDI drum kit' : gmProgramName(synth.channels[c].program)}${selectable ? ' · click to transmit here' : ''}`}
 		>
+			<!--
+				The number is the hero. Sixteen channels showing "Acoustic Grand
+				Piano" sixteen times is a wall of identical English where the only
+				thing that differs — which channel this is — was the smallest type in
+				the cell. The family name is enough to place the sound; the exact
+				program is in the tooltip, where a detail you rarely need belongs.
+			-->
 			<span
-				class="tnum w-4 shrink-0 text-right font-mono text-xs"
+				class="tnum w-4 shrink-0 text-right font-mono text-sm font-medium"
 				style:color={active ? colour(c) : ''}
 			>
 				{c + 1}
 			</span>
 			{#if !compact}
 				<span class="min-w-0 flex-1 truncate text-2xs leading-tight text-muted-foreground">
-					{c === 9 ? 'GM kit' : gmProgramName(synth.channels[c].program)}
+					{c === 9 ? 'GM kit' : gmFamily(synth.channels[c].program)}
 				</span>
 			{/if}
 			{#if active}
