@@ -8,7 +8,7 @@
  * here purely because General MIDI says so.
  */
 
-import type { AudioEngine } from './engine';
+import type { SynthHost } from './engine';
 
 interface DrumSpec {
 	kind: 'kick' | 'snare' | 'hat' | 'tom' | 'cymbal' | 'clap' | 'perc' | 'click';
@@ -72,7 +72,7 @@ export function drumLabel(note: number): DrumSpec | undefined {
 }
 
 export function triggerDrum(
-	engine: AudioEngine,
+	engine: SynthHost,
 	note: number,
 	velocity: number,
 	out: AudioNode,

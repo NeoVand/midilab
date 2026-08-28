@@ -7,13 +7,13 @@
 	import Checkpoint from '$lib/components/lesson/Checkpoint.svelte';
 	import Keyboard from '$lib/components/midi/Keyboard.svelte';
 	import MelodyPlayer from '$lib/components/midi/MelodyPlayer.svelte';
+	import SoundVsData from '$lib/components/midi/SoundVsData.svelte';
 	import Xref from '$lib/components/lesson/Xref.svelte';
 	import Term from '$lib/components/lesson/Term.svelte';
 	import Further from '$lib/components/lesson/Further.svelte';
 	import { lessonById } from '$lib/curriculum/registry';
 	import { notesToEvents } from '$lib/midi/player.svelte';
 	import { melody } from '$lib/music/melodies';
-	import { encode } from '$lib/midi/messages';
 
 	const meta = lessonById('control-not-sound')!;
 
@@ -26,12 +26,25 @@
 	 */
 	const VOICES = [0, 11, 19, 40, 48, 56, 73, 81, 89];
 
-	// Concrete sizes, computed rather than asserted.
+	/*
+	 * The figure below carries the byte counts now, computed from its own
+	 * render. What is left here is the one number the callout needs: what those
+	 * seconds cost as uncompressed stereo, which is a property of the duration
+	 * and not of anything the reader can change.
+	 */
 	const ODE = melody('ode-to-joy');
+
+	/*
+	 * One instrument for the whole lesson.
+	 *
+	 * The demo picks it and the figure below renders it. Two pickers for one
+	 * performance is not a figure with controls, it is a second copy of the
+	 * demo — and the moment they disagree the page is telling the reader two
+	 * different things about the same eight bars.
+	 */
+	let voice = $state(ODE.program);
 	const events = notesToEvents(ODE.notes, ODE.bpm);
-	const midiBytes = events.reduce((n, e) => n + encode(e.message).length, 0);
-	const seconds = events[events.length - 1].time;
-	const audioBytes = Math.round(seconds * 44100 * 2 * 2);
+	const audioBytes = Math.round(events[events.length - 1].time * 44100 * 2 * 2);
 </script>
 
 <LessonShell lesson={meta}>
@@ -58,7 +71,16 @@
 			number <em>n</em>".
 		</p>
 
-		<MelodyPlayer id="ode-to-joy" voices={VOICES} credit={false} />
+		<MelodyPlayer id="ode-to-joy" voices={VOICES} credit={false} bind:program={voice} />
+
+		<!--
+			And the same instrument under your own hands, because "switch the
+			instrument, play them again" is an instruction you should be able to
+			disobey. Typing is off here: the keyboard listens on the window, and the
+			one at the foot of the lesson already owns the A–' row — two of them
+			would sound every keystroke twice.
+		-->
+		<Keyboard low={55} octaves={2} height={92} typing={false} />
 
 		<p class="text-xs leading-relaxed text-muted-foreground">
 			What changed between takes was one two-byte message —
@@ -70,30 +92,20 @@
 	</TryThis>
 
 	<Section title="Why that difference is enormous">
-		<div class="grid gap-3 sm:grid-cols-2">
-			<div class="flex flex-col gap-2 rounded-lg border border-msg-note/30 bg-msg-note-bg p-4">
-				<p class="text-xs font-semibold tracking-wide text-msg-note uppercase">MIDI · the intent</p>
-				<p class="tnum font-mono text-2xl">{midiBytes} bytes</p>
-				<p class="text-sm leading-relaxed">
-					{events.length} messages. Every one of them is editable: change a note, change the tempo, change
-					the instrument, transpose the lot, and nothing degrades because there is nothing to degrade.
-				</p>
-			</div>
-			<div class="flex flex-col gap-2 rounded-lg border bg-muted/40 p-4">
-				<p class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-					Audio · the result
-				</p>
-				<p class="tnum font-mono text-2xl">{(audioBytes / 1_000_000).toFixed(1)} MB</p>
-				<p class="text-sm leading-relaxed">
-					The same {seconds.toFixed(1)} seconds as uncompressed stereo. Exactly what was played, and almost
-					nothing about it can be changed afterwards. You cannot un-play a wrong note.
-				</p>
-			</div>
-		</div>
+		<!--
+			Two numbers in two boxes is what this was, and numbers are the weakest
+			way to make this particular point: nobody disbelieves them and nobody
+			feels them either. The bytes and the sound side by side, with the sound
+			rendered from those exact bytes while you watch, is an argument you
+			cannot read past.
+		-->
+		<SoundVsData id="ode-to-joy" program={voice ?? ODE.program} />
 		<p class="prose-body">
-			That is roughly <strong>{Math.round(audioBytes / midiBytes).toLocaleString()}× smaller</strong
-			>, which is why a protocol designed in 1983 for a 31,250-bit-per-second cable is still how
-			every instrument in your studio talks to every other one. It was never trying to move sound.
+			The column on the left is the whole performance. The picture on the right is one rendering of
+			it — and if you change the instrument, every pixel of that picture is redrawn while exactly
+			one byte in the column changes. That ratio is why a protocol designed in 1983 for a
+			31,250-bit-per-second cable is still how every instrument in your studio talks to every other
+			one. It was never trying to move sound.
 		</p>
 		<Callout variant="note" title="The comparison is not quite fair, and it does not need to be">
 			<p>

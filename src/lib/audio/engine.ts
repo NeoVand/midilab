@@ -18,6 +18,28 @@ export interface MasterMeters {
 	rms: number;
 }
 
+/**
+ * Everything the synth needs from whatever it is playing into.
+ *
+ * `AudioEngine` is the live one — a running AudioContext, a master bus, a
+ * reverb and a delay. But nothing in the synth actually requires the context to
+ * be live, and there is a second thing that wants to drive it: an offline
+ * render, where the whole point is to produce a buffer faster than real time
+ * and then look at it. Naming the six members it uses lets both exist without
+ * the synth knowing which it has.
+ *
+ * Widened to `BaseAudioContext` for the same reason: an `OfflineAudioContext`
+ * is not an `AudioContext`, and every node the synth builds is on the base.
+ */
+export interface SynthHost {
+	readonly context: BaseAudioContext | null;
+	readonly destination: GainNode | null;
+	readonly reverbSend: GainNode | null;
+	readonly delaySend: GainNode | null;
+	readonly noiseBuffer: AudioBuffer | null;
+	resume(): Promise<BaseAudioContext | null>;
+}
+
 export class AudioEngine {
 	#ctx: AudioContext | null = null;
 	#master: GainNode | null = null;
@@ -180,7 +202,7 @@ export class AudioEngine {
 	}
 }
 
-function makeImpulse(ctx: BaseAudioContext, seconds: number, decay: number): AudioBuffer {
+export function makeImpulse(ctx: BaseAudioContext, seconds: number, decay: number): AudioBuffer {
 	const rate = ctx.sampleRate;
 	const length = Math.floor(rate * seconds);
 	const buffer = ctx.createBuffer(2, length, rate);
@@ -196,7 +218,7 @@ function makeImpulse(ctx: BaseAudioContext, seconds: number, decay: number): Aud
 	return buffer;
 }
 
-function makeNoise(ctx: BaseAudioContext, seconds: number): AudioBuffer {
+export function makeNoise(ctx: BaseAudioContext, seconds: number): AudioBuffer {
 	const length = Math.floor(ctx.sampleRate * seconds);
 	const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
 	const data = buffer.getChannelData(0);

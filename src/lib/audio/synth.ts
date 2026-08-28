@@ -14,7 +14,7 @@
  * is a wider default bend range on member channels.
  */
 
-import { audio, type AudioEngine } from './engine';
+import { audio, type SynthHost } from './engine';
 import { presetForProgram, type Preset } from './presets';
 import { triggerDrum } from './drums';
 import type { MidiMessage } from '$lib/midi/messages';
@@ -30,7 +30,7 @@ class Voice {
 	readonly startedAt: number;
 	released = false;
 
-	#ctx: AudioContext;
+	#ctx: BaseAudioContext;
 	#preset: Preset;
 	#osc1: OscillatorNode;
 	#osc2: OscillatorNode;
@@ -45,7 +45,7 @@ class Voice {
 	#stopAt = Infinity;
 
 	constructor(
-		engine: AudioEngine,
+		engine: SynthHost,
 		preset: Preset,
 		channel: number,
 		note: number,
@@ -195,8 +195,31 @@ class Voice {
 		const t = Math.max(when, this.#ctx.currentTime);
 		const r = Math.max(0.01, this.#preset.release);
 		const a = this.#amp.gain;
-		a.cancelScheduledValues(t);
-		a.setValueAtTime(a.value, t);
+		/*
+		 * Hold whatever the envelope is at `t`, not whatever it is now.
+		 *
+		 * This was `setValueAtTime(a.value, t)`, and `a.value` is the parameter's
+		 * value at the context's *current* time — which is only the same thing
+		 * when the release happens the instant it is asked for. Every release
+		 * scheduled ahead therefore pinned the envelope to a level from the past
+		 * and decayed from there. The scheduler runs with lookahead, so that is
+		 * every sequenced note; on an instrument whose attack is slower than the
+		 * note is long — a pad at a hundred and sixteen beats a minute — the
+		 * value it read was near zero and the note was silenced before it had
+		 * finished swelling. In an offline render, where the clock never leaves
+		 * zero, it silenced almost everything.
+		 *
+		 * `cancelAndHoldAtTime` is the method for exactly this: cancel what is
+		 * scheduled after `t`, and hold the value the curve genuinely reaches
+		 * there. Firefox only shipped it in 126, so the old path stays as a
+		 * fallback rather than throwing on an older build.
+		 */
+		if (typeof a.cancelAndHoldAtTime === 'function') {
+			a.cancelAndHoldAtTime(t);
+		} else {
+			a.cancelScheduledValues(t);
+			a.setValueAtTime(a.value, t);
+		}
 		a.setTargetAtTime(0.0001, t, r / 4);
 		this.#stopAt = t + r * 1.5;
 		this.#osc1.stop(this.#stopAt);
@@ -330,14 +353,14 @@ function shaped(p: Preset, s: ChannelState): Preset {
 export class Synth {
 	readonly channels: ChannelState[] = Array.from({ length: 16 }, () => initialChannel());
 
-	#engine: AudioEngine;
+	#engine: SynthHost;
 	#voices: Voice[] = [];
 	#sustained = new Set<Voice>();
 	#lfo: OscillatorNode | null = null;
 	#out: GainNode | null = null;
 	#sweeper = 0;
 
-	constructor(engine: AudioEngine = audio) {
+	constructor(engine: SynthHost = audio) {
 		this.#engine = engine;
 	}
 

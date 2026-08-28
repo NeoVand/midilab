@@ -18,7 +18,7 @@
 	import { melody, melodyNotes, round, MELODIES } from '$lib/music/melodies';
 	import { engine } from '$lib/midi/engine.svelte';
 	import VoicePicker from './VoicePicker.svelte';
-	import { gmProgramName } from '$lib/midi/constants';
+	import VoiceStrip from './VoiceStrip.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { PlayIcon, StopIcon } from '@hugeicons/core-free-icons';
@@ -40,6 +40,12 @@
 		 * the point sixteen channels exists to make.
 		 */
 		voicesInRound?: { channel: number; delay: number; program?: number; label?: string }[];
+		/**
+		 * The instrument in force. Bindable, so a page can put one picker on the
+		 * screen and let everything else on it follow — which is the only honest
+		 * arrangement when two figures are showing the same performance.
+		 */
+		program?: number | null;
 		channel?: number;
 		loop?: boolean;
 		class?: string;
@@ -50,6 +56,7 @@
 		transpose = false,
 		credit = true,
 		voicesInRound,
+		program = $bindable(null),
 		channel = 0,
 		loop = false,
 		class: className
@@ -59,7 +66,6 @@
 	let chosen = $state(MELODIES[0].id);
 	const current = $derived(melody(id ?? chosen));
 
-	let program = $state<number | null>(null);
 	let shift = $state(0);
 
 	const player = new SequencePlayer();
@@ -168,22 +174,7 @@
 	{#if voiceList.length}
 		<div class="flex flex-col gap-1.5">
 			<span class="label">Same notes, different instrument</span>
-			<div class="flex flex-wrap gap-1.5">
-				{#each voiceList as p (p)}
-					<button
-						class={cn(
-							'rounded-lg border px-2.5 py-1.5 text-xs transition-colors',
-							(program ?? current.program) === p
-								? 'border-msg-program bg-msg-program-bg text-msg-program'
-								: 'hover:border-foreground/30 hover:bg-accent/40'
-						)}
-						aria-pressed={(program ?? current.program) === p}
-						onclick={() => pickVoice(p)}
-					>
-						{gmProgramName(p)}
-					</button>
-				{/each}
-			</div>
+			<VoiceStrip voices={voiceList} value={program ?? current.program} onValue={pickVoice} />
 		</div>
 	{/if}
 
