@@ -106,7 +106,7 @@
 	<title>Jukebox — MIDI Lab</title>
 </svelte:head>
 
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-8 sm:py-8">
+<div class="workbench-prose mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-8 sm:py-8">
 	<PageHeader
 		title="Jukebox"
 		lead="Music old enough to be nobody's property, played by describing it. Change the instrument, the key or the speed — the notes never move."

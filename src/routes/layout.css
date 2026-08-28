@@ -594,12 +594,21 @@
 	 * column narrower than the cap or wants to be. `:where` keeps the
 	 * specificity at zero so a single utility class overrides it, and
 	 * `.full-measure` is there for the case that genuinely needs the column.
+	 *
+	 * The lab pages want it too. A workbench is wider than a lesson — 68rem of
+	 * instruments rather than 50 — but the sentences on it are still sentences:
+	 * "arm this, then move a knob on the instrument" was running to eighty-five
+	 * characters a line above a panel of controls, for no reason except that
+	 * nothing had told it not to. The instruments keep the whole bench.
 	 */
-	.lesson-prose :where(p, li) {
+	.lesson-prose :where(p, li),
+	.workbench-prose :where(p, li) {
 		max-width: var(--measure);
 	}
 	.lesson-prose .full-measure,
-	.lesson-prose :where(p, li).full-measure {
+	.lesson-prose :where(p, li).full-measure,
+	.workbench-prose .full-measure,
+	.workbench-prose :where(p, li).full-measure {
 		max-width: none;
 	}
 

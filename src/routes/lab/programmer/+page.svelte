@@ -8,7 +8,7 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 </script>
 
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-8">
+<div class="workbench-prose mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-8">
 	<PageHeader
 		title="Programmer"
 		lead="Step patterns, algorithmic patterns and Standard MIDI Files — all driven by the same transport as the rest of the app, so they stay in time with your hardware."
