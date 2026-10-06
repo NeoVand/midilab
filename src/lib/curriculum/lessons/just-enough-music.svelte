@@ -18,6 +18,8 @@
 	import { lessonById } from '$lib/curriculum/registry';
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { phrase } from '$lib/music/notation';
+	import { MUSIC_FOUNDATIONS } from '$lib/curriculum/music-foundations';
+	import { lessonHref } from '$lib/nav';
 
 	const meta = lessonById('just-enough-music')!;
 
@@ -30,20 +32,37 @@
 <LessonShell lesson={meta}>
 	<Section>
 		<p class="prose-body">
-			This lesson is here because the rest of the course kept assuming things. "Twenty-four ticks a
-			quarter note" is a fact about MIDI and a wall for anybody who has never been told what a
-			quarter note is. "Bend a fifth" is a precise instruction that means nothing without the word.
+			Start with the music you can hear and play: a steady pulse, a short melody, and notes that
+			work together. This overview gives you the words for those ideas. You will use them to make
+			music before looking inside a MIDI message.
 		</p>
 		<p class="prose-body">
-			So: everything musical the other thirty-seven lessons lean on, in one place. It is not a music
-			theory course — it is the specific vocabulary, and no more of it than you need. If you already
-			play, skip to <Xref to="notes-and-pitch" />; nothing here will be new.
+			The six practical lessons in Act 0 turn this vocabulary into playing: keep a pulse, make a
+			melody, connect chords, build a groove, shape a phrase, then finish an eight-bar piece. Each
+			gives you something to listen to, play back and use in your own project. Already comfortable
+			with these ideas? Start Act I with <Xref to="control-not-sound" />.
 		</p>
+		<ol class="flex flex-col gap-3">
+			{#each Object.entries(MUSIC_FOUNDATIONS) as [id, foundation], i (id)}
+				<li>
+					<a
+						class="flex gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
+						href={lessonHref(id)}
+						><span class="font-mono text-msg-note">{i + 1}</span><span
+							><strong class="block text-sm">{foundation.title}</strong><span
+								class="mt-1 block text-xs leading-relaxed text-muted-foreground"
+								>{lessonById(id)?.blurb}</span
+							></span
+						></a
+					>
+				</li>
+			{/each}
+		</ol>
 		<Callout variant="key" title="Musical words are almost all measurements">
 			<p>
 				Nearly every term below turns out to name a <em>number</em> — a count of beats, a count of semitones,
 				a ratio between durations. That is why MIDI can carry music at all without understanding any of
-				it, and it is why this vocabulary is much smaller than it looks from outside.
+				it. Act I explores how those instructions work; here, listen for what the numbers mean.
 			</p>
 		</Callout>
 	</Section>
@@ -55,8 +74,8 @@
 			called <Term>bars</Term>, and almost always in groups of four.
 		</p>
 		<p class="prose-body">
-			Everything else about musical time is a fraction of a beat, and the names are literal
-			fractions of a bar. A <Term>quarter note</Term> is a quarter of a four-beat bar — one beat. An
+			Note values describe lengths relative to each other, independently of the bar. In 4/4 a
+			<Term>quarter note</Term> lasts one beat. An
 			<Term>eighth note</Term> is half of that. The British names are completely different words for exactly
 			the same durations, which is a historical accident you will meet in manuals and can safely ignore.
 		</p>
@@ -65,8 +84,8 @@
 			<p>
 				MIDI Clock sends 24 ticks per quarter note. Twenty-four because it divides evenly by 2, 3,
 				4, 6, 8 and 12 — so eighths, sixteenths and
-				<Term>triplets</Term> all land on a tick and none of them needs a fraction. Play the triplet row
-				against the eighth-note row above and you are hearing exactly why that number was chosen.
+				<Term>triplets</Term> all land on a tick and none of them needs a fraction. Compare the triplet
+				and eighth-note rows one at a time: the same beat divides into three or two equal pieces.
 			</p>
 			<p class="mt-2">
 				The full story is in <Xref to="midi-clock" /> and
@@ -80,15 +99,15 @@
 			A <Term>semitone</Term> is the distance from any key to the very next key, black or white. It is
 			the smallest step a normal keyboard offers, and in MIDI it is simply <strong>+1</strong>.
 			Twelve of them make an <Term>octave</Term>, which is <strong>+12</strong>, and two notes an
-			octave apart sound so alike that every musical culture on earth gives them the same name.
+			octave apart share a pitch class and the same letter name in this naming system.
 		</p>
 		<p class="prose-body">
-			The distance between any two notes is an <Term>interval</Term>, and musicians name intervals
-			rather than counting semitones — but the names <em>are</em> the counts. Here are the ones that earn
-			their keep:
+			The distance between any two notes is an <Term>interval</Term>. Musicians name intervals using
+			letter-name steps and a quality such as major or perfect. On a twelve-tone keyboard, these
+			common intervals have useful semitone distances:
 		</p>
 		<div class="grid gap-2 sm:grid-cols-2">
-			{#each [['+12', 'Octave', 'The same note again, higher.'], ['+7', 'Perfect fifth', 'The most consonant interval after the octave. Power chords are nothing else.'], ['+5', 'Perfect fourth', 'A fifth upside down. Stable, slightly hollow.'], ['+4', 'Major third', 'The interval that makes a chord sound happy.'], ['+3', 'Minor third', 'One semitone smaller. Makes it sound sad.'], ['+1', 'Semitone', 'Adjacent keys. Grinding, tense, the horror-film interval.']] as [n, label, note] (label)}
+			{#each [['+12', 'Octave', 'The same pitch class again, higher.'], ['+7', 'Perfect fifth', 'An open, often stable sound. A power chord uses root and fifth.'], ['+5', 'Perfect fourth', 'A fifth inverted. Its role depends on the surrounding harmony.'], ['+4', 'Major third', 'The third that defines a major triad.'], ['+3', 'Minor third', 'One semitone smaller; the third that defines a minor triad.'], ['+1', 'Semitone', 'Adjacent keys. Close pitches can create audible tension.']] as [n, label, note] (label)}
 				<div class="flex gap-3 rounded-lg border p-3">
 					<span class="tnum w-9 shrink-0 font-mono text-sm text-msg-note">{n}</span>
 					<span class="min-w-0">
@@ -118,24 +137,25 @@
 		</p>
 		<Callout variant="note" title="Why some distances sound better than others">
 			<p>
-				Not taste, and not convention. A single note is already a stack of frequencies at
-				whole-number multiples of its pitch — the <Term>harmonic series</Term> — and an interval sounds
-				consonant when the two notes share a lot of that stack. A fifth is a 3:2 frequency ratio and shares
-				a great deal. A semitone is roughly 18:17 and shares almost nothing. There is a widget for this
-				in <Xref to="notes-and-pitch" />.
+				Timbre, musical context and listening traditions all affect consonance. Many sounds contain
+				frequencies at whole-number multiples of its pitch — the <Term>harmonic series</Term> — and an
+				interval sounds consonant when the two notes share a lot of that stack. A fifth is a 3:2 frequency
+				ratio and shares a great deal. A semitone is roughly 18:17 and shares almost nothing. There is
+				a widget for this in <Xref to="notes-and-pitch" />.
 			</p>
 		</Callout>
 	</Section>
 
 	<Section title="Scales: which twelve notes you are using">
 		<p class="prose-body">
-			There are twelve pitches in an octave, and almost no music uses all of them. A
-			<Term>scale</Term> is the subset a piece draws from, and the note it treats as home is the
-			<Term>root</Term>. Together they make the <Term>key</Term>.
+			A twelve-tone keyboard offers twelve pitch classes in an octave. Many pieces emphasise a
+			subset. A
+			<Term>scale</Term> is the subset a piece draws from, and the note it treats as home is the tonic.
+			The scale and the way the music treats that home note help establish the <Term>key</Term>.
 		</p>
 		<p class="prose-body">
-			The major scale is the pattern <strong>0, 2, 4, 5, 7, 9, 11</strong> semitones above its root. Start
-			on C and that pattern lands on exactly the white keys, which is not a coincidence — the keyboard
+			The major scale is the pattern <strong>0, 2, 4, 5, 7, 9, 11</strong> semitones above its tonic.
+			Start on C and that pattern lands on exactly the white keys, which is not a coincidence — the keyboard
 			was designed around it.
 		</p>
 		<PhrasePlayer notes={SCALE} bpm={132} label="Play a C major scale" program={0} />
@@ -159,9 +179,9 @@
 
 	<TryThis title="Chords are addition">
 		<p class="text-sm leading-relaxed">
-			A <Term>chord</Term> is more than one note at once. Every chord name you have ever seen is a set
-			of distances from a root — so the difference between the happiest and the saddest sound in Western
-			music is one semitone in the middle.
+			A <Term>chord</Term> combines notes heard together. A chord quality describes a pattern of distances
+			from a root. A major and a minor triad differ by one semitone in the middle; their musical mood
+			also depends on the rhythm, instrument and surrounding harmony.
 		</p>
 		<ChordLab />
 	</TryThis>
@@ -209,8 +229,8 @@
 		/>
 		<p class="text-sm leading-relaxed">
 			60-64-67, then 60-63-67. One note moved down by one. Now hear the same idea used for real —
-			Beethoven's most famous four notes are a minor third apart, and the whole symphony is built on
-			the fact that they are minor.
+			Beethoven's opening motif falls from G to E-flat, a major third; its answer falls from F to D,
+			a minor third. Hear how rhythm and context give those intervals a dramatic role.
 		</p>
 		<MelodyPlayer id="fate" />
 	</TryThis>
@@ -249,7 +269,7 @@
 			immediately stable. Then play a note and the key directly beside it.
 		</p>
 		<Keyboard low={48} octaves={3} height={140} labels="numbers" />
-		<p class="text-xs text-muted-foreground">{noteState.heldCount} held</p>
+		<p class="text-xs text-muted-foreground">{noteState.performerHeldCount} held</p>
 	</TryThis>
 
 	<Quiz
@@ -277,42 +297,46 @@
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="fifth"
 			label="Play two notes seven semitones apart — a perfect fifth"
 			hint="Hold one key, then the seventh key to the right of it counting black keys too."
 			test={() => {
-				const held = noteState.held;
+				const held = noteState.performerHeld;
 				return held.some((a) => held.some((b) => b - a === 7));
 			}}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="major"
 			label="Play a major triad — root, +4, +7"
 			hint="Any root will do. 60, 64 and 67 together, for example."
 			test={() => {
-				const held = noteState.held;
+				const held = noteState.performerHeld;
 				return held.some((r) => held.includes(r + 4) && held.includes(r + 7));
 			}}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="minor"
 			label="Play a minor triad — root, +3, +7"
 			hint="Take the major triad you just played and move the middle note down one key."
 			test={() => {
-				const held = noteState.held;
+				const held = noteState.performerHeld;
 				return held.some((r) => held.includes(r + 3) && held.includes(r + 7));
 			}}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="octave"
 			label="Play two notes exactly an octave apart"
 			hint="Twelve semitones — the same letter name, twice."
 			test={() => {
-				const held = noteState.held;
+				const held = noteState.performerHeld;
 				return held.some((a) => held.includes(a + 12));
 			}}
 		/>

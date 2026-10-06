@@ -130,8 +130,8 @@
 		const n = notes[i];
 		await engine.wake();
 		if (!fixedVoice) engine.programChange(voice, n.channel ?? 0);
-		engine.noteOn(n.note, n.velocity ?? 96, n.channel ?? 0);
-		setTimeout(() => engine.noteOff(n.note, n.channel ?? 0), 350);
+		engine.noteOn(n.note, n.velocity ?? 96, n.channel ?? 0, 'demo');
+		setTimeout(() => engine.noteOff(n.note, n.channel ?? 0, 0, 'demo'), 350);
 	}
 
 	/*

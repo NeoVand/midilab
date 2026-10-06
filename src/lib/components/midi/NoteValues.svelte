@@ -18,6 +18,7 @@
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { PlayIcon, StopIcon } from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
+	import { Button } from '$lib/components/ui/button';
 
 	interface Props {
 		bpm?: number;
@@ -94,7 +95,11 @@
 	];
 
 	let playing = $state<string | null>(null);
+	let pulse = $state(true);
 	const player = new SequencePlayer();
+	const currentBeat = $derived(
+		playing && player.playing ? Math.min(beats, Math.floor(player.position / (60 / bpm)) + 1) : null
+	);
 
 	/*
 	 * Pitch is deliberately fixed and low: the row is about duration, and a
@@ -105,7 +110,7 @@
 	function rowNotes(r: Row): NoteSpec[] {
 		const step = 1 / r.per;
 		const count = Math.round(beats * r.per);
-		return Array.from({ length: count }, (_, i) => ({
+		const melody: NoteSpec[] = Array.from({ length: count }, (_, i) => ({
 			note: 60,
 			// Each note sounds for almost all of its own written length — never a
 			// fixed maximum. An earlier version capped this at 1.6 beats to stop
@@ -118,6 +123,18 @@
 			velocity: i === 0 ? 112 : i % r.per === 0 ? 92 : 70,
 			channel: 0
 		}));
+		return pulse
+			? [
+					...melody,
+					...Array.from({ length: beats }, (_, i) => ({
+						note: 76,
+						start: i,
+						duration: 0.08,
+						velocity: i === 0 ? 85 : 55,
+						channel: 9
+					}))
+				]
+			: melody;
 	}
 
 	async function toggle(r: Row) {
@@ -196,5 +213,19 @@
 			Every row is the same {beats} beats at {bpm} BPM. Only the number of pieces changes.
 		</p>
 		<VoicePicker bind:value={program} />
+	</div>
+	<div class="flex flex-wrap items-center gap-3">
+		<Button
+			variant="outline"
+			size="sm"
+			disabled={playing !== null}
+			aria-pressed={pulse}
+			onclick={() => (pulse = !pulse)}>{pulse ? 'Beat pulse on' : 'Beat pulse off'}</Button
+		>
+		<span class="text-xs text-muted-foreground" aria-live="polite"
+			>{currentBeat
+				? `Beat ${currentBeat} of ${beats}`
+				: 'Compare one row at a time against the same beat.'}</span
+		>
 	</div>
 </div>

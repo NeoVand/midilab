@@ -76,8 +76,8 @@
 	<Section>
 		<p class="prose-body">
 			Most people meet MIDI inside a <Term>DAW</Term> — Ableton, Logic, FL Studio, Reaper, Bitwig, Cubase
-			— and meet it as a grid of coloured rectangles. Everything in the previous three acts is underneath
-			that grid, and this lesson is the join.
+			— and meet it as a grid of coloured rectangles. The music, messages and timing you have explored
+			all sit underneath that grid, and this lesson is the join.
 		</p>
 		<p class="prose-body">
 			Here is the whole of it in one sentence: <strong

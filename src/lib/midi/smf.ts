@@ -255,13 +255,15 @@ function readTracks(
 
 export interface WriteOptions {
 	division?: number;
+	/** Preserve intentional silence through this absolute tick in every track. */
+	endTick?: number;
 	bpm?: number;
 	timeSignature?: [number, number];
 	name?: string;
 }
 
 /** Build a track chunk body from absolute-tick events. */
-function buildTrack(events: TrackEvent[]): number[] {
+function buildTrack(events: TrackEvent[], endTick = 0): number[] {
 	const out: number[] = [];
 	const sorted = [...events].sort((a, b) => a.tick - b.tick);
 	let last = 0;
@@ -277,7 +279,7 @@ function buildTrack(events: TrackEvent[]): number[] {
 		}
 	}
 	// Every track must end with End of Track.
-	out.push(0x00, 0xff, 0x2f, 0x00);
+	out.push(...encodeVlq(Math.max(0, Math.round(endTick) - last)), 0xff, 0x2f, 0x00);
 	return out;
 }
 
@@ -326,7 +328,7 @@ export function timeSignatureMeta(numerator: number, denominator: number): MetaE
 
 /** Write a format-1 file: one conductor track plus one track per part. */
 export function writeMidiFile(tracks: MidiTrack[], opts: WriteOptions = {}): Uint8Array {
-	const { division = 480, bpm = 120, timeSignature = [4, 4], name } = opts;
+	const { division = 480, bpm = 120, timeSignature = [4, 4], name, endTick = 0 } = opts;
 
 	const conductor: TrackEvent[] = [
 		{ delta: 0, tick: 0, event: tempoMeta(bpm) },
@@ -334,11 +336,11 @@ export function writeMidiFile(tracks: MidiTrack[], opts: WriteOptions = {}): Uin
 	];
 	if (name) conductor.unshift({ delta: 0, tick: 0, event: textMeta(0x03, name) });
 
-	const bodies: number[][] = [buildTrack(conductor)];
+	const bodies: number[][] = [buildTrack(conductor, endTick)];
 	for (const t of tracks) {
 		const events = [...t.events];
 		if (t.name) events.unshift({ delta: 0, tick: 0, event: textMeta(0x03, t.name) });
-		bodies.push(buildTrack(events));
+		bodies.push(buildTrack(events, endTick));
 	}
 
 	const header = chunk('MThd', [

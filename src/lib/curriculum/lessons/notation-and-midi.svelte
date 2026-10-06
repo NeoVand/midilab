@@ -241,6 +241,7 @@
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="enharmonic"
 			label="Play a black key and see it spelled both ways"
@@ -248,13 +249,15 @@
 			test={(e) => e.message.type === 'noteOn' && [1, 3, 6, 8, 10].includes(e.message.note % 12)}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="chord"
 			label="Hold three notes and read them off the staff"
 			hint="Any triad. The engraving follows what is sounding."
-			test={() => noteState.heldCount >= 3}
+			test={() => noteState.performerHeldCount >= 3}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="choose"
 			label="Say which format you would send to a session player, and why"

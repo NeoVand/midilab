@@ -2,7 +2,7 @@
 	/**
 	 * The whole course, as a map rather than a grid of cards.
 	 *
-	 * Six acts in a fixed order, every lesson in a fixed order — a sequence,
+	 * Music basics followed by seven MIDI acts, every lesson in a fixed order — a sequence,
 	 * and a card grid is the one layout that throws a sequence away. Each act is
 	 * a row; each lesson is a pip you can hover to name and click to open. So
 	 * the section shows where the course goes, how far along you are, and gives
@@ -10,19 +10,17 @@
 	 */
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
-	import { CURRICULUM, ACT_ICON, type LessonMeta } from '$lib/curriculum/registry';
+	import { CURRICULUM, ACT_ICON, actLabel, type LessonMeta } from '$lib/curriculum/registry';
 	import { lessonHref, path } from '$lib/nav';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { cn } from '$lib/utils';
 
 	/** The lesson under the cursor, whose title takes over its act's subtitle. */
 	let peek = $state<LessonMeta | null>(null);
-
-	const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
 </script>
 
 <div class="divide-y rounded-lg border">
-	{#each CURRICULUM as act, a (act.id)}
+	{#each CURRICULUM as act (act.id)}
 		{@const done = act.lessons.filter((l) => progress.isLessonComplete(l.id)).length}
 		{@const complete = done === act.lessons.length}
 		<div class="grid grid-cols-[auto_1fr] gap-x-3.5 px-4 py-3.5 sm:grid-cols-[auto_1fr_auto]">
@@ -36,7 +34,7 @@
 			</span>
 
 			<div class="flex min-w-0 items-baseline gap-2.5">
-				<span class="label shrink-0">Act {ROMAN[a]}</span>
+				<span class="label shrink-0">Act {actLabel(act.number)}</span>
 				<a
 					href="{path('/learn')}#{act.id}"
 					class="truncate leading-snug font-medium hover:underline hover:underline-offset-4"

@@ -27,6 +27,14 @@
 	 */
 	const tools = $derived([
 		{
+			href: '/lab/studio',
+			icon: MusicNote01Icon,
+			name: 'First Track Studio',
+			desc: 'Make an eight-bar piece with drums, bass, chords, and a melody of your own.',
+			contents: 'Original starters · Live recording · Note editing · Saved projects · MIDI export',
+			badge: 'Start here' as string | null
+		},
+		{
 			href: '/lab/monitor',
 			icon: Activity03Icon,
 			name: 'Monitor',

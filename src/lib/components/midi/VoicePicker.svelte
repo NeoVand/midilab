@@ -22,8 +22,11 @@
 	 * type, and nothing else until you press it. It is furniture until you want
 	 * it, and then it is a full General MIDI browser.
 	 */
+	import { onDestroy } from 'svelte';
 	import * as Popover from '$lib/components/ui/popover';
 	import { engine } from '$lib/midi/engine.svelte';
+	import { DRUM_KITS, drumKit } from '$lib/audio/drum-machines';
+	import { gm } from '$lib/audio/gm.svelte';
 	import { GM_FAMILIES, GM_PROGRAMS } from '$lib/midi/constants';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ArrowUpDownIcon } from '@hugeicons/core-free-icons';
@@ -45,6 +48,7 @@
 		 * which cannot be the target of a two-way binding.
 		 */
 		onValue?: (program: number) => void;
+		title?: string;
 		class?: string;
 	}
 	let {
@@ -52,25 +56,47 @@
 		channel = 0,
 		audition = true,
 		onValue,
+		title = 'Choose an instrument',
 		class: className
 	}: Props = $props();
 
 	let open = $state(false);
 	let offTimer = 0;
+	let playingNote: { note: number; channel: number } | null = null;
+	let pickVersion = 0;
+
+	function stopAudition() {
+		clearTimeout(offTimer);
+		if (playingNote) engine.noteOff(playingNote.note, playingNote.channel, 0, 'demo');
+		playingNote = null;
+	}
 
 	async function pick(p: number) {
+		const version = ++pickVersion;
+		const sendingChannel = channel;
+		stopAudition();
 		value = p;
+		open = false;
 		onValue?.(p);
 		await engine.wake();
-		engine.programChange(p, channel);
+		if (version !== pickVersion) return;
+		engine.programChange(p, sendingChannel);
 		if (!audition) return;
-		// One audition at a time: moving quickly down the list should replace the
-		// previous note, not pile up a chord of every instrument you passed.
-		clearTimeout(offTimer);
-		const note = channel === 9 ? 38 : 64;
-		engine.noteOn(note, 90, channel);
-		offTimer = window.setTimeout(() => engine.noteOff(note, channel), 600);
+		const note = sendingChannel === 9 ? 38 : 64;
+		playingNote = { note, channel: sendingChannel };
+		engine.noteOn(note, 90, sendingChannel, 'demo');
+		offTimer = window.setTimeout(stopAudition, 600);
 	}
+
+	function cancelAudition() {
+		pickVersion++;
+		stopAudition();
+	}
+	onDestroy(cancelAudition);
+	$effect(() => {
+		void channel;
+		return cancelAudition;
+	});
 </script>
 
 <Popover.Root bind:open>
@@ -79,37 +105,72 @@
 			'flex items-center gap-1 rounded-md px-1.5 py-1 text-2xs text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground',
 			className
 		)}
-		title="Change the instrument this demonstration plays through"
+		{title}
 	>
-		<span class="max-w-[9rem] truncate">{GM_PROGRAMS[value]}</span>
+		<span class="max-w-[9rem] truncate"
+			>{channel === 9 ? drumKit(value).name : GM_PROGRAMS[value]}</span
+		>
 		<HugeiconsIcon icon={ArrowUpDownIcon} size={11} class="shrink-0 opacity-70" />
 	</Popover.Trigger>
-	<Popover.Content class="w-[min(28rem,calc(100vw-2rem))] p-0" sideOffset={6} align="end">
+	{#if channel === 9 && gm.enabled}
+		{#if gm.stateOfDrums(value) === 'loading'}<span class="text-2xs text-muted-foreground"
+				>Loading kit…</span
+			>
+		{:else if gm.stateOfDrums(value) === 'failed'}<span class="text-2xs text-muted-foreground"
+				>Synth fallback</span
+			>{/if}
+	{/if}
+	<Popover.Content
+		class="w-[min(28rem,calc(100vw-2rem))] p-0"
+		sideOffset={6}
+		align="end"
+		onCloseAutoFocus={(event) => event.preventDefault()}
+	>
 		<div class="border-b px-3 py-2">
-			<p class="text-xs font-medium">Instrument</p>
+			<p class="text-xs font-medium">{channel === 9 ? 'Drum kit' : 'Instrument'}</p>
 			<p class="mt-0.5 text-2xs leading-relaxed text-muted-foreground">
-				One Program Change on channel {channel + 1}. The notes do not change.
+				Choose a sound for channel {channel + 1}.
 			</p>
 		</div>
 		<div class="max-h-72 overflow-y-auto p-2">
-			{#each GM_FAMILIES as family, f (family)}
-				<p class="label px-1 pt-2 pb-1 first:pt-0">{family}</p>
-				<div class="grid grid-cols-2 gap-1">
-					{#each Array.from({ length: 8 }, (_, i) => f * 8 + i) as p (p)}
+			{#if channel === 9}
+				<div class="flex flex-col gap-1">
+					{#each DRUM_KITS as kit (kit.program)}
 						<button
 							class={cn(
-								'flex items-baseline gap-1.5 rounded-md px-2 py-1 text-left text-xs transition-colors',
-								value === p ? 'bg-msg-program-bg text-msg-program' : 'hover:bg-accent/60'
+								'rounded-md px-2 py-2 text-left transition-colors',
+								drumKit(value).program === kit.program
+									? 'bg-msg-program-bg text-msg-program'
+									: 'hover:bg-accent/60'
 							)}
-							aria-pressed={value === p}
-							onclick={() => pick(p)}
+							aria-pressed={drumKit(value).program === kit.program}
+							onclick={() => pick(kit.program)}
 						>
-							<span class="tnum w-5 shrink-0 font-mono text-2xs text-muted-foreground">{p}</span>
-							<span class="truncate">{GM_PROGRAMS[p]}</span>
+							<span class="text-xs font-medium">{kit.name} · {kit.machine}</span>
+							<span class="mt-1 block text-2xs text-muted-foreground">{kit.description}</span>
 						</button>
 					{/each}
 				</div>
-			{/each}
+			{:else}
+				{#each GM_FAMILIES as family, f (family)}
+					<p class="label px-1 pt-2 pb-1 first:pt-0">{family}</p>
+					<div class="grid grid-cols-2 gap-1">
+						{#each Array.from({ length: 8 }, (_, i) => f * 8 + i) as p (p)}
+							<button
+								class={cn(
+									'flex items-baseline gap-1.5 rounded-md px-2 py-1 text-left text-xs transition-colors',
+									value === p ? 'bg-msg-program-bg text-msg-program' : 'hover:bg-accent/60'
+								)}
+								aria-pressed={value === p}
+								onclick={() => pick(p)}
+							>
+								<span class="tnum w-5 shrink-0 font-mono text-2xs text-muted-foreground">{p}</span>
+								<span class="truncate">{GM_PROGRAMS[p]}</span>
+							</button>
+						{/each}
+					</div>
+				{/each}
+			{/if}
 		</div>
 	</Popover.Content>
 </Popover.Root>

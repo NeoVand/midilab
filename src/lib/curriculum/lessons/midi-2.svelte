@@ -93,7 +93,7 @@
 			<p>
 				Sixteen groups, each with sixteen channels, is 256 addresses on a single connection — and
 				<Xref to="mpe" label="MPE" /> zones can live inside a group without consuming everyone else's
-				channels. The port-plus-channel thinking from Act IV becomes group-plus-channel, with far more
+				channels. The port-plus-channel thinking from Act V becomes group-plus-channel, with far more
 				room.
 			</p>
 		</Callout>

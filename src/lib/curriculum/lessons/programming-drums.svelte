@@ -247,6 +247,7 @@
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="kick"
 			label="Trigger a kick — note 36 on channel 10"
@@ -254,6 +255,7 @@
 			test={(e) => e.message.type === 'noteOn' && e.message.channel === 9 && e.message.note === 36}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="kit"
 			label="Use four different drums in one session"
@@ -263,6 +265,7 @@
 			test={(e) => e.message.type === 'noteOn' && e.message.channel === 9}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="dynamics"
 			label="Hit the same drum at three different strengths"
@@ -275,11 +278,12 @@
 			test={(e) => e.message.type === 'noteOn' && e.message.channel === 9}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="flam"
 			label="Hit two drums at once"
 			hint="Two pads together — on a drum channel that is a chord."
-			test={() => noteState.heldCount >= 2}
+			test={() => noteState.performerHeldCount >= 2}
 		/>
 	</Checkpoints>
 </LessonShell>

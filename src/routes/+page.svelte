@@ -4,7 +4,7 @@
 	import CourseMap from '$lib/components/shell/CourseMap.svelte';
 	import ToolFigure from '$lib/components/shell/ToolFigure.svelte';
 	import { progress } from '$lib/curriculum/progress.svelte';
-	import { ALL_LESSONS, TOTAL_MINUTES, actOf } from '$lib/curriculum/registry';
+	import { ALL_LESSONS, TOTAL_MINUTES, actOf, actLabel } from '$lib/curriculum/registry';
 	import { lessonHref, path } from '$lib/nav';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { device } from '$lib/stores/device.svelte';
@@ -14,7 +14,8 @@
 		ArrowRight01Icon,
 		PlugSocketIcon,
 		FlaskConicalIcon,
-		LibraryIcon
+		LibraryIcon,
+		MusicNote01Icon
 	} from '@hugeicons/core-free-icons';
 
 	const overall = $derived(progress.fractionOf(ALL_LESSONS.map((l) => l.id)));
@@ -82,13 +83,17 @@
 	-->
 	{#if device.narrow}
 		<div class="flex flex-col gap-2">
+			<Button href={path('/lab/studio')} size="lg" class="w-full justify-start">
+				<HugeiconsIcon icon={MusicNote01Icon} data-icon="inline-start" />
+				Make your first eight-bar track
+			</Button>
 			<a
 				href={lessonHref(nextLesson)}
 				class="flex items-center gap-3 rounded-lg border bg-card px-3 py-2.5 transition-colors active:bg-accent"
 			>
 				<span class="flex min-w-0 flex-1 flex-col">
 					<span class="label">
-						{overall > 0 ? 'Continue' : 'Start the course'} · Act {nextAct?.number ?? 1}
+						{overall > 0 ? 'Continue' : 'Start the course'} · Act {actLabel(nextAct?.number ?? 0)}
 					</span>
 					<span class="truncate text-sm font-medium">{nextLesson.title}</span>
 				</span>
@@ -132,13 +137,17 @@
 					Learn MIDI by making it happen, one byte at a time.
 				</h1>
 				<p class="max-w-xl leading-relaxed text-pretty text-muted-foreground">
-					Thirty lessons, from "what even is a MIDI message" to running a rig of several instruments
-					off one clock — or off your own code. Nothing here is an illustration: the panel above is
-					the same engine every lesson is built on.
+					{ALL_LESSONS.length} lessons, from your first steady beat to running several instruments off
+					one clock — or off your own code. Start with music in Act 0, then explore MIDI in Acts I–VII.
+					The panel above uses the same engine as every lesson.
 				</p>
 			</div>
 			<div class="flex shrink-0 flex-col items-start gap-2 sm:items-end">
-				<Button href={lessonHref(nextLesson)} size="xl">
+				<Button href={path('/lab/studio')} size="xl">
+					<HugeiconsIcon icon={MusicNote01Icon} data-icon="inline-start" />
+					Make your first track
+				</Button>
+				<Button href={lessonHref(nextLesson)} variant="outline" size="lg">
 					{overall > 0 ? 'Continue' : 'Start the course'}
 					<HugeiconsIcon icon={ArrowRight01Icon} size={14} />
 				</Button>

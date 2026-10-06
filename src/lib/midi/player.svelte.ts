@@ -3,10 +3,11 @@
  *
  * It uses the same lookahead discipline as the main transport — plan ahead,
  * hand events to the audio and MIDI layers with timestamps, never fire them
- * from a timer — so the phrases in Act I are already an example of the thing
+ * from a timer — so the phrases in Act 0 are already an example of the thing
  * Latency, jitter, and the lookahead scheduler explains.
  */
 
+import { SvelteSet } from 'svelte/reactivity';
 import { onDestroy } from 'svelte';
 import { audio } from '$lib/audio/engine';
 import { engine } from './engine.svelte';
@@ -129,11 +130,16 @@ export class SequencePlayer {
 		this.#timer = 0;
 		if (this.playing) {
 			// Release anything the sequence left hanging, on its own channels only.
-			const channels = new Set(
+			const channels = new SvelteSet(
 				this.#events.map((e) => ('channel' in e.message ? e.message.channel : 0))
 			);
 			for (const ch of channels) {
-				engine.send({ type: 'controlChange', channel: ch, controller: 123, value: 0 });
+				engine.send(
+					{ type: 'controlChange', channel: ch, controller: 123, value: 0 },
+					undefined,
+					undefined,
+					'demo'
+				);
 			}
 		}
 		this.playing = false;
@@ -155,7 +161,7 @@ export class SequencePlayer {
 			const ev = this.#events[this.#index];
 			const at = this.#startTime + ev.time;
 			if (at > horizon) break;
-			engine.send(ev.message, audioToPerf(at), at);
+			engine.send(ev.message, audioToPerf(at), at, 'demo');
 			this.#index++;
 		}
 

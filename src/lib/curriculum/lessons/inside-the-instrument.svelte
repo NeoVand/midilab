@@ -56,9 +56,9 @@
 <LessonShell lesson={meta}>
 	<Section>
 		<p class="prose-body">
-			Everything so far has been about the message. This lesson is about the thing on the other end
-			of the cable, because half the confusing behaviour in MIDI is not the protocol at all — it is
-			a synthesiser doing something reasonable that you were not expecting.
+			The last few lessons have followed the message. This lesson is about the thing on the other
+			end of the cable, because half the confusing behaviour in MIDI is not the protocol at all — it
+			is a synthesiser doing something reasonable that you were not expecting.
 		</p>
 		<p class="prose-body">
 			You do not need to be able to build one. You need enough of the map that CC 74 stops being a

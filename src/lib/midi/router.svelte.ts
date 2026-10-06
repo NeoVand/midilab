@@ -12,10 +12,10 @@
  */
 
 import { browser } from '$app/environment';
-import { bus, type MidiEvent } from './bus';
+import { SvelteSet } from 'svelte/reactivity';
+import { bus, type MidiEvent, type MidiOrigin } from './bus';
 import { midiAccess } from './access.svelte';
 import { encode, type MidiMessage } from './messages';
-import { synth } from '$lib/audio/synth';
 import { engine, INTERNAL_OUTPUT_ID, VIRTUAL_INPUT_ID } from './engine.svelte';
 import { load, save } from '$lib/stores/persist';
 
@@ -134,14 +134,16 @@ export class Router {
 	#unsub: (() => void) | null = null;
 	#unsubLocal: (() => void) | null = null;
 	#frame = 0;
-	#pending = new Set<string>();
+	#pending = new SvelteSet<string>();
 
 	start(): () => void {
 		if (this.#unsub || !browser) return () => this.stop();
 		this.#unsub = bus.subscribe((e) => this.#route(e));
 		// The app's own controls are an input too, tapped once per message
 		// rather than once per open output port.
-		this.#unsubLocal = engine.onLocalSend((msg) => this.#routeLocal(msg));
+		this.#unsubLocal = engine.onLocalSend((msg, at, audioTime, origin) =>
+			this.#routeLocal(msg, at, audioTime, origin)
+		);
 		const tick = () => {
 			this.#frame = requestAnimationFrame(tick);
 			if (this.#pending.size === 0) return;
@@ -170,30 +172,36 @@ export class Router {
 		for (const route of this.routes) {
 			if (!route.enabled || route.fromPortId !== e.portId) continue;
 			if (route.toPortId === route.fromPortId) continue;
-			this.#pass(route, e.message);
+			this.#pass(route, e.message, e.time, undefined, e.origin ?? 'performer');
 		}
 	}
 
 	/** Messages this page generated, offered to routes from the virtual input. */
-	#routeLocal(msg: MidiMessage) {
+	#routeLocal(msg: MidiMessage, at?: number, audioTime?: number, origin: MidiOrigin = 'performer') {
 		for (const route of this.routes) {
 			if (!route.enabled || route.fromPortId !== VIRTUAL_INPUT_ID) continue;
-			this.#pass(route, msg);
+			this.#pass(route, msg, at, audioTime, origin);
 		}
 	}
 
-	#pass(route: Route, message: MidiMessage) {
+	#pass(
+		route: Route,
+		message: MidiMessage,
+		at?: number,
+		audioTime?: number,
+		origin: MidiOrigin = 'performer'
+	) {
 		const out = transform(message, route);
 		if (!out) return;
 		this.#pending.add(route.id);
 		const bytes = encode(out);
 		if (route.toPortId === INTERNAL_OUTPUT_ID) {
-			synth.handle(out);
+			engine.handleInternal(out, audioTime);
 		} else {
-			midiAccess.sendRaw(route.toPortId, bytes);
+			midiAccess.sendRaw(route.toPortId, bytes, at);
 		}
 		bus.emit({
-			time: performance.now(),
+			time: at ?? performance.now(),
 			portId: route.toPortId,
 			portName:
 				route.toPortId === INTERNAL_OUTPUT_ID
@@ -201,7 +209,8 @@ export class Router {
 					: midiAccess.outputName(route.toPortId),
 			direction: 'out',
 			bytes,
-			message: out
+			message: out,
+			origin
 		});
 	}
 

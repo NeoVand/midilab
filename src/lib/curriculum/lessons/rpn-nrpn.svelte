@@ -74,7 +74,7 @@
 		</div>
 		<p class="text-sm leading-relaxed text-muted-foreground">
 			That is the complete list. RPN 0,0 — bend sensitivity — is the one you will use; RPN 0,6 is
-			how an <Xref to="mpe" label="MPE" /> zone is declared, which is Act V.
+			how an <Xref to="mpe" label="MPE" /> zone is declared, which is Act VI.
 		</p>
 	</Section>
 

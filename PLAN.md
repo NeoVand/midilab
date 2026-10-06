@@ -4,6 +4,13 @@ An interactive, desktop-scale web application that takes someone from "MIDI is
 the thing that makes those cheap piano sounds" to "I can wire six devices,
 pick a clock master, map an undocumented synth, and write code that drives it."
 
+The original plan below has grown into 44 lessons across eight acts. Act 0
+teaches music basics; Act I begins MIDI. The music foundations include ten
+assessed performance drills and a connected eight-bar Studio with three
+original studies, recording, editable notes,
+local projects, backups and MIDI export. Keyboard controls and computer drum
+shortcuts are shared across the learning and playing surfaces.
+
 ---
 
 ## 1. The core idea

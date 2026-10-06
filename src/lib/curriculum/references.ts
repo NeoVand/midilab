@@ -330,6 +330,87 @@ export const REFERENCES: Reference[] = [
 		'Which browsers ship Web MIDI today, updated continuously — including the long-running gap on Safari.'
 	),
 
+	ref(
+		'ableton-beats',
+		'Beat and tempo',
+		'https://learningmusic.ableton.com/make-beats/beat-and-tempo.html',
+		'Ableton Learning Music',
+		'article',
+		'An interactive introduction to the pulse, beat and tempo. Compare a steady beat with the patterns placed around it.'
+	),
+	ref(
+		'ableton-pitch',
+		'Explore pitch',
+		'https://learningmusic.ableton.com/notes-and-scales/notes-and-scales.html',
+		'Ableton Learning Music',
+		'article',
+		'Hear pitch patterns and explore notes before moving into keys and scales.'
+	),
+	ref(
+		'ableton-chords',
+		'Make some chords',
+		'https://learningmusic.ableton.com/chords/chords.html',
+		'Ableton Learning Music',
+		'article',
+		'Build and hear chords in the browser, then explore major and minor triads.'
+	),
+	ref(
+		'ableton-bass',
+		'Make basslines',
+		'https://learningmusic.ableton.com/make-basslines/make-basslines.html',
+		'Ableton Learning Music',
+		'article',
+		'Create bass patterns and hear how low notes work with other musical parts.'
+	),
+	ref(
+		'ableton-structure',
+		'Play with song structures',
+		'https://learningmusic.ableton.com/song-structure/song-structure.html',
+		'Ableton Learning Music',
+		'article',
+		'Combine parts across a timeline to hear musical contrast, repetition and arrangement.'
+	),
+	ref(
+		'theory-duration',
+		'Note duration',
+		'https://www.musictheory.net/lessons/11',
+		'musictheory.net',
+		'article',
+		'Animated explanations of note values and their relative lengths.'
+	),
+	ref(
+		'theory-major',
+		'The major scale',
+		'https://www.musictheory.net/lessons/21',
+		'musictheory.net',
+		'article',
+		'Construct a major scale with whole steps and half steps.'
+	),
+	ref(
+		'theory-inversions',
+		'Triad inversion',
+		'https://www.musictheory.net/lessons/42',
+		'musictheory.net',
+		'article',
+		'See how changing the bass note preserves a triad while changing its inversion.'
+	),
+	ref(
+		'omt-expression',
+		'Dynamics and articulations',
+		'https://viva.pressbooks.pub/openmusictheory/chapter/other-aspects-of-notation/',
+		'Open Music Theory',
+		'article',
+		'An open textbook chapter on dynamics, articulation, tempo and the written marks that guide a performance.'
+	),
+	ref(
+		'theory-lessons',
+		'Music theory lessons',
+		'https://www.musictheory.net/lessons',
+		'musictheory.net',
+		'article',
+		'A structured reference for scales, chords, phrase endings and progressions to revisit while composing.'
+	),
+
 	// ── Music, rhythm, tuning ─────────────────────────────────────────────
 	ref(
 		'toussaint-euclid',

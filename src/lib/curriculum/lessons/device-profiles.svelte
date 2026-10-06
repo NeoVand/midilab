@@ -93,7 +93,7 @@ log(JSON.stringify([
 
 	<Callout variant="key" title="The instrument is an API; the profile is its client library">
 		<p>
-			Everything in Act IV pointed at this. An implementation chart lists methods (which messages it
+			Everything in Act V pointed at this. An implementation chart lists methods (which messages it
 			accepts), properties (its CC and NRPN map), an addressing scheme (port and channel) and an
 			extension mechanism (SysEx). A device profile is that documentation, written down in a form
 			your code can execute.

@@ -8,7 +8,8 @@
  */
 
 import { browser } from '$app/environment';
-import { bus, type MidiEvent } from './bus';
+import { SvelteSet } from 'svelte/reactivity';
+import { bus, type MidiEvent, type MidiOrigin } from './bus';
 import { midiAccess } from './access.svelte';
 import { encode, parse, type MidiMessage } from './messages';
 import { synth } from '$lib/audio/synth';
@@ -73,7 +74,9 @@ export class MidiEngine {
 	#started = false;
 	#unsub: (() => void) | null = null;
 	#meterTimer = 0;
-	#localListeners = new Set<(msg: MidiMessage, at?: number, audioTime?: number) => void>();
+	#localListeners = new SvelteSet<
+		(msg: MidiMessage, at?: number, audioTime?: number, origin?: MidiOrigin) => void
+	>();
 
 	get outputs(): OutputTarget[] {
 		const internal: OutputTarget = {
@@ -116,7 +119,7 @@ export class MidiEngine {
 
 	#onEvent(e: MidiEvent) {
 		if (e.direction !== 'in') return;
-		if (this.auditionInput) internalVoice().handle(e.message);
+		if (this.auditionInput) this.handleInternal(e.message);
 	}
 
 	isOutputActive(id: string): boolean {
@@ -151,15 +154,17 @@ export class MidiEngine {
 	 * the patchbay would route a single note once per open port. This is that
 	 * single tap.
 	 */
-	onLocalSend(fn: (msg: MidiMessage, at?: number, audioTime?: number) => void): () => void {
+	onLocalSend(
+		fn: (msg: MidiMessage, at?: number, audioTime?: number, origin?: MidiOrigin) => void
+	): () => void {
 		this.#localListeners.add(fn);
 		return () => this.#localListeners.delete(fn);
 	}
 
-	send(msg: MidiMessage, at?: number, audioTime?: number): void {
+	send(msg: MidiMessage, at?: number, audioTime?: number, origin: MidiOrigin = 'performer'): void {
 		for (const fn of this.#localListeners) {
 			try {
-				fn(msg, at, audioTime);
+				fn(msg, at, audioTime, origin);
 			} catch (err) {
 				console.error('[engine] local send listener threw', err);
 			}
@@ -167,7 +172,7 @@ export class MidiEngine {
 		const bytes = encode(msg);
 		for (const id of this.activeOutputs) {
 			if (id === INTERNAL_OUTPUT_ID) {
-				internalVoice().handle(msg, audioTime);
+				this.handleInternal(msg, audioTime);
 			} else {
 				midiAccess.sendRaw(id, bytes, at);
 			}
@@ -177,9 +182,15 @@ export class MidiEngine {
 				portName: id === INTERNAL_OUTPUT_ID ? 'Internal Synth' : midiAccess.outputName(id),
 				direction: 'out',
 				bytes,
-				message: msg
+				message: msg,
+				origin
 			});
 		}
+	}
+
+	/** The selected internal sound engine, shared by direct and routed performance. */
+	handleInternal(msg: MidiMessage, audioTime?: number): void {
+		internalVoice().handle(msg, audioTime);
 	}
 
 	/**
@@ -209,13 +220,23 @@ export class MidiEngine {
 		for (const m of messages) this.send(m, at);
 	}
 
-	noteOn(note: number, velocity = 100, channel = this.channel): void {
+	noteOn(
+		note: number,
+		velocity = 100,
+		channel = this.channel,
+		origin: MidiOrigin = 'performer'
+	): void {
 		void this.wake();
-		this.send({ type: 'noteOn', channel, note, velocity });
+		this.send({ type: 'noteOn', channel, note, velocity }, undefined, undefined, origin);
 	}
 
-	noteOff(note: number, channel = this.channel, velocity = 0): void {
-		this.send({ type: 'noteOff', channel, note, velocity });
+	noteOff(
+		note: number,
+		channel = this.channel,
+		velocity = 0,
+		origin: MidiOrigin = 'performer'
+	): void {
+		this.send({ type: 'noteOff', channel, note, velocity }, undefined, undefined, origin);
 	}
 
 	cc(controller: number, value: number, channel = this.channel): void {

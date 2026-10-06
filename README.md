@@ -8,7 +8,7 @@
 
 [![Live](https://img.shields.io/badge/live-neovand.github.io%2Fmidilab-0f766e?style=flat-square)](https://neovand.github.io/midilab/)
 [![Deploy](https://img.shields.io/github/actions/workflow/status/NeoVand/midilab/deploy.yml?branch=main&style=flat-square&label=deploy)](https://github.com/NeoVand/midilab/actions/workflows/deploy.yml)
-![Lessons](https://img.shields.io/badge/lessons-38-1f6feb?style=flat-square)
+![Lessons](https://img.shields.io/badge/lessons-44-1f6feb?style=flat-square)
 ![No backend](https://img.shields.io/badge/backend-none-6e7781?style=flat-square)
 
 <img src="midilab.gif" alt="MIDI Lab in use: a key goes down, the staff and the chord name fill in, the spectrum analyser moves, and the same Note On appears decoded into hex and bits below — with the monitor streaming every message underneath." width="100%">
@@ -21,10 +21,12 @@ An interactive course and toolkit that takes you from "MIDI is the thing that
 makes those cheap piano sounds" to running a multi-instrument rig from one
 clock — or from your own code.
 
-Thirty-eight lessons across seven acts, wired to a live MIDI engine. Nothing
-here is a diagram: press a key and the actual bytes appear, decoded, in the same
+Forty-four lessons across eight acts, wired to a live MIDI engine. Act 0 teaches
+music basics; Act I begins MIDI. Press a key and the actual bytes appear, decoded, in the same
 panel. Lessons end in **checkpoints** the engine verifies by watching the MIDI
-stream, so you advance by making MIDI happen rather than by clicking Next.
+stream. Demonstrations stay separate from learner performances, and manual
+self-checks are labelled separately from verified checkpoints. Partial progress
+survives navigation and reloads.
 
 It assumes nothing. A programmer who has never counted a bar and a producer who
 has never seen a hex byte are each missing half of this subject, and the course
@@ -33,7 +35,10 @@ lesson ends with the primary sources it was compressed from.
 
 Everything works with no hardware attached — a full sixteen-channel synthesiser
 is built in and receives exactly the messages an external instrument would — and
-better with hardware plugged in.
+better with hardware plugged in. Every keyboard has instrument and channel
+controls; drum pads have visible computer-key shortcuts and selectable sampled
+kits. One instrument owns computer keys at a time, and typing in a form leaves
+the instruments quiet.
 
 > **Browser support.** Web MIDI needs a Chromium browser (Chrome, Edge, Brave,
 > Arc) or Firefox, on desktop or Android. **Safari ships no Web MIDI at all**, on
@@ -87,20 +92,28 @@ sampled General MIDI instruments come from **smplr**.
 
 ### The course — `/learn`
 
-|     | Act                       | Covers                                                                                                                                                                    |
-| --- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| I   | What MIDI actually is     | Control not sound, just enough music theory, note numbers, velocity, the status/data bit, Note On and Off, envelopes, what a synthesiser does, and how MIDI came to exist |
-| II  | The message language      | Channels, Control Change, pitch bend, aftertouch, programs and banks, RPN/NRPN, Channel Mode and panic, System Exclusive                                                  |
-| III | Time                      | MIDI Clock, resolution and swing, MTC and Link, latency and jitter, Standard MIDI Files                                                                                   |
-| IV  | Making music with it      | The piano roll and what it hides, programming drums, and what MIDI cannot write down                                                                                      |
-| V   | The physical world        | DIN, TRS Type A/B, USB host and device, In/Out/Thru, studio routing, troubleshooting                                                                                      |
-| VI  | Expression and the future | MPE, tuning and microtonality, MIDI 2.0 and the Universal MIDI Packet                                                                                                     |
-| VII | Programming MIDI          | Web MIDI, Web Audio, building a sequencer, device profiles, algorithmic patterns, and a capstone                                                                          |
+|     | Act                       | Covers                                                                                                                   |
+| --- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 0   | Music basics              | Pulse, rhythm, rests, melody, scales, chords, bass, drums, expression, and a first eight-bar composition                 |
+| I   | What MIDI actually is     | Control not sound, note numbers, velocity, bytes, Note On and Off, envelopes, synthesis, and MIDI history                |
+| II  | The message language      | Channels, Control Change, pitch bend, aftertouch, programs and banks, RPN/NRPN, Channel Mode and panic, System Exclusive |
+| III | Time                      | MIDI Clock, resolution and swing, MTC and Link, latency and jitter, Standard MIDI Files                                  |
+| IV  | Making music with it      | The piano roll and what it hides, programming drums, and what MIDI cannot write down                                     |
+| V   | The physical world        | DIN, TRS Type A/B, USB host and device, In/Out/Thru, studio routing, troubleshooting                                     |
+| VI  | Expression and the future | MPE, tuning and microtonality, MIDI 2.0 and the Universal MIDI Packet                                                    |
+| VII | Programming MIDI          | Web MIDI, Web Audio, building a sequencer, device profiles, algorithmic patterns, and a capstone                         |
 
 ### The Lab — `/lab`
 
 The tools the lessons are built from, standing alone.
 
+- **First Track Studio** — an eight-bar workspace with drums, bass, chords and
+  melody. Hear three original studies (**Pocket Soul**, **Night Drive** and
+  **Sunlit Pop**), or begin with empty parts. Record with a count-in, layer or
+  replace takes, edit pitch, start, duration and velocity, compare mute and solo,
+  tighten timing without losing all the feel, and undo an experiment. Named
+  projects and the current draft save locally; MIDI export preserves tempo,
+  channels and instrument programs, and JSON backups can restore a project.
 - **Monitor** — every byte in the order the wire carried it, the shape of the
   last few seconds, or the standing state of every channel in play
 - **Patchbay** — routes between real ports, with channel remapping and splits
@@ -110,6 +123,13 @@ The tools the lessons are built from, standing alone.
 - **Console** — JavaScript against your actual rig
 - **Jukebox** — thirteen public-domain melodies through any instrument you like,
   transposed, re-tempoed, or played against themselves as a round
+
+The six music-foundation lessons include ten listen-and-play drills with an
+audio-clock count-in and feedback on pitch, timing, missing and extra notes.
+Dynamics drills also assess velocity; phrasing drills assess physical key lengths
+so a held note cannot pass as a rest. Slower retries and input-delay adjustment
+make practice usable with an on-screen instrument or a MIDI controller. Each
+lesson leads into a concrete musical experiment in the Studio.
 
 ### Reference — `/reference`
 
@@ -136,7 +156,9 @@ npm run build     # static output in build/
 
 A SvelteKit single-page application, statically built. No server, no backend, no
 analytics, no network calls except fetching an instrument's samples the first
-time you ask for one. Progress lives in the browser's local storage.
+time you ask for one. Progress and Studio projects live in the browser's local
+storage. Sampled kits use selected hits from LM-2, TR-808 and Casio RZ-1 through
+smplr; the synthesiser supplies drums while samples load or if they are unavailable.
 
 ```
 src/lib/
@@ -144,7 +166,8 @@ src/lib/
   audio/       the built-in synthesiser and the sampled General MIDI engine
   patterns/    the mini-notation language and Euclidean rhythms
   sandbox/     the API exposed to code you write in the Console
-  music/       a small notation for writing melodies, and the public-domain library
+  music/       melody notation, the public-domain library, and practice assessment
+  studio/      original studies, recording, project validation, editing and MIDI export
   components/  the widget kit and lesson chrome
   curriculum/  lesson metadata, progress, the glossary, the bibliography, and the lessons
   nav.ts       internal links, so they survive being served under a base path

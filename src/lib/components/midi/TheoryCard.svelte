@@ -70,7 +70,7 @@
 	function stop() {
 		for (const t of timers) clearTimeout(t);
 		timers = [];
-		for (const n of running) engine.noteOff(n, 0);
+		for (const n of running) engine.noteOff(n, 0, 0, 'demo');
 		running = [];
 		lit = [];
 	}
@@ -79,7 +79,7 @@
 		timers.push(
 			window.setTimeout(() => {
 				for (const n of notes) {
-					engine.noteOn(n, 92, 0);
+					engine.noteOn(n, 92, 0, 'demo');
 					running.push(n);
 				}
 				lit = notes;
@@ -88,7 +88,7 @@
 		timers.push(
 			window.setTimeout(() => {
 				for (const n of notes) {
-					engine.noteOff(n, 0);
+					engine.noteOff(n, 0, 0, 'demo');
 					running = running.filter((r) => r !== n);
 				}
 				lit = lit.filter((l) => !notes.includes(l));

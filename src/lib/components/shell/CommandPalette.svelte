@@ -11,7 +11,7 @@
 	import { engine } from '$lib/midi/engine.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { transport } from '$lib/midi/clock.svelte';
-	import { CURRICULUM, ALL_LESSONS } from '$lib/curriculum/registry';
+	import { CURRICULUM, ALL_LESSONS, actLabel } from '$lib/curriculum/registry';
 	import { lessonHref, path } from '$lib/nav';
 	import { load, save } from '$lib/stores/persist';
 
@@ -39,6 +39,17 @@
 	});
 
 	const destinations: Cmd[] = [
+		go('go-studio', 'First Track Studio', '/lab/studio', [
+			'music',
+			'record',
+			'recording',
+			'compose',
+			'composition',
+			'song',
+			'track',
+			'project',
+			'drums'
+		]),
 		go('go-learn', 'Course overview', '/learn', ['lessons', 'acts', 'curriculum']),
 		go('go-lab', 'The Lab', '/lab', ['tools']),
 		go('go-monitor', 'MIDI Monitor', '/lab/monitor', ['bytes', 'inspect', 'log', 'sniff']),
@@ -266,7 +277,7 @@
 					.map((l) => byId.get(`lesson-${l.id}`)!)
 					.filter((c) => !promoted.has(c.id))}
 				{#if items.length}
-					<Command.Group heading="Act {act.number} · {act.title}">
+					<Command.Group heading="Act {actLabel(act.number)} · {act.title}">
 						{#each items as cmd (cmd.id)}
 							<Command.Item keywords={cmd.keywords} onSelect={() => invoke(cmd)}>
 								{cmd.label}

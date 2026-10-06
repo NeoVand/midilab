@@ -8,6 +8,7 @@
 
 import { browser } from '$app/environment';
 import { bus, type MidiEvent } from './bus';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 export interface ChannelSnapshot {
 	/** note number → velocity, for notes currently held. */
@@ -20,7 +21,14 @@ export interface ChannelSnapshot {
 }
 
 function blank(): ChannelSnapshot {
-	return { notes: new Map(), cc: new Map(), bend: 8192, pressure: 0, program: 0, lastActivity: 0 };
+	return {
+		notes: new SvelteMap(),
+		cc: new SvelteMap(),
+		bend: 8192,
+		pressure: 0,
+		program: 0,
+		lastActivity: 0
+	};
 }
 
 export class NoteState {
@@ -28,6 +36,7 @@ export class NoteState {
 	version = $state(0);
 
 	#channels: ChannelSnapshot[] = Array.from({ length: 16 }, blank);
+	#performed: Map<number, number>[] = Array.from({ length: 16 }, () => new SvelteMap());
 	#unsub: (() => void) | null = null;
 	#visibility: (() => void) | null = null;
 	#dirty = false;
@@ -71,6 +80,13 @@ export class NoteState {
 		const m = e.message;
 		if (!('channel' in m)) return;
 		const s = this.#channels[m.channel];
+		if (e.origin === 'performer') {
+			const performed = this.#performed[m.channel];
+			if (m.type === 'noteOn' && m.velocity > 0) performed.set(m.note, m.velocity);
+			else if (m.type === 'noteOff' || (m.type === 'noteOn' && m.velocity === 0))
+				performed.delete(m.note);
+			else if (m.type === 'controlChange' && [120, 123].includes(m.controller)) performed.clear();
+		}
 		switch (m.type) {
 			case 'noteOn':
 				s.notes.set(m.note, m.velocity);
@@ -138,6 +154,18 @@ export class NoteState {
 		return this.#channels.reduce((a, c) => a + c.notes.size, 0);
 	}
 
+	/** Direct performer notes, kept separate from demonstrations and playback. */
+	get performerHeld(): number[] {
+		void this.version;
+		return [...new SvelteSet(this.#performed.flatMap((channel) => [...channel.keys()]))].sort(
+			(a, b) => a - b
+		);
+	}
+
+	get performerHeldCount(): number {
+		return this.performerHeld.length;
+	}
+
 	/**
 	 * Every note sounding anywhere, sorted, each one once.
 	 *
@@ -149,12 +177,13 @@ export class NoteState {
 	 */
 	get held(): number[] {
 		void this.version;
-		const all = new Set<number>();
+		const all = new SvelteSet<number>();
 		for (const c of this.#channels) for (const n of c.notes.keys()) all.add(n);
 		return [...all].sort((a, b) => a - b);
 	}
 
 	clear(): void {
+		for (const performed of this.#performed) performed.clear();
 		for (const c of this.#channels) {
 			c.notes.clear();
 		}
@@ -168,6 +197,7 @@ export class NoteState {
 	 */
 	reset(): void {
 		this.#channels = Array.from({ length: 16 }, blank);
+		this.#performed = Array.from({ length: 16 }, () => new SvelteMap());
 		this.version++;
 	}
 

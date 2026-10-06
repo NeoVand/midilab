@@ -10,7 +10,7 @@
 		Target02Icon,
 		Tick02Icon
 	} from '@hugeicons/core-free-icons';
-	import { actOf, neighbours, type LessonMeta } from '$lib/curriculum/registry';
+	import { actOf, actLabel, neighbours, type LessonMeta } from '$lib/curriculum/registry';
 	import { lessonHref, path } from '$lib/nav';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { cn } from '$lib/utils';
@@ -23,6 +23,7 @@
 
 	const act = $derived(actOf(lesson.id));
 	const { prev, next } = $derived(neighbours(lesson.id));
+	const nextAct = $derived(next ? actOf(next.id) : undefined);
 	const done = $derived(progress.doneCount(lesson.id));
 	const total = $derived(progress.totalFor(lesson.id));
 
@@ -42,7 +43,7 @@
 			<span>/</span>
 			{#if act}
 				<a href="{path('/learn')}#{act.id}" class="hover:text-foreground"
-					>Act {act.number} · {act.title}</a
+					>Act {actLabel(act.number)} · {act.title}</a
 				>
 			{/if}
 		</div>
@@ -126,7 +127,10 @@
 				class="flex flex-col items-end gap-1 rounded-lg border bg-card px-4 py-3 text-right transition-colors hover:border-foreground/25 sm:col-start-2"
 			>
 				<span class="flex items-center gap-1 text-xs text-muted-foreground">
-					Next <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
+					{#if nextAct && nextAct.id !== act?.id}Next · Act {actLabel(
+							nextAct.number
+						)}{:else}Next{/if}
+					<HugeiconsIcon icon={ArrowRight01Icon} size={14} />
 				</span>
 				<span class="text-sm font-medium">{next.title}</span>
 			</a>

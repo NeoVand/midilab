@@ -10,7 +10,7 @@ import {
 } from '@hugeicons/core-free-icons';
 
 /**
- * The course: seven acts, thirty-eight lessons.
+ * The course: music basics in Act 0, followed by seven acts about MIDI.
  *
  * Metadata lives here; the lessons themselves are Svelte components under
  * `lessons/`, because almost every one of them needs a live instrument, a
@@ -58,6 +58,7 @@ function lesson(
  * a mapping like this is how they drift apart.
  */
 export const ACT_ICON: Record<string, IconSvgElement> = {
+	music: MusicNote01Icon,
 	foundations: BinaryCodeIcon,
 	language: Message01Icon,
 	time: Clock01Icon,
@@ -69,10 +70,95 @@ export const ACT_ICON: Record<string, IconSvgElement> = {
 
 export const CURRICULUM: Act[] = [
 	{
+		id: 'music',
+		number: 0,
+		title: 'Music basics',
+		subtitle: 'Pulse, melody, harmony, expression, and your first eight-bar piece',
+		lessons: [
+			lesson(
+				'just-enough-music',
+				'Just enough music',
+				'A musical starting point, with a six-part path from the pulse to your first eight-bar piece.',
+				14,
+				[
+					'Count a bar and name the note lengths inside it',
+					'Build a major and a minor chord from semitone distances alone',
+					'Read "sixteenth note" and "perfect fifth" without flinching'
+				]
+			),
+			lesson(
+				'pulse-and-rhythm',
+				'Pulse, rhythm and rests',
+				'Keep a pulse, divide the beat, and play through intentional silence.',
+				12,
+				[
+					'Keep four steady beats through a rest',
+					'Reproduce a syncopated rhythm after a count-in',
+					'Hear the difference between tempo and subdivision'
+				]
+			),
+			lesson(
+				'pitch-and-melody',
+				'Pitch, scales and melody',
+				'Find a home note, follow a scale, and answer a short musical phrase.',
+				14,
+				[
+					'Play a short melody with correct notes and timing',
+					'Distinguish tonic from a chord root',
+					'Use repetition and a breath to shape a phrase'
+				]
+			),
+			lesson(
+				'chords-and-movement',
+				'Triads, inversions and progressions',
+				'Build a chord, turn it over, and connect harmony with smaller movements.',
+				16,
+				[
+					'Play a major triad and its first inversion',
+					'Build diatonic chords from a major key',
+					'Hear how a progression creates direction'
+				]
+			),
+			lesson(
+				'bass-and-drums',
+				'Bass and drums together',
+				'Place a backbeat, connect bass roots to the kick, and leave useful space.',
+				14,
+				[
+					'Play a kick and snare backbeat',
+					'Place a bass pickup in time',
+					'Simplify a groove so its parts work together'
+				]
+			),
+			lesson(
+				'musical-expression',
+				'Dynamics, articulation and expression',
+				'Shape a phrase with strength, duration, silence and an intentional accent.',
+				12,
+				[
+					'Play a strong note and a soft answer',
+					'Use a rest to give a phrase room',
+					'Distinguish articulation from pitch choice'
+				]
+			),
+			lesson(
+				'first-composition',
+				'Your first eight-bar composition',
+				'Combine an original groove, bass, chords and melody into a named project you can keep.',
+				20,
+				[
+					'Create a complete eight-bar musical sketch',
+					'Make an intentional variation in its second half',
+					'Save, replay and export the finished piece'
+				]
+			)
+		]
+	},
+	{
 		id: 'foundations',
 		number: 1,
 		title: 'What MIDI actually is',
-		subtitle: 'Control, not sound — and the single bit the whole protocol rests on',
+		subtitle: 'Control, notes, velocity, bytes, and the instrument that turns them into sound',
 		lessons: [
 			lesson(
 				'control-not-sound',
@@ -83,17 +169,6 @@ export const CURRICULUM: Act[] = [
 					'Explain what a MIDI message does and does not carry',
 					'Predict what happens when you change the instrument but not the notes',
 					'Say why a MIDI file cannot be "played" without an instrument'
-				]
-			),
-			lesson(
-				'just-enough-music',
-				'Just enough music',
-				'Beats, bars, semitones and chords — the vocabulary the rest of this course assumes you have, in one place, with a keyboard attached.',
-				14,
-				[
-					'Count a bar and name the note lengths inside it',
-					'Build a major and a minor chord from semitone distances alone',
-					'Read "sixteenth note" and "perfect fifth" without flinching'
 				]
 			),
 			lesson(
@@ -552,6 +627,11 @@ export const CURRICULUM: Act[] = [
 		]
 	}
 ];
+
+/** Display Act 0 as a numeral and the MIDI acts as Roman numerals. */
+export function actLabel(number: number): string {
+	return ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII'][number] ?? String(number);
+}
 
 export const ALL_LESSONS: LessonMeta[] = CURRICULUM.flatMap((a) => a.lessons);
 

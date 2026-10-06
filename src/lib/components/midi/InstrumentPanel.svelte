@@ -20,7 +20,6 @@
 	import Scope from './Scope.svelte';
 	import NowPlaying from './NowPlaying.svelte';
 	import { engine } from '$lib/midi/engine.svelte';
-	import { bus } from '$lib/midi/bus';
 	import { monitor } from '$lib/midi/monitor.svelte';
 	import { noteState } from '$lib/midi/notestate.svelte';
 	import { GM_FAMILIES, GM_PROGRAMS } from '$lib/midi/constants';
@@ -40,30 +39,18 @@
 	 * climbing in eights is the thing worth noticing — a family *is* eight
 	 * programs.
 	 */
-	let program = $state(0);
+	const program = $derived(noteState.channel(engine.channel).program);
 	const family = $derived(program >> 3);
 	const familyProgram = (i: number) => i * 8;
 
 	function pick(p: number) {
-		program = ((p % 128) + 128) % 128;
-		engine.programChange(program);
-		gm.load(program);
+		const chosen = ((p % 128) + 128) % 128;
+		engine.programChange(chosen);
+		gm.load(chosen);
 	}
 
-	// Follow the wire: a Program Change arriving from a controller moves the
-	// bank, because the bank is a view of the instrument's state, not a widget
-	// that owns it.
-	onMount(() => {
-		// Fetch the sound that is already selected, so the first key you press
-		// is the instrument the panel says it is rather than the synth covering
-		// while the samples arrive.
-		gm.load(program);
-		return bus.subscribe((e) => {
-			if (e.message.type === 'programChange' && e.message.channel === engine.channel) {
-				program = e.message.program & 0x7f;
-			}
-		});
-	});
+	// Read the engine's existing channel state, including changes made in lessons.
+	onMount(() => gm.load(program));
 
 	const loading = $derived(gm.enabled && gm.stateOf(program) === 'loading');
 	const substituted = $derived(gm.enabled && gm.stateOf(program) === 'failed');

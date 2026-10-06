@@ -24,9 +24,11 @@ test('pressing a key produces a decoded message', async ({ page }) => {
 test('the course lists every act', async ({ page }) => {
 	await page.goto('/learn');
 	for (const act of [
+		'Music basics',
 		'What MIDI actually is',
 		'The message language',
 		'Time',
+		'Making music with it',
 		'The physical world',
 		'Expression and the future',
 		'Programming MIDI'
@@ -44,6 +46,7 @@ test('a lesson renders its objectives and checkpoints', async ({ page }) => {
 
 test('every lab tool loads', async ({ page }) => {
 	for (const [path, heading] of [
+		['/lab/studio', 'Your first eight bars.'],
 		['/lab/monitor', 'Monitor'],
 		['/lab/patchbay', 'Patchbay'],
 		['/lab/programmer', 'Programmer'],

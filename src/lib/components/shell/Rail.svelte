@@ -32,7 +32,12 @@
 	 * repeating its name.
 	 */
 	const items = [
-		{ href: '/learn', icon: GraduationCapIcon, label: 'Learn', hint: 'The course, Act I to VI' },
+		{
+			href: '/learn',
+			icon: GraduationCapIcon,
+			label: 'Learn',
+			hint: 'Music basics, then MIDI · Acts 0–VII'
+		},
 		{
 			href: '/lab',
 			icon: FlaskConicalIcon,

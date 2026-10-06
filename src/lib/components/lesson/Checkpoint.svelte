@@ -6,7 +6,7 @@
 	 * moment the thing actually happens — on the internal synth or on your OP-XY,
 	 * it makes no difference, because both go through the same bus.
 	 */
-	import { onDestroy, onMount, untrack } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { bus, type MidiEvent } from '$lib/midi/bus';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
@@ -20,41 +20,40 @@
 		hint?: string;
 		/** Return true when this event satisfies the checkpoint. */
 		test?: (event: MidiEvent) => boolean;
+		/** Musical performance tasks accept direct playing, never sequenced notes. */
+		learnerOnly?: boolean;
 		/** Require this many satisfying events (distinct by `key`, if given). */
 		count?: number;
 		key?: (event: MidiEvent) => string;
 		class?: string;
 	}
 
-	let { lesson, id, label, hint, test, count = 1, key, class: className }: Props = $props();
+	let {
+		lesson,
+		id,
+		label,
+		hint,
+		test,
+		learnerOnly = false,
+		count = 1,
+		key,
+		class: className
+	}: Props = $props();
 
 	const done = $derived(progress.isDone(lesson, id));
-	let seen = $state(new Set<string>());
+	const verified = $derived(progress.isVerified(lesson, id));
+	let seen = $state<string[]>([]);
 	let flash = $state(false);
 	let flashTimer = 0;
 
-	const progressText = $derived(count > 1 && !done ? `${seen.size} of ${count}` : '');
-
-	/*
-	 * Un-ticking a finished checkpoint has to put the counter back to zero. It
-	 * used to keep every key it had already seen, so the box read "4 of 4" next
-	 * to an empty circle, and — for a checkpoint whose keys are exhaustible,
-	 * like "send four different kinds of message" — nothing you did afterwards
-	 * could ever complete it again.
-	 */
-	$effect(() => {
-		if (done) return;
-		untrack(() => {
-			if (seen.size) seen = new Set();
-		});
-	});
+	const progressText = $derived(count > 1 && !done ? `${seen.length} of ${count}` : '');
 
 	onMount(() => {
-		progress.register(lesson, id);
 		let unsub: (() => void) | undefined;
 		if (test) {
 			unsub = bus.subscribe((event) => {
-				if (progress.isDone(lesson, id)) return;
+				if (event.origin === 'demo' || (learnerOnly && event.origin !== 'performer')) return;
+				if (progress.isVerified(lesson, id)) return;
 				let ok: boolean;
 				try {
 					ok = test(event);
@@ -64,10 +63,10 @@
 				}
 				if (!ok) return;
 				if (count > 1) {
-					const k = key ? key(event) : String(seen.size);
-					if (seen.has(k)) return;
-					seen = new Set(seen).add(k);
-					if (seen.size < count) return;
+					const k = key ? key(event) : String(seen.length);
+					if (seen.includes(k)) return;
+					seen = [...seen, k];
+					if (seen.length < count) return;
 				}
 				progress.complete(lesson, id);
 				flash = true;
@@ -77,7 +76,6 @@
 		}
 		return () => {
 			unsub?.();
-			progress.unregister(lesson, id);
 		};
 	});
 
@@ -99,7 +97,10 @@
 				? 'border-ok bg-ok text-background'
 				: 'border-muted-foreground/40 text-transparent hover:border-foreground'
 		)}
-		onclick={() => progress.toggle(lesson, id)}
+		onclick={() => {
+			seen = [];
+			progress.toggle(lesson, id);
+		}}
 		aria-pressed={done}
 		aria-label="Mark done: {label}"
 		title={done ? 'Completed' : 'Tick manually if your hardware will not cooperate'}
@@ -109,6 +110,11 @@
 	<div class="min-w-0 flex-1">
 		<p class={cn('text-sm leading-snug', done && 'text-muted-foreground')}>
 			{label}
+			{#if done}
+				<span class="ml-1.5 text-xs text-muted-foreground"
+					>{verified ? 'Verified' : 'Self-checked'}</span
+				>
+			{/if}
 			{#if progressText}
 				<span class="ml-1.5 font-mono text-xs text-msg-cc">{progressText}</span>
 			{/if}

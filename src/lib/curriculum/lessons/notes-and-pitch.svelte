@@ -251,7 +251,9 @@
 					{l}
 				</Button>
 			{/each}
-			<span class="tnum ml-auto text-xs text-muted-foreground">{noteState.heldCount} held</span>
+			<span class="tnum ml-auto text-xs text-muted-foreground"
+				>{noteState.performerHeldCount} held</span
+			>
 		</div>
 		<Keyboard low={48} octaves={3} height={140} {labels} />
 	</TryThis>
@@ -274,6 +276,7 @@
 
 	<Checkpoints lesson={meta.id}>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="middle-c"
 			label="Play middle C — note number 60"
@@ -281,19 +284,22 @@
 			test={(e) => e.message.type === 'noteOn' && e.message.note === 60}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="octave"
 			label="Play note 72 — the C an octave above"
 			test={(e) => e.message.type === 'noteOn' && e.message.note === 72}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="triad"
 			label="Hold three notes at the same time"
 			hint="Click and hold with one finger while typing with the other hand, or hold three computer keys at once."
-			test={() => noteState.heldCount >= 3}
+			test={() => noteState.performerHeldCount >= 3}
 		/>
 		<Checkpoint
+			learnerOnly
 			lesson={meta.id}
 			id="octave-span"
 			label="Play a note in three different octaves"

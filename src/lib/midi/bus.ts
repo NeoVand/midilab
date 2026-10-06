@@ -12,6 +12,9 @@ import type { MidiMessage } from './messages';
 
 export type Direction = 'in' | 'out';
 
+/** Why a message was sent. Demonstrations must never count as learner playing. */
+export type MidiOrigin = 'performer' | 'demo' | 'sequence';
+
 export interface MidiEvent {
 	/** Monotonically increasing, unique for the session. */
 	id: number;
@@ -20,6 +23,8 @@ export interface MidiEvent {
 	portId: string;
 	portName: string;
 	direction: Direction;
+	/** Incoming hardware and older producers without a tag are performer input. */
+	origin?: MidiOrigin;
 	bytes: number[];
 	message: MidiMessage;
 }
@@ -37,7 +42,7 @@ export class MidiBus {
 	}
 
 	emit(event: Omit<MidiEvent, 'id'>): MidiEvent {
-		const full: MidiEvent = { ...event, id: nextId++ };
+		const full: MidiEvent = { ...event, origin: event.origin ?? 'performer', id: nextId++ };
 		for (const listener of this.#listeners) {
 			try {
 				listener(full);

@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { device } from '$lib/stores/device.svelte';
 	import { lessonHref } from '$lib/nav';
-	import { CURRICULUM, ALL_LESSONS, TOTAL_MINUTES, ACT_ICON } from '$lib/curriculum/registry';
+	import {
+		CURRICULUM,
+		ALL_LESSONS,
+		TOTAL_MINUTES,
+		ACT_ICON,
+		actLabel
+	} from '$lib/curriculum/registry';
 	import { progress } from '$lib/curriculum/progress.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { Tick02Icon, PlugSocketIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
@@ -23,17 +29,10 @@
 		return lessons.reduce((t, l) => t + l.minutes, 0);
 	}
 
-	const ACT_WORDS: Record<number, string> = {
-		5: 'Five',
-		6: 'Six',
-		7: 'Seven',
-		8: 'Eight'
-	};
-
 	/*
 	 * Where to come in, for somebody who has not started.
 	 *
-	 * Thirty-eight lessons is a lot to land on, and the two audiences this
+	 * A long course is a lot to land on, and the two audiences this
 	 * course serves arrive missing opposite halves of it: a producer knows what
 	 * a bar is and has never seen a hex byte, a programmer the reverse. Both are
 	 * well served by the running order and neither can tell that from the index.
@@ -44,17 +43,17 @@
 	const DOORS = [
 		{
 			who: 'New to all of it',
-			then: 'Straight through, in order. Nothing is assumed.',
-			id: 'control-not-sound'
+			then: 'Begin with music basics in Act 0, then explore MIDI. Nothing is assumed.',
+			id: 'just-enough-music'
 		},
 		{
 			who: 'You make music',
-			then: 'You already have the musical half. Start here, then skip to the DAW.',
-			id: 'in-the-daw'
+			then: 'Skip the music basics and start with what MIDI actually sends in Act I.',
+			id: 'control-not-sound'
 		},
 		{
 			who: 'You write code',
-			then: 'Bars and fifths first — the rest of the course leans on them constantly.',
+			then: 'Build the musical half first: pulse, melody, chords, then your own piece.',
 			id: 'just-enough-music'
 		}
 	];
@@ -64,10 +63,15 @@
 	<header class="flex flex-col gap-3">
 		<h1 class="text-3xl font-semibold tracking-tight">The course</h1>
 		<p class="prose-body text-muted-foreground">
-			{ACT_WORDS[CURRICULUM.length] ?? CURRICULUM.length} acts. You do not advance by clicking Next —
-			each lesson ends in checkpoints that the engine verifies by watching the MIDI stream. Everything
-			works with no hardware attached; most of it works better with some. It assumes no music theory and
-			no programming, and supplies whichever half you are missing.
+			Act 0 builds your music basics, from the pulse to a piece you can keep. Acts I–VII explore
+			MIDI: the messages, the timing, the studio, the hardware, and your own code. No music theory
+			or programming is assumed, and you can explore without hardware.
+		</p>
+		<p class="text-sm text-muted-foreground">
+			Already know music? <a
+				href={lessonHref('control-not-sound')}
+				class="font-medium text-foreground underline underline-offset-4">Start with Act I</a
+			>. Guided playing is verified; reflection tasks and manual checks are labelled self-checked.
 		</p>
 
 		<!--
@@ -103,7 +107,7 @@
 		</div>
 		{#if doneLessons === 0}
 			<div class="mt-1 grid gap-2 sm:grid-cols-3">
-				{#each DOORS as d (d.id)}
+				{#each DOORS as d (d.who)}
 					{@const lesson = ALL_LESSONS.find((l) => l.id === d.id)}
 					{#if lesson}
 						<a
@@ -166,7 +170,7 @@
 						whole line to itself, which is all it ever needed.
 					-->
 					<p class="label mb-0.5 flex items-baseline gap-1.5 sm:hidden">
-						<span>Act {act.number}</span>
+						<span>Act {actLabel(act.number)}</span>
 						<span class="text-border" aria-hidden="true">·</span>
 						<span class="tnum font-mono normal-case">
 							{done}/{act.lessons.length} done
@@ -175,7 +179,9 @@
 						<span class="tnum font-mono normal-case">{actMinutes(act.lessons)} min</span>
 					</p>
 					<div class="flex items-baseline gap-2.5">
-						<span class="label hidden text-muted-foreground sm:inline">Act {act.number}</span>
+						<span class="label hidden text-muted-foreground sm:inline"
+							>Act {actLabel(act.number)}</span
+						>
 						<h2 class="text-lg leading-tight font-semibold tracking-tight text-balance">
 							{act.title}
 						</h2>

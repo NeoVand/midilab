@@ -24,9 +24,11 @@
  * Level 2 sample module of 1999 would have given you.
  */
 
+import { SvelteSet } from 'svelte/reactivity';
 import { Soundfont, getSoundfontNames } from 'smplr';
 import type { Smplr, StopFn } from 'smplr';
 import { audio } from './engine';
+import { sampledDrums, drumKit } from './drum-machines';
 import { synth, timeScale } from './synth';
 import { load as loadSetting, save } from '$lib/stores/persist';
 import { GM_PROGRAMS } from '$lib/midi/constants';
@@ -119,24 +121,28 @@ class GeneralMidi {
 	 * Which engine the internal instrument runs. Sampled by default, because
 	 * "what does a trumpet sound like" should be answered with a trumpet.
 	 */
-	enabled = $state<boolean>(loadSetting('gmSampled', true));
+	#enabled = $state<boolean>(loadSetting('gmSampled', true));
+	get enabled(): boolean {
+		return this.#enabled;
+	}
+	set enabled(value: boolean) {
+		if (this.#enabled !== value) this.allOff();
+		this.#enabled = value;
+		save('gmSampled', value);
+	}
 
 	/** Per program, so the UI can say which sound is on its way. */
 	state = $state<Record<number, LoadState>>({});
+	drumState = $state<Record<number, LoadState>>({});
 
 	#players = new Map<number, Smplr>();
-
-	constructor() {
-		$effect.root(() => {
-			$effect(() => save('gmSampled', this.enabled));
-			return () => {};
-		});
-	}
 
 	/** Held notes, so a Note Off can stop the exact voices it started. */
 	#sounding = new Map<string, StopFn>();
 	/** Channels whose notes are being covered by the built-in synth for now. */
-	#covered = new Set<string>();
+	#covered = new SvelteSet<string>();
+	/** Sample releases held by each channel's own sustain pedal. */
+	#sustained = new SvelteSet<string>();
 
 	programOf(channel: number): number {
 		return synth.channels[channel].program;
@@ -177,6 +183,20 @@ class GeneralMidi {
 			});
 	}
 
+	stateOfDrums(program: number): LoadState {
+		return this.drumState[drumKit(program).program] ?? 'idle';
+	}
+
+	loadDrums(program: number): void {
+		const ctx = audio.context;
+		const out = audio.destination;
+		if (!ctx || !out) return;
+		const chosen = drumKit(program).program;
+		sampledDrums.prepare(chosen, ctx, out, (state) => {
+			this.drumState[chosen] = state;
+		});
+	}
+
 	handle(msg: MidiMessage, audioTime?: number): void {
 		switch (msg.type) {
 			case 'noteOn':
@@ -189,27 +209,50 @@ class GeneralMidi {
 			case 'controlChange':
 				// The synth owns the channel state either way; `noteOn` reads
 				// the release and the cutoff back out of it when it starts a
-				// sample. Sustain is the one controller that has to reach the
-				// player itself, because it holds notes that already exist.
+				// sample. Sustain defers releases only on the addressed channel.
 				synth.handle(msg, audioTime);
-				if (msg.controller === 64) {
-					for (const player of this.#players.values()) player.setCC(64, msg.value);
+				if ((msg.controller === 64 && msg.value < 64) || msg.controller === 121) {
+					for (const k of this.#sustained) {
+						if (!k.startsWith(msg.channel + ':')) continue;
+						this.#sounding.get(k)?.(audioTime);
+						this.#sounding.delete(k);
+						this.#sustained.delete(k);
+					}
+				}
+				if (msg.controller === 120 || msg.controller === 123) {
+					if (msg.channel === 9) sampledDrums.allOff(audioTime);
+					for (const k of this.#covered) {
+						if (k.startsWith(msg.channel + ':')) this.#covered.delete(k);
+					}
+					for (const [k, stop] of this.#sounding) {
+						if (!k.startsWith(msg.channel + ':')) continue;
+						stop(audioTime);
+						this.#sounding.delete(k);
+						this.#sustained.delete(k);
+					}
 				}
 				return;
 			default:
 				// Program Change, bend, pressure, resets: the synth owns the
 				// channel state, and this reads it back out of there.
 				synth.handle(msg, audioTime);
-				if (msg.type === 'programChange') this.load(msg.program);
+				if (msg.type === 'programChange') {
+					if (msg.channel === 9) this.loadDrums(msg.program);
+					else this.load(msg.program);
+				}
+				if (msg.type === 'reset') this.allOff();
 				return;
 		}
 	}
 
 	noteOn(channel: number, note: number, velocity: number, audioTime?: number): void {
 		if (channel === 9) {
-			// Percussion is a note map, not an instrument, and the soundfont
-			// packs do not carry one. The synthesised kit is what plays it.
-			synth.noteOn(channel, note, velocity, audioTime);
+			const state = synth.channels[channel];
+			this.loadDrums(state.program);
+			const volume = (state.volume * state.expression) / 127;
+			if (!sampledDrums.noteOn(state.program, note, velocity, audioTime, volume, state.pan)) {
+				synth.noteOn(channel, note, velocity, audioTime);
+			}
 			return;
 		}
 		const program = this.programOf(channel);
@@ -220,6 +263,10 @@ class GeneralMidi {
 			synth.noteOn(channel, note, velocity, audioTime);
 			return;
 		}
+		const k = key(channel, note);
+		if (this.#covered.delete(k)) synth.noteOff(channel, note, audioTime);
+		this.#sounding.get(k)?.(audioTime);
+		this.#sustained.delete(k);
 		const state = synth.channels[channel];
 		// Everything here is applied once, at the start. A sample already
 		// playing cannot be re-tuned, re-filtered or re-shaped, which is the
@@ -231,11 +278,11 @@ class GeneralMidi {
 			velocity,
 			detune,
 			time: audioTime,
-			stopId: note,
+			stopId: k,
 			ampRelease: sampledRelease(state.releaseTime),
 			lpfCutoffHz: sampledCutoff(state.cutoff)
 		});
-		this.#sounding.set(key(channel, note), stop);
+		this.#sounding.set(k, stop);
 	}
 
 	noteOff(channel: number, note: number, audioTime?: number): void {
@@ -244,8 +291,13 @@ class GeneralMidi {
 			synth.noteOff(channel, note, audioTime);
 			return;
 		}
+		if (synth.channels[channel].sustain && this.#sounding.has(k)) {
+			this.#sustained.add(k);
+			return;
+		}
 		const stop = this.#sounding.get(k);
 		this.#sounding.delete(k);
+		this.#sustained.delete(k);
 		stop?.(audioTime);
 	}
 
@@ -259,7 +311,9 @@ class GeneralMidi {
 		for (const stop of this.#sounding.values()) stop();
 		this.#sounding.clear();
 		this.#covered.clear();
+		this.#sustained.clear();
 		for (const player of this.#players.values()) player.stop();
+		sampledDrums.allOff();
 		synth.allSoundOff();
 	}
 }

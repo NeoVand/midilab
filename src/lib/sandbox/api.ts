@@ -5,7 +5,7 @@
  * timers, intervals, bus subscriptions, held notes — is tracked, so Stop really
  * stops and a runaway loop cannot outlive the page you left. Second, the raw
  * layer is not hidden: `midi.raw` gives you the actual Web MIDI ports and
- * `midi.send([0x90, 60, 100])` takes literal bytes, because the point of Act VI
+ * `midi.send([0x90, 60, 100])` takes literal bytes, because the point of Act VII
  * is that you can now read those bytes.
  */
 
