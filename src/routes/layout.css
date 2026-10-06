@@ -5,47 +5,49 @@
 @import '@fontsource-variable/jetbrains-mono';
 
 @custom-variant dark (&:is(.dark *));
+/* Playing notes is keyboard input, but it is not focus navigation. */
+@custom-variant focus-visible (&:focus-visible:where(html[data-focus-navigation='true'] *));
 
 :root {
-	--background: #fafbfc;
-	--foreground: #171b20;
-	--card: oklch(1 0 0);
-	--card-foreground: #171b20;
-	--popover: oklch(1 0 0);
-	--popover-foreground: #171b20;
-	--primary: #22272e;
-	--primary-foreground: oklch(0.987 0.002 197.1);
-	--secondary: #e8ebee;
-	--secondary-foreground: #22272e;
-	--muted: #e8ebee;
-	--muted-foreground: #555d67;
-	--accent: #e8ebee;
-	--accent-foreground: #22272e;
+	--background: #ffffff;
+	--foreground: #181b1f;
+	--card: #ffffff;
+	--card-foreground: #181b1f;
+	--popover: #ffffff;
+	--popover-foreground: #181b1f;
+	--primary: #24272c;
+	--primary-foreground: #ffffff;
+	--secondary: #f1f2f3;
+	--secondary-foreground: #24272c;
+	--muted: #f4f5f6;
+	--muted-foreground: #585e66;
+	--accent: #edf0f2;
+	--accent-foreground: #24272c;
 	--destructive: oklch(0.55 0.245 27.325);
-	--border: #d6dbe0;
-	--input: #d6dbe0;
-	--ring: oklch(0.56 0.085 275);
+	--border: #d7dade;
+	--input: #cdd1d6;
+	--ring: #345a99;
 	--chart-1: oklch(0.872 0.007 219.6);
 	--chart-2: oklch(0.56 0.021 213.5);
 	--chart-3: oklch(0.45 0.017 213.2);
 	--chart-4: oklch(0.378 0.015 216);
 	--chart-5: oklch(0.275 0.011 216.9);
 	--radius: 0.45rem;
-	--sidebar: #f0f2f4;
-	--sidebar-foreground: #171b20;
+	--sidebar: #fafafa;
+	--sidebar-foreground: #181b1f;
 	--sidebar-primary: oklch(0.218 0.008 223.9);
 	--sidebar-primary-foreground: oklch(0.987 0.002 197.1);
-	--sidebar-accent: #e4e8ec;
-	--sidebar-accent-foreground: oklch(0.218 0.008 223.9);
-	--sidebar-border: #d6dbe0;
-	--sidebar-ring: oklch(0.56 0.085 275);
+	--sidebar-accent: #eceef0;
+	--sidebar-accent-foreground: #24272c;
+	--sidebar-border: #e0e2e5;
+	--sidebar-ring: var(--ring);
 	--landing-accent: oklch(0.47 0.145 152);
 	--landing-accent-soft: oklch(0.47 0.145 152 / 10%);
 	--landing-line: var(--border);
 	--landing-panel: var(--card);
 	--landing-inset: var(--surface-sunken);
-	--panel-edge: oklch(0 0 0 / 5%);
-	--panel-recess: oklch(0 0 0 / 8%);
+	--panel-edge: oklch(1 0 0 / 85%);
+	--panel-recess: oklch(0 0 0 / 6%);
 }
 
 .dark {
@@ -175,8 +177,8 @@
 	 * worse than none — but never darker than the noteheads sitting on it.
 	 */
 	--staff-line: oklch(0.72 0.008 220);
-	--surface-sunken: #e8ebee;
-	--surface-raised: oklch(1 0 0);
+	--surface-sunken: #f4f5f6;
+	--surface-raised: #ffffff;
 	--key-white: oklch(0.995 0.001 220);
 	--key-black: oklch(0.28 0.008 224);
 	--ring-on-key-white: oklch(0.42 0.09 214);
@@ -219,8 +221,31 @@
 	--channel-l: 0.76;
 }
 
-/* Instrument materials stay graphite in both page themes. */
+/* Porcelain in daylight, graphite at night; controls follow their deck. */
 :root {
+	--instrument-body: #ffffff;
+	--instrument-glass: #f4f5f6;
+	--instrument-ink: #181b1f;
+	--instrument-muted: #585e66;
+	--instrument-seam: #cdd1d6;
+	--instrument-control: #ffffff;
+	--instrument-control-hover: #edf0f2;
+	--instrument-pad-face: #f7f8f9;
+	--instrument-pad-rim: #ffffff;
+	--instrument-grid-line: oklch(0.3 0.005 250 / 8%);
+	--instrument-grid-line-strong: oklch(0.3 0.005 250 / 15%);
+	--instrument-staff-line: #9ca3ad;
+	--instrument-focus: #345a99;
+	--instrument-color-scheme: light;
+	--instrument-body-shadow:
+		inset 0 1px 0 #ffffff, inset 0 -1px 0 oklch(0 0 0 / 8%), 0 3px 5px -4px oklch(0 0 0 / 22%);
+	--instrument-recess-shadow: inset 0 1px 2px oklch(0 0 0 / 8%);
+	--instrument-pad-shadow:
+		inset 0 1px 0 #ffffff, inset 0 -1px 0 oklch(0 0 0 / 9%), 0 1px 2px oklch(0 0 0 / 8%);
+	--instrument-pad-pressed-shadow: inset 0 2px 3px oklch(0 0 0 / 12%);
+}
+
+.dark {
 	--instrument-body: oklch(0.23 0.005 255);
 	--instrument-glass: oklch(0.1 0.002 255);
 	--instrument-ink: oklch(0.95 0.006 248);
@@ -230,6 +255,11 @@
 	--instrument-control-hover: oklch(0.34 0.009 255);
 	--instrument-pad-face: oklch(0.27 0.007 255);
 	--instrument-pad-rim: oklch(0.31 0.007 255);
+	--instrument-grid-line: oklch(1 0 0 / 7%);
+	--instrument-grid-line-strong: oklch(1 0 0 / 14%);
+	--instrument-staff-line: oklch(0.59 0.01 248);
+	--instrument-focus: oklch(0.76 0.08 248);
+	--instrument-color-scheme: dark;
 	--instrument-body-shadow:
 		inset 0 1px 0 oklch(1 0 0 / 12%), inset 0 -1px 0 oklch(0 0 0 / 60%),
 		0 4px 10px -5px oklch(0 0 0 / 45%);
@@ -347,7 +377,10 @@
 
 @layer base {
 	html {
-		color-scheme: light dark;
+		color-scheme: light;
+	}
+	html.dark {
+		color-scheme: dark;
 	}
 	/*
 	 * The interface default is 13px, not the browser's 16px. Anything that
@@ -388,7 +421,7 @@
 }
 
 @layer components {
-	/* Shared palette for playable hardware; portalled menus keep the page theme. */
+	/* Material colours change with the page; MIDI family hues remain semantic. */
 	.instrument-material {
 		--background: var(--instrument-glass);
 		--foreground: var(--instrument-ink);
@@ -404,21 +437,12 @@
 		--accent-foreground: var(--instrument-ink);
 		--surface-sunken: var(--instrument-glass);
 		--surface-raised: var(--instrument-control);
-		--grid-line: oklch(1 0 0 / 7%);
-		--grid-line-strong: oklch(1 0 0 / 14%);
-		--staff-line: oklch(0.59 0.01 248);
-		--key-white: oklch(0.9 0.003 220);
-		--key-black: oklch(0.2 0.008 224);
-		--msg-note: oklch(0.78 0.17 152);
-		--msg-cc: oklch(0.72 0.16 264);
-		--msg-expr: oklch(0.75 0.19 320);
-		--msg-program: oklch(0.82 0.15 80);
-		--msg-clock: oklch(0.74 0.1 197);
-		--msg-sysex: oklch(0.72 0.18 25);
-		--ring: oklch(0.76 0.08 248);
-		--channel-l: 0.76;
+		--grid-line: var(--instrument-grid-line);
+		--grid-line-strong: var(--instrument-grid-line-strong);
+		--staff-line: var(--instrument-staff-line);
+		--ring: var(--instrument-focus);
 		color: var(--instrument-ink);
-		color-scheme: dark;
+		color-scheme: var(--instrument-color-scheme);
 	}
 	.instrument-deck {
 		border-radius: 0.5rem;
@@ -458,7 +482,7 @@
 	 * keys, pads. An offset ring on the outermost key is clipped by the panel it
 	 * sits in, which is exactly the key a keyboard user reaches first.
 	 */
-	.focus-inset:focus-visible {
+	html[data-focus-navigation='true'] .focus-inset:focus-visible {
 		outline-offset: -3px;
 	}
 	/*
@@ -467,11 +491,11 @@
 	 * page background and lands around 2.7:1 on a white key — under the 3:1 that
 	 * a focus indicator has to clear. These two are tuned to the keys instead.
 	 */
-	.focus-key-white:focus-visible {
+	html[data-focus-navigation='true'] .focus-key-white:focus-visible {
 		outline-color: var(--ring-on-key-white);
 		outline-offset: -3px;
 	}
-	.focus-key-black:focus-visible {
+	html[data-focus-navigation='true'] .focus-key-black:focus-visible {
 		outline-color: var(--ring-on-key-black);
 		outline-offset: -3px;
 	}
@@ -494,10 +518,36 @@
 	.focus-shape {
 		outline: none;
 	}
-	.focus-shape:focus-visible {
+	html[data-focus-navigation='true'] .focus-shape:focus-visible {
 		stroke: var(--ring);
 		stroke-width: 2.5;
 	}
+	.select-control {
+		background: var(--surface-raised);
+		box-shadow: inset 0 1px 0 var(--panel-edge);
+	}
+	.select-control:not(:disabled):hover,
+	.select-control[aria-expanded='true'] {
+		background: var(--accent);
+	}
+}
+
+/* A toolbar has breathing room; focus is contained within each control. */
+.instrument-toolbar {
+	padding: 6px;
+}
+
+html[data-focus-navigation='true'] .instrument-toolbar :is(select, button):focus-visible {
+	outline: 2px solid var(--instrument-focus);
+	outline-offset: -2px;
+	box-shadow: none;
+}
+
+html[data-focus-navigation='true'] .select-control:focus-visible,
+html[data-focus-navigation='true']
+	[data-slot='input-group']:has([data-slot='input-group-control']:focus-visible) {
+	outline: 2px solid var(--ring);
+	outline-offset: -2px;
 }
 
 /*
@@ -727,21 +777,24 @@
 
 @layer base {
 	/*
-	 * Every custom control — knobs, faders, keys, pads, step cells — is a
-	 * <button> or has a slider role, and every one of them must show where
-	 * focus is. Mouse users never see this; keyboard users cannot work
-	 * without it.
+	 * Browsers also mark pointer-selected native selects and the last clicked
+	 * button as focus-visible after a musical key press. Use the app's actual
+	 * navigation mode so only moving around the interface draws an outline.
 	 */
-	:where(
-		button,
-		[role='slider'],
-		[role='application'],
-		a,
-		summary,
-		input,
-		textarea,
-		select
-	):focus-visible {
+	:where(button, [role='slider'], [role='application'], a, summary, input, textarea, select):focus {
+		outline: none;
+	}
+	html[data-focus-navigation='true']
+		:where(
+			button,
+			[role='slider'],
+			[role='application'],
+			a,
+			summary,
+			input,
+			textarea,
+			select
+		):focus-visible {
 		outline: 2px solid var(--ring);
 		outline-offset: 2px;
 		border-radius: var(--radius-sm);

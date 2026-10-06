@@ -93,6 +93,20 @@ describe('musical computer keyboard ownership', () => {
 		expect(piano.keyup).toHaveBeenCalledWith(release);
 	});
 
+	it('clears navigation focus only for shortcuts accepted by the active instrument', () => {
+		const input = new MusicalInput();
+		const piano = surface();
+		piano.keydown = (event) => {
+			if (event.code === 'KeyA') event.preventDefault();
+		};
+		cleanup.push(input.register(Symbol(), piano));
+		document.documentElement.setAttribute('data-focus-navigation', 'true');
+		press(document.body, { code: 'KeyB', key: 'b' });
+		expect(document.documentElement.hasAttribute('data-focus-navigation')).toBe(true);
+		press();
+		expect(document.documentElement.hasAttribute('data-focus-navigation')).toBe(false);
+	});
+
 	it('releases all held notes when the browser loses focus', () => {
 		const input = new MusicalInput();
 		const piano = surface();

@@ -72,6 +72,14 @@ test('the mobile landing keeps playing close and its destinations reachable', as
 	// close to the introduction rather than below a long marketing page.
 	const keyboardBox = await keyboard.boundingBox();
 	expect(keyboardBox!.y).toBeLessThan(812);
+	const toolbarRows = await page.locator('.instrument-toolbar').evaluate((toolbar) => {
+		const tops = Array.from(toolbar.children)
+			.map((control) => control.getBoundingClientRect())
+			.filter((bounds) => bounds.height > 0)
+			.map((bounds) => Math.round(bounds.top));
+		return new Set(tops).size;
+	});
+	expect(toolbarRows).toBeLessThanOrEqual(2);
 	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 	await expect(
 		page.locator('main a[href$="/learn"]').filter({ visible: true }).first()

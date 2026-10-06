@@ -111,7 +111,7 @@
 		</div>
 	{/if}
 	<div class="keybed">
-		<Keyboard low={48} octaves={3} height={device.narrow ? 96 : 128} labels="c" />
+		<Keyboard integrated low={48} octaves={3} height={device.narrow ? 96 : 128} labels="c" />
 	</div>
 	<div
 		class="message-readout"

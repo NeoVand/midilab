@@ -8,7 +8,8 @@
 		Settings02Icon,
 		Sun03Icon,
 		Moon02Icon,
-		CommandIcon
+		CommandIcon,
+		GithubIcon
 	} from '@hugeicons/core-free-icons';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -112,6 +113,26 @@
 	<div class="flex-1"></div>
 
 	<div class="mb-1 h-px w-6 bg-sidebar-border"></div>
+
+	<Tooltip.Provider delayDuration={400}>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<a
+						{...props}
+						href="https://github.com/NeoVand/midilab"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="grid size-9 place-items-center text-muted-foreground transition-colors hover:text-foreground"
+						aria-label="MIDI Lab on GitHub"
+					>
+						<HugeiconsIcon icon={GithubIcon} size={22} strokeWidth={1.7} />
+					</a>
+				{/snippet}
+			</Tooltip.Trigger>
+			<Tooltip.Content side="right">MIDI Lab on GitHub</Tooltip.Content>
+		</Tooltip.Root>
+	</Tooltip.Provider>
 
 	<Tooltip.Provider delayDuration={400}>
 		<Tooltip.Root>

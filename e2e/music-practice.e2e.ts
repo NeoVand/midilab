@@ -69,12 +69,18 @@ test('computer playing after the count-in verifies a whole practice phrase', asy
 	await page.goto('/learn/pulse-and-rhythm');
 	const practice = page.locator('[data-practice="pulse-and-rhythm-pulse"]');
 	await practice.getByRole('button', { name: 'Play it back', exact: true }).click();
-	await expect(practice.getByText(/Play — beat 1/)).toBeVisible({ timeout: 8000 });
-	for (let beat = 0; beat < 4; beat++) {
+	for (let beat = 1; beat <= 4; beat++) {
+		await page.waitForFunction(
+			(expectedBeat) =>
+				document
+					.querySelector('[data-practice="pulse-and-rhythm-pulse"] [aria-live="polite"]')
+					?.textContent?.trim() === expectedBeat,
+			`Play — beat ${beat}, bar 1`,
+			{ polling: 'raf', timeout: 8000 }
+		);
 		await page.keyboard.down('a');
 		await page.waitForTimeout(60);
 		await page.keyboard.up('a');
-		if (beat < 3) await page.waitForTimeout(770);
 	}
 	await expect(practice.getByText('You played the whole phrase in time.')).toBeVisible({
 		timeout: 5000

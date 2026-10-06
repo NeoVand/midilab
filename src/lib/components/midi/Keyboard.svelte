@@ -24,6 +24,7 @@
 	import { capturePointer, cn } from '$lib/utils';
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { momentary } from '$lib/a11y/momentary';
+	import { markPerformanceInput } from '$lib/a11y/focus-mode';
 	import { device } from '$lib/stores/device.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
@@ -42,6 +43,8 @@
 		typing?: boolean;
 		/** Hide the sound controls when a parent supplies its own instrument panel. */
 		controls?: boolean;
+		/** A surrounding instrument already supplies the housing. */
+		integrated?: boolean;
 		/** Remap velocity before sending — the response curve in Velocity and dynamics. */
 		curve?: (v: number) => number;
 		onNoteOn?: (note: number, velocity: number) => void;
@@ -58,6 +61,7 @@
 		labels = 'c',
 		typing = true,
 		controls = true,
+		integrated = false,
 		curve,
 		onNoteOn,
 		onNoteOff,
@@ -213,6 +217,7 @@
 	}
 
 	function onPointerDown(note: number, event: PointerEvent) {
+		markPerformanceInput();
 		const el = event.currentTarget as HTMLElement;
 		capturePointer(el, event.pointerId);
 		down = true;
@@ -393,7 +398,7 @@
 <svelte:window onpointerup={onPointerUp} onpointercancel={onPointerUp} />
 
 <div
-	class="instrument-material instrument-deck flex flex-col gap-2"
+	class={cn('instrument-material flex flex-col gap-2', !integrated && 'instrument-deck')}
 	role="group"
 	aria-label="Keyboard instrument"
 	tabindex="-1"
@@ -401,7 +406,7 @@
 	onfocusin={activateTyping}
 >
 	{#if controls}
-		<Field.FieldGroup class="flex-row flex-wrap items-center gap-x-4 gap-y-2">
+		<Field.FieldGroup class="instrument-toolbar flex-row flex-wrap items-center gap-2">
 			<VoicePicker
 				value={program}
 				channel={ch}
@@ -455,8 +460,8 @@
 				</NativeSelect>
 			</Field.Field>
 			<Button
-				size="sm"
 				variant={sustained ? 'secondary' : 'outline'}
+				style="--secondary: var(--msg-note-bg); --secondary-foreground: var(--msg-note)"
 				aria-pressed={sustained}
 				onclick={toggleSustain}>Sustain</Button
 			>
@@ -538,7 +543,7 @@
 				-->
 						{#if cap}
 							<span
-								class="pointer-events-none absolute inset-x-0 bottom-7 text-center font-mono text-2xs leading-none text-black/30"
+								class="pointer-events-none absolute inset-x-0 bottom-7 text-center font-mono text-2xs leading-none text-black/60"
 							>
 								{cap}
 							</span>
@@ -591,7 +596,7 @@
 					>
 						{#if cap}
 							<span
-								class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center font-mono text-2xs leading-none text-white/35"
+								class="pointer-events-none absolute inset-x-0 bottom-1.5 text-center font-mono text-2xs leading-none text-white/60"
 							>
 								{cap}
 							</span>
@@ -662,6 +667,7 @@
 			<Button
 				size="sm"
 				variant={ownsTyping ? 'secondary' : 'outline'}
+				style="--secondary: var(--msg-note-bg); --secondary-foreground: var(--msg-note)"
 				aria-label="Use computer keys"
 				aria-pressed={ownsTyping}
 				title="Play the lettered keys on this keyboard"

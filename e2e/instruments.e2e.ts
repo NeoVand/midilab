@@ -58,6 +58,89 @@ for (const width of [320, 1280]) {
 	});
 }
 
+for (const mode of ['light', 'dark'] as const) {
+	test(`pointer controls and computer playing stay free of focus rings in ${mode} mode`, async ({
+		page
+	}) => {
+		await page.addInitScript(
+			(theme) => localStorage.setItem('midilab:theme', JSON.stringify(theme)),
+			mode
+		);
+		await page.goto('/');
+		const piano = page.getByRole('group', { name: 'Keyboard instrument', exact: true });
+		const channel = piano.getByLabel('Channel', { exact: true });
+		await channel.click();
+		await expectNoFocusRing(channel);
+		await page.keyboard.press('Escape');
+
+		const picker = piano.getByTitle("Choose this keyboard's instrument");
+		await picker.click();
+		await page.getByRole('searchbox', { name: 'Search instruments', exact: true }).press('Escape');
+		await page.keyboard.press('a');
+		await expectNoFocusRing(picker);
+
+		const middleC = piano.getByRole('application').getByRole('button', { name: 'C3', exact: true });
+		await middleC.click();
+		await page.keyboard.down('a');
+		await expect(middleC).toHaveAttribute('aria-pressed', 'true');
+		await expectNoFocusRing(middleC);
+		await page.keyboard.up('a');
+		await expect(middleC).toHaveAttribute('aria-pressed', 'false');
+		await expectNoFocusRing(middleC);
+	});
+
+	test(`homepage controls keep keyboard focus inside their toolbar in ${mode} mode`, async ({
+		page
+	}) => {
+		await page.emulateMedia({ colorScheme: mode });
+		await page.addInitScript(
+			(theme) => localStorage.setItem('midilab:theme', JSON.stringify(theme)),
+			mode
+		);
+		await page.goto('/');
+		const piano = page.getByRole('group', { name: 'Keyboard instrument', exact: true });
+		await expect(piano).toBeVisible();
+		expect(await piano.evaluate((el) => getComputedStyle(el).colorScheme)).toBe(mode);
+		const toolbar = piano.locator('.instrument-toolbar');
+		const bounds = (await toolbar.boundingBox())!;
+		const picker = piano.getByTitle("Choose this keyboard's instrument");
+		await picker.focus();
+		for (const name of ['Channel', 'Velocity']) {
+			await page.keyboard.press('Tab');
+			const control = piano.getByLabel(name, { exact: true });
+			await expect(control).toBeFocused();
+			const focus = await control.evaluate((el) => {
+				const style = getComputedStyle(el);
+				return {
+					visible: el.matches(':focus-visible'),
+					width: parseFloat(style.outlineWidth),
+					offset: parseFloat(style.outlineOffset),
+					shadow: style.boxShadow
+				};
+			});
+			expect(focus.visible).toBe(true);
+			expect(focus.width > 0 || focus.shadow !== 'none').toBe(true);
+			expect(focus.width + focus.offset).toBeLessThanOrEqual(0);
+			const box = (await control.boundingBox())!;
+			expect(box.y - bounds.y).toBeGreaterThanOrEqual(5);
+			expect(bounds.y + bounds.height - box.y - box.height).toBeGreaterThanOrEqual(5);
+		}
+	});
+}
+
+async function expectNoFocusRing(control: Locator) {
+	const focus = await control.evaluate((el) => {
+		const style = getComputedStyle(el);
+		return {
+			outline: style.outlineStyle,
+			width: parseFloat(style.outlineWidth),
+			ring: style.getPropertyValue('--tw-ring-shadow').trim()
+		};
+	});
+	expect(focus.outline === 'none' || focus.width === 0).toBe(true);
+	expect(focus.ring === '' || focus.ring === '0 0 #0000').toBe(true);
+}
+
 test('drum sound controls and complete instrument names fit on mobile', async ({ page }) => {
 	await page.setViewportSize({ width: 320, height: 850 });
 	await page.goto('/learn/channels');

@@ -615,13 +615,13 @@
 		content: '';
 	}
 
-	a:focus-visible {
+	:global(html[data-focus-navigation='true']) a:focus-visible {
 		outline: 2px solid var(--landing-accent, var(--ring));
 		outline-offset: 4px;
 		border-radius: 4px;
 	}
 
-	.lesson-link:focus-visible {
+	:global(html[data-focus-navigation='true']) .lesson-link:focus-visible {
 		outline-offset: -3px;
 	}
 

@@ -132,7 +132,7 @@
 			border-color 140ms ease;
 	}
 	.lesson-mark:hover::before,
-	.lesson-mark:focus-visible::before {
+	:global(html[data-focus-navigation='true']) .lesson-mark:focus-visible::before {
 		background: var(--landing-accent-soft, var(--muted));
 		border-color: var(--landing-accent, var(--foreground));
 	}
@@ -159,7 +159,7 @@
 	.course-link:hover {
 		color: var(--foreground);
 	}
-	a:focus-visible {
+	:global(html[data-focus-navigation='true']) a:focus-visible {
 		outline: 2px solid var(--landing-accent, var(--ring));
 		outline-offset: 3px;
 	}

@@ -9,6 +9,7 @@
 	import { settings } from '$lib/stores/settings.svelte';
 	import { rovingGrid } from '$lib/a11y/roving';
 	import { momentary } from '$lib/a11y/momentary';
+	import { markPerformanceInput } from '$lib/a11y/focus-mode';
 	import { capturePointer, cn } from '$lib/utils';
 	import { Button } from '$lib/components/ui/button';
 	import { NativeSelect, NativeSelectOption } from '$lib/components/ui/native-select';
@@ -91,6 +92,7 @@
 	}
 
 	function hit(note: number, e: PointerEvent) {
+		markPerformanceInput();
 		activateTyping();
 		const el = e.currentTarget as HTMLElement;
 		capturePointer(el, e.pointerId);
@@ -177,7 +179,7 @@
 	onfocusin={activateTyping}
 >
 	{#if controls}
-		<Field.FieldGroup class="flex-row flex-wrap items-center gap-x-4 gap-y-2">
+		<Field.FieldGroup class="instrument-toolbar flex-row flex-wrap items-center gap-2">
 			<span class="text-xs text-muted-foreground">Channel {channel + 1}</span>
 			<VoicePicker
 				value={program}
@@ -258,6 +260,7 @@
 			<Button
 				size="sm"
 				variant={ownsTyping ? 'secondary' : 'outline'}
+				style="--secondary: var(--msg-note-bg); --secondary-foreground: var(--msg-note)"
 				aria-label="Use computer keys"
 				aria-pressed={ownsTyping}
 				title="Play the letters and numbers shown on the pads"

@@ -264,6 +264,16 @@
 			class="flex flex-col gap-2 rounded-lg border bg-card p-4 text-sm leading-relaxed text-muted-foreground"
 		>
 			<p>
+				Built by
+				<a
+					href="https://neovand.github.io/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="rounded-sm font-medium text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+					>Neo Mohsenvand</a
+				>.
+			</p>
+			<p>
 				MIDI Lab is a static single-page application. The MIDI parser, the Standard MIDI File codec,
 				the pattern language, the synthesiser and the scheduler are all written here rather than
 				pulled from libraries, because reading them is part of the point.
@@ -272,6 +282,15 @@
 				Web MIDI requires a Chromium browser or Firefox, on desktop or Android. Safari ships none,
 				on any platform — everything except hardware still works there.
 			</p>
+			<div class="mt-2 border-t pt-3">
+				<a
+					href="https://github.com/NeoVand/midilab"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="rounded-sm font-medium text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+					>GitHub repository</a
+				>
+			</div>
 		</div>
 	</section>
 </div>

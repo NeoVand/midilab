@@ -32,7 +32,7 @@
 	import { gm } from '$lib/audio/gm.svelte';
 	import { GM_FAMILIES, GM_PROGRAMS } from '$lib/midi/constants';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { ArrowUpDownIcon, Cancel01Icon, SearchIcon } from '@hugeicons/core-free-icons';
+	import { ArrowDown01Icon, Cancel01Icon, SearchIcon } from '@hugeicons/core-free-icons';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -180,15 +180,13 @@
 <Popover.Root bind:open={() => open, setOpen}>
 	<Popover.Trigger
 		class={cn(
-			'flex max-w-full min-w-0 items-center gap-1 rounded-md px-1.5 py-1 text-2xs text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground',
+			'select-control focus-inset flex h-7 max-w-full min-w-0 items-center gap-1.5 rounded-md border border-input px-1.5 text-xs text-foreground transition-colors',
 			className
 		)}
 		{title}
 	>
-		<span class="max-w-[9rem] min-w-0 truncate"
-			>{channel === 9 ? drumKit(value).name : GM_PROGRAMS[value]}</span
-		>
-		<HugeiconsIcon icon={ArrowUpDownIcon} size={11} class="shrink-0 opacity-70" />
+		<span class="min-w-0 truncate">{channel === 9 ? drumKit(value).name : GM_PROGRAMS[value]}</span>
+		<HugeiconsIcon icon={ArrowDown01Icon} size={11} class="shrink-0 text-muted-foreground" />
 	</Popover.Trigger>
 	{#if channel === 9 && gm.enabled}
 		{#if gm.stateOfDrums(value) === 'loading'}<span class="text-2xs text-muted-foreground"

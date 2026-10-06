@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { UnfoldMoreIcon } from '@hugeicons/core-free-icons';
+	import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
 	import { cn, type WithElementRef } from '$lib/utils.js';
 	import type { HTMLSelectAttributes } from 'svelte/elements';
 
@@ -28,18 +29,23 @@
 >
 	<select
 		bind:value
-		bind:this={ref}
+		{@attach (element) => {
+			if (untrack(() => ref) !== element) ref = element;
+			return () => {
+				if (ref === element) ref = null;
+			};
+		}}
 		data-slot="native-select"
 		data-size={size}
-		class="h-7 w-full min-w-0 appearance-none rounded-md border border-input bg-input/20 py-0.5 pr-6 pl-2 text-xs/relaxed transition-colors outline-none select-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-[size=sm]:h-6 data-[size=sm]:text-[0.625rem] dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
+		class="select-control h-7 w-full min-w-0 appearance-none rounded-md border border-input py-0.5 pr-6 pl-2 text-xs/relaxed text-foreground transition-colors outline-none select-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-[size=sm]:h-6 data-[size=sm]:text-[0.625rem] dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
 		{...restProps}
 	>
 		{@render children?.()}
 	</select>
 	<HugeiconsIcon
-		icon={UnfoldMoreIcon}
+		icon={ArrowDown01Icon}
 		strokeWidth={2}
-		class="pointer-events-none absolute top-1/2 right-1.5 size-3.5 -translate-y-1/2 text-muted-foreground select-none group-data-[size=sm]/native-select:size-3 group-data-[size=sm]/native-select:-translate-y-[calc(--spacing(1.25))]"
+		class="pointer-events-none absolute top-1/2 right-2 size-3 -translate-y-1/2 text-muted-foreground select-none group-data-[size=sm]/native-select:size-2.5"
 		aria-hidden
 		data-slot="native-select-icon"
 	/>

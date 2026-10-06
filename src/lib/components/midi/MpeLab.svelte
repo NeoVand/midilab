@@ -23,6 +23,7 @@
 	import * as NativeSelect from '$lib/components/ui/native-select';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group';
 	import { capturePointer, cn } from '$lib/utils';
+	import { markPerformanceInput } from '$lib/a11y/focus-mode';
 
 	type Achievement = 'configure' | 'member' | 'per-note-bend' | 'pressure' | 'slide';
 	type Gesture = 'lean' | 'bloom' | 'color';
@@ -290,6 +291,7 @@
 
 	function down(event: PointerEvent) {
 		if (!isSurface || event.button !== 0) return;
+		markPerformanceInput();
 		const element = event.currentTarget as HTMLDivElement;
 		capturePointer(element, event.pointerId);
 		const bounds = element.getBoundingClientRect();

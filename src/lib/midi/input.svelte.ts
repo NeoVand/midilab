@@ -1,4 +1,5 @@
 import { SvelteMap } from 'svelte/reactivity';
+import { markPerformanceInput } from '$lib/a11y/focus-mode';
 
 export interface InputSurface {
 	enabled: () => boolean;
@@ -69,7 +70,10 @@ export class MusicalInput {
 			this.active = null;
 		}
 		if (this.active === null) this.#activateFirst();
-		if (this.active !== null) this.#surfaces.get(this.active)?.keydown(event);
+		if (this.active !== null) {
+			this.#surfaces.get(this.active)?.keydown(event);
+			if (event.defaultPrevented) markPerformanceInput();
+		}
 	};
 
 	// Releases are always delivered, even after focus or modifiers change.

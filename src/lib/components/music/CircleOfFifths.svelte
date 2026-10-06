@@ -442,7 +442,7 @@
 		fill: var(--msg-expr-bg);
 		stroke: var(--pull);
 	}
-	.key-wedge:focus-visible {
+	:global(html[data-focus-navigation='true']) .key-wedge:focus-visible {
 		stroke: var(--foreground);
 		stroke-width: 4;
 	}

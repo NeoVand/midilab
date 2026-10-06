@@ -403,7 +403,7 @@
 		color: var(--muted-foreground);
 		max-width: 44rem;
 	}
-	a:focus-visible {
+	:global(html[data-focus-navigation='true']) a:focus-visible {
 		outline: 2px solid var(--landing-accent, var(--ring));
 		outline-offset: 4px;
 	}

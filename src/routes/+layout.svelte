@@ -15,9 +15,12 @@
 	import { transport } from '$lib/midi/clock.svelte';
 	import { audio } from '$lib/audio/engine';
 	import { Toaster } from '$lib/components/ui/sonner';
+	import { trackFocusNavigation } from '$lib/a11y/focus-mode';
 
 	let { children } = $props();
 	let paletteOpen = $state(false);
+
+	onMount(trackFocusNavigation);
 
 	/*
 	 * The engine and the monitor are process-wide singletons, so their lifetime

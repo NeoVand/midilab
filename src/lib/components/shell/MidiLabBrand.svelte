@@ -12,7 +12,11 @@
 
 <span class={['midi-brand', `midi-brand-${size}`, className]}>
 	<!-- One drawing for the app, the browser tab, and the course entrance. -->
-	<img class="brand-mark" src={asset('/favicon.svg')} width="56" height="56" alt="" />
+	<span
+		class="brand-mark"
+		style:--brand-image={`url("${asset('/favicon.svg')}")`}
+		aria-hidden="true"
+	></span>
 	{#if wordmark}
 		<span class="brand-wordmark">MIDI Lab</span>
 	{:else}
@@ -33,9 +37,18 @@
 	.brand-mark {
 		display: block;
 		width: var(--brand-mark-size, 2rem);
-		height: var(--brand-mark-size, 2rem);
+		height: auto;
+		aspect-ratio: 934 / 730;
 		flex: none;
-		filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.18));
+		background-color: var(--brand-mark-color, var(--landing-accent));
+		mask-image: var(--brand-image);
+		mask-position: center;
+		mask-size: contain;
+		mask-repeat: no-repeat;
+	}
+
+	:global(.dark) .brand-mark {
+		background-color: var(--brand-mark-color, #a0f7c5);
 	}
 
 	.brand-wordmark {
@@ -48,7 +61,6 @@
 
 	.midi-brand-compact .brand-mark {
 		width: var(--brand-mark-size, 1.5rem);
-		height: var(--brand-mark-size, 1.5rem);
 	}
 
 	.midi-brand-compact .brand-wordmark {
@@ -61,8 +73,6 @@
 
 	.midi-brand-hero .brand-mark {
 		width: var(--brand-mark-size, clamp(3.15rem, 4vw + 1rem, 4.7rem));
-		height: var(--brand-mark-size, clamp(3.15rem, 4vw + 1rem, 4.7rem));
-		filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.2));
 	}
 
 	.midi-brand-hero .brand-wordmark {

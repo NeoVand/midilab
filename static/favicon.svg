@@ -1,31 +1,15 @@
-<!-- The canonical MIDI Lab mark, shared by MidiLabBrand and the favicon. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
-	<defs>
-		<linearGradient id="edge" x1="14" y1="0" x2="38" y2="56" gradientUnits="userSpaceOnUse">
-			<stop stop-color="#62676a" />
-			<stop offset=".42" stop-color="#303436" />
-			<stop offset="1" stop-color="#151719" />
-		</linearGradient>
-		<linearGradient id="face" x1="15" y1="1" x2="40" y2="55" gradientUnits="userSpaceOnUse">
-			<stop stop-color="#363a3d" />
-			<stop offset=".5" stop-color="#272b2e" />
-			<stop offset="1" stop-color="#1b1e20" />
-		</linearGradient>
-		<linearGradient id="note" x1="28" y1="12" x2="28" y2="44" gradientUnits="userSpaceOnUse">
-			<stop stop-color="#86e3b6" />
-			<stop offset="1" stop-color="#4fc68d" />
-		</linearGradient>
-	</defs>
-	<rect x="1" y="1" width="54" height="54" rx="14" fill="url(#edge)" />
-	<rect x="2" y="2" width="52" height="52" rx="13" fill="url(#face)" />
-	<path
-		d="M29 12c3.4 3.6 6.4 4.9 10.4 6.8 3.8 1.8 5.6 4.2 5.6 7.6 0 3.1-1.8 6.1-5.4 8.3 1.7-2.7 2.2-4.6 1.4-6.4-1-2.3-4.5-3.6-8-5.2V39c0 4.3-4.1 7.6-9.2 7.6-4.6 0-7.8-2.5-7.8-5.7 0-4.2 4.5-7.8 9.8-7.8 1.1 0 2.2.2 3.2.6V12Z"
-		fill="#111e19"
-		transform="translate(0 1)"
-	/>
-	<path
-		d="M29 12c3.4 3.6 6.4 4.9 10.4 6.8 3.8 1.8 5.6 4.2 5.6 7.6 0 3.1-1.8 6.1-5.4 8.3 1.7-2.7 2.2-4.6 1.4-6.4-1-2.3-4.5-3.6-8-5.2V39c0 4.3-4.1 7.6-9.2 7.6-4.6 0-7.8-2.5-7.8-5.7 0-4.2 4.5-7.8 9.8-7.8 1.1 0 2.2.2 3.2.6V12Z"
-		fill="url(#note)"
-	/>
-	<path d="M15 2.5h26" stroke="#a1a8ac" stroke-opacity=".22" stroke-linecap="round" />
+<!-- Traced from the supplied three-key 010 / M mark. This is the canonical MIDI Lab drawing. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="160 250 934 730" fill="none">
+	<style>
+		:root { color: #9ff7c5; }
+		@media (prefers-color-scheme: light) { :root { color: #266f43; } }
+	</style>
+	<g fill="currentColor" fill-rule="evenodd">
+		<!-- Left key / zero. -->
+		<path d="M358 264H472C487 264 498 276 498 292L496 762C496 781 488 791 477 800C466 809 460 818 460 834L459 919C458 945 440 963 416 963H234C198 963 176 935 178 899L208 411C212 329 279 264 358 264ZM357 404C397 404 428 435 426 476L418 698C416 739 385 771 345 771C305 771 271 739 273 700L286 475C288 435 317 404 357 404Z" />
+		<!-- Center key / one. -->
+		<path d="M550 264H703C719 264 731 276 731 292L732 734C732 762 742 783 756 796C767 806 773 817 773 832L772 920C772 946 754 964 729 964H528C502 964 483 946 483 920L481 830C481 817 487 807 498 797C513 782 523 761 523 736L524 291C524 276 535 264 550 264ZM652 329H673C682 329 688 336 688 345V760C688 767 683 773 675 773H581C573 773 568 768 568 760V450C568 442 566 438 558 438C551 438 546 433 546 425V416C546 410 549 404 554 400L637 335C642 331 646 329 652 329Z" />
+		<!-- Right key / zero. -->
+		<path d="M784 264H899C978 264 1041 329 1046 411L1076 900C1079 935 1057 963 1027 963H845C817 963 796 944 795 918L794 831C794 816 789 806 777 796C765 787 759 778 759 762L756 292C756 276 769 264 784 264ZM894 404C932 404 961 433 963 471L981 694C984 735 954 768 914 769C874 772 839 742 837 703L823 479C820 438 852 404 894 404Z" />
+	</g>
 </svg>
