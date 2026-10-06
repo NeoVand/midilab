@@ -94,7 +94,15 @@ test('holding a key through a rest receives duration feedback instead of verific
 	await page.goto('/learn/pulse-and-rhythm');
 	const practice = page.locator('[data-practice="pulse-and-rhythm-rests"]');
 	await practice.getByRole('button', { name: 'Play it back', exact: true }).click();
-	await expect(practice.getByText(/Play — beat 1/)).toBeVisible({ timeout: 8000 });
+	// Assertion backoff can find beat one after its onset tolerance has passed.
+	await page.waitForFunction(
+		() =>
+			document
+				.querySelector('[data-practice="pulse-and-rhythm-rests"] [aria-live="polite"]')
+				?.textContent?.trim() === 'Play — beat 1, bar 1',
+		undefined,
+		{ polling: 'raf', timeout: 8000 }
+	);
 	await page.keyboard.down('a');
 	await expect(practice.getByText(/held too long — lift the key/)).toBeVisible({ timeout: 10000 });
 	await page.keyboard.up('a');

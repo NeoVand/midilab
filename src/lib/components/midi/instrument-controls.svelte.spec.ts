@@ -54,6 +54,18 @@ function assertReadableControls(target: HTMLElement) {
 }
 
 describe('instrument controls fit their container', () => {
+	it.each([300, 304, 320])('keeps the phone toolbar in two rows at %ipx', async (width) => {
+		const target = container(width);
+		component = mount(Keyboard, { target, props: { typing: false } });
+		await tick();
+		assertReadableControls(target);
+		const toolbar = target.querySelector<HTMLElement>('.instrument-toolbar')!;
+		const rows = new Set(
+			Array.from(toolbar.children).map((control) => Math.round(control.getBoundingClientRect().top))
+		);
+		expect(rows.size).toBeLessThanOrEqual(2);
+	});
+
 	it.each([216, 264, 512, 768])('keeps keyboard controls readable at %ipx', async (width) => {
 		const target = container(width);
 		component = mount(Keyboard, { target, props: { typing: false } });

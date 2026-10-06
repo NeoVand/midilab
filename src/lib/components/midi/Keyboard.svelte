@@ -411,7 +411,7 @@
 				value={program}
 				channel={ch}
 				audition={false}
-				class="shrink-0"
+				class="grow basis-28"
 				title={ch === 9 ? 'Choose a drum kit' : "Choose this keyboard's instrument"}
 			/>
 			<Field.Field
