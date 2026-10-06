@@ -10,8 +10,13 @@ import { expect, test } from '@playwright/test';
 
 test('the home page loads and offers the course', async ({ page }) => {
 	await page.goto('/');
-	await expect(page.getByRole('heading', { level: 1 })).toContainText('Learn MIDI');
+	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+	const contents = page.getByRole('link', { name: /Course contents/i });
+	await expect(contents).toBeVisible();
 	await expect(page.getByRole('application', { name: 'Musical keyboard' })).toBeVisible();
+	await contents.click();
+	await expect(page).toHaveURL(/\/learn$/);
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('The course');
 });
 
 test('pressing a key produces a decoded message', async ({ page }) => {

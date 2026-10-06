@@ -19,11 +19,11 @@
 		GraduationCapIcon,
 		FlaskConicalIcon,
 		LibraryIcon,
-		MusicNote02Icon,
 		SearchIcon
 	} from '@hugeicons/core-free-icons';
 	import { path, routeOf } from '$lib/nav';
 	import { cn } from '$lib/utils';
+	import MidiLabBrand from './MidiLabBrand.svelte';
 
 	interface Props {
 		onOpenPalette: () => void;
@@ -32,7 +32,7 @@
 	let { onOpenPalette, class: className }: Props = $props();
 
 	const items = [
-		{ href: '/', icon: MusicNote02Icon, label: 'Play' },
+		{ href: '/', icon: undefined, label: 'Play' },
 		{ href: '/learn', icon: GraduationCapIcon, label: 'Learn' },
 		{ href: '/lab', icon: FlaskConicalIcon, label: 'Lab' },
 		{ href: '/reference', icon: LibraryIcon, label: 'Tables' }
@@ -49,6 +49,7 @@
 			{@const on = active(item.href)}
 			<a
 				href={path(item.href)}
+				aria-label={item.label}
 				aria-current={on ? 'page' : undefined}
 				class={cn(
 					'relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors',
@@ -60,12 +61,11 @@
 					     marks the edge it shares with the page. -->
 					<span class="absolute inset-x-4 top-0 h-px bg-foreground"></span>
 				{/if}
-				<HugeiconsIcon
-					icon={item.icon}
-					size={22}
-					strokeWidth={on ? 2 : 1.6}
-					class={item.href === '/' && on ? 'text-msg-note' : undefined}
-				/>
+				{#if item.icon}
+					<HugeiconsIcon icon={item.icon} size={22} strokeWidth={on ? 2 : 1.6} />
+				{:else}
+					<MidiLabBrand wordmark={false} size="compact" />
+				{/if}
 				<span class="text-3xs leading-none font-medium">{item.label}</span>
 			</a>
 		{/each}

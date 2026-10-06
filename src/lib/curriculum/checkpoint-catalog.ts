@@ -27,7 +27,7 @@ export const CHECKPOINTS: Record<string, readonly string[]> = {
 	'midi-2': ['ump', 'resolution', 'decide'],
 	'midi-clock': ['run', 'clock-out', 'spp', 'continue', 'tempo'],
 	'midi-files': ['vlq', 'open', 'play', 'write'],
-	mpe: ['configure', 'member', 'per-note-bend', 'slide'],
+	mpe: ['configure', 'member', 'per-note-bend', 'pressure', 'slide'],
 	'notation-and-midi': ['enharmonic', 'chord', 'choose'],
 	'note-on-off': ['pair', 'stick', 'rescue', 'long-note'],
 	'notes-and-pitch': ['middle-c', 'octave', 'triad', 'octave-span'],

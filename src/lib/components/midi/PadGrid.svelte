@@ -169,7 +169,7 @@
 <svelte:window onpointerup={lift} onpointercancel={lift} />
 
 <div
-	class={cn('flex flex-col gap-2', className)}
+	class={cn('instrument-material instrument-deck flex flex-col gap-2', className)}
 	role="group"
 	aria-label="Drum pads"
 	tabindex="-1"
@@ -214,7 +214,7 @@
 		</Field.FieldGroup>
 	{/if}
 	<div
-		class="grid gap-1.5"
+		class="instrument-recess grid gap-1.5 rounded-lg"
 		style="grid-template-columns: repeat({columns}, minmax(0, 1fr))"
 		use:rovingGrid={{ columns }}
 	>
@@ -223,11 +223,12 @@
 			{@const vel = noteState.velocityOf(note, channel)}
 			<button
 				use:momentary
-				class="panel-sunken relative flex aspect-square touch-none flex-col items-start justify-end gap-0.5 overflow-hidden rounded-lg border p-2 text-left transition-[background,transform] select-none active:translate-y-px"
+				class="instrument-pad focus-inset relative flex aspect-square touch-none flex-col items-start justify-end gap-0.5 overflow-hidden rounded-lg border p-2 text-left transition-[background,transform] select-none active:translate-y-px"
 				style:background={active
-					? `color-mix(in oklch, ${colour} ${25 + (vel / 127) * 55}%, transparent)`
+					? `color-mix(in oklch, ${colour} ${18 + (vel / 127) * 22}%, var(--instrument-pad-face))`
 					: ''}
 				style:border-color={active ? colour : ''}
+				style:--muted-foreground={active ? 'var(--instrument-ink)' : undefined}
 				onpointerdown={(e) => hit(note, e)}
 				onpointerup={lift}
 				onpointercancel={lift}

@@ -1,12 +1,31 @@
-<!--
-  The same mark the rail carries, so the tab and the app agree. Drawn rather
-  than exported so it can carry the note colour on either theme: browsers
-  render a favicon against whatever chrome the user has, and a monochrome
-  glyph disappears into half of them.
--->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
-	<g stroke="#22a45d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-		<path d="M11 7.13678V17M11 7.13678C12.8928 8.81698 14.5706 10.0042 16.0063 10.6818C16.6937 11.0062 17.3165 11.0682 18.0198 10.7552C19.7751 9.97419 21 8.20629 21 6.15045C19.0715 7.50911 16.6876 6.77163 14.6847 5.50548C13.0454 4.46918 12.2258 3.95102 11.8569 4.00364C11.5781 4.0434 11.4283 4.1242 11.244 4.33421C11 4.61216 11 5.4537 11 7.13678Z" />
-		<path d="M11 17C11 19.2091 9.20914 21 7 21C4.79086 21 3 19.2091 3 17C3 14.7909 4.79086 13 7 13C9.20914 13 11 14.7909 11 17Z" />
-	</g>
+<!-- The canonical MIDI Lab mark, shared by MidiLabBrand and the favicon. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
+	<defs>
+		<linearGradient id="edge" x1="14" y1="0" x2="38" y2="56" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#62676a" />
+			<stop offset=".42" stop-color="#303436" />
+			<stop offset="1" stop-color="#151719" />
+		</linearGradient>
+		<linearGradient id="face" x1="15" y1="1" x2="40" y2="55" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#363a3d" />
+			<stop offset=".5" stop-color="#272b2e" />
+			<stop offset="1" stop-color="#1b1e20" />
+		</linearGradient>
+		<linearGradient id="note" x1="28" y1="12" x2="28" y2="44" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#86e3b6" />
+			<stop offset="1" stop-color="#4fc68d" />
+		</linearGradient>
+	</defs>
+	<rect x="1" y="1" width="54" height="54" rx="14" fill="url(#edge)" />
+	<rect x="2" y="2" width="52" height="52" rx="13" fill="url(#face)" />
+	<path
+		d="M29 12c3.4 3.6 6.4 4.9 10.4 6.8 3.8 1.8 5.6 4.2 5.6 7.6 0 3.1-1.8 6.1-5.4 8.3 1.7-2.7 2.2-4.6 1.4-6.4-1-2.3-4.5-3.6-8-5.2V39c0 4.3-4.1 7.6-9.2 7.6-4.6 0-7.8-2.5-7.8-5.7 0-4.2 4.5-7.8 9.8-7.8 1.1 0 2.2.2 3.2.6V12Z"
+		fill="#111e19"
+		transform="translate(0 1)"
+	/>
+	<path
+		d="M29 12c3.4 3.6 6.4 4.9 10.4 6.8 3.8 1.8 5.6 4.2 5.6 7.6 0 3.1-1.8 6.1-5.4 8.3 1.7-2.7 2.2-4.6 1.4-6.4-1-2.3-4.5-3.6-8-5.2V39c0 4.3-4.1 7.6-9.2 7.6-4.6 0-7.8-2.5-7.8-5.7 0-4.2 4.5-7.8 9.8-7.8 1.1 0 2.2.2 3.2.6V12Z"
+		fill="url(#note)"
+	/>
+	<path d="M15 2.5h26" stroke="#a1a8ac" stroke-opacity=".22" stroke-linecap="round" />
 </svg>

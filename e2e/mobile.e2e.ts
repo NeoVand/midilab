@@ -64,23 +64,25 @@ test('the analyser draws at a density the width can show', async ({ page }) => {
 	await expect(labels).toHaveCount(4);
 });
 
-test('the play tab is the instrument, not a brochure about it', async ({ page }) => {
+test('the mobile landing keeps playing close and its destinations reachable', async ({ page }) => {
 	await page.goto('/');
-	// The app renders nothing on the server, so wait for it to actually exist.
-	await expect(page.locator('[data-playable]').first()).toBeVisible();
-	// The headline, the course map and the grid of tool cards are all reachable
-	// from the bar along the bottom. Repeating them down the page turned a tab
-	// called Play into something you scroll past to reach the keys.
-	const screens = await page.evaluate(() => {
+	const keyboard = page.getByRole('application', { name: 'Musical keyboard' });
+	await expect(keyboard).toBeVisible();
+	// The welcome now belongs on phones too, but the instrument should remain
+	// close to the introduction rather than below a long marketing page.
+	const keyboardBox = await keyboard.boundingBox();
+	expect(keyboardBox!.y).toBeLessThan(812);
+	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+	await expect(
+		page.locator('main a[href$="/learn"]').filter({ visible: true }).first()
+	).toBeVisible();
+	await expect(page.locator('a[href$="/lab/studio"]').first()).toBeVisible();
+	await expect(page.locator('a[href$="/lab/mpe"]').first()).toBeVisible();
+	const overflow = await page.evaluate(() => {
 		const main = document.querySelector('main')!;
-		return main.scrollHeight / main.clientHeight;
+		return main.scrollWidth - main.clientWidth;
 	});
-	expect(screens).toBeLessThan(1.6);
-	await expect(page.getByRole('heading', { name: /Learn MIDI by making it happen/ })).toHaveCount(
-		0
-	);
-	// What is *not* in the bar stays: where you got to, and what is plugged in.
-	await expect(page.getByText(/Continue|Start the course/).first()).toBeVisible();
+	expect(overflow).toBeLessThanOrEqual(1);
 });
 
 test('the display sizes come down to meet the width', async ({ page }) => {

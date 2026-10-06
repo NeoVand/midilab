@@ -393,7 +393,7 @@
 <svelte:window onpointerup={onPointerUp} onpointercancel={onPointerUp} />
 
 <div
-	class="flex flex-col gap-2"
+	class="instrument-material instrument-deck flex flex-col gap-2"
 	role="group"
 	aria-label="Keyboard instrument"
 	tabindex="-1"
@@ -466,7 +466,7 @@
 	<div
 		bind:clientWidth={bedWidth}
 		class={cn(
-			'panel-sunken relative w-full touch-none overflow-hidden rounded-lg border select-none',
+			'instrument-recess relative w-full touch-none overflow-hidden rounded-lg border select-none',
 			className
 		)}
 		style="height: {height}px"

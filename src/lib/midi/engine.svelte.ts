@@ -8,7 +8,7 @@
  */
 
 import { browser } from '$app/environment';
-import { SvelteSet } from 'svelte/reactivity';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import { bus, type MidiEvent, type MidiOrigin } from './bus';
 import { midiAccess } from './access.svelte';
 import { encode, parse, type MidiMessage } from './messages';
@@ -77,6 +77,9 @@ export class MidiEngine {
 	#localListeners = new SvelteSet<
 		(msg: MidiMessage, at?: number, audioTime?: number, origin?: MidiOrigin) => void
 	>();
+	#inputAuditionInterceptors = new SvelteSet<(event: MidiEvent) => boolean>();
+	#inputNotes = new SvelteMap<string, SvelteMap<string, { channel: number; note: number }>>();
+	#browserVoiceCounts = new SvelteSet<() => number>();
 
 	get outputs(): OutputTarget[] {
 		const internal: OutputTarget = {
@@ -105,7 +108,10 @@ export class MidiEngine {
 		transport.bindOutput((bytes, at) => this.sendBytes(bytes, at));
 		transport.watchExternal();
 		this.#meterTimer = window.setInterval(() => {
-			this.voiceCount = synth.voiceCount + gm.voiceCount;
+			this.voiceCount =
+				synth.voiceCount +
+				gm.voiceCount +
+				[...this.#browserVoiceCounts].reduce((total, count) => total + count(), 0);
 			this.audioReady = audio.ready;
 		}, 200);
 	}
@@ -119,7 +125,65 @@ export class MidiEngine {
 
 	#onEvent(e: MidiEvent) {
 		if (e.direction !== 'in') return;
-		if (this.auditionInput) this.handleInternal(e.message);
+		const message = e.message;
+		if (message.type === 'noteOff' || (message.type === 'noteOn' && !message.velocity)) {
+			this.#inputNotes.get(e.portId)?.delete(`${message.channel}:${message.note}`);
+		}
+		for (const intercept of this.#inputAuditionInterceptors) {
+			try {
+				if (intercept(e)) return;
+			} catch (err) {
+				console.error('[engine] input audition interceptor threw', err);
+			}
+		}
+		if (this.auditionInput) {
+			this.handleInternal(message);
+			if (message.type === 'noteOn' && message.velocity > 0) {
+				let notes = this.#inputNotes.get(e.portId);
+				if (!notes) {
+					notes = new SvelteMap();
+					this.#inputNotes.set(e.portId, notes);
+				}
+				notes.set(`${message.channel}:${message.note}`, {
+					channel: message.channel,
+					note: message.note
+				});
+			}
+		}
+	}
+
+	/** Release only this source's earlier GM notes when a browser monitor takes over. */
+	releaseInputAudition(portId: string, channels: readonly number[]): void {
+		const notes = this.#inputNotes.get(portId);
+		if (!notes) return;
+		for (const [id, note] of notes) {
+			if (channels.includes(note.channel)) {
+				this.handleInternal({
+					type: 'noteOff',
+					channel: note.channel,
+					note: note.note,
+					velocity: 0
+				});
+				notes.delete(id);
+			}
+		}
+		if (!notes.size) this.#inputNotes.delete(portId);
+	}
+
+	/** Dedicated browser voices share the dock's meter without becoming MIDI outputs. */
+	registerBrowserVoiceCount(count: () => number): () => void {
+		this.#browserVoiceCounts.add(count);
+		return () => this.#browserVoiceCounts.delete(count);
+	}
+
+	/**
+	 * Let an explicitly enabled browser monitor replace the regular input voice.
+	 * Returning true consumes only this audition; the original bus event and
+	 * any user-created hardware routes retain their channels and destinations.
+	 */
+	interceptInputAudition(intercept: (event: MidiEvent) => boolean): () => void {
+		this.#inputAuditionInterceptors.add(intercept);
+		return () => this.#inputAuditionInterceptors.delete(intercept);
 	}
 
 	isOutputActive(id: string): boolean {
@@ -186,6 +250,24 @@ export class MidiEngine {
 				origin
 			});
 		}
+	}
+
+	/**
+	 * A browser-only lesson surface. It stays visible to the monitor and lesson
+	 * verifier without being broadcast to hardware or the virtual-input router.
+	 * A dedicated audio monitor may supply the sound by passing audition=false.
+	 */
+	sendInternal(msg: MidiMessage, origin: MidiOrigin = 'performer', audition = true): void {
+		if (audition) this.handleInternal(msg);
+		bus.emit({
+			time: performance.now(),
+			portId: INTERNAL_OUTPUT_ID,
+			portName: 'Browser lesson',
+			direction: 'out',
+			bytes: encode(msg),
+			message: msg,
+			origin
+		});
 	}
 
 	/** The selected internal sound engine, shared by direct and routed performance. */
@@ -282,6 +364,19 @@ export class MidiEngine {
 			}
 		}
 		gm.allOff();
+		this.#inputNotes.clear();
+		// Browser-only lesson voices still exist when every output is unchecked.
+		// This local reset reaches their schedulers without sending System Reset
+		// to hardware, and gives pending audio wakes an unconditional cancellation.
+		this.handleInternal({ type: 'reset' });
+		bus.emit({
+			time: performance.now(),
+			portId: 'engine',
+			portName: 'Engine Panic',
+			direction: 'out',
+			bytes: [],
+			message: { type: 'reset' }
+		});
 	}
 }
 

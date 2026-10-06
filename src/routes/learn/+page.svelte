@@ -16,9 +16,12 @@
 
 	const overall = $derived(progress.fractionOf(ALL_LESSONS.map((l) => l.id)));
 	const doneLessons = $derived(ALL_LESSONS.filter((l) => progress.isLessonComplete(l.id)).length);
+	const hasProgress = $derived(overall > 0);
+	const allComplete = $derived(doneLessons === ALL_LESSONS.length);
 	const nextLesson = $derived(
 		ALL_LESSONS.find((l) => !progress.isLessonComplete(l.id)) ?? ALL_LESSONS[0]
 	);
+	const nextAct = $derived(CURRICULUM.find((act) => act.lessons.includes(nextLesson)));
 
 	const HARDWARE_TITLE: Record<string, string> = {
 		better: 'Better with hardware attached',
@@ -29,234 +32,783 @@
 		return lessons.reduce((t, l) => t + l.minutes, 0);
 	}
 
-	/*
-	 * Where to come in, for somebody who has not started.
-	 *
-	 * A long course is a lot to land on, and the two audiences this
-	 * course serves arrive missing opposite halves of it: a producer knows what
-	 * a bar is and has never seen a hex byte, a programmer the reverse. Both are
-	 * well served by the running order and neither can tell that from the index.
-	 *
-	 * Shown only before anything is done. Once there is progress the resume row
-	 * above answers the same question better, and this becomes furniture.
-	 */
 	const DOORS = [
 		{
 			who: 'New to all of it',
-			then: 'Begin with music basics in Act 0, then explore MIDI. Nothing is assumed.',
+			then: 'Start with a pulse, find a melody, and build your first piece. Nothing is assumed.',
 			id: 'just-enough-music'
 		},
 		{
 			who: 'You make music',
-			then: 'Skip the music basics and start with what MIDI actually sends in Act I.',
+			then: 'Go straight to MIDI: what your instrument sends, and what happens next.',
 			id: 'control-not-sound'
 		},
 		{
 			who: 'You write code',
-			then: 'Build the musical half first: pulse, melody, chords, then your own piece.',
+			then: 'Build your musical ear first. The bytes will make more sense when you can hear them.',
 			id: 'just-enough-music'
 		}
 	];
 </script>
 
-<div class="workbench-prose mx-auto flex w-full max-w-4xl flex-col gap-10 px-4 py-12 sm:px-8">
-	<header class="flex flex-col gap-3">
-		<h1 class="text-3xl font-semibold tracking-tight">The course</h1>
-		<p class="prose-body text-muted-foreground">
-			Act 0 builds your music basics, from the pulse to a piece you can keep. Acts I–VII explore
-			MIDI: the messages, the timing, the studio, the hardware, and your own code. No music theory
-			or programming is assumed, and you can explore without hardware.
-		</p>
-		<p class="text-sm text-muted-foreground">
-			Already know music? <a
-				href={lessonHref('control-not-sound')}
-				class="font-medium text-foreground underline underline-offset-4">Start with Act I</a
-			>. Guided playing is verified; reflection tasks and manual checks are labelled self-checked.
-		</p>
+<svelte:head>
+	<title>The course — MIDI Lab</title>
+	<meta
+		name="description"
+		content="A hands-on path through music and MIDI: play, hear, experiment, and build your own tools. Start with music basics or go straight to MIDI."
+	/>
+</svelte:head>
 
-		<!--
-			The resume row. An index this long without one makes you scroll
-			looking for the first title you don't recognise.
-		-->
-		<div
-			class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-lg border bg-card px-4 py-3"
-		>
-			<div class="flex min-w-0 flex-1 flex-col gap-1.5">
-				<p class="label">{doneLessons > 0 ? 'Up next' : 'Start here'}</p>
-				<p class="truncate text-sm font-medium">
-					{nextLesson.number}. {nextLesson.title}
-				</p>
-			</div>
-			<div class="flex items-center gap-3">
-				<div class="hidden flex-col items-end gap-1.5 sm:flex">
-					<span class="tnum text-xs text-muted-foreground">
-						{doneLessons} of {ALL_LESSONS.length} done · {Math.round(TOTAL_MINUTES / 60)} hours in total
-					</span>
-					<div class="h-1.5 w-40 overflow-hidden rounded-full bg-border">
-						<div
-							class="h-full rounded-full bg-ok transition-[width] duration-500"
-							style="width: {Math.max(overall * 100, overall > 0 ? 2 : 0)}%"
-						></div>
-					</div>
-				</div>
-				<Button href={lessonHref(nextLesson)} size="lg">
-					{doneLessons > 0 ? 'Continue' : 'Begin'}
-					<HugeiconsIcon icon={ArrowRight01Icon} size={14} />
-				</Button>
+<div class="course-page">
+	<header class="course-hero">
+		<div class="course-introduction">
+			<h1>The course</h1>
+			<p class="course-promise">From your first beat to your own MIDI tools.</p>
+			<p class="course-lead">
+				Act 0 builds the music. Acts I–VII open up MIDI, from the messages behind a note to
+				expressive instruments, connected studios, and your own code.
+			</p>
+			<p class="course-reassurance">
+				No music theory or programming experience needed. Start in the browser; bring hardware when
+				you're ready.
+			</p>
+			<div class="course-facts" aria-label="Course overview">
+				<span>{ALL_LESSONS.length} hands-on lessons</span>
+				<span>About {Math.round(TOTAL_MINUTES / 60)} hours</span>
+				<a href={lessonHref('control-not-sound')}>Start with Act I</a>
 			</div>
 		</div>
-		{#if doneLessons === 0}
-			<div class="mt-1 grid gap-2 sm:grid-cols-3">
-				{#each DOORS as d (d.who)}
-					{@const lesson = ALL_LESSONS.find((l) => l.id === d.id)}
+
+		<section class="resume-panel" aria-labelledby="resume-title">
+			<div class="resume-heading">
+				<h2 id="resume-title">
+					{allComplete ? 'Keep exploring' : hasProgress ? 'Your next lesson' : 'Start here'}
+				</h2>
+				<span class="resume-act">Act {actLabel(nextAct?.number ?? 0)}</span>
+			</div>
+			<p class="resume-lesson">{nextLesson.title}</p>
+			<p class="resume-description">{nextLesson.blurb}</p>
+			<div class="resume-action">
+				<Button href={lessonHref(nextLesson)} size="xl" class="min-h-11">
+					{allComplete ? 'Revisit the course' : hasProgress ? 'Continue' : 'Begin'}
+					<HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
+				</Button>
+				<span>{nextLesson.minutes} min</span>
+			</div>
+			<div class="course-progress">
+				<div class="progress-copy">
+					<span>{doneLessons} of {ALL_LESSONS.length} done</span>
+					<span>{Math.round(overall * 100)}%</span>
+				</div>
+				<progress aria-label="Course checkpoint progress" value={overall} max="1"></progress>
+				<p>Progress includes verified playing and labelled self-checks.</p>
+			</div>
+		</section>
+	</header>
+
+	{#if !hasProgress}
+		<section class="starting-points" aria-labelledby="starting-title">
+			<h2 id="starting-title">Find your starting point</h2>
+			<div class="starting-links">
+				{#each DOORS as door (door.who)}
+					{@const lesson = ALL_LESSONS.find((l) => l.id === door.id)}
 					{#if lesson}
-						<a
-							href={lessonHref(lesson)}
-							class="group flex flex-col gap-1 rounded-lg border bg-card px-3.5 py-3 transition-colors hover:border-foreground/25"
-						>
-							<span class="label">{d.who}</span>
-							<span class="text-sm leading-snug text-muted-foreground">{d.then}</span>
-							<span
-								class="mt-auto flex items-center gap-1 pt-1.5 text-xs font-medium decoration-foreground/30 underline-offset-[3px] group-hover:underline"
-							>
-								{lesson.number}. {lesson.title}
-								<HugeiconsIcon icon={ArrowRight01Icon} size={14} />
+						<a href={lessonHref(lesson)} class="starting-link">
+							<span class="starting-name">
+								{door.who}
+								<HugeiconsIcon icon={ArrowRight01Icon} size={14} aria-hidden="true" />
 							</span>
+							<span class="starting-description">{door.then}</span>
+							<span class="starting-lesson">{lesson.number}. {lesson.title}</span>
 						</a>
 					{/if}
 				{/each}
 			</div>
-		{/if}
-	</header>
-
-	{#each CURRICULUM as act (act.id)}
-		{@const done = act.lessons.filter((l) => progress.isLessonComplete(l.id)).length}
-		{@const frac = done / act.lessons.length}
-		<section id={act.id} class="flex scroll-mt-8 flex-col gap-3">
-			<div class="flex items-start gap-3 sm:items-center sm:gap-3.5">
-				<!-- The mark, with the act's progress drawn round it. -->
-				<span class="relative grid size-9 shrink-0 place-items-center sm:size-11">
-					<svg viewBox="0 0 44 44" class="absolute inset-0 -rotate-90">
-						<circle cx="22" cy="22" r="20" fill="none" class="stroke-border" stroke-width="2" />
-						{#if frac > 0}
-							<circle
-								cx="22"
-								cy="22"
-								r="20"
-								fill="none"
-								class="stroke-ok"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-dasharray="{frac * 125.66} 125.66"
-							/>
-						{/if}
-					</svg>
-					<HugeiconsIcon
-						icon={ACT_ICON[act.id]}
-						size={18}
-						strokeWidth={1.6}
-						class={frac === 1 ? 'text-ok' : 'text-muted-foreground'}
-					/>
-				</span>
-				<div class="min-w-0 flex-1">
-					<!--
-						An eyebrow, then the title, then the subtitle.
-						
-						Act number, title and count all wanted to share one line. At this
-						width they do not fit, and asking them to wrap produced the worst
-						of both: the count dropped to a line of its own and sat
-						right-aligned under a title that had also broken in two. Putting
-						the two short facts together on the line above leaves the title a
-						whole line to itself, which is all it ever needed.
-					-->
-					<p class="label mb-0.5 flex items-baseline gap-1.5 sm:hidden">
-						<span>Act {actLabel(act.number)}</span>
-						<span class="text-border" aria-hidden="true">·</span>
-						<span class="tnum font-mono normal-case">
-							{done}/{act.lessons.length} done
-						</span>
-						<span class="text-border" aria-hidden="true">·</span>
-						<span class="tnum font-mono normal-case">{actMinutes(act.lessons)} min</span>
-					</p>
-					<div class="flex items-baseline gap-2.5">
-						<span class="label hidden text-muted-foreground sm:inline"
-							>Act {actLabel(act.number)}</span
-						>
-						<h2 class="text-lg leading-tight font-semibold tracking-tight text-balance">
-							{act.title}
-						</h2>
-					</div>
-					<p class="mt-0.5 text-sm text-muted-foreground">{act.subtitle}</p>
-				</div>
-				<span
-					class="tnum hidden shrink-0 self-center font-mono text-xs text-muted-foreground sm:inline"
-				>
-					{done}/{act.lessons.length} · {actMinutes(act.lessons)} min
-				</span>
-			</div>
-
-			<!--
-				One container, ruled rows. Thirty separately bordered cards down a
-				page is thirty-odd rectangles competing for the same attention; a table
-				of contents is a list, and it should look like one.
-			-->
-			<ol class="overflow-hidden rounded-lg border bg-card">
-				{#each act.lessons as lesson, i (lesson.id)}
-					{@const complete = progress.isLessonComplete(lesson.id)}
-					{@const isNext = lesson.id === nextLesson.id}
-					<li>
-						<a
-							href={lessonHref(lesson)}
-							class={cn(
-								'relative grid grid-cols-[1.75rem_1fr_auto] items-baseline gap-x-3 px-3 py-2.5 transition-colors hover:bg-accent/50 sm:gap-x-4 sm:px-4 sm:py-3',
-								i > 0 && 'border-t'
-							)}
-						>
-							{#if isNext && doneLessons > 0}
-								<span class="absolute inset-y-0 left-0 w-[3px] bg-ok"></span>
-							{/if}
-							<span
-								class={cn(
-									'tnum self-start pt-0.5 text-center font-mono text-xs',
-									complete ? 'text-ok' : 'text-muted-foreground'
-								)}
-							>
-								{#if complete}
-									<HugeiconsIcon icon={Tick02Icon} size={14} strokeWidth={2.5} class="mx-auto" />
-								{:else}
-									{String(lesson.number).padStart(2, '0')}
-								{/if}
-							</span>
-							<span class="min-w-0">
-								<span class="block font-medium">{lesson.title}</span>
-								<!--
-									Three lines of blurb, thirty-one times, is seven screens of
-									scrolling to find a lesson you already know the name of. A
-									table of contents on a phone is titles; the sentence is on
-									the other side of the tap.
-								-->
-								{#if !device.narrow}
-									<span class="mt-0.5 block text-sm leading-relaxed text-muted-foreground">
-										{lesson.blurb}
-									</span>
-								{/if}
-							</span>
-							<span
-								class="tnum flex shrink-0 items-center gap-2 self-start pt-0.5 text-xs text-muted-foreground"
-							>
-								{#if lesson.hardware && lesson.hardware !== 'none'}
-									<HugeiconsIcon
-										icon={PlugSocketIcon}
-										size={14}
-										aria-label={HARDWARE_TITLE[lesson.hardware]}
-									/>
-								{/if}
-								{lesson.minutes} min
-							</span>
-						</a>
-					</li>
-				{/each}
-			</ol>
 		</section>
-	{/each}
+	{/if}
+
+	<nav class="course-outline" aria-label="Course outline">
+		<p>Explore the acts</p>
+		<ol>
+			{#each CURRICULUM as act (act.id)}
+				<li>
+					<a href={`#${act.id}`}>
+						<span class="outline-number">{actLabel(act.number)}</span>
+						<span>{act.title}</span>
+					</a>
+				</li>
+			{/each}
+		</ol>
+	</nav>
+
+	<div class="course-acts">
+		{#each CURRICULUM as act (act.id)}
+			{@const done = act.lessons.filter((l) => progress.isLessonComplete(l.id)).length}
+			{@const fraction = progress.fractionOf(act.lessons.map((l) => l.id))}
+			<section id={act.id} class="course-act" aria-labelledby={`${act.id}-title`}>
+				<header class="act-introduction">
+					<div class="act-heading">
+						<span class="act-icon" aria-hidden="true">
+							<HugeiconsIcon icon={ACT_ICON[act.id]} size={18} strokeWidth={1.65} />
+						</span>
+						<p>Act {actLabel(act.number)}</p>
+					</div>
+					<h2 id={`${act.id}-title`}>{act.title}</h2>
+					<p class="act-description">{act.subtitle}</p>
+					<div class="act-progress-copy">
+						<span>{done}/{act.lessons.length} done</span>
+						<span>{actMinutes(act.lessons)} min</span>
+					</div>
+					<progress
+						aria-label={`Act ${actLabel(act.number)} checkpoint progress`}
+						value={fraction}
+						max="1"
+					></progress>
+				</header>
+
+				<ol class="lesson-list">
+					{#each act.lessons as lesson (lesson.id)}
+						{@const complete = progress.isLessonComplete(lesson.id)}
+						{@const completedChecks = progress.doneCount(lesson.id)}
+						{@const totalChecks = progress.totalFor(lesson.id)}
+						{@const isNext = hasProgress && !allComplete && lesson.id === nextLesson.id}
+						<li>
+							<a
+								href={lessonHref(lesson)}
+								class={cn('lesson-link', complete && 'lesson-complete', isNext && 'lesson-next')}
+							>
+								<span class="lesson-number" aria-label={complete ? 'Complete' : undefined}>
+									{#if complete}
+										<HugeiconsIcon icon={Tick02Icon} size={14} strokeWidth={2} />
+									{:else}
+										{String(lesson.number).padStart(2, '0')}
+									{/if}
+								</span>
+								<span class="lesson-copy">
+									<span class="lesson-title">{lesson.title}</span>
+									{#if !device.narrow}
+										<span class="lesson-description">{lesson.blurb}</span>
+									{/if}
+									{#if !complete && completedChecks > 0}
+										<span class="lesson-checkpoints">
+											{completedChecks} of {totalChecks} checkpoints complete
+										</span>
+									{/if}
+								</span>
+								<span class="lesson-meta">
+									{#if lesson.hardware && lesson.hardware !== 'none'}
+										<HugeiconsIcon
+											icon={PlugSocketIcon}
+											size={14}
+											aria-label={HARDWARE_TITLE[lesson.hardware]}
+										/>
+									{/if}
+									<span>{lesson.minutes} min</span>
+								</span>
+							</a>
+						</li>
+					{/each}
+				</ol>
+			</section>
+		{/each}
+	</div>
 </div>
+
+<style>
+	.course-page {
+		width: 100%;
+		max-width: 1184px;
+		margin-inline: auto;
+		padding: 48px 36px 88px;
+	}
+
+	.course-hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+		align-items: start;
+		gap: clamp(32px, 5vw, 76px);
+	}
+
+	.course-introduction {
+		padding-top: 8px;
+	}
+
+	h1 {
+		margin: 0;
+		font-size: clamp(32px, 3.4vw, 44px);
+		line-height: 1.12;
+		font-weight: 650;
+		letter-spacing: -0.045em;
+	}
+
+	.course-promise {
+		max-width: 24ch;
+		margin-top: 22px;
+		font-size: clamp(21px, 2.2vw, 27px);
+		line-height: 1.35;
+		font-weight: 450;
+		letter-spacing: -0.025em;
+		text-wrap: balance;
+	}
+
+	.course-lead,
+	.course-reassurance {
+		max-width: 53ch;
+		color: var(--muted-foreground);
+		font-size: 14px;
+		line-height: 1.75;
+	}
+
+	.course-lead {
+		margin-top: 18px;
+	}
+
+	.course-reassurance {
+		margin-top: 12px;
+	}
+
+	.course-facts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px 20px;
+		margin-top: 25px;
+		font-size: 12px;
+		color: var(--muted-foreground);
+	}
+
+	.course-facts a {
+		color: var(--foreground);
+		text-decoration: underline;
+		text-decoration-color: var(--landing-line, var(--border));
+		text-underline-offset: 4px;
+	}
+
+	.resume-panel {
+		padding: 24px;
+		border: 1px solid var(--landing-line, var(--border));
+		border-radius: 14px;
+		background: var(--landing-panel, var(--card));
+	}
+
+	.resume-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 16px;
+		font-size: 12px;
+	}
+
+	.resume-heading h2 {
+		font-size: inherit;
+		font-weight: 500;
+		color: var(--landing-accent, var(--foreground));
+	}
+
+	.resume-act {
+		color: var(--muted-foreground);
+	}
+
+	.resume-lesson {
+		margin-top: 16px;
+		font-size: 21px;
+		line-height: 1.35;
+		font-weight: 550;
+		letter-spacing: -0.025em;
+	}
+
+	.resume-description {
+		margin-top: 8px;
+		font-size: 12px;
+		line-height: 1.7;
+		color: var(--muted-foreground);
+	}
+
+	.resume-action {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-top: 22px;
+	}
+
+	.resume-action > span {
+		color: var(--muted-foreground);
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.course-progress {
+		margin-top: 25px;
+		padding-top: 20px;
+		border-top: 1px solid var(--landing-line, var(--border));
+	}
+
+	.progress-copy,
+	.act-progress-copy {
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+		color: var(--muted-foreground);
+		font-size: 11px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	progress {
+		display: block;
+		width: 100%;
+		height: 4px;
+		margin-top: 10px;
+		border: 0;
+		border-radius: 999px;
+		overflow: hidden;
+		appearance: none;
+		background: var(--landing-inset, var(--surface-sunken));
+		color: var(--landing-accent, var(--ok));
+	}
+
+	progress::-webkit-progress-bar {
+		border-radius: 999px;
+		background: var(--landing-inset, var(--surface-sunken));
+	}
+
+	progress::-webkit-progress-value {
+		border-radius: 999px;
+		background: var(--landing-accent, var(--ok));
+	}
+
+	progress::-moz-progress-bar {
+		border-radius: 999px;
+		background: var(--landing-accent, var(--ok));
+	}
+
+	.course-progress p {
+		margin-top: 10px;
+		font-size: 10px;
+		line-height: 1.6;
+		color: var(--muted-foreground);
+	}
+
+	.starting-points {
+		margin-top: 42px;
+	}
+
+	.starting-points > h2,
+	.course-outline > p {
+		font-size: 13px;
+		font-weight: 550;
+		letter-spacing: -0.01em;
+	}
+
+	.starting-links {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 28px;
+		margin-top: 16px;
+	}
+
+	.starting-link {
+		display: flex;
+		flex-direction: column;
+		gap: 9px;
+		padding-top: 16px;
+		border-top: 1px solid var(--landing-line, var(--border));
+		text-decoration: none;
+	}
+
+	.starting-name {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		font-size: 14px;
+		font-weight: 550;
+	}
+
+	.starting-name :global(svg) {
+		color: var(--muted-foreground);
+	}
+
+	.starting-description {
+		font-size: 12px;
+		line-height: 1.7;
+		color: var(--muted-foreground);
+	}
+
+	.starting-lesson {
+		margin-top: auto;
+		padding-top: 3px;
+		font-size: 11px;
+		color: var(--landing-accent, var(--foreground));
+	}
+
+	.course-outline {
+		margin-top: 45px;
+		padding: 20px 0;
+		border-top: 1px solid var(--landing-line, var(--border));
+		border-bottom: 1px solid var(--landing-line, var(--border));
+	}
+
+	.course-outline ol {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 4px 16px;
+		margin-top: 12px;
+		list-style: none;
+	}
+
+	.course-outline a {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+		padding-block: 8px;
+		color: var(--muted-foreground);
+		font-size: 12px;
+		line-height: 1.5;
+		text-decoration: none;
+	}
+
+	.outline-number {
+		width: 20px;
+		flex-shrink: 0;
+		color: var(--landing-accent, var(--foreground));
+		font-size: 11px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.course-acts {
+		display: flex;
+		flex-direction: column;
+		gap: 64px;
+		margin-top: 48px;
+	}
+
+	.course-act {
+		display: grid;
+		grid-template-columns: minmax(180px, 230px) minmax(0, 1fr);
+		align-items: start;
+		gap: 34px;
+		scroll-margin-top: 28px;
+	}
+
+	.act-introduction {
+		padding-top: 4px;
+	}
+
+	.act-heading {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		color: var(--muted-foreground);
+		font-size: 12px;
+	}
+
+	.act-icon {
+		display: grid;
+		place-items: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 8px;
+		color: var(--landing-accent, var(--foreground));
+		background: var(--landing-accent-soft, var(--muted));
+	}
+
+	.act-introduction h2 {
+		margin-top: 15px;
+		font-size: 21px;
+		line-height: 1.35;
+		font-weight: 550;
+		letter-spacing: -0.03em;
+		text-wrap: balance;
+	}
+
+	.act-description {
+		margin-top: 10px;
+		font-size: 12px;
+		line-height: 1.7;
+		color: var(--muted-foreground);
+	}
+
+	.act-progress-copy {
+		margin-top: 24px;
+	}
+
+	.lesson-list {
+		list-style: none;
+		overflow: hidden;
+		border: 1px solid var(--landing-line, var(--border));
+		border-radius: 12px;
+		background: var(--landing-panel, var(--card));
+	}
+
+	.lesson-list li + li {
+		border-top: 1px solid var(--landing-line, var(--border));
+	}
+
+	.lesson-link {
+		position: relative;
+		display: grid;
+		grid-template-columns: 24px minmax(0, 1fr) auto;
+		align-items: baseline;
+		gap: 16px;
+		padding: 18px 20px;
+		text-decoration: none;
+		transition: background-color 140ms ease;
+	}
+
+	.lesson-number {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--muted-foreground);
+		font-size: 11px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lesson-title {
+		display: block;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.5;
+		letter-spacing: -0.01em;
+	}
+
+	.lesson-description {
+		display: block;
+		max-width: 67ch;
+		margin-top: 4px;
+		font-size: 12px;
+		line-height: 1.7;
+		color: var(--muted-foreground);
+	}
+
+	.lesson-checkpoints {
+		display: block;
+		margin-top: 6px;
+		font-size: 10px;
+		color: var(--landing-accent, var(--foreground));
+	}
+
+	.lesson-meta {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		color: var(--muted-foreground);
+		font-size: 11px;
+		line-height: 1.5;
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lesson-complete .lesson-number {
+		color: var(--ok);
+	}
+
+	.lesson-next {
+		background: color-mix(in oklch, var(--landing-accent-soft, var(--muted)) 45%, transparent);
+	}
+
+	.lesson-next::before {
+		position: absolute;
+		inset: 15px auto 15px 0;
+		width: 2px;
+		border-radius: 2px;
+		background: var(--landing-accent, var(--ok));
+		content: '';
+	}
+
+	a:focus-visible {
+		outline: 2px solid var(--landing-accent, var(--ring));
+		outline-offset: 4px;
+		border-radius: 4px;
+	}
+
+	.lesson-link:focus-visible {
+		outline-offset: -3px;
+	}
+
+	@media (hover: hover) {
+		.course-facts a:hover,
+		.course-outline a:hover,
+		.starting-link:hover .starting-name {
+			color: var(--landing-accent, var(--foreground));
+		}
+
+		.lesson-link:hover {
+			background: var(--landing-inset, var(--surface-sunken));
+		}
+	}
+
+	@media (max-width: 1040px) {
+		.course-hero {
+			grid-template-columns: minmax(0, 1fr) minmax(260px, 315px);
+			gap: 30px;
+		}
+
+		.course-act {
+			grid-template-columns: minmax(160px, 195px) minmax(0, 1fr);
+			gap: 24px;
+		}
+
+		.course-outline ol {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 760px) {
+		.course-page {
+			padding: 28px 24px 60px;
+		}
+
+		.course-hero {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 28px;
+		}
+
+		.course-introduction {
+			padding-top: 0;
+		}
+
+		.course-promise {
+			max-width: 32ch;
+		}
+
+		.course-act {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 20px;
+		}
+
+		.act-introduction {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) auto;
+			column-gap: 20px;
+			padding: 0;
+		}
+
+		.act-heading,
+		.act-introduction h2,
+		.act-description {
+			grid-column: 1 / -1;
+		}
+
+		.act-introduction h2 {
+			margin-top: 12px;
+		}
+
+		.act-progress-copy {
+			grid-column: 1 / -1;
+			justify-content: flex-start;
+			margin-top: 14px;
+		}
+
+		.act-introduction progress {
+			grid-column: 1 / -1;
+			max-width: 180px;
+		}
+	}
+
+	@media (max-width: 540px) {
+		.course-page {
+			padding: 24px 18px 48px;
+		}
+
+		h1 {
+			font-size: 24px;
+			letter-spacing: -0.035em;
+		}
+
+		.course-promise {
+			margin-top: 16px;
+			font-size: 23px;
+			line-height: 1.35;
+		}
+
+		.course-lead,
+		.course-reassurance {
+			font-size: 13px;
+		}
+
+		.course-facts {
+			gap: 12px 16px;
+			margin-top: 20px;
+			font-size: 11px;
+		}
+
+		.resume-panel {
+			padding: 20px;
+		}
+
+		.resume-lesson {
+			font-size: 20px;
+		}
+
+		.starting-points {
+			margin-top: 30px;
+		}
+
+		.starting-links {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 20px;
+			margin-top: 4px;
+		}
+
+		.starting-link {
+			gap: 7px;
+		}
+
+		.starting-description {
+			max-width: 46ch;
+		}
+
+		.course-outline {
+			margin-top: 32px;
+		}
+
+		.course-outline ol {
+			gap: 0 14px;
+		}
+
+		.course-outline a {
+			min-height: 44px;
+			gap: 6px;
+			font-size: 11px;
+		}
+
+		.outline-number {
+			width: 18px;
+		}
+
+		.course-acts {
+			gap: 42px;
+			margin-top: 30px;
+		}
+
+		.act-introduction h2 {
+			font-size: 20px;
+		}
+
+		.act-description {
+			margin-top: 7px;
+		}
+
+		.lesson-link {
+			grid-template-columns: 20px minmax(0, 1fr) auto;
+			gap: 10px;
+			padding: 16px 14px;
+		}
+
+		.lesson-title {
+			font-size: 13px;
+			line-height: 1.55;
+		}
+
+		.lesson-meta {
+			gap: 5px;
+			font-size: 10px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.lesson-link {
+			transition: none;
+		}
+	}
+</style>

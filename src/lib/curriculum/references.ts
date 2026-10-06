@@ -226,6 +226,38 @@ export const REFERENCES: Reference[] = [
 		'A compact description of the container, with the header and track chunk layouts in one screen.'
 	),
 	ref(
+		'osmose-config',
+		'Osmose External MIDI configuration',
+		'https://expressivee.happyfox.com/kb/article/254-config-menu/',
+		'Expressive E',
+		'docs',
+		'Load the MPE configuration and see which messages normal pressure, deeper Aftertouch and sideways movement produce.'
+	),
+	ref(
+		'osmose-ports',
+		'Osmose USB MIDI ports',
+		'https://expressivee.happyfox.com/kb/article/355-osmose-usb-midi-ports/',
+		'Expressive E',
+		'docs',
+		'The current five-port layout: choose the Play port for an external receiver and keep Sound Engine, DIN, DAW Control and Haken separate.'
+	),
+	ref(
+		'osmose-controller',
+		'Osmose as an MPE controller',
+		'https://expressivee.happyfox.com/kb/article/285-setting-up-osmose-in-bitwig-studio/',
+		'Expressive E',
+		'docs',
+		'The external controller setup uses a 48-semitone member bend range, distinct from the internal EaganMatrix replay setup.'
+	),
+	ref(
+		'osmose-hardware',
+		'Osmose hardware overview',
+		'https://expressivee.happyfox.com/kb/article/234-hardware-overview/',
+		'Expressive E',
+		'docs',
+		'USB carries class-compliant MIDI. Listen to the internal instrument through its headphone or line outputs, rather than expecting USB audio.'
+	),
+	ref(
 		'wikipedia-mpe',
 		'MIDI Polyphonic Expression',
 		'https://en.wikipedia.org/wiki/MIDI_Polyphonic_Expression',

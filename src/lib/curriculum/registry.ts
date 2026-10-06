@@ -514,13 +514,14 @@ export const CURRICULUM: Act[] = [
 		lessons: [
 			lesson(
 				'mpe',
-				'MIDI Polyphonic Expression',
-				'One channel per note — a clever exploit of MIDI 1.0 that buys per-note bend, pressure and timbre.',
-				20,
+				'MPE: a voice for every finger',
+				'Connect an expressive instrument, watch each note come alive, and shape musical phrases with independent pitch, pressure and color.',
+				35,
 				[
-					'Explain zones, the master channel and member channels',
-					'Set up an MPE zone with the configuration message',
-					'Say why bend range must match on both ends or nothing feels right'
+					'Connect Osmose or another MPE controller and choose the correct playing port',
+					'Hear and see independent pitch, pressure and timbre on a held chord',
+					'Match member and manager bend ranges and diagnose channel problems',
+					'Use expression to shape a phrase, support a melody and leave room for contrast'
 				],
 				'better'
 			),

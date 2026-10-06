@@ -5,7 +5,6 @@
 		GraduationCapIcon,
 		FlaskConicalIcon,
 		LibraryIcon,
-		MusicNote02Icon,
 		Settings02Icon,
 		Sun03Icon,
 		Moon02Icon,
@@ -15,6 +14,7 @@
 	import { settings } from '$lib/stores/settings.svelte';
 	import { path, routeOf } from '$lib/nav';
 	import { cn } from '$lib/utils';
+	import MidiLabBrand from './MidiLabBrand.svelte';
 
 	interface Props {
 		onOpenPalette: () => void;
@@ -76,7 +76,7 @@
 	aria-label="Primary"
 >
 	<a href={path('/')} class="mb-2.5 grid size-8 place-items-center" aria-label="MIDI Lab home">
-		<HugeiconsIcon icon={MusicNote02Icon} size={22} strokeWidth={1.7} class="text-msg-note" />
+		<MidiLabBrand wordmark={false} />
 	</a>
 
 	{#each items as item (item.href)}

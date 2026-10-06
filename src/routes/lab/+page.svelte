@@ -1,185 +1,456 @@
 <script lang="ts">
 	import { path } from '$lib/nav';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import {
-		Activity03Icon,
-		Route02Icon,
-		Grid3X3Icon,
-		Chip02Icon,
-		StopWatchIcon,
-		SquareTerminalIcon,
-		PlugSocketIcon,
-		MusicNote01Icon
-	} from '@hugeicons/core-free-icons';
+	import { ArrowRight01Icon, PlugSocketIcon, SquareTerminalIcon } from '@hugeicons/core-free-icons';
 	import { midiAccess } from '$lib/midi/access.svelte';
 	import { router } from '$lib/midi/router.svelte';
 	import { devices } from '$lib/midi/devices/store.svelte';
 	import { MELODIES } from '$lib/music/melodies';
 	import { Button } from '$lib/components/ui/button';
-	import SignalPath from '$lib/components/shell/SignalPath.svelte';
+	import { Badge } from '$lib/components/ui/badge';
+	import ToolFigure from '$lib/components/shell/ToolFigure.svelte';
 	import { cn } from '$lib/utils';
 
-	/*
-	 * Each tool says what is inside it as well as what it is for. A launcher
-	 * whose cards only repeat their own titles teaches you nothing you could
-	 * not have guessed, and the space it takes up is space the tool could have
-	 * used to tell you it already holds three routes.
-	 */
-	const tools = $derived([
+	const featured = [
 		{
 			href: '/lab/studio',
-			icon: MusicNote01Icon,
+			figure: 'studio' as const,
 			name: 'First Track Studio',
-			desc: 'Make an eight-bar piece with drums, bass, chords, and a melody of your own.',
-			contents: 'Original starters · Live recording · Note editing · Saved projects · MIDI export',
-			badge: 'Start here' as string | null
+			desc: 'Turn a small idea into a complete piece. Build with drums, bass, chords, and your own melody.',
+			contents: 'Original starters, live recording, and MIDI export.',
+			action: 'Make your first track'
 		},
 		{
+			href: '/lab/mpe',
+			figure: 'mpe' as const,
+			name: 'MPE Playground',
+			desc: 'Bend one note. Let another bloom. Discover how pitch, pressure, and color become musical gestures.',
+			contents: 'Play on screen or connect your expressive controller.',
+			action: 'Explore expression'
+		}
+	];
+	const tools = $derived([
+		{
 			href: '/lab/monitor',
-			icon: Activity03Icon,
+			figure: 'monitor' as const,
 			name: 'Monitor',
-			desc: 'Every message in and out, in the order the wire carried them.',
-			contents: 'Byte inspector · Family filters · TSV export',
+			desc: 'See every message your instrument sends, down to the last byte.',
+			contents: 'Message filters · Byte inspector · Export',
 			badge: null as string | null
 		},
 		{
 			href: '/lab/patchbay',
-			icon: Route02Icon,
+			figure: 'patchbay' as const,
 			name: 'Patchbay',
-			desc: 'Route any input to any output, with rules in between.',
-			contents: 'Channel remap · Transpose · Filter · Split',
+			desc: 'Connect instruments, reshape channels, and put every note where it belongs.',
+			contents: 'Route · Transpose · Filter · Split',
 			badge: router.routes.length
 				? `${router.routes.length} route${router.routes.length === 1 ? '' : 's'}`
 				: null
 		},
 		{
 			href: '/lab/programmer',
-			icon: Grid3X3Icon,
+			figure: 'programmer' as const,
 			name: 'Programmer',
-			desc: 'Build a program, then play it out or save it to a file.',
-			contents: 'Step sequencer · Patterns · MIDI files · Clock',
+			desc: 'Find a rhythm, build a sequence, and send it to your synth or a MIDI file.',
+			contents: 'Step sequencer · Patterns · MIDI export',
 			badge: null
 		},
 		{
 			href: '/lab/devices',
-			icon: Chip02Icon,
+			figure: 'devices' as const,
 			name: 'Device Lab',
-			desc: 'Teach the app an instrument it has never met.',
-			contents: 'Identify · Learn by wiggling · Saved profiles',
+			desc: 'Get to know your instrument. Move a control and learn what it does.',
+			contents: 'Identify · Learn controls · Save profiles',
 			badge: devices.user.length ? `${devices.user.length} saved` : null
 		},
 		{
-			href: '/lab/diagnostics',
-			icon: StopWatchIcon,
-			name: 'Diagnostics',
-			desc: 'Prove where the latency and the jitter are actually coming from.',
-			contents: 'Round trip · Clock jitter · Loopback · Troubleshooter',
-			badge: null
-		},
-		{
-			href: '/lab/console',
-			icon: SquareTerminalIcon,
-			name: 'Console',
-			desc: 'Write JavaScript that drives your real hardware, right now.',
-			contents: 'engine · notes · patterns · transport',
-			badge: null
-		},
-		{
 			href: '/lab/jukebox',
-			icon: MusicNote01Icon,
+			figure: 'jukebox' as const,
 			name: 'Jukebox',
-			desc: 'Music out of copyright, played by describing it rather than recording it.',
-			contents: `${MELODIES.length} pieces · Any instrument · Transpose · Rounds`,
+			desc: 'Hear familiar music through a new instrument. Change the tempo, key, or voice.',
+			contents: `${MELODIES.length} pieces · Transpose · Rounds`,
+			badge: null
+		},
+		{
+			href: '/lab/diagnostics',
+			figure: 'diagnostics' as const,
+			name: 'Diagnostics',
+			desc: 'Check the timing of your setup and find the source of lag or jitter.',
+			contents: 'Round trip · Clock jitter · Loopback',
 			badge: null
 		}
 	]);
-
 	const ports = $derived(midiAccess.inputs.length + midiAccess.outputs.length);
 </script>
 
-<div class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-12 sm:px-8">
-	<header class="flex flex-wrap items-end justify-between gap-4">
-		<div class="flex flex-col gap-3">
-			<h1 class="text-3xl font-semibold tracking-tight">The Lab</h1>
-			<p class="prose-body text-muted-foreground">
-				The instruments the lessons are built from, standing on their own. Nothing here is a demo —
-				these are the tools you keep.
+<svelte:head>
+	<title>The Lab — MIDI Lab</title>
+	<meta
+		name="description"
+		content="Make music in First Track Studio, explore per-note expression, and understand your instruments with MIDI Lab's creative tools."
+	/>
+</svelte:head>
+
+<div class="lab-landing">
+	<header class="lab-header">
+		<div class="introduction">
+			<h1>The Lab</h1>
+			<p>
+				A place to make music, understand your instruments, and follow an idea wherever it leads.
 			</p>
 		</div>
-
-		<!-- Every tool below needs the same thing, so it is answered once, here. -->
-		{#if midiAccess.status === 'granted'}
-			<p class="flex items-center gap-2 text-xs text-muted-foreground">
-				<span class={cn('size-1.5 rounded-full', ports ? 'bg-ok' : 'bg-muted-foreground/40')}
-				></span>
-				{#if ports}
-					<!-- "detected", because the dock a few pixels below counts the ports
-					     you have actually opened. Two readouts in the same shape meaning
-					     two different things is how you get someone counting cables. -->
-					{midiAccess.inputs.length} in · {midiAccess.outputs.length} out detected
-				{:else}
-					No ports found
-				{/if}
-			</p>
-		{:else if midiAccess.status !== 'unsupported'}
-			<Button variant="outline" size="sm" onclick={() => midiAccess.request(false)}>
-				<HugeiconsIcon icon={PlugSocketIcon} size={14} />
-				Connect MIDI
-			</Button>
-		{/if}
+		<div class="header-actions">
+			{#if midiAccess.status === 'granted'}
+				<p class="port-status">
+					<span class={cn('status-dot', ports ? 'bg-ok' : 'bg-muted-foreground/40')}></span>
+					{#if ports}
+						{midiAccess.inputs.length} in · {midiAccess.outputs.length} out detected
+					{:else}
+						No ports found
+					{/if}
+				</p>
+			{:else if midiAccess.status !== 'unsupported'}
+				<Button variant="outline" size="lg" onclick={() => midiAccess.request(false)}>
+					<HugeiconsIcon icon={PlugSocketIcon} data-icon="inline-start" />
+					Connect MIDI
+				</Button>
+			{/if}
+			<a href={path('/learn')} class="lesson-link"
+				>Find a lesson <HugeiconsIcon icon={ArrowRight01Icon} size={14} /></a
+			>
+		</div>
 	</header>
 
-	<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-		{#each tools as tool (tool.href)}
-			<a
-				href={path(tool.href)}
-				class="group flex flex-col gap-2.5 rounded-lg border bg-card p-4 transition-colors hover:border-foreground/25"
-			>
-				<!--
-					Mark and name on one line. The icon used to sit alone on a row of
-					its own above the title, which left it reading as a stray glyph
-					rather than the card's mark.
-				-->
-				<div class="flex items-center gap-3">
-					<span class="grid size-6 shrink-0 place-items-center transition-colors">
-						<HugeiconsIcon
-							icon={tool.icon}
-							size={18}
-							strokeWidth={1.6}
-							class="text-muted-foreground transition-colors group-hover:text-foreground"
-						/>
-					</span>
-					<h2 class="min-w-0 flex-1 leading-tight font-medium">{tool.name}</h2>
-					{#if tool.badge}
-						<span
-							class="tnum shrink-0 rounded-full border px-1.5 py-0.5 font-mono text-2xs text-muted-foreground"
-						>
-							{tool.badge}
-						</span>
-					{/if}
+	<section aria-label="Creative tools" class="featured-grid">
+		{#each featured as tool (tool.href)}
+			<a href={path(tool.href)} class="featured-tool">
+				<div class="feature-preview"><ToolFigure tool={tool.figure} /></div>
+				<div class="feature-body">
+					<h2>{tool.name}</h2>
+					<p>{tool.desc}</p>
+					<p class="feature-contents">{tool.contents}</p>
+					<span class="feature-action"
+						>{tool.action}<HugeiconsIcon icon={ArrowRight01Icon} size={18} /></span
+					>
 				</div>
-				<p class="text-sm leading-relaxed text-muted-foreground">{tool.desc}</p>
-				<p class="mt-auto border-t pt-2.5 text-2xs leading-relaxed text-muted-foreground">
-					{tool.contents}
-				</p>
 			</a>
 		{/each}
-	</div>
-
-	<!--
-		The tools above are not separate programs. This is the one sentence of
-		architecture that makes the rest of the app make sense, so it gets drawn
-		rather than written.
-	-->
-	<section class="flex flex-col gap-4 rounded-lg border bg-card px-6 py-5">
-		<div class="flex flex-col gap-1">
-			<h2 class="font-medium">How a byte travels</h2>
-			<p class="measure text-sm leading-relaxed text-muted-foreground">
-				Nothing here has a private side channel. Your keyboard, the widgets on these pages, the
-				sequencer and your own code all put messages on the same bus, and every tool in the Lab is
-				something that listens to it.
-			</p>
-		</div>
-		<SignalPath />
 	</section>
+
+	<section aria-labelledby="tool-heading" class="tools-section">
+		<div class="section-heading">
+			<h2 id="tool-heading">Your MIDI workbench</h2>
+			<p>Focused tools for the moments when you want to look a little closer.</p>
+		</div>
+		<div class="tool-grid">
+			{#each tools as tool (tool.href)}
+				<a href={path(tool.href)} class="tool-card">
+					<div class="tool-preview"><ToolFigure tool={tool.figure} /></div>
+					<div class="tool-body">
+						<div class="tool-title">
+							<h3>{tool.name}</h3>
+							{#if tool.badge}<Badge variant="outline">{tool.badge}</Badge>{/if}<HugeiconsIcon
+								icon={ArrowRight01Icon}
+								size={14}
+							/>
+						</div>
+						<p>{tool.desc}</p>
+						<p class="tool-contents">{tool.contents}</p>
+					</div>
+				</a>
+			{/each}
+		</div>
+		<a href={path('/lab/console')} class="console-link">
+			<span class="console-icon"
+				><HugeiconsIcon icon={SquareTerminalIcon} size={22} strokeWidth={1.6} /></span
+			>
+			<div>
+				<h3>Console</h3>
+				<p>
+					Write a little JavaScript. Play notes, build patterns, or drive your hardware directly.
+				</p>
+			</div>
+			<HugeiconsIcon icon={ArrowRight01Icon} size={18} />
+		</a>
+	</section>
+	<p class="workspace-note">
+		Play a note, watch it in the Monitor, then shape its journey in the Patchbay. Your tools work
+		together.
+	</p>
 </div>
+
+<style>
+	.lab-landing {
+		width: min(100%, 76rem);
+		margin: 0 auto;
+		padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem) 4rem;
+	}
+	.lab-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: 2rem;
+		margin-bottom: 2.5rem;
+	}
+	.introduction {
+		max-width: 39rem;
+	}
+	.introduction h1 {
+		font-size: clamp(2.35rem, 4.5vw, 3.6rem);
+		font-weight: 560;
+		letter-spacing: -0.055em;
+		line-height: 1.05;
+		margin-bottom: 1.1rem;
+	}
+	.introduction p {
+		font-size: 1rem;
+		line-height: 1.7;
+		color: var(--muted-foreground);
+		max-width: 34rem;
+	}
+	.header-actions {
+		display: flex;
+		align-items: flex-end;
+		flex-direction: column;
+		gap: 0.8rem;
+		flex-shrink: 0;
+		padding-bottom: 0.2rem;
+	}
+	.port-status {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.75rem;
+		color: var(--muted-foreground);
+	}
+	.status-dot {
+		width: 0.375rem;
+		height: 0.375rem;
+		border-radius: 50%;
+	}
+	.lesson-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.8125rem;
+		color: var(--muted-foreground);
+	}
+	.lesson-link:hover {
+		color: var(--foreground);
+	}
+	.featured-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.25rem;
+	}
+	.featured-tool,
+	.tool-card {
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		border: 1px solid var(--landing-line, var(--border));
+		border-radius: 1rem;
+		background: var(--landing-panel, var(--card));
+		box-shadow: 0 1px 0 color-mix(in oklch, var(--foreground) 3%, transparent);
+		transition:
+			border-color 160ms ease,
+			box-shadow 160ms ease;
+	}
+	.featured-tool:hover,
+	.tool-card:hover {
+		border-color: color-mix(in oklch, var(--landing-accent, var(--foreground)) 42%, var(--border));
+		box-shadow: 0 8px 24px color-mix(in oklch, var(--foreground) 4%, transparent);
+	}
+	.feature-preview {
+		margin: 1rem 1rem 0;
+		border: 1px solid var(--border);
+		border-radius: 0.55rem;
+		overflow: hidden;
+	}
+	.feature-body {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		padding: 1.35rem 1.5rem 1.4rem;
+	}
+	.feature-body h2 {
+		font-size: 1.25rem;
+		letter-spacing: -0.025em;
+		font-weight: 560;
+		line-height: 1.3;
+		margin-bottom: 0.55rem;
+	}
+	.feature-body p {
+		font-size: 0.875rem;
+		line-height: 1.65;
+		color: var(--muted-foreground);
+	}
+	.feature-body .feature-contents {
+		font-size: 0.75rem;
+		margin-top: 0.7rem;
+	}
+	.feature-action {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding-top: 1.25rem;
+		margin-top: auto;
+		font-size: 0.8125rem;
+		font-weight: 530;
+		color: var(--landing-accent, var(--foreground));
+	}
+	.tools-section {
+		margin-top: 3.5rem;
+	}
+	.section-heading {
+		margin-bottom: 1.5rem;
+	}
+	.section-heading h2 {
+		font-size: 1.5rem;
+		letter-spacing: -0.035em;
+		font-weight: 550;
+		line-height: 1.3;
+	}
+	.section-heading p {
+		margin-top: 0.5rem;
+		font-size: 0.875rem;
+		line-height: 1.65;
+		color: var(--muted-foreground);
+	}
+	.tool-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1.15rem;
+	}
+	.tool-preview {
+		margin: 0.75rem 0.75rem 0;
+		border: 1px solid var(--border);
+		border-radius: 0.45rem;
+		overflow: hidden;
+	}
+	.tool-body {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		padding: 1.15rem 1.25rem 1.25rem;
+	}
+	.tool-title {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-bottom: 0.5rem;
+	}
+	.tool-title h3 {
+		font-weight: 550;
+		font-size: 1rem;
+		letter-spacing: -0.025em;
+		line-height: 1.3;
+	}
+	.tool-title :global(svg) {
+		margin-left: auto;
+		color: var(--muted-foreground);
+	}
+	.tool-body p {
+		font-size: 0.8125rem;
+		line-height: 1.6;
+		color: var(--muted-foreground);
+	}
+	.tool-body .tool-contents {
+		margin-top: auto;
+		padding-top: 1.2rem;
+		font-size: 0.6875rem;
+		line-height: 1.55;
+	}
+	.console-link {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		border: 1px solid var(--border);
+		border-radius: 0.8rem;
+		padding: 1.5rem;
+		margin-top: 1.2rem;
+		background: var(--landing-panel, var(--card));
+		transition: border-color 160ms ease;
+	}
+	.console-link:hover {
+		border-color: var(--landing-accent, var(--foreground));
+	}
+	.console-icon {
+		color: var(--muted-foreground);
+	}
+	.console-link h3 {
+		font-weight: 550;
+		font-size: 0.9375rem;
+		line-height: 1.4;
+		margin-bottom: 0.25rem;
+	}
+	.console-link p {
+		color: var(--muted-foreground);
+		font-size: 0.8125rem;
+		line-height: 1.6;
+	}
+	.console-link > :global(svg) {
+		margin-left: auto;
+		flex-shrink: 0;
+		color: var(--muted-foreground);
+	}
+	.workspace-note {
+		padding-top: 1.5rem;
+		font-size: 0.8125rem;
+		line-height: 1.7;
+		color: var(--muted-foreground);
+		max-width: 44rem;
+	}
+	a:focus-visible {
+		outline: 2px solid var(--landing-accent, var(--ring));
+		outline-offset: 4px;
+	}
+	@media (max-width: 1000px) {
+		.tool-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+		.lab-header {
+			align-items: flex-start;
+		}
+	}
+	@media (max-width: 640px) {
+		.lab-header {
+			flex-direction: column;
+			gap: 1.4rem;
+			margin-bottom: 1.8rem;
+		}
+		.header-actions {
+			flex-direction: row;
+			align-items: center;
+			gap: 1.25rem;
+			flex-wrap: wrap;
+		}
+		.featured-grid,
+		.tool-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.feature-body {
+			padding: 1.2rem;
+		}
+		.tools-section {
+			margin-top: 2.5rem;
+		}
+		.console-link {
+			align-items: flex-start;
+			padding: 1.2rem;
+			gap: 0.8rem;
+		}
+		.console-link > :global(svg) {
+			margin-top: 0.1rem;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.featured-tool,
+		.tool-card,
+		.console-link {
+			transition: none;
+		}
+	}
+</style>

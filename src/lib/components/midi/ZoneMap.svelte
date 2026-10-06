@@ -29,7 +29,7 @@
 	interface Props {
 		/** Starting side. Both are reachable from the buttons. */
 		side?: ZoneSide;
-		/** Starting member count. Eight is what most controllers ship with. */
+		/** Starting number of independently addressable member channels. */
 		members?: number;
 		class?: string;
 	}
@@ -104,7 +104,9 @@
 			aria-label="The sixteen MIDI channels. In this {zoneSide} zone, channel {zone.master +
 				1} is the master and channels {zone.members
 				.map((m) => m + 1)
-				.join(', ')} are members, one note each. {spare.length} channels are left over."
+				.join(
+					', '
+				)} are independently addressable members. A typical allocation gives each held finger its own member. {spare.length} channels are left over."
 		>
 			<!-- ── Master, annotated above ─────────────────────────────────── -->
 			<text
@@ -192,7 +194,7 @@
 					fill="var(--msg-note)"
 				>
 					{zone.members.length}
-					{zone.members.length === 1 ? 'MEMBER' : 'MEMBERS'} · one note each
+					{zone.members.length === 1 ? 'MEMBER' : 'MEMBERS'} · typical allocation
 				</text>
 				<text
 					x={labelX}
@@ -201,7 +203,7 @@
 					font-size="9"
 					class="fill-muted-foreground"
 				>
-					its own bend, its own pressure, its own CC 74
+					one held finger per member · independent expression
 				</text>
 			{/if}
 
@@ -263,9 +265,11 @@
 			-->
 			{memberCount}
 			{memberCount === 1 ? 'member' : 'members'} plus the master is
-			<strong class="text-foreground">{memberCount + 1} channels</strong>, so this zone can sound
+			<strong class="text-foreground">{memberCount + 1} channels</strong>, providing
 			{memberCount}
-			{memberCount === 1 ? 'note' : 'notes'} at once. The controller announces it on the master with
+			independently addressable member {memberCount === 1 ? 'channel' : 'channels'}. A typical
+			allocation gives each held finger one member; sustained tails or notes sharing a member can
+			make the sounding note count larger. The controller announces the zone on the master with
 			<code class="font-mono text-foreground">{rpn[2]}</code>, wrapped in the
 			<span class="font-mono">{rpn[0]}</span> / <span class="font-mono">{rpn[1]}</span> that select RPN
 			0,6:
