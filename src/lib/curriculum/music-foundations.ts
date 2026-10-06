@@ -115,6 +115,13 @@ export const MUSIC_FOUNDATIONS: Record<string, MusicFoundation> = {
 					'Begin with three or four notes. Repeat a small idea, change its ending, and leave a breath. A phrase that stops away from the tonic can sound unfinished; a later answer that lands on the tonic can make it feel complete.',
 					'You can borrow the rhythm of your own first phrase and change only its pitches. Repetition gives the listener something to recognise. A melody does not have to climb a scale, use every available note, or keep playing all the time.'
 				]
+			},
+			{
+				title: 'A motif gives the listener something to remember',
+				paragraphs: [
+					'A motif is a small identity: perhaps a rhythm, a repeated note followed by a leap, or a three-note contour. Repeat it once so the listener recognises it. Then change one feature—its last pitch, its register, or where it enters—while keeping the rest familiar.',
+					'Try singing a phrase before playing it. If you need a breath, put a breath in the music. Answering a phrase can mean repeating its rhythm with a different ending; contrast does not require a completely new melody.'
+				]
 			}
 		],
 		drills: [
@@ -172,6 +179,30 @@ export const MUSIC_FOUNDATIONS: Record<string, MusicFoundation> = {
 				paragraphs: [
 					'Stack alternate notes of C major and you get C, D minor, E minor, F, G, A minor and B diminished. Musicians label these I, ii, iii, IV, V, vi and vii°; the numbers describe scale degrees rather than fixed letter names.',
 					'Try I–vi–IV–V: C–Am–F–G. The G chord often makes returning to C feel convincing. A cadence is an ending gesture; a V–I motion is one common kind. Other styles use different endings, and looping progressions need not resolve each time.'
+				]
+			},
+			{
+				title: 'Read the circle as a map of relationships',
+				paragraphs: [
+					'Each clockwise step on the circle moves the tonic up a fifth, wrapping into the same octave. Neighbouring major keys share six of their seven pitch classes. In C, F sits to the left and G to the right: IV and V are close neighbours of I. Their positions describe a relationship; they do not require every song to follow the circle.',
+					'The inner ring pairs each major key with its relative minor. C major and A natural minor share a note collection, but their musical home differs. Parallel minor keeps the tonic and changes the collection: C major becomes C minor. Hear both rather than treating “minor” as a single change.',
+					'The keyboard uses twelve-tone equal temperament. A seven-semitone fifth is close to the pure frequency ratio 3:2, but not identical. Twelve pure fifths do not close exactly into seven octaves. Enharmonic names such as F-sharp and G-flat share a keyboard pitch while spelling different musical contexts.'
+				]
+			},
+			{
+				title: 'Let the voices make small journeys',
+				paragraphs: [
+					'A chord symbol names the harmony; it does not dictate where every finger goes. Across C–Am–F, the note C can remain in place. E can stay as C changes to Am, then move one semitone to F. Follow each voice separately and listen to how much movement the progression actually needs.',
+					'Root-position triads can make every chord jump together. Inversions let some voices stay and others move nearby. Neither version is automatically better: large jumps may create the lift you want, while a connected accompaniment may leave room for an active melody. Compare at the same tempo and volume.',
+					'Low, close chord tones can become dense; spread them apart and listen again. Higher voices can often sit closer together. Register and spacing change a chord’s sound even when its pitch classes and chord name stay the same.'
+				]
+			},
+			{
+				title: 'Tension is more than roughness',
+				paragraphs: [
+					'Acoustic roughness can arise when nearby frequency components interfere and interact within the ear’s frequency resolution. A note usually contains many partials, so the interaction depends on timbre and register as well as the fundamental pitches. In the landscape, change the spectrum while keeping the three pitches fixed, then hear what changes.',
+					'Tonal expectation is another kind of tension. Once C feels like home, G7 can suggest a return: its B can rise to C and its F can fall to E. Those small movements help make a cadence convincing in this tonal setting. A low point on a roughness graph cannot tell you whether a phrase has finished.',
+					'Rhythm can create tension too: delay an expected entrance, hold a note across a chord change, or leave an unfinished phrase hanging. Rough sounds can be expressive, and smooth sounds can feel unresolved. The graph estimates one acoustic ingredient; style, experience and the surrounding music shape its meaning.'
 				]
 			}
 		],
@@ -295,6 +326,20 @@ export const MUSIC_FOUNDATIONS: Record<string, MusicFoundation> = {
 					'A crescendo grows through the phrase; a decrescendo settles. Use a small change rather than making every note maximum strength. Expression, modulation and filter movement can shape a held note when the instrument supports those controls.',
 					'Compare your playing with the reference, then ask one musical question: which note should stand out? Timing feedback is a guide to deliberate placement. It does not require every style to use a rigid grid.'
 				]
+			},
+			{
+				title: 'Timing needs a reason',
+				paragraphs: [
+					'Playing expressively does not mean making every note randomly late or loud. Establish a pulse the listener can follow, then decide which entrances lean into it or relax behind it. Repeated accents and a consistent placement can create a groove; unrelated timing errors can obscure it.',
+					'In the comparison below, listen once for starts, once for releases, and once for accents. Keep the pitches in your memory while the performance changes. A tight electronic grid can be exactly right for a piece; another phrase may need more space and a gentler answer.'
+				]
+			},
+			{
+				title: 'Give the listener a destination',
+				paragraphs: [
+					'A phrase can gather energy toward a high note, a strong beat, a chord change or a deliberate pause. Decide which moment matters before making every note louder. Let the notes leading to it support that destination, then hear whether the ending feels like a breath or a new beginning.',
+					'Repetition establishes an expectation. A changed ending can answer it, redirect it or leave it open. Musicality lives in those relationships: the same final pitch can sound settled over one chord and suspended over another. Listen to the phrase in its accompaniment before deciding what it means.'
+				]
 			}
 		],
 		drills: [
@@ -361,6 +406,14 @@ export const MUSIC_FOUNDATIONS: Record<string, MusicFoundation> = {
 				paragraphs: [
 					'Change one thing in bars 5–8: lift the melody, add a drum fill, change an inversion, or leave a whole beat empty. A listener should recognise the first idea and hear why it returned.',
 					'Mute one part at a time. If a part adds nothing, simplify it or leave it out. Listen from the beginning without editing, then make one change based on what you heard.'
+				]
+			},
+			{
+				title: 'Choose an intention, then edit toward it',
+				paragraphs: [
+					'Before adding another part, describe what you want a listener to notice: a steady dance pulse, a melody that asks and answers, a moment of unease, or a quiet landing. Make one decision that serves that intention—an accent, a rest, a closer chord voicing, or a different ending.',
+					'Use contrast with a point of return. If the second half rises, keep a recognisable motif. If the texture thickens, make an earlier passage spare enough for the change to matter. If a rough chord becomes the climax, allow its surrounding rhythm and voicing to make that moment clear.',
+					'Play the complete eight bars without touching a control. Name one moment that works and one that does not yet communicate your idea. Change the latter, save another version, and compare the whole phrase again. Finishing a piece is choosing relationships, not exhausting every available note.'
 				]
 			},
 			{

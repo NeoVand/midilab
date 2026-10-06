@@ -1,4 +1,77 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
+
+async function expectReadableSoundControls(instrument: Locator) {
+	const layout = await instrument.locator('[data-slot="field-group"]').evaluate((group) => {
+		const bounds = group.getBoundingClientRect();
+		const children = Array.from(group.children).map((el) => el.getBoundingClientRect().toJSON());
+		const context = document.createElement('canvas').getContext('2d')!;
+		const selects = Array.from(group.querySelectorAll('select')).map((select) => {
+			const styles = getComputedStyle(select);
+			context.font = styles.font;
+			const text = select.selectedOptions[0]?.textContent?.trim() ?? '';
+			return {
+				text,
+				textWidth: context.measureText(text).width,
+				availableWidth:
+					select.clientWidth - parseFloat(styles.paddingLeft) - parseFloat(styles.paddingRight)
+			};
+		});
+		return { bounds: bounds.toJSON(), children, selects };
+	});
+	const instrumentBounds = (await instrument.boundingBox())!;
+	expect(layout.bounds.width).toBeGreaterThan(200);
+	expect(layout.bounds.width).toBeLessThanOrEqual(instrumentBounds.width + 1);
+	for (const select of layout.selects) {
+		expect(select.text).not.toBe('');
+		expect(select.availableWidth).toBeGreaterThanOrEqual(select.textWidth);
+	}
+	for (const child of layout.children) {
+		expect(child.left).toBeGreaterThanOrEqual(layout.bounds.left - 1);
+		expect(child.right).toBeLessThanOrEqual(layout.bounds.right + 1);
+	}
+	for (let a = 0; a < layout.children.length; a++) {
+		for (let b = a + 1; b < layout.children.length; b++) {
+			const overlapWidth =
+				Math.min(layout.children[a].right, layout.children[b].right) -
+				Math.max(layout.children[a].left, layout.children[b].left);
+			const overlapHeight =
+				Math.min(layout.children[a].bottom, layout.children[b].bottom) -
+				Math.max(layout.children[a].top, layout.children[b].top);
+			expect(overlapWidth > 1 && overlapHeight > 1).toBe(false);
+		}
+	}
+}
+
+for (const width of [320, 1280]) {
+	test(`lesson sound controls fit their actual container at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 850 });
+		await page.goto('/learn/chords-and-movement');
+		const instruments = page.getByRole('group', { name: 'Keyboard instrument', exact: true });
+		await expect(instruments).toHaveCount(2);
+		for (const instrument of await instruments.all()) {
+			await expect(instrument.getByLabel('Channel', { exact: true })).toHaveValue('0');
+			await expect(instrument.getByLabel('Velocity', { exact: true })).toHaveValue('touch');
+			await expectReadableSoundControls(instrument);
+			await instrument.getByLabel('Velocity', { exact: true }).selectOption('48');
+			await expectReadableSoundControls(instrument);
+		}
+	});
+}
+
+test('drum sound controls and complete instrument names fit on mobile', async ({ page }) => {
+	await page.setViewportSize({ width: 320, height: 850 });
+	await page.goto('/learn/channels');
+	const pads = page.getByRole('group', { name: 'Drum pads', exact: true });
+	await expectReadableSoundControls(pads);
+	await pads.getByLabel('Velocity', { exact: true }).selectOption('100');
+	await expectReadableSoundControls(pads);
+	const piano = page.getByRole('group', { name: 'Keyboard instrument', exact: true });
+	await piano.getByTitle("Choose this keyboard's instrument").click();
+	const acoustic = page.getByRole('button', { name: '0 Acoustic Grand Piano', exact: true });
+	const name = acoustic.locator('span').last();
+	expect(await name.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+	await acoustic.click();
+});
 
 test('lesson keyboards expose sound, channel, dynamics, sustain, and octave controls', async ({
 	page

@@ -10,8 +10,10 @@
 import { SvelteSet } from 'svelte/reactivity';
 import { onDestroy } from 'svelte';
 import { audio } from '$lib/audio/engine';
+import { claimDemoPlayback } from '$lib/audio/demo-focus';
 import { engine } from './engine.svelte';
 import { audioToPerf } from './clock.svelte';
+import { bus } from './bus';
 import type { MidiMessage } from './messages';
 
 export interface ScheduledEvent {
@@ -51,35 +53,6 @@ export function notesToEvents(notes: NoteSpec[], bpm = 110): ScheduledEvent[] {
 const LOOKAHEAD = 0.15;
 const INTERVAL = 25;
 
-/**
- * The one demonstration that is currently sounding.
- *
- * A lesson page holds several of these, and they all send to the same engine
- * on the same channel — including the Program Change each of them sends before
- * it starts. So a reader who plays the scale on a piano and then, a second
- * later, the interval demonstration on strings used to hear the scale finish
- * on strings, having changed instrument halfway through a phrase that was
- * making a point about pitch.
- *
- * Demonstrations are short and mutually exclusive by nature: starting one is
- * a decision to listen to it. Starting any player therefore stops whichever
- * one was already going.
- */
-let sounding: SequencePlayer | null = null;
-
-/** Silence whichever demonstration was already going, if it is not this one. */
-function stopOthers(mine: SequencePlayer): void {
-	if (sounding && sounding !== mine) sounding.stop();
-}
-
-function claim(mine: SequencePlayer): void {
-	sounding = mine;
-}
-
-function release(mine: SequencePlayer): void {
-	if (sounding === mine) sounding = null;
-}
-
 export class SequencePlayer {
 	playing = $state(false);
 	/** Seconds elapsed, for progress bars. */
@@ -92,6 +65,9 @@ export class SequencePlayer {
 	#timer = 0;
 	#loop = false;
 	#onEnd: (() => void) | undefined;
+	#releaseFocus: (() => void) | undefined;
+	#generation = 0;
+	#disposed = false;
 
 	/**
 	 * Construct this during component initialisation. It registers its own
@@ -100,19 +76,39 @@ export class SequencePlayer {
 	 * from a component that no longer exists.
 	 */
 	constructor() {
-		onDestroy(() => this.stop());
+		const unsubscribe = bus.subscribe(({ message }) => {
+			if (
+				message.type === 'reset' ||
+				(message.type === 'controlChange' && message.controller === 120)
+			)
+				this.stop();
+		});
+		onDestroy(() => {
+			this.#disposed = true;
+			unsubscribe();
+			this.stop();
+		});
 	}
 
 	async play(
 		events: ScheduledEvent[],
 		opts: { loop?: boolean; onEnd?: () => void } = {}
 	): Promise<void> {
-		await engine.wake();
-		stopOthers(this);
-		// `stop()` clears the registry, so the claim has to come after it.
 		this.stop();
-		if (events.length === 0) return;
-		claim(this);
+		if (this.#disposed || events.length === 0) return;
+		// Claim before resuming audio, so a newer request also cancels a demo
+		// still waiting for the audio context. Acoustic and MIDI examples share
+		// this foreground: the picture and the sound always describe one demo.
+		this.#releaseFocus = claimDemoPlayback(() => this.stop());
+		const generation = this.#generation;
+		try {
+			await engine.wake();
+		} catch (error) {
+			if (this.#disposed || generation !== this.#generation) return;
+			this.stop();
+			throw error;
+		}
+		if (this.#disposed || generation !== this.#generation) return;
 		this.#events = [...events].sort((a, b) => a.time - b.time);
 		this.duration = this.#events[this.#events.length - 1].time + 0.4;
 		this.#loop = opts.loop ?? false;
@@ -125,7 +121,10 @@ export class SequencePlayer {
 	}
 
 	stop(): void {
-		release(this);
+		this.#generation++;
+		const release = this.#releaseFocus;
+		this.#releaseFocus = undefined;
+		release?.();
 		if (this.#timer) clearInterval(this.#timer);
 		this.#timer = 0;
 		if (this.playing) {

@@ -5,7 +5,16 @@
 
 <MusicFoundationsLesson lessonId="chords-and-movement">
 	<Further
-		refs={['ableton-chords', 'theory-inversions']}
+		refs={[
+			'ableton-chords',
+			'theory-inversions',
+			'omt-key-signatures',
+			'omt-voice-leading',
+			'sethares-consonance',
+			'sethares-model',
+			'minutephysics-dissonance',
+			'bhatia-dissonance'
+		]}
 		lead="Continue with these explanations and interactive examples."
 	/>
 </MusicFoundationsLesson>

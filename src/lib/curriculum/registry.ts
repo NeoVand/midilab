@@ -101,7 +101,7 @@ export const CURRICULUM: Act[] = [
 				'pitch-and-melody',
 				'Pitch, scales and melody',
 				'Find a home note, follow a scale, and answer a short musical phrase.',
-				14,
+				16,
 				[
 					'Play a short melody with correct notes and timing',
 					'Distinguish tonic from a chord root',
@@ -112,7 +112,7 @@ export const CURRICULUM: Act[] = [
 				'chords-and-movement',
 				'Triads, inversions and progressions',
 				'Build a chord, turn it over, and connect harmony with smaller movements.',
-				16,
+				26,
 				[
 					'Play a major triad and its first inversion',
 					'Build diatonic chords from a major key',
@@ -134,7 +134,7 @@ export const CURRICULUM: Act[] = [
 				'musical-expression',
 				'Dynamics, articulation and expression',
 				'Shape a phrase with strength, duration, silence and an intentional accent.',
-				12,
+				18,
 				[
 					'Play a strong note and a soft answer',
 					'Use a rest to give a phrase room',
@@ -145,7 +145,7 @@ export const CURRICULUM: Act[] = [
 				'first-composition',
 				'Your first eight-bar composition',
 				'Combine an original groove, bass, chords and melody into a named project you can keep.',
-				20,
+				22,
 				[
 					'Create a complete eight-bar musical sketch',
 					'Make an intentional variation in its second half',

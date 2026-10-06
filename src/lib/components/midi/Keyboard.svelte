@@ -401,57 +401,66 @@
 	onfocusin={activateTyping}
 >
 	{#if controls}
-		<div class="flex flex-wrap items-center gap-2">
+		<Field.FieldGroup class="flex-row flex-wrap items-center gap-x-4 gap-y-2">
 			<VoicePicker
 				value={program}
 				channel={ch}
 				audition={false}
+				class="shrink-0"
 				title={ch === 9 ? 'Choose a drum kit' : "Choose this keyboard's instrument"}
 			/>
-			<Field.FieldGroup class="flex w-auto flex-row flex-wrap items-center gap-2">
-				<Field.Field orientation="horizontal" class="w-auto gap-1">
-					<Field.FieldLabel for={controlId + '-channel'}>Channel</Field.FieldLabel>
-					<NativeSelect
-						id={controlId + '-channel'}
-						value={String(ch)}
-						disabled={channel !== undefined}
-						onchange={(e) => chooseChannel(Number(e.currentTarget.value))}
-					>
-						{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
-							<NativeSelectOption value={String(c)}
-								>{c + 1}{c === 9 ? ' · drums' : ''}</NativeSelectOption
-							>
-						{/each}
-					</NativeSelect>
-				</Field.Field>
-				<Field.Field orientation="horizontal" class="w-auto gap-1">
-					<Field.FieldLabel for={controlId + '-velocity'}>Velocity</Field.FieldLabel>
-					<NativeSelect
-						id={controlId + '-velocity'}
-						value={String(strikeVelocity ?? 'touch')}
-						disabled={velocity !== null}
-						onchange={(e) =>
-							(selectedVelocity =
-								e.currentTarget.value === 'touch' ? null : Number(e.currentTarget.value))}
-					>
-						{#if velocity !== null}<NativeSelectOption value={String(velocity)}
-								>{velocity} · fixed</NativeSelectOption
-							>{:else}
-							<NativeSelectOption value="touch">Touch dynamics</NativeSelectOption>
-							<NativeSelectOption value="48">Soft · 48</NativeSelectOption>
-							<NativeSelectOption value="96">Medium · 96</NativeSelectOption>
-							<NativeSelectOption value="127">Hard · 127</NativeSelectOption>
-						{/if}
-					</NativeSelect>
-				</Field.Field>
-			</Field.FieldGroup>
+			<Field.Field
+				orientation="horizontal"
+				class="w-auto shrink-0 gap-1.5"
+				data-disabled={channel !== undefined}
+			>
+				<Field.FieldLabel for={controlId + '-channel'}>Channel</Field.FieldLabel>
+				<NativeSelect
+					id={controlId + '-channel'}
+					class="w-[6.5rem] shrink-0"
+					value={String(ch)}
+					disabled={channel !== undefined}
+					onchange={(e) => chooseChannel(Number(e.currentTarget.value))}
+				>
+					{#each Array.from({ length: 16 }, (_, i) => i) as c (c)}
+						<NativeSelectOption value={String(c)}
+							>{c + 1}{c === 9 ? ' · drums' : ''}</NativeSelectOption
+						>
+					{/each}
+				</NativeSelect>
+			</Field.Field>
+			<Field.Field
+				orientation="horizontal"
+				class="w-auto shrink-0 gap-1.5"
+				data-disabled={velocity !== null}
+			>
+				<Field.FieldLabel for={controlId + '-velocity'}>Velocity</Field.FieldLabel>
+				<NativeSelect
+					id={controlId + '-velocity'}
+					class="w-36 shrink-0"
+					value={String(strikeVelocity ?? 'touch')}
+					disabled={velocity !== null}
+					onchange={(e) =>
+						(selectedVelocity =
+							e.currentTarget.value === 'touch' ? null : Number(e.currentTarget.value))}
+				>
+					{#if velocity !== null}<NativeSelectOption value={String(velocity)}
+							>{velocity} · fixed</NativeSelectOption
+						>{:else}
+						<NativeSelectOption value="touch">Touch dynamics</NativeSelectOption>
+						<NativeSelectOption value="48">Soft · 48</NativeSelectOption>
+						<NativeSelectOption value="96">Medium · 96</NativeSelectOption>
+						<NativeSelectOption value="127">Hard · 127</NativeSelectOption>
+					{/if}
+				</NativeSelect>
+			</Field.Field>
 			<Button
 				size="sm"
 				variant={sustained ? 'secondary' : 'outline'}
 				aria-pressed={sustained}
 				onclick={toggleSustain}>Sustain</Button
 			>
-		</div>
+		</Field.FieldGroup>
 	{/if}
 
 	<div

@@ -131,6 +131,23 @@ so a held note cannot pass as a rest. Slower retries and input-delay adjustment
 make practice usable with an on-screen instrument or a MIDI controller. Each
 lesson leads into a concrete musical experiment in the Studio.
 
+Music basics also include a playable **circle of fifths** with every chord in a
+key, relative and parallel minor, and two cadence endings. A rotatable **3D
+roughness landscape** lets you hear three tones, inspect their partials, and
+compare harmonic and stretched spectra. The graph and sound share the same
+spectrum and a fixed comparison scale. Original A/B phrase studies make timing,
+touch, note length, repetition, variation and musical arrival audible and visible.
+The lessons connect these experiments to voice leading, register and intention.
+
+The landscape is an independent implementation inspired by
+[Aatish Bhatia’s Dissonance explorer](https://aatishb.com/dissonance/) and
+[MinutePhysics’s The Physics of Dissonance](https://www.youtube.com/watch?v=tCsl6ZcY9ag),
+using [William Sethares’s published roughness kernel](https://sethares.engr.wisc.edu/comprog.html)
+with Bhatia’s simplified loudness weighting and three-tone aggregation. Its dense
+surface uses linear frequency-ratio axes, projected contours and a fixed height
+scale across timbres and registers; the canvas follows the app’s theme.
+Sensory roughness describes one acoustic ingredient, not a score for musical quality.
+
 ### Reference — `/reference`
 
 Status bytes, the full CC table, RPN, GM programs and drums, a note/frequency
@@ -166,7 +183,7 @@ src/lib/
   audio/       the built-in synthesiser and the sampled General MIDI engine
   patterns/    the mini-notation language and Euclidean rhythms
   sandbox/     the API exposed to code you write in the Console
-  music/       melody notation, the public-domain library, and practice assessment
+  music/       notation, harmony, roughness modelling, the melody library and practice
   studio/      original studies, recording, project validation, editing and MIDI export
   components/  the widget kit and lesson chrome
   curriculum/  lesson metadata, progress, the glossary, the bibliography, and the lessons

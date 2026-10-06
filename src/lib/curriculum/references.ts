@@ -413,6 +413,54 @@ export const REFERENCES: Reference[] = [
 
 	// ── Music, rhythm, tuning ─────────────────────────────────────────────
 	ref(
+		'omt-key-signatures',
+		'Key signatures and the circle of fifths',
+		'https://open-musictheory.github.io/docs/fundamentals/key-signatures/',
+		'Open Music Theory',
+		'article',
+		'Trace relationships between major and minor keys, their signatures, and correct note spellings.'
+	),
+	ref(
+		'omt-voice-leading',
+		'Jazz voicings',
+		'https://viva.pressbooks.pub/openmusictheory/chapter/jazz-voicings/',
+		'Open Music Theory',
+		'article',
+		'Follow common tones and nearby voices through changing harmonies, including practical voicing examples.'
+	),
+	ref(
+		'sethares-consonance',
+		'Relating tuning and timbre',
+		'https://sethares.engr.wisc.edu/consemi.html',
+		'William A. Sethares',
+		'article',
+		'Explore why a sound’s partial spectrum changes the intervals that produce low estimated sensory roughness.'
+	),
+	ref(
+		'sethares-model',
+		'Sethares’s dissonance calculation',
+		'https://sethares.engr.wisc.edu/comprog.html',
+		'William A. Sethares',
+		'docs',
+		'The underlying frequency-distance kernel; the landscape adds Bhatia’s simplified loudness weighting and three-tone aggregation.'
+	),
+	ref(
+		'minutephysics-dissonance',
+		'The Physics of Dissonance',
+		'https://www.youtube.com/watch?v=tCsl6ZcY9ag',
+		'MinutePhysics',
+		'article',
+		'The audiovisual exploration of beating, partial spectra, tuning and chord landscapes that inspired these experiments.'
+	),
+	ref(
+		'bhatia-dissonance',
+		'Dissonance: a journey through musical possibility space',
+		'https://aatishb.com/dissonance/',
+		'Aatish Bhatia',
+		'tool',
+		'The playable landscape and simplified loudness weighting that inspired this lab’s independently implemented model.'
+	),
+	ref(
 		'toussaint-euclid',
 		'The Euclidean algorithm generates traditional musical rhythms',
 		'http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf',

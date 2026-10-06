@@ -102,12 +102,12 @@
 <Popover.Root bind:open>
 	<Popover.Trigger
 		class={cn(
-			'flex items-center gap-1 rounded-md px-1.5 py-1 text-2xs text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground',
+			'flex max-w-full min-w-0 items-center gap-1 rounded-md px-1.5 py-1 text-2xs text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground',
 			className
 		)}
 		{title}
 	>
-		<span class="max-w-[9rem] truncate"
+		<span class="max-w-[9rem] min-w-0 truncate"
 			>{channel === 9 ? drumKit(value).name : GM_PROGRAMS[value]}</span
 		>
 		<HugeiconsIcon icon={ArrowUpDownIcon} size={11} class="shrink-0 opacity-70" />
@@ -154,7 +154,7 @@
 			{:else}
 				{#each GM_FAMILIES as family, f (family)}
 					<p class="label px-1 pt-2 pb-1 first:pt-0">{family}</p>
-					<div class="grid grid-cols-2 gap-1">
+					<div class="grid grid-cols-1 gap-1 min-[480px]:grid-cols-2">
 						{#each Array.from({ length: 8 }, (_, i) => f * 8 + i) as p (p)}
 							<button
 								class={cn(
@@ -162,6 +162,7 @@
 									value === p ? 'bg-msg-program-bg text-msg-program' : 'hover:bg-accent/60'
 								)}
 								aria-pressed={value === p}
+								title={GM_PROGRAMS[p]}
 								onclick={() => pick(p)}
 							>
 								<span class="tnum w-5 shrink-0 font-mono text-2xs text-muted-foreground">{p}</span>

@@ -177,37 +177,41 @@
 	onfocusin={activateTyping}
 >
 	{#if controls}
-		<div class="flex flex-wrap items-center gap-2">
+		<Field.FieldGroup class="flex-row flex-wrap items-center gap-x-4 gap-y-2">
 			<span class="text-xs text-muted-foreground">Channel {channel + 1}</span>
 			<VoicePicker
 				value={program}
 				{channel}
 				audition={false}
+				class="shrink-0"
 				title={channel === 9 ? 'Choose a drum kit' : "Choose the pads' instrument"}
 			/>
-			<Field.FieldGroup class="w-auto">
-				<Field.Field orientation="horizontal" class="w-auto gap-1">
-					<Field.FieldLabel for={controlId + '-velocity'}>Velocity</Field.FieldLabel>
-					<NativeSelect
-						id={controlId + '-velocity'}
-						value={String(strikeVelocity ?? 'touch')}
-						disabled={velocity !== null}
-						onchange={(e) =>
-							(selectedVelocity =
-								e.currentTarget.value === 'touch' ? null : Number(e.currentTarget.value))}
-					>
-						{#if velocity !== null}<NativeSelectOption value={String(velocity)}
-								>{velocity} · fixed</NativeSelectOption
-							>{:else}
-							<NativeSelectOption value="touch">Touch dynamics</NativeSelectOption>
-							<NativeSelectOption value="48">Soft · 48</NativeSelectOption>
-							<NativeSelectOption value="100">Medium · 100</NativeSelectOption>
-							<NativeSelectOption value="127">Hard · 127</NativeSelectOption>
-						{/if}
-					</NativeSelect>
-				</Field.Field>
-			</Field.FieldGroup>
-		</div>
+			<Field.Field
+				orientation="horizontal"
+				class="w-auto shrink-0 gap-1.5"
+				data-disabled={velocity !== null}
+			>
+				<Field.FieldLabel for={controlId + '-velocity'}>Velocity</Field.FieldLabel>
+				<NativeSelect
+					id={controlId + '-velocity'}
+					class="w-36 shrink-0"
+					value={String(strikeVelocity ?? 'touch')}
+					disabled={velocity !== null}
+					onchange={(e) =>
+						(selectedVelocity =
+							e.currentTarget.value === 'touch' ? null : Number(e.currentTarget.value))}
+				>
+					{#if velocity !== null}<NativeSelectOption value={String(velocity)}
+							>{velocity} · fixed</NativeSelectOption
+						>{:else}
+						<NativeSelectOption value="touch">Touch dynamics</NativeSelectOption>
+						<NativeSelectOption value="48">Soft · 48</NativeSelectOption>
+						<NativeSelectOption value="100">Medium · 100</NativeSelectOption>
+						<NativeSelectOption value="127">Hard · 127</NativeSelectOption>
+					{/if}
+				</NativeSelect>
+			</Field.Field>
+		</Field.FieldGroup>
 	{/if}
 	<div
 		class="grid gap-1.5"

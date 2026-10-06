@@ -14,7 +14,7 @@
 		</p>
 	</Callout>
 	<Further
-		refs={['ableton-structure', 'theory-lessons']}
+		refs={['ableton-structure', 'theory-lessons', 'omt-expression']}
 		lead="Continue with these explanations and interactive examples."
 	/>
 </MusicFoundationsLesson>
